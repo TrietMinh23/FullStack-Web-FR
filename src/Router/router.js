@@ -1,9 +1,10 @@
 import { Route, Routes } from "react-router-dom";
-import Home from "../Home/home";
-import Login from "../Login/login";
-import Signup from "../Signup/signup";
-import ForgotPassword from "../ForgotPassword/forgotpassword";
-import ChooseType from "../ChooseType/choosetype";
+import Home from "../pages/Home/home";
+import Login from "../pages/Login/login";
+import Signup from "../pages/Signup/signup";
+import ForgotPassword from "../pages/ForgotPassword/forgotpassword";
+import ChooseType from "../pages/ChooseType/choosetype";
+import NotFound from "../pages/NotFound/404";
 
 export default function Router() {
   return (
@@ -16,6 +17,7 @@ export default function Router() {
         element={<ForgotPassword></ForgotPassword>}
       ></Route>
       <Route path="/type" element={<ChooseType />}></Route>
+      <Route path="*" element={<NotFound />}></Route>
     </Routes>
   );
 }
