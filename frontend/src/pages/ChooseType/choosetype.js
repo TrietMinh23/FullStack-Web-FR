@@ -2,10 +2,14 @@ import { useState } from "react";
 import { GoDotFill } from "react-icons/go";
 import { MdOutlineLocalGroceryStore } from "react-icons/md";
 import { BsShop } from "react-icons/bs";
+import { useDispatch } from "react-redux";
+import { SETROLE } from "../../utils/redux/authSlice";
+import { Link } from "react-router-dom";
 
 export default function ChooseType() {
   const [isBuyerSelected, setBuyerSelected] = useState(true);
   const [isSellerSelected, setSellerSelected] = useState(false);
+  const dispatch = useDispatch();
 
   const handleBuyerClick = () => {
     setBuyerSelected(true);
@@ -15,6 +19,16 @@ export default function ChooseType() {
   const handleSellerClick = () => {
     setSellerSelected(true);
     setBuyerSelected(false);
+  };
+
+  const Continue = () => {
+    dispatch(
+      SETROLE({
+        payload: {
+          role: isBuyerSelected ? "buyer" : "seller",
+        },
+      })
+    );
   };
 
   return (
@@ -82,7 +96,7 @@ export default function ChooseType() {
                   </label>
                 </div>
 
-                <div className="mt-3">
+                <div className="mt-3 mb-8">
                   <input
                     type="radio"
                     id="seller"
@@ -112,9 +126,13 @@ export default function ChooseType() {
                   </label>
                 </div>
 
-                <button className="mt-10 px-14 py-4 bg-[#79B695] rounded-2xl text-white">
+                <Link
+                  to="/login"
+                  onClick={Continue}
+                  className="px-14 py-4 bg-[#79B695] rounded-2xl text-white"
+                >
                   Continue
-                </button>
+                </Link>
               </div>
             </div>
           </div>

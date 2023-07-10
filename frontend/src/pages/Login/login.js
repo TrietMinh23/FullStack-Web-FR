@@ -2,11 +2,15 @@ import { Link } from "react-router-dom";
 import { useReducer, useState } from "react";
 import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
 import { ValidationEmail } from "../../utils/Validation";
+import { useSignInWithGoogle } from "react-firebase-hooks/auth";
+import { auth } from "../../firebase/firebase";
+import { login } from "../../api/login";
+import { useSelector } from "react-redux";
+import LoadingIcon from "../../components/ui/LoadingIcon";
 
 const initialStateDialog = {
   stateDialogEmail: true,
   stateDialogPassword: true,
-  stateDialogUsername: true,
 };
 
 const dialogReducer = (state, action) => {
@@ -20,6 +24,12 @@ const dialogReducer = (state, action) => {
 };
 
 export default function Login() {
+  const [signInWithGoogle, user, loading, error] = useSignInWithGoogle(auth);
+  const role = useSelector((state) => state.auth.role);
+
+  const [isLoading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+
   const [stateDialog, setStateDialog] = useReducer(
     dialogReducer,
     initialStateDialog
@@ -28,6 +38,7 @@ export default function Login() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
+    role: role,
   });
 
   const handleLoginInputChange = (e) => {
@@ -37,16 +48,33 @@ export default function Login() {
     });
   };
 
-  const Login = (e) => {
+  const signInWithGoolge = () => {
+    signInWithGoogle();
+  };
+
+  const Login = async (e) => {
     e.preventDefault();
+    setMessage("");
 
     setStateDialog({
       type: "SET_STATUS_DIALOG",
       payload: {
         stateDialogEmail: !ValidationEmail(formData.email) ? false : true,
-        stateDialogPassword: !formData.password ? false : true,
+        stateDialogPassword: formData.password === "" ? false : true,
       },
     });
+
+    if (ValidationEmail(formData.email) && formData.password !== "") {
+      setLoading(true);
+      await login(formData)
+        .then((res) => {
+          if (res.data.data) setLoading(false);
+        })
+        .catch((err) => {
+          setMessage(err.response.data.message);
+          setLoading(false);
+        });
+    }
   };
 
   return (
@@ -110,6 +138,16 @@ export default function Login() {
               <p>Enter your password</p>
             </div>
           </div>
+          <div
+            className={`alert-box-inner alert-container mb-4 flex font-semibold text-red-600 ${
+              message != "" ? "block" : "hidden"
+            }`}
+          >
+            <PriorityHighIcon className="icon-alert"></PriorityHighIcon>
+            <div className="alert-content text-xs ml-2">
+              <p>{message}</p>
+            </div>
+          </div>
           <div className="mt-6 flex items-center justify-between">
             <div className="flex items-center">
               <input
@@ -132,10 +170,11 @@ export default function Login() {
           </div>
           <div className="mt-6">
             <button
+              disabled={isLoading}
               onClick={(e) => Login(e)}
               className="w-full inline-flex items-center justify-center px-4 py-2 bg-green-sheen hover:bg-emerald border border-transparent rounded-md font-semibold capitalize text-white focus:outline-none disabled:opacity-25 transition"
             >
-              Sign In
+              {isLoading ? <LoadingIcon /> : "Sign In"}
             </button>
           </div>
           <div className="mt-4">
@@ -158,6 +197,7 @@ export default function Login() {
           </div>
           <div className="mt-6">
             <button
+              onClick={signInWithGoolge}
               type="button"
               className="w-full block bg-white hover:bg-gray-100 focus:bg-gray-100 text-gray-900 font-semibold rounded-lg px-4 py-3 border border-gray-300"
             >

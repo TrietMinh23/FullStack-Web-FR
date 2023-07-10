@@ -3,6 +3,8 @@ import { useReducer, useState } from "react";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
 import { ValidationEmail } from "../../utils/Validation";
+import { useSelector } from "react-redux";
+import { signup } from "../../api/signup";
 
 const initialStateDialog = {
   stateDialogEmail: true,
@@ -27,6 +29,9 @@ export default function Signup() {
     initialStateDialog
   );
 
+  const [message, setMessage] = useState("");
+  const role = useSelector((state) => state.auth.role);
+
   const [stateConfirmPassword, setStateConfirmPassword] = useState(true);
   const [stateRequiredPassword, setStateRequiredPassword] = useState(false);
 
@@ -35,6 +40,7 @@ export default function Signup() {
     email: "",
     password: "",
     confirm_password: "",
+    role: role,
   });
 
   const handleSignUpInputChange = (e) => {
@@ -44,12 +50,13 @@ export default function Signup() {
     });
   };
 
-  const signIn = (e) => {
+  const signIn = async (e) => {
     e.preventDefault();
+    setMessage("");
 
     setStateRequiredPassword(true);
 
-    formData.confirm_password !== formData.password
+    formData.confirm_password != formData.password
       ? setStateConfirmPassword(false)
       : setStateConfirmPassword(true);
 
@@ -61,6 +68,22 @@ export default function Signup() {
         stateDialogPassword: formData.password.length < 6 ? false : true,
       },
     });
+
+    if (
+      ValidationEmail(formData.email) &&
+      formData.password !== "" &&
+      stateConfirmPassword
+    ) {
+      const { email, password, username, role } = formData;
+      await signup({
+        email,
+        password,
+        username,
+        role,
+      })
+        .then((res) => console.log(res))
+        .catch((err) => setMessage(err.response.data.message));
+    }
   };
 
   return (
@@ -163,7 +186,7 @@ export default function Signup() {
             <input
               id="password_confirm"
               type="password"
-              name="password_confirm"
+              name="confirm_password"
               className={`py-2 px-3 border focus:outline-none focus:ring focus:ring-red-200 focus:ring-opacity-50 rounded-md shadow-sm disabled:bg-gray-100 mt-1 block w-full ${
                 !stateConfirmPassword ? "border-red-300" : "border-gray-300"
               }`}
@@ -172,12 +195,22 @@ export default function Signup() {
           </div>
           <div
             className={`alert-box-inner alert-container mb-4 flex font-semibold text-red-600 ${
-              !stateConfirmPassword ? "block" : "hidden"
+              stateConfirmPassword ? "hidden" : "block"
             } `}
           >
             <PriorityHighIcon className="icon-alert"></PriorityHighIcon>
             <div className="alert-content text-xs ml-2">
               <p>Passwords must match</p>
+            </div>
+          </div>
+          <div
+            className={`alert-box-inner alert-container mb-4 flex font-semibold text-red-600 ${
+              message != "" ? "block" : "hidden"
+            }`}
+          >
+            <PriorityHighIcon className="icon-alert"></PriorityHighIcon>
+            <div className="alert-content text-xs ml-2">
+              <p>{message}</p>
             </div>
           </div>
           <div className="text-xs mb-4">
