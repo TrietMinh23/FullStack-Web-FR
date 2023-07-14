@@ -56,7 +56,7 @@ export default function Signup() {
 
     setStateRequiredPassword(true);
 
-    formData.confirm_password != formData.password
+    formData.confirm_password !== formData.password
       ? setStateConfirmPassword(false)
       : setStateConfirmPassword(true);
 
@@ -205,7 +205,7 @@ export default function Signup() {
           </div>
           <div
             className={`alert-box-inner alert-container mb-4 flex font-semibold text-red-600 ${
-              message != "" ? "block" : "hidden"
+              message !== "" ? "block" : "hidden"
             }`}
           >
             <PriorityHighIcon className="icon-alert"></PriorityHighIcon>

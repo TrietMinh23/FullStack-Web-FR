@@ -19,7 +19,7 @@ export default function ForgotPassword() {
       <div className="sm:max-w-sm mx-auto max-sm:px-2">
         <div className="logo-banner flex justify-center">
           <div className="w-20 h-20">
-            <img src="./logo-banner.png" />
+            <img src="./logo-banner.png" alt="logo" />
           </div>
         </div>
         <h5 className="text-center font-semibold mb-2 text-gray-900">

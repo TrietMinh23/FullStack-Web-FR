@@ -6,4 +6,8 @@ const instance = axios.create({
   headers: { "Content-Type": "application/json", Accept: "application/json" },
 });
 
-export { instance };
+const fakeapi = axios.create({
+  baseURL: "https://fakestoreapi.com/products",
+});
+
+export { instance, fakeapi };

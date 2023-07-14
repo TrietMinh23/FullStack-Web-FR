@@ -1,14 +1,11 @@
-import { useEffect } from "react";
-import { instance } from "../../api/config";
+import Navbar from "./components/NavBar";
+import ShoppingList from "./components/ShoppingList";
 
 export default function Home() {
-  useEffect(() => {
-    instance.get("/products").then((res) => console.log(res.data));
-  }, []);
   return (
-    <div>
-      {console.log("Component")}
-      Home
+    <div className="bg-light-silver">
+      <Navbar></Navbar>
+      <ShoppingList></ShoppingList>
     </div>
   );
 }
