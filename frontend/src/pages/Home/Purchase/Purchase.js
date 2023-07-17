@@ -2,8 +2,27 @@ import FmdGoodIcon from "@mui/icons-material/FmdGood";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import ItemCart from "./components/ItemCart";
 import TableItemResponsive from "./components/TableItemResponsive";
+import { useState } from "react";
+import { useSelector } from "react-redux";
+import ModalShipping from "./components/ModalShipping";
 
 export default function Purchase() {
+  const [modalIsOpen, setModalOpen] = useState(false);
+  const shipping = useSelector((state) => state.purchase.shipping);
+
+  console.log(shipping);
+
+  const changeShipping = () => {
+    setModalOpen(!modalIsOpen);
+    const bodyModal = document.getElementsByClassName("body-modal")[0];
+
+    if (document.body.contains(bodyModal)) {
+      document.body.classList.remove("body-modal");
+    } else {
+      document.body.classList.add("body-modal");
+    }
+  };
+
   return (
     <div className="max-w-4xl mx-auto">
       <div className="infomation-customer bg-white px-3 pb-2">
@@ -53,7 +72,7 @@ export default function Purchase() {
         <div className="bg-white text-red-600 px-3 py-3 flex items-center">
           <div className="border-r border-red-600 pr-3 flex items-center text-2xl">
             <ShoppingBagIcon />
-            <span className="font-semibold">Fashion Revive</span>
+            <span className="font-semibold max-sm:text-sm">Fashion Revive</span>
           </div>
           <div className="ml-3">
             <h1 className="">Product Ordered</h1>
@@ -88,27 +107,42 @@ export default function Purchase() {
                 </tbody>
               </table>
             </div>
-            <div className="shipping">
-              <h1>Shipping Option</h1>
-              <select
-                id="countries"
-                className="text-sm rounded-lg block w-full p-2.5"
-              >
-                <option selected>Choose a country</option>
-                <option value="US">United States</option>
-                <option value="CA">Canada</option>
-                <option value="FR">France</option>
-                <option value="DE">Germany</option>
-              </select>
-              <div className="time-recieve">
-                Nhận hàng vào 18 Th07 - 19 Th07
-              </div>
-              <div className="btn-change">
-                <button className="uppercase">change</button>
-              </div>
-              <div className="total">123.000.000</div>
-            </div>
             <TableItemResponsive />
+            <div className="shipping bg-bright-gray">
+              <div className="wapper px-6 py-4 flex justify-between md:flex-row flex-col">
+                <div className="flex max-md:justify-between">
+                  <h1 className="text-steel-teal font-bold md:text-xl text-sm">
+                    Shipping Option
+                  </h1>
+                  <div className="md:ml-10">
+                    <span>{shipping}</span>
+                    <div className="time-recieve text-xs text-gray-800">
+                      Nhận hàng vào 18 Th07 - 19 Th07
+                    </div>
+                  </div>
+                  <div className="btn-change">
+                    <button
+                      onClick={changeShipping}
+                      className="uppercase ml-3 text-lg text-blue-600"
+                    >
+                      change
+                    </button>
+                    <ModalShipping
+                      modal={modalIsOpen}
+                      closeModal={changeShipping}
+                    />
+                  </div>
+                  <div
+                    id="dimScreen"
+                    className={modalIsOpen ? "block" : "hidden"}
+                  ></div>
+                </div>
+                <div className="total lg:mt-0 mt-5 max-lg:text-right">
+                  Order Total (2 items){" "}
+                  <span className="text-lg text-red-400 ml-3">123.000.000</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -17,11 +17,28 @@ input[type="number"]::-webkit-outer-spin-button {
   outline: none !important;
 }
 
-.tag {
-  grid-template-columns: 398px 130px 130px 130px 80px;
+.body-modal {
+  overflow: hidden;
 }
 
-.v-counter {
+.modal {
+  box-shadow: 0 3px 10px 0 rgba(0, 0, 0, 0.14);
+}
+
+#dimScreen {
+  position: fixed;
+  padding: 0;
+  margin: 0;
+
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* .v-counter {
   border-radius: 32px;
   max-width: 89px;
   display: flex;
@@ -55,4 +72,4 @@ input[type="text"] {
   color: black;
   height: 33px;
   font-family: "Open Sans";
-}
+} */

@@ -9,6 +9,9 @@ module.exports = {
         "silver-sand": "#B4BCC7",
         emerald: "#4EB47C",
         "light-silver": "#D9D9D9",
+        "bright-gray": "#EEEEEE",
+        "steel-teal": "#55928B",
+        "light-grey": "#D2D2D2",
       },
       flexGrow: {
         2: "2",
