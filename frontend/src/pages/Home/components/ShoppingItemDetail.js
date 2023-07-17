@@ -1,105 +1,173 @@
+import "react-toastify/dist/ReactToastify.css";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { fakeapi } from "../../../api/config";
+import { ToastContainer, toast } from "react-toastify";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import { ADDTOCART } from "../../../utils/redux/productsSlice";
+import { useDispatch } from "react-redux";
+import { current } from "@reduxjs/toolkit";
 
 export default function ProductDetail() {
   const params = useParams();
   const [data, setData] = useState(null);
+  const dispatch = useDispatch();
+  const [currentProducts, setCurrentProducts] = useState(1);
+
+  const notify = () =>
+    toast.success("Add to cart successfully 🛒", {
+      autoClose: 4000,
+      icon: true,
+    });
+
+  const addToCart = () => {
+    notify();
+    dispatch(
+      ADDTOCART({
+        payload: {
+          name: data.title,
+          price: data.price * currentProducts,
+          quantity: currentProducts,
+        },
+      })
+    );
+  };
+
   useEffect(() => {
     fakeapi.get(`/${params.slug}`).then((res) => setData(res.data));
   }, []);
   return (
-    <section className="py-10">
-      <div className="max-w-6xl px-4 mx-auto">
-        <div className="flex flex-wrap mb-24 -mx-4">
-          <div className="w-full px-4 mb-8 md:w-1/2 md:mb-0">
-            <div className="sticky top-0 overflow-hidden ">
-              <div className="relative mb-6 lg:mb-10 lg:h-96">
-                <img
-                  className="object-contain w-full lg:h-full"
-                  src={data?.image}
-                  alt={data?.title}
-                />
+    <section className="text-gray-700 body-font overflow-hidden bg-white">
+      <div className="container px-5 py-24 mx-auto">
+        <div className="lg:w-4/5 mx-auto flex flex-wrap justify-center">
+          <img
+            alt="ecommerce"
+            className="lg:w-1/2 w-full object-cover object-center rounded border border-gray-200"
+            src={data?.image}
+          />
+          <div className="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
+            <h2 className="text-sm title-font uppercase text-gray-500 tracking-widest">
+              {data?.category}
+            </h2>
+            <h1 className="text-gray-900 text-3xl title-font font-medium mb-1">
+              {data?.title}
+            </h1>
+            <div className="flex mb-4">
+              <span className="flex items-center">
+                <ThumbUpIcon />
+                <span className="text-gray-600 ml-3">
+                  {data?.rating.count} Reviews
+                </span>
+              </span>
+              <span className="flex ml-3 pl-3 py-2 border-l-2 border-gray-200">
+                <a className="text-gray-500">
+                  <svg
+                    fill="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    className="w-5 h-5"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z" />
+                  </svg>
+                </a>
+                <a className="ml-2 text-gray-500">
+                  <svg
+                    fill="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    className="w-5 h-5"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z" />
+                  </svg>
+                </a>
+                <a className="ml-2 text-gray-500">
+                  <svg
+                    fill="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    className="w-5 h-5"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z" />
+                  </svg>
+                </a>
+              </span>
+              <div className="ml-3 border-l-2">
+                <button className="rounded-full hover:text-blue-500 w-10 h-10 bg-gray-200 p-0 border-0 inline-flex items-center justify-center text-gray-500 ml-4">
+                  <ThumbUpIcon></ThumbUpIcon>
+                </button>
               </div>
             </div>
-          </div>
-          <div className="w-full px-4 md:w-1/2">
-            <div className="lg:pl-20">
-              <div className="mb-6 ">
-                <h2 className="max-w-xl mt-6 mb-6 text-xl font-semibold leading-loose tracking-wide text-gray-700 md:text-2xl dark:text-gray-300">
-                  {data?.title}
-                </h2>
-                <p className="inline-block text-2xl font-semibold text-gray-700 dark:text-gray-400 ">
-                  <span> ${data?.price}</span>
-                  <span className="ml-3 text-base font-normal text-gray-500 line-through dark:text-gray-400">
-                    $19.00
-                  </span>
-                </p>
+            <p className="leading-relaxed">{data?.description}</p>
+            <div className="mt-6 pb-5 border-b-2 border-gray-200 mb-5"></div>
+            <div>
+              <div className="first-part">
+                <div className="sub-first-part">
+                  <div>
+                    <span className="title-font font-medium text-2xl text-gray-900">
+                      Price : <span className="text-4xl">{data?.price}</span> $
+                    </span>
+                  </div>
+                </div>
               </div>
-              <div className="mb-6">
-                <h2 class="mb-2 text-lg font-bold text-gray-700 dark:text-gray-400">
-                  Description :
-                </h2>
-                <p>{data?.description}</p>
-              </div>
-              <div className="py-6 mb-6 border-t border-b border-gray-200 dark:border-gray-700">
-                <span className="text-base text-gray-600 dark:text-gray-400">
-                  In Stock
+              <div className="flex md:items-center sm:flex-row flex-col mt-6">
+                <span className="font-bold text-lg mr-6 max-sm:mb-2">
+                  Quantites :{" "}
                 </span>
-                <p className="mt-2 text-sm text-blue-500 dark:text-blue-200">
-                  Ships from china.
-                  <span className="text-gray-600 dark:text-gray-400">
-                    Most customers receive within 3-31 days.
-                  </span>
-                </p>
-              </div>
-              <div className="mb-6 " />
-              <div className="flex flex-wrap items-center mb-6">
-                <div className="mb-4 mr-4 lg:mb-0">
-                  <div className="w-28">
-                    <div className="relative flex flex-row w-full h-10 bg-transparent rounded-lg">
-                      <button className="w-20 h-full text-gray-600 bg-gray-100 border-r rounded-l outline-none cursor-pointer dark:border-gray-700 dark:hover:bg-gray-700 dark:text-gray-400 hover:text-gray-700 dark:bg-gray-900 hover:bg-gray-300">
-                        <span className="m-auto text-2xl font-thin">-</span>
+                <div className="flex items-center">
+                  <div className="custom-number-input h-10 w-32">
+                    <div className="flex flex-row h-10 w-full rounded-lg relative bg-transparent">
+                      <button
+                        onClick={() =>
+                          currentProducts > 0
+                            ? setCurrentProducts(currentProducts - 1)
+                            : ""
+                        }
+                        data-action="decrement"
+                        className=" bg-gray-300 text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-l cursor-pointer outline-none"
+                      >
+                        <span className="m-auto text-2xl font-thin">−</span>
                       </button>
                       <input
                         type="number"
-                        className="flex items-center w-full font-semibold text-center text-gray-700 placeholder-gray-700 bg-gray-100 outline-none dark:text-gray-400 dark:placeholder-gray-400 dark:bg-gray-900 focus:outline-none text-md hover:text-black"
-                        placeholder={1}
+                        className="outline-none focus:outline-none text-center w-full bg-gray-300 font-semibold text-md hover:text-black focus:text-black  md:text-basecursor-default flex items-center text-gray-700  outline-none"
+                        name="custom-input-number"
+                        value={currentProducts}
                       />
-                      <button className="w-20 h-full text-gray-600 bg-gray-100 border-l rounded-r outline-none cursor-pointer dark:border-gray-700 dark:hover:bg-gray-700 dark:text-gray-400 dark:bg-gray-900 hover:text-gray-700 hover:bg-gray-300">
+                      <button
+                        onClick={() => setCurrentProducts(currentProducts + 1)}
+                        data-action="increment"
+                        className="bg-gray-300 text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-r cursor-pointer"
+                      >
                         <span className="m-auto text-2xl font-thin">+</span>
                       </button>
                     </div>
                   </div>
+                  <span className="ml-4 text-gray-500 text-sm">
+                    159 products are available
+                  </span>
                 </div>
-                <div className="mb-4 lg:mb-0">
-                  <button className="flex items-center justify-center w-full h-10 p-2 mr-4 text-gray-700 border border-gray-300 lg:w-11 hover:text-gray-50 dark:text-gray-200 dark:border-blue-600 hover:bg-blue-600 hover:border-blue-600 dark:bg-blue-600 dark:hover:bg-blue-500 dark:hover:border-blue-500 dark:hover:text-gray-100">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width={16}
-                      height={16}
-                      fill="currentColor"
-                      className=" bi bi-heart"
-                      viewBox="0 0 16 16"
-                    >
-                      <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z"></path>
-                    </svg>
+              </div>
+              <div className="second-part flex mt-6 md:items-center sm:flex-row flex-col">
+                <div className="sm:mr-4 max-sm:w-full">
+                  <button
+                    onClick={addToCart}
+                    className="flex ml-auto max-sm:w-full max-sm:mb-2 max-sm:block text-white bg-green-sheen hover:bg-emerald border-0 py-3 px-7 focus:outline-none rounded"
+                  >
+                    Add To Cart
+                  </button>
+                  <ToastContainer />
+                </div>
+                <div className="max-sm:grow">
+                  <button className="flex ml-auto w-full max-sm:block text-white bg-red-500 hover:bg-red-600 border-0 py-3 px-7 focus:outline-none rounded">
+                    Buy Now
                   </button>
                 </div>
-                <a
-                  href="#"
-                  className="w-full px-4 py-3 text-center text-blue-600 bg-blue-100 border border-blue-600 dark:hover:bg-gray-900 dark:text-gray-400 dark:border-gray-700 dark:bg-gray-700 hover:bg-blue-600 hover:text-gray-100 lg:w-1/2 rounded-xl"
-                >
-                  Add to cart
-                </a>
-              </div>
-              <div className="flex gap-4 mb-6">
-                <a
-                  href="#"
-                  className="w-full px-4 py-3 text-center text-gray-100 bg-blue-600 border border-transparent dark:border-gray-700 hover:border-blue-500 hover:text-blue-700 hover:bg-blue-100 dark:text-gray-400 dark:bg-gray-700 dark:hover:bg-gray-900 rounded-xl"
-                >
-                  Buy now
-                </a>
               </div>
             </div>
           </div>

@@ -3,11 +3,56 @@
   width: 13px;
 }
 
-.card-item {
-  transition: all 0.2s;
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
-.card-item:hover {
-  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-  transform: scale(1.1);
+.custom-number-input input:focus {
+  outline: none !important;
+}
+
+.custom-number-input button:focus {
+  outline: none !important;
+}
+
+.tag {
+  grid-template-columns: 398px 130px 130px 130px 80px;
+}
+
+.v-counter {
+  border-radius: 32px;
+  max-width: 89px;
+  display: flex;
+  justify-content: center;
+  overflow: auto;
+  padding: 0px 4px;
+  border: 1px solid #323140;
+  margin: 10px;
+}
+
+.v-counter input[type="button"]:hover {
+  color: black;
+  font-weight: bold;
+  background-color: transparent;
+}
+.v-counter span {
+  font-size: 13px;
+  color: black;
+  font-family: "Open Sans";
+}
+.v-counter input[type="button"],
+input[type="text"] {
+  display: inline-block;
+  width: 30px;
+  background-color: transparent;
+  outline: none;
+  border: none;
+  text-align: center;
+  cursor: pointer;
+  padding: 0px;
+  color: black;
+  height: 33px;
+  font-family: "Open Sans";
 }

@@ -10,7 +10,13 @@ module.exports = {
         emerald: "#4EB47C",
         "light-silver": "#D9D9D9",
       },
+      flexGrow: {
+        2: "2",
+      },
     },
   },
-  plugins: [],
+  corePlugins: {
+    aspectRatio: false,
+  },
+  plugins: [require("@tailwindcss/aspect-ratio")],
 };

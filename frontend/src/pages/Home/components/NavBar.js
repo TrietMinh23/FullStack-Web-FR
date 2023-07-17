@@ -14,7 +14,11 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 lg:pt-2 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center justify-center flex-shrink-0">
-            <img className="h-16 w-16" src="./logo-banner.png" alt="Logo" />
+            <img
+              className="h-16 w-16"
+              src={process.env.PUBLIC_URL + "/logo-banner.png"}
+              alt="Logo"
+            />
             <h1 className="text-xl font-bold text-white hidden lg:block uppercase">
               fashion revive
             </h1>

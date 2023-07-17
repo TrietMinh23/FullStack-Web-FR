@@ -5,7 +5,9 @@ import Signup from "../pages/Signup/signup";
 import ForgotPassword from "../pages/ForgotPassword/forgotpassword";
 import ChooseType from "../pages/ChooseType/choosetype";
 import NotFound from "../pages/NotFound/404";
+import Purchase from "../pages/Home/Purchase/Purchase";
 import ShoppingItemDetail from "../pages/Home/components/ShoppingItemDetail";
+import ShoppingCart from "../pages/Home/ShoppingCart/ShoppingCart";
 
 export default function Router() {
   return (
@@ -18,6 +20,11 @@ export default function Router() {
         path="/forgotpassword"
         element={<ForgotPassword></ForgotPassword>}
       ></Route>
+      <Route
+        path="/shoppingcart"
+        element={<ShoppingCart></ShoppingCart>}
+      ></Route>
+      <Route path="/purchase" element={<Purchase></Purchase>}></Route>
       <Route path="/type" element={<ChooseType />}></Route>
       <Route path="*" element={<NotFound />}></Route>
     </Routes>
