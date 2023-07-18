@@ -8,6 +8,10 @@ import NotFound from "../pages/NotFound/404";
 import Purchase from "../pages/Home/Purchase/Purchase";
 import ShoppingItemDetail from "../pages/Home/components/ShoppingItemDetail";
 import ShoppingCart from "../pages/Home/ShoppingCart/ShoppingCart";
+import HomeSeller from "../pages/Seller/Home/home";
+import AllItems from "../pages/Seller/AllItems/allItem";
+import NewItem from "../pages/Seller/NewItem/newItem";
+import Review from "../pages/Seller/Review/review";
 
 export default function Router() {
   return (
@@ -27,6 +31,11 @@ export default function Router() {
       <Route path="/purchase" element={<Purchase></Purchase>}></Route>
       <Route path="/type" element={<ChooseType />}></Route>
       <Route path="*" element={<NotFound />}></Route>
+      <Route path="seller" element={<HomeSeller/>}></Route>
+      <Route path="seller/all-item" element={<AllItems/>}></Route>
+      <Route path="seller/add-new-item" element={<NewItem/>}></Route>
+      <Route path="seller/review" element={<Review/>}></Route>
+      
     </Routes>
   );
 }

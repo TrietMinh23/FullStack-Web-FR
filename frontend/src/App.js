@@ -5,7 +5,7 @@ import Navbar from "./pages/Home/components/NavBar";
 function App() {
   return (
     <div className="App bg-light-silver">
-      <Navbar></Navbar>
+      {/* <Navbar></Navbar> */}
       <Router></Router>
     </div>
   );
