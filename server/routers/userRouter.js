@@ -3,6 +3,8 @@ import {
   getUsers,
   getUserByName,
   deleteUserByName,
+  createUser,
+  loginUser,
 } from "../controllers/userController.js";
 
 const router = express.Router();
@@ -10,8 +12,8 @@ const router = express.Router();
 router.get("/", getUsers);
 router.get("/:name", getUserByName);
 router.delete("/:name", deleteUserByName);
-// router.post("/register", createUser);
-// router.post("/login", loginUser);
+router.post("/register", createUser);
+router.post("/login", loginUser);
 // router.get("/logout", logoutUser);
 
 export default router;
