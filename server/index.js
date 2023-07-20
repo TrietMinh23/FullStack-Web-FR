@@ -1,7 +1,8 @@
 import express from "express"; //pour utiliser la bibliothèque ExpressJS
 // import bodyParser from "body-parser";
 import cors from "cors";
-import userRouter from "./routers/userRouter.js";
+import userRouter from "./routers/userRoute.js";
+import productRouter from "./routers/producRoute.js";
 import mongoose from "mongoose";
 
 const app = express();
@@ -19,6 +20,7 @@ app.get("/", (req, res) => {
 
 // http://localhost:5000/posts
 app.use("/users", userRouter);
+app.use("/products", productRouter);
 
 mongoose
   .connect(URI, {useNewUrlParser: true, useUnifiedTopology: true})

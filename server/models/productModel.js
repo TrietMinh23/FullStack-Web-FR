@@ -19,7 +19,7 @@ const productSchema = new mongoose.Schema({
     },
   ],
   color: [],
-  sellerId: {type: mongoose.Schema.Type.ObjectId, ref: "Seller", require: true},
+  sellerId: {type: mongoose.Schema.Types.ObjectId, ref: "Seller", require: true},
 });
 
 export const Product = mongoose.model("Product", productSchema);

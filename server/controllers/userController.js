@@ -1,6 +1,6 @@
 import {User} from "../models/userModel.js";
 
-import {generateToken} from "../config/jwtToken.js";
+import { generateToken } from "../config/jwtToken.js";
 
 export const getUsers = async (req, res) => {
   try {
