@@ -9,7 +9,7 @@ const userSchema = new mongoose.Schema(
     mobile: {type: String, unique: true},
     password: {type: String, require: true},
     address: {type: String},
-    role: {type: String, default: "client"},
+    role: {type: String, default: "buyer"},
     isBlocked: {type: Boolean, default: false},
     wishlist: [{type: mongoose.Schema.Types.ObjectId, ref: "Product"}],
     passwordChangeAt: Date,
