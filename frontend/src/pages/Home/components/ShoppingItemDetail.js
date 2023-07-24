@@ -6,7 +6,7 @@ import { ToastContainer, toast } from "react-toastify";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import { ADDTOCART } from "../../../utils/redux/productsSlice";
 import { useDispatch } from "react-redux";
-import { current } from "@reduxjs/toolkit";
+import { Link } from "react-router-dom";
 
 export default function ProductDetail() {
   const params = useParams();
@@ -16,7 +16,7 @@ export default function ProductDetail() {
 
   const notify = () =>
     toast.success("Add to cart successfully 🛒", {
-      autoClose: 4000,
+      autoClose: 2000,
       icon: true,
     });
 
@@ -24,11 +24,12 @@ export default function ProductDetail() {
     notify();
     dispatch(
       ADDTOCART({
-        payload: {
-          name: data.title,
-          price: data.price * currentProducts,
-          quantity: currentProducts,
-        },
+        id: data.id,
+        name: data.title,
+        image: data.image,
+        price: data.price,
+        shop: "AB SHOP",
+        quantity: currentProducts,
       })
     );
   };
@@ -39,7 +40,7 @@ export default function ProductDetail() {
   return (
     <section className="text-gray-700 body-font overflow-hidden bg-white">
       <div className="container px-5 py-24 mx-auto">
-        <div className="lg:w-4/5 mx-auto flex flex-wrap justify-center">
+        <div className="xl:w-4/5 w-full mx-auto flex flex-wrap justify-center">
           <img
             alt="ecommerce"
             className="lg:w-1/2 w-full object-cover object-center rounded border border-gray-200"
@@ -135,9 +136,10 @@ export default function ProductDetail() {
                       </button>
                       <input
                         type="number"
-                        className="outline-none focus:outline-none text-center w-full bg-gray-300 font-semibold text-md hover:text-black focus:text-black  md:text-basecursor-default flex items-center text-gray-700  outline-none"
+                        className="focus:outline-none text-center w-full bg-gray-300 font-semibold text-md hover:text-black focus:text-black  md:text-basecursor-default flex items-center text-gray-700  outline-none"
                         name="custom-input-number"
                         value={currentProducts}
+                        readOnly
                       />
                       <button
                         onClick={() => setCurrentProducts(currentProducts + 1)}
@@ -164,9 +166,13 @@ export default function ProductDetail() {
                   <ToastContainer />
                 </div>
                 <div className="max-sm:grow">
-                  <button className="flex ml-auto w-full max-sm:block text-white bg-red-500 hover:bg-red-600 border-0 py-3 px-7 focus:outline-none rounded">
+                  <Link
+                    to="/shoppingcart"
+                    onClick={addToCart}
+                    className="flex ml-auto w-full max-sm:block text-white bg-red-500 hover:bg-red-600 border-0 py-3 px-7 focus:outline-none rounded"
+                  >
                     Buy Now
-                  </button>
+                  </Link>
                 </div>
               </div>
             </div>

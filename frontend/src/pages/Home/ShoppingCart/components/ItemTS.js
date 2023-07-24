@@ -1,23 +1,27 @@
+import ClearIcon from "@mui/icons-material/Clear";
 import MallIcon from "../../../../assets/MallIcon";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import ItemItemTableResponsive from "./ItemItemTableResponsive";
+import ItemItemTS from "./ItemItemTS";
 
-export default function ItemTableResponsive({ shop }) {
+export default function ItemTS({ shop }) {
   return (
-    <div className="bg-white p-4 shadow">
+    <div className="bg-white p-4 pt-5 shadow relative">
       <div className="px-2 pb-2 mb-2 flex justify-between border-b-2">
         <div className="shop cursor-pointer hover:underline">
           <MallIcon />
-          <span className="ml-2">{shop?.name}</span>
+          <span className="ml-2">{shop.name}</span>
           <ArrowForwardIosIcon style={{ fontSize: "12px" }} />
         </div>
       </div>
-      {shop?.item.map((item) => (
-        <ItemItemTableResponsive
+      {shop.item.map((item) => (
+        <ItemItemTS
           name={item.name}
           price={item.price}
-          quantity={item.quantity}
           image={item.image}
+          quantity={item.quantity}
+          key={item.id}
+          id={item.id}
+          shop={shop.name}
         />
       ))}
     </div>

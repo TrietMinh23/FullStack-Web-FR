@@ -29,11 +29,7 @@ export default function ModalShipping({ modal, closeModal }) {
   };
 
   return (
-    <div
-      className={`modal absolute bg-white z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] ${
-        modal ? "block" : "hidden"
-      }`}
-    >
+    <div className={`modal ${modal ? "block" : "hidden"}`}>
       <div className="modal-wrapper p-7">
         <h1 className="text-lg mb-4">Choose a shipping unit</h1>
         <div className="sub-title">
@@ -51,7 +47,7 @@ export default function ModalShipping({ modal, closeModal }) {
         >
           <div className="left-side">
             <div className="above flex">
-              <div className="name mr-5">Normal</div>
+              <div className="name mr-5">Fast</div>
               <div className="price text-red-500 font-semibold">₫12.800</div>
             </div>
             <div className="below text-xs mt-1">
@@ -80,12 +76,6 @@ export default function ModalShipping({ modal, closeModal }) {
           </div>
         </div>
         <div className="btn-group border-t-2 border-bright-gray mt-3 border-dashed pt-3 flex justify-end">
-          <div
-            onClick={confirmShipping}
-            className="py-2 px-6 mr-4 rounded-md hover:bg-gray-200 cursor-pointer"
-          >
-            Back
-          </div>
           <div
             onClick={confirmShipping}
             className="py-2 px-6 bg-red-500 hover:bg-red-600 rounded-md text-white cursor-pointer"

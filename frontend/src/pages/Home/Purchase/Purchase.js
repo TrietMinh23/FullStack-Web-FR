@@ -8,9 +8,9 @@ import ModalShipping from "./components/ModalShipping";
 
 export default function Purchase() {
   const [modalIsOpen, setModalOpen] = useState(false);
+  const [isChange, setIsChange] = useState(false);
   const shipping = useSelector((state) => state.purchase.shipping);
-
-  console.log(shipping);
+  const products = useSelector((state) => state.product.shoppingCart);
 
   const changeShipping = () => {
     setModalOpen(!modalIsOpen);
@@ -23,6 +23,28 @@ export default function Purchase() {
     }
   };
 
+  const summarizeQuantity = (list) => {
+    let sum = 0;
+    for (let i of list) {
+      for (let j of i.item) {
+        sum += j.quantity;
+      }
+    }
+
+    return sum;
+  };
+
+  const summarizePrice = (list) => {
+    let sum = 0;
+    for (let i of list) {
+      for (let j of i.item) {
+        sum += j.quantity * j.price;
+      }
+    }
+
+    return sum;
+  };
+
   return (
     <div className="max-w-4xl mx-auto">
       <div className="infomation-customer bg-white px-3 pb-2">
@@ -32,8 +54,11 @@ export default function Purchase() {
             <span>Delivery Address</span>
           </div>
           <div className="flex items-center">
-            <button className="text-blue-400 font-bold max-lg:w-full lg:py-0 py-3 px-3">
-              Change
+            <button
+              onClick={() => setIsChange(!isChange)}
+              className="text-blue-400 font-bold max-lg:w-full lg:py-0 py-3 px-3"
+            >
+              {isChange ? "Save" : "Edit"}
             </button>
           </div>
         </div>
@@ -50,6 +75,7 @@ export default function Purchase() {
               id="username"
               type="text"
               placeholder="Username"
+              disabled={!isChange}
             />
           </div>
           <div className="lg:ml-4 bg-light-silver p-2 grow-2">
@@ -64,6 +90,7 @@ export default function Purchase() {
               id="address"
               type="text"
               placeholder="Address"
+              disabled={!isChange}
             />
           </div>
         </div>
@@ -99,15 +126,13 @@ export default function Purchase() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                  <ItemCart />
-                  <ItemCart />
-                  <ItemCart />
-                  <ItemCart />
-                  <ItemCart />
+                  {products?.map((item) => (
+                    <ItemCart shop={item}></ItemCart>
+                  ))}
                 </tbody>
               </table>
             </div>
-            <TableItemResponsive />
+            <TableItemResponsive products={products} />
             <div className="shipping bg-bright-gray">
               <div className="wapper px-6 py-4 flex justify-between md:flex-row flex-col">
                 <div className="flex max-md:justify-between">
@@ -138,8 +163,10 @@ export default function Purchase() {
                   ></div>
                 </div>
                 <div className="total lg:mt-0 mt-5 max-lg:text-right">
-                  Order Total (2 items){" "}
-                  <span className="text-lg text-red-400 ml-3">123.000.000</span>
+                  Order Total ({summarizeQuantity(products)} items){" "}
+                  <span className="text-lg text-red-400 ml-3">
+                    ${summarizePrice(products)}
+                  </span>
                 </div>
               </div>
             </div>

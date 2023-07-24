@@ -4,25 +4,27 @@ import ButtonShoppingCart from "./ButtonShoppingCart";
 import ButtonUser from "./ButtonUser";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
+import { Link } from "react-router-dom";
 import { useState } from "react";
 
 const Navbar = () => {
   const [isDropdownOpenMenu, setIsDropdownOpenMenu] = useState(false);
-
   return (
-    <nav className="bg-gray-800">
+    <nav className="nav bg-gray-800">
       <div className="max-w-7xl mx-auto px-4 lg:pt-2 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <div className="flex items-center justify-center flex-shrink-0">
-            <img
-              className="h-16 w-16"
-              src={process.env.PUBLIC_URL + "/logo-banner.png"}
-              alt="Logo"
-            />
-            <h1 className="text-xl font-bold text-white hidden lg:block uppercase">
-              fashion revive
-            </h1>
-          </div>
+          <Link to="/">
+            <div className="flex items-center justify-center flex-shrink-0">
+              <img
+                className="h-16 w-16"
+                src={process.env.PUBLIC_URL + "/logo-banner.png"}
+                alt="Logo"
+              />
+              <h1 className="text-xl font-bold text-white hidden lg:block uppercase">
+                fashion revive
+              </h1>
+            </div>
+          </Link>
           <div className="flex-1 flex justify-center px-2 lg:ml-6 lg:justify-end">
             <div className="max-w-lg w-full lg:max-w-xs">
               <label htmlFor="search" className="sr-only">
@@ -63,35 +65,29 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-      <div
-        className={isDropdownOpenMenu ? "hidden" : "lg:hidden"}
-        id="mobile-menu"
-      >
+      <div className={isDropdownOpenMenu ? "block" : "hidden"} id="mobile-menu">
         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-          <a
-            href="#"
-            className="bg-gray-900 text-white block px-3 py-2 rounded-md text-base font-medium"
-          >
-            Shipping Status
-          </a>
-          <a
-            href="#"
+          <Link
+            to="notification"
+            onClick={() => setIsDropdownOpenMenu(!isDropdownOpenMenu)}
             className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
           >
-            Notification Status
-          </a>
-          <a
-            href="#"
+            Notification
+          </Link>
+          <Link
+            to="profile"
+            onClick={() => setIsDropdownOpenMenu(!isDropdownOpenMenu)}
             className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
           >
-            User Account
-          </a>
-          <a
-            href="#"
+            My Account
+          </Link>
+          <Link
+            to="shoppingcart"
+            onClick={() => setIsDropdownOpenMenu(!isDropdownOpenMenu)}
             className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
           >
             Shopping Cart
-          </a>
+          </Link>
         </div>
       </div>
     </nav>

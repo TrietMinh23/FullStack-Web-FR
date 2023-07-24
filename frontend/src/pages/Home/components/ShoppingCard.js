@@ -14,10 +14,8 @@ export default function ShoppingCard({ title, price, image, id }) {
         <div className="flex items-start justify-between mt-4 space-x-4">
           <div>
             <h3 className="text-xs font-bold text-gray-900 sm:text-sm md:text-base">
-              <a href="#" title>
-                {title}
-                <span className="absolute inset-0" aria-hidden="true" />
-              </a>
+              {title}
+              <span className="absolute inset-0" aria-hidden="true" />
             </h3>
             <div className="flex items-center mt-2.5 space-x-px">
               <svg
