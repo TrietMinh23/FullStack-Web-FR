@@ -8,4 +8,9 @@ const sellerSchema = new mongoose.Schema(
   }
 );
 
+sellerSchema.pre("save", (next) => {
+  this.role = "seller";
+  next();
+});
+
 export const Seller = User.discriminator ("Seller", sellerSchema);

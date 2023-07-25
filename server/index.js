@@ -2,6 +2,7 @@ import express from "express"; //pour utiliser la bibliothèque ExpressJS
 // import bodyParser from "body-parser";
 import cors from "cors";
 import userRouter from "./routers/userRoute.js";
+import sellerRouter from "./routers/sellerRoute.js";
 import productRouter from "./routers/producRoute.js";
 import mongoose from "mongoose";
 
@@ -19,7 +20,9 @@ app.get("/", (req, res) => {
 });
 
 // http://localhost:5000/posts
-app.use("/users", userRouter);
+// app.use("/users", userRouter);
+app.use("/seller", )
+app.use("/buyer/", userRouter);
 app.use("/products", productRouter);
 
 mongoose
