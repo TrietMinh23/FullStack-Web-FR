@@ -1,4 +1,5 @@
 import { Menu } from "@headlessui/react";
+import { Link } from "react-router-dom";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
 export default function Example() {
@@ -10,7 +11,9 @@ export default function Example() {
         </div>
         <div>
           <Menu.Button className="inline-flex w-full justify-center rounded-md hover:bg-slate-200 px-4 py-2 text-sm font-medium text-white hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75">
-            <ShoppingCartIcon />
+            <Link to="/shoppingcart">
+              <ShoppingCartIcon />
+            </Link>
           </Menu.Button>
         </div>
       </Menu>

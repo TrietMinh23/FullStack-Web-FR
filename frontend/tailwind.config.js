@@ -12,9 +12,7 @@ module.exports = {
         "bright-gray": "#EEEEEE",
         "steel-teal": "#55928B",
         "light-grey": "#D2D2D2",
-      },
-      flexGrow: {
-        2: "2",
+        cultured: "#F5F5F5",
       },
     },
   },

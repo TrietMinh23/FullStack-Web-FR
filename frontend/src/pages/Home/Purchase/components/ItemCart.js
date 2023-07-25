@@ -1,29 +1,31 @@
 import DeleteIcon from "@mui/icons-material/Delete";
+import MallIcon from "../../../../assets/MallIcon";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import React from "react";
+import ItemItemCart from "./ItemItemCart";
 
-export default function ItemCart() {
+export default function ItemCart({ shop }) {
   return (
-    <tr className="bg-white">
-      <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-        <div className="flex">
-          <img
-            src="https://fakestoreapi.com/img/71-3HjGNDUL._AC_SY879._SX._UX._SY._UY_.jpg"
-            alt="image"
-            style={{ width: "10%" }}
-          />
-          <span className="ml-4 flex items-center">
-            Kring New Fit office chair, mesh + PU, black
-          </span>
-        </div>
-      </td>
-      <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
-        $10.00
-      </td>
-      <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
-        7
-      </td>
-      <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
-        $200.00
-      </td>
-    </tr>
+    <React.Fragment>
+      <tr className="bg-white border-t-8 border-light-silver">
+        <th colSpan="5" className="text-left border-y-[1px] border-light-grey">
+          <div className="p-3 inline-block cursor-pointer hover:underline">
+            <MallIcon />
+            <span className="ml-1">{shop?.name}</span>
+            <ArrowForwardIosIcon
+              style={{ fontSize: "12px", marginLeft: "3px" }}
+            />
+          </div>
+        </th>
+      </tr>
+      {shop?.item.map((item) => (
+        <ItemItemCart
+          name={item.name}
+          price={item.price}
+          quantity={item.quantity}
+          image={item.image}
+        />
+      ))}
+    </React.Fragment>
   );
 }

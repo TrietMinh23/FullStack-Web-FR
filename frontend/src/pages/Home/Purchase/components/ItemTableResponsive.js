@@ -1,26 +1,25 @@
-export default function ItemTableResponsive() {
+import MallIcon from "../../../../assets/MallIcon";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import ItemItemTableResponsive from "./ItemItemTableResponsive";
+
+export default function ItemTableResponsive({ shop }) {
   return (
     <div className="bg-white p-4 shadow">
-      <div className="flex items-center text-sm">
-        <div className="flex max-md:justify-between">
-          <img
-            src="https://fakestoreapi.com/img/71-3HjGNDUL._AC_SY879._SX._UX._SY._UY_.jpg"
-            alt="image"
-            style={{ width: "20%" }}
-          />
-          <div className="ml-3 mt-2">
-            <span className="flex items-center">
-              Kring New Fit office chair, mesh + PU, black
-            </span>
-            <div className="flex justify-between mt-2">
-              <div className="price text-sm font-medium text-black">
-                $200.00
-              </div>
-              <div className="quantity">x1</div>
-            </div>
-          </div>
+      <div className="px-2 pb-2 mb-2 flex justify-between border-b-2">
+        <div className="shop cursor-pointer hover:underline">
+          <MallIcon />
+          <span className="ml-2">{shop?.name}</span>
+          <ArrowForwardIosIcon style={{ fontSize: "12px" }} />
         </div>
       </div>
+      {shop?.item.map((item) => (
+        <ItemItemTableResponsive
+          name={item.name}
+          price={item.price}
+          quantity={item.quantity}
+          image={item.image}
+        />
+      ))}
     </div>
   );
 }
