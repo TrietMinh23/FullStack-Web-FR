@@ -6,7 +6,9 @@ import React from "react";
 export default function ShoppingList() {
   const [products, setProducts] = useState(null);
   useEffect(() => {
-    fakeapi().then((res) => setProducts(res.data));
+    fakeapi()
+      .then((res) => setProducts(res.data))
+      .catch((err) => console.log(err));
   }, []);
   return (
     <section className="py-12 bg-white sm:py-16 lg:py-20">
