@@ -5,6 +5,9 @@ import {
   createUser,
   loginUser,
   logoutUser,
+  blockUser,
+  unblockUser,
+  deleteUser,
   getUserByName,
 } from "../controllers/userController.js";
 
@@ -14,9 +17,12 @@ const router = express.Router();
 
 router.get("/", getUsers);
 router.post("/register", createUser);
-router.delete("/:name", deleteUserByID);
+router.delete("/:id", deleteUserByID);
 router.post("/login", loginUser);
 router.delete("/logout", logoutUser);
+router.put("/blockUser/:id", blockUser);
+router.put("unblockUser/:id", unblockUser);
+router.delete("/deleteUser/:id", deleteUser);
 router.get("/:name", getUserByName);
 
 export default router;

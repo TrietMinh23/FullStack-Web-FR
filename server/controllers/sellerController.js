@@ -90,7 +90,31 @@ export const loginSeller = async (req, res) => {
 
 export const logoutSeller = async (req, res) => {
   try {
+    if (req.params.role !== "Seller") {
+      res.status(403).json({error: "You are not authorized to logout!"});
+    }
+
+    const cookie = req.cookie;
+    if(!cookie.refreshToken) {
+      res.status(400).json({message: "No refresh token in cookie"});
+    }
     
+    const refreshToken = cookie.refreshToken;
+    const seller = await Seller.findOneAndUpdate({refreshToken : refreshToken});
+    if (!seller) {
+      res.clearCookie("refreshToken", {
+        httpOnly: true,
+        secure: true,
+      });
+    } else {
+      await Seller.findOneAndUpdate(seller._id, {refreshToken: null});
+      res.clearCookie("refreshToken", {
+        httpOnly: true,
+        secure: true,
+      });
+    }
+    
+    res.status(200).json({message: "Logout successfully!"});
   } catch (err) {
     res.status(400).json({error: err.message});
   }
