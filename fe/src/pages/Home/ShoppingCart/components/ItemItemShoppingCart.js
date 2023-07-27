@@ -1,5 +1,5 @@
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
   INCREASEITEM,
   REMOVEFROMCART,
@@ -51,7 +51,7 @@ export default function ItemItemShoppingCart({
     <tr className="bg-white">
       <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
         <div className="flex">
-          <img src={image} alt="image" style={{ width: "15%" }} />
+          <img src={image} alt="something" style={{ width: "15%" }} />
           <span className="ml-4 flex items-center whitespace-break-spaces">
             {name}
           </span>

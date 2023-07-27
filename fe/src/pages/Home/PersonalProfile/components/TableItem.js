@@ -3,7 +3,7 @@ export default function TableItem() {
     <tr className="bg-white">
       <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
         <a
-          href="#"
+          href="/#"
           className="font-bold text-blue-500 hover:underline truncate w-80 block"
         >
           Kring New Fit office chair, mesh + PU, black Kring New Fit office

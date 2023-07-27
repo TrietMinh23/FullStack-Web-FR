@@ -51,7 +51,7 @@ export default function ItemItemTS({ shop, name, price, quantity, image, id }) {
         <div className="flex max-md:justify-between">
           <img
             src={image}
-            alt="image"
+            alt="something"
             style={{ width: "20%", height: "20%" }}
           />
           <div className="ml-3 mt-2">

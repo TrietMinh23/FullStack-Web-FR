@@ -5,7 +5,7 @@ export default function TableResponsive() {
         <div className="flex items-center space-x-2 text-sm">
           <div className="w-1/2">
             <a
-              href="#"
+              href="/#"
               className="font-bold text-blue-500 hover:underline line-clamp-2 w-full"
             >
               Kring New Fit office chair, mesh + PU, black Kring New Fit office
@@ -25,7 +25,7 @@ export default function TableResponsive() {
       <div className="bg-white space-y-3 p-4 rounded-lg shadow">
         <div className="flex items-center space-x-2 text-sm">
           <div>
-            <a href="#" className="text-blue-500 font-bold hover:underline">
+            <a href="/#" className="text-blue-500 font-bold hover:underline">
               #1001
             </a>
           </div>
@@ -44,7 +44,7 @@ export default function TableResponsive() {
       <div className="bg-white space-y-3 p-4 rounded-lg shadow">
         <div className="flex items-center space-x-2 text-sm">
           <div>
-            <a href="#" className="text-blue-500 font-bold hover:underline">
+            <a href="/#" className="text-blue-500 font-bold hover:underline">
               #1002
             </a>
           </div>

@@ -7,7 +7,7 @@ export default function ItemItemTableResponsive({
   return (
     <div className="flex items-center text-sm">
       <div className="flex max-md:justify-between">
-        <img src={image} alt="image" style={{ width: "20%" }} />
+        <img src={image} alt="something" style={{ width: "20%" }} />
         <div className="ml-3 mt-2">
           <span className="flex items-center">{name}</span>
           <div className="flex justify-between mt-2">

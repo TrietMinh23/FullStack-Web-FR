@@ -85,6 +85,7 @@ export default function ShoppingCart() {
             <img
               src={process.env.PUBLIC_URL + "/cat-in-box.png"}
               className="mx-auto"
+              alt="something"
             />
             <h1 className="text-[1.8rem] my-2">You don't have any items yet</h1>
             <p className="mb-6">Start shopping by clicking on 'SHOPPING'</p>

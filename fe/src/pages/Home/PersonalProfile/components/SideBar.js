@@ -64,7 +64,7 @@ export default function SideBar() {
           <ul className="space-y-2 font-medium">
             <li>
               <a
-                href="#"
+                href="/#"
                 className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 hover:text-white dark:hover:bg-gray-700 group"
               >
                 <ViewListIcon />

@@ -10,7 +10,7 @@ export default function Notification() {
               <img
                 src="https://down-vn.img.susercontent.com/file/sg-11134004-7qvdc-ljfalfyjie7n92_tn"
                 className="w-full h-full"
-                alt="image"
+                alt="something"
               />
             </div>
           </div>

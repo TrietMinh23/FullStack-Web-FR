@@ -1,4 +1,3 @@
-import ClearIcon from "@mui/icons-material/Clear";
 import MallIcon from "../../../../assets/MallIcon";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ItemItemTS from "./ItemItemTS";
