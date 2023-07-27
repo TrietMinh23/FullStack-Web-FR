@@ -35,7 +35,7 @@ export default function Router() {
         <Route path="/" element={<LayoutHomePage />}>
           <Route exact path="/" element={<Home />}></Route>
           <Route path="products/:slug" element={<ShoppingItemDetail />}></Route>
-          {localStorage.getItem("currentUser") ? (
+          {!localStorage.getItem("currentUser") ? (
             <React.Fragment>
               <Route path="shoppingcart" element={<ShoppingCart />} />
               <Route path="purchase" element={<Purchase />} />
@@ -44,7 +44,7 @@ export default function Router() {
           ) : null}
         </Route>
 
-        {localStorage.getItem("currentUser") ? (
+        {!localStorage.getItem("currentUser") ? (
           <React.Fragment>
             <Route path="/notification" element={<Notification />}></Route>
           </React.Fragment>
