@@ -29,7 +29,16 @@ export const createSeller = async (req, res) => {
 
     const newSeller = new Seller.create(req.body);
     await newSeller.save();
-    res.status(201).json(newSeller);
+
+    const accessToken = await generateToken(newSeller._id);
+    // const refreshtoken = await generateToken(newUser._id);
+    res.status(201).json({
+      _id: findSeller?._id,
+      name: findSeller?.name,
+      email: findSeller?._email,
+      mobile: findSeller?.mobile,
+      token: accessToken,
+    });
   } catch (err) {
     res.status(400).json({error: err.messange});
   }

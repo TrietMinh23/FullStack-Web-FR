@@ -105,16 +105,17 @@ export const getAllProducts = async (req, res) => {
 export const createProduct = async (req, res) => {
   try {
     if (req.body.role === "seller") {
-      if (req.body.title) {
-        req.body.slug = slugify(req.body.title);
-
-        const newProduct = new Product.create(req.body);
-        await newProduct.save();
-        res.status(201).json(newProduct);
-      }
-    } else {
       res.status(400).json({error: "You are not a seller."});
     }
+
+    if (req.body.title) {
+      req.body.slug = slugify(req.body.title, {lower: true});
+
+      const newProduct = new Product.create(req.body);
+      await newProduct.save();
+      res.status(201).json(newProduct);
+    }
+    
   } catch (err) {
     res.status(400).json({error: err.message});
   }
@@ -131,7 +132,7 @@ export const updateProduct = async (req, res) => {
       }
 
       if (req.body.title) {
-        req.body.slug = slugify(req.body.title);
+        req.body.slug = slugify(req.body.title, {});
       }
 
       const productUpdated = await Product.findByIdAndUpdate(id, req.body, {
@@ -146,7 +147,7 @@ export const updateProduct = async (req, res) => {
   }
 };
 
-// delete product by seller 
+// delete product by seller
 export const deleteProductById = async (req, res) => {
   try {
     if (req.params.role === "seller") {

@@ -1,7 +1,6 @@
 import {User} from "../models/userModel.js";
 import {generateToken} from "../config/jwtToken.js";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 
 export const getUsers = async (req, res) => {
   try {
@@ -29,7 +28,16 @@ export const createUser = async (req, res) => {
 
     const newUser = new User.create(req.body);
     await newUser.save();
-    res.status(201).json(newUser);
+
+    const accessToken = await generateToken(newUser._id);
+    // const refreshtoken = await generateToken(newUser._id);
+    res.status(201).json({
+      _id: findUser?._id,
+      name: findUser?.name,
+      email: findUser?.email,
+      mobile: findUser?.mobile,
+      token: accessToken,
+    });
   } catch (err) {
     res.status(400).json({error: err.message});
   }
@@ -102,19 +110,6 @@ export const loginUser = async (req, res) => {
   } catch (err) {
     res.status(400).json({error: err.message});
   }
-};
-
-export const getUserByName = async (req, res) => {
-  // try {
-  //   const name = req.params.name;
-  //   const user = await User.find({name});
-  //   if (user.length === 0) {
-  //     return res.status(404).json({error: "User not found!"});
-  //   }
-  //   res.status(200).json(user);
-  // } catch (err) {
-  //   res.status(404).json({error: err.message});
-  // }
 };
 
 export const logoutUser = async (req, res) => {
