@@ -1,9 +1,7 @@
 import React from 'react'
 
-const allbuyer = () => {
+export default function Allbuyer () {
   return (
     <div>allbuyer</div>
   )
 }
-
-export default allbuyer

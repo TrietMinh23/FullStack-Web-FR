@@ -24,6 +24,11 @@ module.exports = withMT({
         "steel-teal": "#55928B",
         "light-grey": "#D2D2D2",
         cultured: "#F5F5F5",
+        graydark: "#333A48",
+        'meta-4': "#313D4A",
+        primary: '#3C50E0',
+        secondary: '#80CAEE',
+
       },
     },
   },

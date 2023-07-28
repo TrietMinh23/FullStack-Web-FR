@@ -1,9 +1,12 @@
 import React from 'react'
-
-const usemanagement = () => {
+import { Outlet } from 'react-router-dom';
+export default function Usemanagement () {
   return (
-    <div>usemanagement</div>
+    <main>
+      <div>
+        <Outlet />
+      </div>
+    </main>
   )
 }
 
-export default usemanagement

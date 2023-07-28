@@ -19,28 +19,15 @@ import LayoutHomePage from "../pages/Home/LayoutHomePage";
 import LayoutSeller from "../pages/Seller/Home/LayoutSeller";
 import Admin from "../pages/Admin/Admin";
 import FinancialManagement from "../pages/Admin/page/financialmanagement";
-
-
+import Usemanagement from "../pages/Admin/page/usemanagement";
+import Allbuyer from "../pages/Admin/page/allbuyer";
+import Allitems from "../pages/Admin/page/allitems";
+import Allsellers from "../pages/Admin/page/allsellers";
+import Report from "../pages/Admin/page/report";
 
 export default function Router() {
-  const navigate = useNavigate();
-  const [isLoading, setLoading] = useState(false);
-  useEffect(() => {
-    // const NV = () => {
-    //   setLoading(true);
-    //   if (!localStorage.getItem("currentUser")) {
-    //     navigate("/login");
-    //   }
-    //   setLoading(false);
-    // };
-    // return () => {
-    //   NV();
-    // };
-  }, [isLoading]);
-  console.log(isLoading);
   return (
     <Routes>
-      <React.Fragment>
         <Route path="/" element={<LayoutHomePage />}>
           <Route exact path="/" element={<Home />}></Route>
           <Route path="products/:slug" element={<ShoppingItemDetail />}></Route>
@@ -64,23 +51,34 @@ export default function Router() {
           <Route path="add-new-item" element={<NewItem />}></Route>
           <Route path="review" element={<Review />}></Route>
         </Route>
-      </React.Fragment>
+        <Route path="/admin" element={<Admin/>}>
+          <Route exact path="financialmanagement" element={<FinancialManagement/>}></Route>
+          <Route path="usemanagement" element={<Usemanagement/>}>
+            <Route path="allbuyer" element={<Allbuyer/>}></Route>
+            <Route path="allitems" element={<Allitems/>}></Route>
+            <Route path="allsellers" element={<Allsellers/>}></Route>
+            <Route path="report" element={<Report/>}></Route>
+          </Route>
+        </Route>
 
-      <Route path="/login" element={<Login></Login>}></Route>
-      <Route path="/signup" element={<Signup></Signup>}></Route>
-      <Route
-        path="/forgotpassword"
-        element={<ForgotPassword></ForgotPassword>}
-      ></Route>
-      <Route
-        path="/shoppingcart"
-        element={<ShoppingCart></ShoppingCart>}
-      ></Route>
-      <Route path="/purchase" element={<Purchase></Purchase>}></Route>
-      <Route path="/type" element={<ChooseType />}></Route>
-      <Route path="*" element={<NotFound />}></Route>
-      <Route path="/profile" element={<Profile />}></Route>
-      <Route path="/notification" element={<Notification />}></Route>
+        <Route path="/login" element={<Login></Login>}></Route>
+        <Route path="/signup" element={<Signup></Signup>}></Route>
+        <Route
+          path="/forgotpassword"
+          element={<ForgotPassword></ForgotPassword>}
+        ></Route>
+        <Route
+          path="/shoppingcart"
+          element={<ShoppingCart></ShoppingCart>}
+        ></Route>
+        <Route path="/purchase" element={<Purchase></Purchase>}></Route>
+        <Route path="/type" element={<ChooseType />}></Route>
+        <Route path="*" element={<NotFound />}></Route>
+        <Route path="/profile" element={<Profile />}></Route>
+        <Route path="/notification" element={<Notification />}></Route>
+
+        
     </Routes>
+    
   );
 }

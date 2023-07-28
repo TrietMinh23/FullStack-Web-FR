@@ -1,9 +1,7 @@
 import React from 'react'
 
-const allitems = () => {
+export default function Allitems () {
   return (
     <div>allitems</div>
   )
 }
-
-export default allitems
