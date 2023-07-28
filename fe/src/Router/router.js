@@ -1,3 +1,11 @@
+import Admin from "../pages/Admin/Admin";
+import FinancialManagement from "../pages/Admin/page/financialmanagement";
+import Usemanagement from "../pages/Admin/page/usemanagement";
+import Allbuyer from "../pages/Admin/page/allbuyer";
+import Allitems from "../pages/Admin/page/allitems";
+import Allsellers from "../pages/Admin/page/allsellers";
+import Report from "../pages/Admin/page/report";
+
 import { Route, Routes } from "react-router-dom";
 import React, { Suspense, lazy } from "react";
 import Loading from "../components/ui/Loading";
@@ -27,6 +35,8 @@ const Review = lazy(() => import("../pages/Seller/Review/review"));
 const LayoutSeller = lazy(() => import("../pages/Seller/Home/LayoutSeller"));
 const Home = lazy(() => import("../pages/Home/home"));
 const LayoutHomePage = lazy(() => import("../pages/Home/LayoutHomePage"));
+
+
 
 export default function Router() {
   return (
@@ -70,6 +80,15 @@ export default function Router() {
           element={<ForgotPassword></ForgotPassword>}
         ></Route>
         <Route path="/type" element={<ChooseType />}></Route>
+        <Route path="/admin" element={<Admin/>}>
+          <Route exact path="financialmanagement" element={<FinancialManagement/>}></Route>
+          <Route path="usemanagement" element={<Usemanagement/>}>
+            <Route path="allbuyer" element={<Allbuyer/>}></Route>
+            <Route path="allitems" element={<Allitems/>}></Route>
+            <Route path="allsellers" element={<Allsellers/>}></Route>
+            <Route path="report" element={<Report/>}></Route>
+          </Route>
+        </Route>
       </Routes>
     </Suspense>
   );

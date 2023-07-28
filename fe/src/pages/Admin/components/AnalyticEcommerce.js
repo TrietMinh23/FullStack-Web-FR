@@ -4,8 +4,7 @@ import PropTypes from 'prop-types';
 import { Box, Chip, Grid, Stack, Typography } from '@mui/material';
 
 // project import
-
-import MainCard from "../../Seller/components/statistics/MainCard";
+import  MainCard from "../components/MainCard";
 
 // assets
 import { RiseOutlined, FallOutlined } from '@ant-design/icons';
@@ -70,3 +69,4 @@ AnalyticEcommerce.defaultProps = {
 };
 
 export default AnalyticEcommerce;
+
