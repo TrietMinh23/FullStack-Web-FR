@@ -163,7 +163,7 @@ export default function ProductDetail() {
                     </div>
                   </div>
                   <div className="second-part text-center flex mt-6 md:items-center sm:flex-row flex-col">
-                    {!localStorage.getItem("currentUser") ? (
+                    {localStorage.getItem("currentUser") ? (
                       <React.Fragment>
                         <div className="sm:mr-4 max-sm:w-full max-sm:mb-2">
                           <Link

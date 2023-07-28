@@ -45,7 +45,7 @@ export default function LeftNav({ sideBarProp, setSideBarFunc, setCoverFunc }) {
             }}
             to={item.url}
           >
-            <li className="flex items-center p-2 text-gray-900 hover:bg-gray-100 hover:text-white dark:hover:bg-gray-700 group">
+            <li className="flex items-center p-2 text-gray-900 hover:bg-dark-jungle-green hover:text-white group">
               <span>{item.name}</span>
             </li>
           </Link>
