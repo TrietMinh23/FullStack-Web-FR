@@ -1,6 +1,6 @@
 import express from "express";
 import {
-  getAllPCategory,
+  getPCategories,
   createPCategory,
   getPCategoryById,
   updatePCategory,
@@ -9,7 +9,7 @@ import {
 
 const router = express.Router();
 
-router.get("/", getAllPCategory);
+router.get("/", getPCategories);
 router.post("/", createPCategory);
 router.get("/:id", getPCategoryById);
 router.put("/:id", updatePCategory);

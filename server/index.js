@@ -4,7 +4,8 @@ import cors from "cors";
 import userRouter from "./routers/userRoute.js";
 import sellerRouter from "./routers/sellerRoute.js";
 import productRouter from "./routers/producRoute.js";
-import pCategoryRouter from ".routers/pCategoryRoute.js"
+import pCategoryRouter from "./routers/pCategoryRoute.js"
+import orderRouter from "./routers/orderRoute.js"
 import mongoose from "mongoose";
 
 const app = express();
@@ -22,10 +23,11 @@ app.get("/", (req, res) => {
 
 // http://localhost:5000/posts
 // app.use("/users", userRouter);
-app.use("/seller", sellerRouter);
-app.use("/buyer/", userRouter);
+app.use("/sellers", sellerRouter);
+app.use("/buyers/", userRouter);
 app.use("/products", productRouter);
-app.use("/pcategory", pCategoryRouter);
+app.use("/pcategorys", pCategoryRouter);
+app.use("/orders", orderRouter);
 
 mongoose
   .connect(URI, {useNewUrlParser: true, useUnifiedTopology: true})

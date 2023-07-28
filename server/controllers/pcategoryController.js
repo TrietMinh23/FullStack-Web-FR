@@ -1,7 +1,7 @@
 import {PCategory} from "../models/pCategoryModel.js";
 import slugify from "slugify";
 
-export const getAllPCategory = async (req, res) => {
+export const getPCategories = async (req, res) => {
   try {
     const pCategory = await PCategory.find();
     res.status(200).json(pCategory);

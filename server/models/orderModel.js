@@ -9,6 +9,8 @@ const orderSchema = new mongoose.Schema({
       color: String,
     }
   }], 
+  totalPrice: {type: Number},
+  quantity: {type: Number},
   orderStatus: {
     type: String, 
     default: "Not Processed",
