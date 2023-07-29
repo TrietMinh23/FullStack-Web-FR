@@ -26,8 +26,24 @@ export const getOrderById = async (req, res) => {
 
 export const createOrder = async (req, res) => {
   try {
-   
+
+  } catch (err) {
+    res.status(400).json({error: err.message});
+  }
+}
+
+export const deleteOrder = async (req, res) => {
+  try {
+
   } catch (err) {
     res.status(400).json({error: err.message});
   }
 };
+
+export const updateOrder = async (req, res) => {
+  try {
+
+  } catch (err) {
+    res.status(400).json({error: err.message});
+  }
+}

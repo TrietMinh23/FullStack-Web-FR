@@ -1,11 +1,12 @@
 import express from "express"; //pour utiliser la bibliothèque ExpressJS
 // import bodyParser from "body-parser";
 import cors from "cors";
+import dotenv from "dotenv";
 import userRouter from "./routers/userRoute.js";
 import sellerRouter from "./routers/sellerRoute.js";
 import productRouter from "./routers/producRoute.js";
-import pCategoryRouter from "./routers/pCategoryRoute.js"
-import orderRouter from "./routers/orderRoute.js"
+import pCategoryRouter from "./routers/pCategoryRoute.js";
+import orderRouter from "./routers/orderRoute.js";
 import mongoose from "mongoose";
 
 const app = express();
@@ -24,9 +25,9 @@ app.get("/", (req, res) => {
 // http://localhost:5000/posts
 // app.use("/users", userRouter);
 app.use("/sellers", sellerRouter);
-app.use("/buyers/", userRouter);
+app.use("/buyers", userRouter);
 app.use("/products", productRouter);
-app.use("/pcategorys", pCategoryRouter);
+app.use("/pcategories", pCategoryRouter);
 app.use("/orders", orderRouter);
 
 mongoose

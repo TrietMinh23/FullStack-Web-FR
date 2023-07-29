@@ -4,10 +4,10 @@ import crypto from "crypto";
 
 const userSchema = new mongoose.Schema(
   {
-    name: {type: String, require: true},
-    email: {type: String, require: true},
+    name: {type: String, required: true},
+    email: {type: String, required: true},
     mobile: {type: String, unique: true},
-    password: {type: String, require: true},
+    password: {type: String, required: true},
     address: {type: String},
     role: {type: String, default: "buyer"},
     isBlocked: {type: Boolean, default: false},
@@ -27,7 +27,7 @@ userSchema.pre("save", async function (next) {
     return next();
   }
   const salt = bcrypt.genSaltSync(10);
-  this.password = bcrypt.hash(this.password, salt);
+  this.password = await bcrypt.hash(this.password, salt);
   next();
 });
 

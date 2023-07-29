@@ -12,13 +12,16 @@ export const getPCategories = async (req, res) => {
 
 export const createPCategory = async (req, res) => {
   try {
-    if (req.body.title) {
-      req.body.slug = slugify(req.body.title, {lower: true});
-
-      const newPcategory = await new PCategory.create(req.body);
-      await newPcategory.save();
-      res.status(202).json(newPcategory);
+    if (!req.body.title) {
+      res.status(400).json({error: "Title is required."});
+      return;
     }
+
+    req.body.slug = slugify(req.body.title, {lower: true});
+
+    const newPcategory = await new PCategory(req.body);
+    await newPcategory.save();
+    res.status(202).json(newPcategory);
   } catch (err) {
     res.status(400).json({error: err.message});
   }
@@ -65,11 +68,11 @@ export const deletePCategory = async (req, res) => {
   try {
     const id = req.params.id;
     const deletePCategory = await PCategory.findByIdAndDelete(id);
-    if(!deletePCategory) {
+    if (!deletePCategory) {
       res.status(404).json({error: "Not found!"});
     }
     res.status(200).json({message: "Category deleted"});
   } catch (err) {
     res.status(400).json({error: err.message});
   }
-}
+};

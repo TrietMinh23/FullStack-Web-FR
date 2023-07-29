@@ -1,6 +1,5 @@
 import {Seller} from "../models/sellerModel.js";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 import {generateToken} from "../config/jwtToken.js";
 
 export const getSellers = async (req, res) => {
@@ -14,20 +13,15 @@ export const getSellers = async (req, res) => {
 
 export const createSeller = async (req, res) => {
   try {
-    if (req.params.role !== "seller") {
-      res
-        .status(403)
-        .json({error: "You are not authorized to create this seller!"});
-    }
-
     const email = req.body.email;
-    const findSeller = await Seller.find({email});
+    const findSeller = await Seller.findOne({email});
 
     if (findSeller) {
-      res.status(404).json({error: "Seller doesn't exist!"});
+      console.log(findSeller);
+      return res.status(400).json({error: "Seller already exists"});
     }
 
-    const newSeller = new Seller.create(req.body);
+    const newSeller = new Seller(req.body);
     await newSeller.save();
 
     const accessToken = await generateToken(newSeller._id);
@@ -40,34 +34,27 @@ export const createSeller = async (req, res) => {
       token: accessToken,
     });
   } catch (err) {
+    console.log(err);
     res.status(400).json({error: err.messange});
   }
 };
 
 export const loginSeller = async (req, res) => {
   try {
-    if (req.params.role !== "seller") {
-      res.status(403).json({error: "You are not authorized to login!"});
-    }
-
     const {email, password} = req.body;
 
     const findSeller = await Seller.find({email});
     if (!findSeller) {
-      res.status(404).json({error: "Seller doesn't exist"});
+      return res.status(404).json({error: "Seller doesn't exist"});
     }
 
     const passwordMatched = await bcrypt.compare(password, findSeller.password);
     if (!passwordMatched) {
-      res.status(400).json({error: "Password doesn't match"});
+      return res.status(400).json({error: "Password doesn't match"});
     }
 
     // generate access token
-    const accessToken = jwt.sign(
-      {id: findSeller._id, role: "seller"},
-      process.env.ACCESS_TOKEN_SECRET,
-      {expiresIn: "1d"}
-    );
+    const accessToken = await generateToken(findSeller._id);
 
     // generate refresh token
     const refreshToken = await generateToken(findSeller._id);
@@ -90,8 +77,6 @@ export const loginSeller = async (req, res) => {
       mobile: findSeller.mobile,
       token: accessToken,
     });
-
-
   } catch (err) {
     res.status(400).json({error: err.messange});
   }
@@ -99,10 +84,6 @@ export const loginSeller = async (req, res) => {
 
 export const logoutSeller = async (req, res) => {
   try {
-    if (req.params.role !== "Seller") {
-      res.status(403).json({error: "You are not authorized to logout!"});
-    }
-
     const cookie = req.cookie;
     if(!cookie.refreshToken) {
       res.status(400).json({message: "No refresh token in cookie"});
@@ -111,7 +92,7 @@ export const logoutSeller = async (req, res) => {
     const refreshToken = cookie.refreshToken;
     const seller = await Seller.findOneAndUpdate({refreshToken : refreshToken});
     if (!seller) {
-      res.clearCookie("refreshToken", {
+      return res.clearCookie("refreshToken", {
         httpOnly: true,
         secure: true,
       });

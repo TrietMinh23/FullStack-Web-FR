@@ -106,18 +106,20 @@ export const createProduct = async (req, res) => {
   try {
     if (req.body.role === "seller") {
       res.status(400).json({error: "You are not a seller."});
+      return;
     }
 
     if (req.body.title) {
       req.body.slug = slugify(req.body.title, {lower: true});
 
-      const newProduct = new Product.create(req.body);
+      const newProduct = new Product(req.body);
       await newProduct.save();
       res.status(201).json(newProduct);
     }
     
   } catch (err) {
     res.status(400).json({error: err.message});
+    console.log(err);
   }
 };
 

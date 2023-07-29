@@ -1,7 +1,7 @@
 import express from "express";
+import {authenticationUser} from "../middlewares/authentication.js";
 import {
   getUsers,
-  deleteUserByID,
   createUser,
   loginUser,
   logoutUser,
@@ -16,11 +16,10 @@ const router = express.Router();
 
 router.get("/", getUsers);
 router.post("/register", createUser);
-router.delete("/:id", deleteUserByID);
 router.post("/login", loginUser);
-router.delete("/logout", logoutUser);
-router.put("/blockUser/:id", blockUser);
-router.put("unblockUser/:id", unblockUser);
-router.delete("/deleteUser/:id", deleteUser);\
+router.post("/logout", logoutUser);
+router.put("/block/:id", blockUser);
+router.put("/unblock/:id", unblockUser);
+router.delete("/delete/:id", authenticationUser, deleteUser);
 
 export default router;
