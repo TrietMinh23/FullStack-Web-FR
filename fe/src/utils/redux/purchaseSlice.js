@@ -4,7 +4,7 @@ const initialState = {
   productPrice: 0,
   shipPrice: 20000,
   shipping: "Fast",
-  payments: "Cash"
+  payments: "Cash",
 };
 
 export const purchaseSlice = createSlice({

@@ -1,13 +1,16 @@
+import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import FmdGoodIcon from "@mui/icons-material/FmdGood";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import ItemCart from "./components/ItemCart";
 import TableItemResponsive from "./components/TableItemResponsive";
-import { useState } from "react";
-import { useSelector } from "react-redux";
 import ModalShipping from "./components/ModalShipping";
-import { updatedPayments, updatedProductPrice } from "../../../utils/redux/purchaseSlice";
-import { useDispatch } from "react-redux";
-import ModalPayments from "./components/ModalPayments"
+import CheckoutModal from "./components/ModalPayments";
+import {
+  updatedPayments,
+  updatedProductPrice,
+} from "../../../utils/redux/purchaseSlice";
+
 
 export default function Purchase() {
   const [modalIsOpen, setModalOpen] = useState(false);
@@ -239,7 +242,7 @@ export default function Purchase() {
                 </div>
               </div>
               <hr />
-              <div><ModalPayments/></div>
+              <div><CheckoutModal/></div>
               
             </div>
           </div>
