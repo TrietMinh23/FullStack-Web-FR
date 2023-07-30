@@ -162,7 +162,7 @@ export default function ProductDetail() {
                       </span>
                     </div>
                   </div>
-                  <div className="second-part text-center flex mt-6 md:items-center sm:flex-row flex-col">
+                  <div className="second-part flex mt-6 md:items-center sm:flex-row flex-col">
                     {localStorage.getItem("currentUser") ? (
                       <React.Fragment>
                         <div className="sm:mr-4 max-sm:w-full max-sm:mb-2">
@@ -186,7 +186,7 @@ export default function ProductDetail() {
                       <React.Fragment>
                         <button
                           onClick={addToCart}
-                          className="block text-center ml-auto max-sm:w-full max-sm:mb-2 max-sm:block text-white bg-green-sheen hover:bg-emerald border-0 py-3 px-7 focus:outline-none rounded"
+                          className="block text-center max-sm:w-full max-sm:mb-2 max-sm:block text-white bg-green-sheen hover:bg-emerald border-0 py-3 px-7 focus:outline-none rounded"
                         >
                           Add To Cart
                         </button>
@@ -195,7 +195,7 @@ export default function ProductDetail() {
                           <Link
                             to="/shoppingcart"
                             onClick={addToCart}
-                            className="block text-center ml-auto w-full max-sm:block text-white bg-red-500 hover:bg-red-600 border-0 py-3 px-7 focus:outline-none rounded"
+                            className="block text-center sm:ml-3 w-full max-sm:block text-white bg-red-500 hover:bg-red-600 border-0 py-3 px-7 focus:outline-none rounded"
                           >
                             Buy Now
                           </Link>
