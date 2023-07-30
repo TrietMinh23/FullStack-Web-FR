@@ -7,7 +7,7 @@ import { useSelector } from "react-redux";
 import ModalShipping from "./components/ModalShipping";
 import { updatedPayments, updatedProductPrice } from "../../../utils/redux/purchaseSlice";
 import { useDispatch } from "react-redux";
-import ModalTemp from "./components/ModalTemp";
+import ModalPayments from "./components/ModalPayments"
 
 export default function Purchase() {
   const [modalIsOpen, setModalOpen] = useState(false);
@@ -239,7 +239,7 @@ export default function Purchase() {
                 </div>
               </div>
               <hr />
-              <div><ModalTemp/></div>
+              <div><ModalPayments/></div>
               
             </div>
           </div>
