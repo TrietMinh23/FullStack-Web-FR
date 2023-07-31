@@ -71,13 +71,12 @@ export default function Login() {
       setLoading(true);
       await login(formData)
         .then((res) => {
-          if (!res.data.error) setLoading(false);
           console.log(res.data);
         })
         .catch((err) => {
-          setMessage(err.response.data.error);
-          setLoading(false);
+          setMessage(err.response.data.message);
         });
+      setLoading(false);
     }
   };
 

@@ -80,17 +80,20 @@ export const loginUser = async (req, res) => {
 
       // return token
       res.status(200).json({
-        _id: findUser?._id,
-        name: findUser?.name,
-        email: findUser?.email,
-        mobile: findUser?.mobile,
+        _id: findUser._id,
+        name: findUser.name,
+        email: findUser.email,
+        mobile: findUser.mobile,
+        address: findUser?.address,
+        role: findUser.role,
+        wishList: findUser.wishlist,
         token: accessToken,
       });
     } else {
-      res.status(404).json({ error: "Buyer doesn't exist" });
+      res.status(404).json({ message: "Buyer doesn't exist" });
     }
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(400).json({ message: err.message });
   }
 };
 
