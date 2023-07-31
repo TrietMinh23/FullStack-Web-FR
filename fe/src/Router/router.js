@@ -36,6 +36,7 @@ const Allbuyer = lazy(() => import("../pages/Admin/page/allbuyer"));
 const Allitems = lazy(() => import("../pages/Admin/page/allitems"));
 const Allsellers = lazy(() => import("../pages/Admin/page/allsellers"));
 const Report = lazy(() => import("../pages/Admin/page/report"));
+const ReportForm = lazy(() => import("../components/Report"));
 
 export default function Router() {
   return (
@@ -78,6 +79,7 @@ export default function Router() {
           path="/forgotpassword"
           element={<ForgotPassword></ForgotPassword>}
         ></Route>
+        <Route path="/report" element={<ReportForm />}></Route>
         <Route path="/type" element={<ChooseType />}></Route>
         <Route path="/admin" element={<Admin />}>
           <Route

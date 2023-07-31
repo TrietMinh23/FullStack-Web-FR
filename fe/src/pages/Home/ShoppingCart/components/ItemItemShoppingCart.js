@@ -1,11 +1,6 @@
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useDispatch } from "react-redux";
-import {
-  INCREASEITEM,
-  REMOVEFROMCART,
-  DELETE,
-} from "../../../../utils/redux/productsSlice";
-import { useState } from "react";
+import { DELETE } from "../../../../utils/redux/productsSlice";
 
 export default function ItemItemShoppingCart({
   name,
@@ -16,31 +11,10 @@ export default function ItemItemShoppingCart({
   id,
 }) {
   const dispatch = useDispatch();
-  const [currentProducts, setCurrentProducts] = useState(quantity);
 
   const deleteItem = () => {
     dispatch(
       DELETE({
-        id: id,
-        shop: shop,
-      })
-    );
-  };
-
-  const decreaseItem = () => {
-    setCurrentProducts(currentProducts - 1);
-    dispatch(
-      REMOVEFROMCART({
-        id: id,
-        shop: shop,
-      })
-    );
-  };
-
-  const increaseItem = () => {
-    setCurrentProducts(currentProducts + 1);
-    dispatch(
-      INCREASEITEM({
         id: id,
         shop: shop,
       })
@@ -61,30 +35,10 @@ export default function ItemItemShoppingCart({
         ${price}
       </td>
       <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
-        <div className="v-counter">
-          <input
-            type="button"
-            className="minusBtn"
-            defaultValue="-"
-            onClick={() => decreaseItem()}
-          />
-          <input
-            type="text"
-            size="25"
-            value={currentProducts}
-            className="count"
-            readOnly
-          />{" "}
-          <input
-            type="button"
-            className="plusBtn"
-            defaultValue="+"
-            onClick={() => increaseItem()}
-          />
-        </div>
+        1
       </td>
       <td className="total-price p-3 text-sm text-gray-700 whitespace-nowrap text-center">
-        ${price * quantity}
+        ${price}
       </td>
       <td className="p-3 text-sm text-white whitespace-nowrap text-center">
         <button

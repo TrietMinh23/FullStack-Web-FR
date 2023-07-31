@@ -49,42 +49,6 @@ input[type="number"]::-webkit-outer-spin-button {
   background: rgba(255, 255, 255, 0.5);
 }
 
-.v-counter {
-  border-radius: 32px;
-  max-width: 89px;
-  display: flex;
-  justify-content: center;
-  overflow: auto;
-  padding: 0px 4px;
-  border: 1px solid #323140;
-  margin: 10px;
-}
-
-.v-counter input[type="button"]:hover {
-  color: black;
-  font-weight: bold;
-  background-color: transparent;
-}
-.v-counter span {
-  font-size: 13px;
-  color: black;
-  font-family: "Open Sans";
-}
-.v-counter input[type="button"],
-.count {
-  display: inline-block;
-  width: 30px;
-  background-color: transparent;
-  outline: none;
-  border: none;
-  text-align: center;
-  cursor: pointer;
-  padding: 0px;
-  color: black;
-  height: 33px;
-  font-family: "Open Sans";
-}
-
 @media only screen and (max-width: 1024px) {
   .modal {
     position: fixed;

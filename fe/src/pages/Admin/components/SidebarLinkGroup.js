@@ -1,9 +1,6 @@
-import { ReactNode, useState } from 'react';
+import { useState } from "react";
 
-export default function SidebarLinkGroup ({
-  children,
-  activeCondition,
-}){
+export default function SidebarLinkGroup({ children, activeCondition }) {
   const [open, setOpen] = useState(activeCondition);
 
   const handleClick = () => {
@@ -11,4 +8,4 @@ export default function SidebarLinkGroup ({
   };
 
   return <li>{children(handleClick, open)}</li>;
-};
+}

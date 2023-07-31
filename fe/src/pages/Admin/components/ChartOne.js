@@ -1,5 +1,5 @@
 // import { ApexOptions } from 'apexcharts';
-import React, { useState } from "react";
+import React from "react";
 import ReactApexChart from "react-apexcharts";
 
 const options = {
@@ -116,7 +116,7 @@ const options = {
 };
 
 export default function ChartOne() {
-  const [state, setState] = useState({
+  const state = {
     series: [
       {
         name: "Product One",
@@ -128,7 +128,7 @@ export default function ChartOne() {
         data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39, 51],
       },
     ],
-  });
+  };
 
   return (
     <div className="col-span-12 rounded-sm border border-stroke bg-white px-5 pt-7.5 pb-5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5">
