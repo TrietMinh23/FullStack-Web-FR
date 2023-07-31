@@ -1,0 +1,78 @@
+html {
+  scroll-behavior: smooth;
+}
+
+.alert-container .icon-alert {
+  height: 14px;
+  width: 13px;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.custom-number-input input:focus {
+  outline: none !important;
+}
+
+.custom-number-input button:focus {
+  outline: none !important;
+}
+
+.body-modal {
+  overflow: hidden;
+}
+
+.modal {
+  box-shadow: 0 3px 10px 0 rgba(0, 0, 0, 0.14);
+  position: absolute;
+  background: white;
+  z-index: 1;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+}
+
+#dimScreen {
+  position: fixed;
+  padding: 0;
+  margin: 0;
+
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+@media only screen and (max-width: 1024px) {
+  .modal {
+    position: fixed;
+    padding: 0;
+    margin: 0;
+    top: 0;
+    left: 0;
+    transform: none;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.box-notification::-webkit-scrollbar {
+  width: 10px;
+}
+
+.box-notification::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.box-notification::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background-color: #838294;
+}
