@@ -5,6 +5,7 @@ import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
 import { ValidationEmail } from "../../utils/Validation";
 import { useSelector } from "react-redux";
 import { signup } from "../../api/signup";
+import LoadingIcon from "../../components/ui/LoadingIcon";
 import ButtonReport from "../../components/ButtonReport";
 
 const initialStateDialog = {
@@ -34,6 +35,7 @@ export default function Signup() {
 
   const [message, setMessage] = useState("");
   const role = useSelector((state) => state.auth.role);
+  const [isLoading, setLoading] = useState(false);
 
   const [stateConfirmPassword, setStateConfirmPassword] = useState(true);
   const [stateRequiredPassword, setStateRequiredPassword] = useState(false);
@@ -77,15 +79,23 @@ export default function Signup() {
       formData.password !== "" &&
       stateConfirmPassword
     ) {
+      setLoading(true);
       const { email, password, username, role } = formData;
       await signup({
         email,
         password,
-        username,
+        name: username,
         role,
       })
-        .then((res) => console.log(res))
-        .catch((err) => setMessage(err.response.data.message));
+        .then((res) => {
+          console.log(res.response.data);
+          localStorage.setItem("currentUser", res.response.data.newUser);
+        })
+        .catch((err) => {
+          console.log(err);
+          //setMessage(err.response.data.message);
+        });
+      setLoading(false);
     }
   };
 
@@ -223,10 +233,11 @@ export default function Signup() {
           </div>
           <div className="mt-6">
             <button
+              disabled={isLoading}
               onClick={(e) => signIn(e)}
               className="w-full inline-flex items-center justify-center px-4 py-2 bg-green-sheen hover:bg-emerald border border-transparent rounded-md font-semibold capitalize text-white focus:outline-none disabled:opacity-25 transition"
             >
-              Sign In
+              {isLoading ? <LoadingIcon /> : "Sign In"}
             </button>
           </div>
           <div className="mt-4 flex justify-between">
