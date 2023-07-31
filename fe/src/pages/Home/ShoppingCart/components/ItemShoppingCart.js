@@ -22,7 +22,6 @@ export default function ItemShoppingCart({ shop }) {
           name={item.name}
           price={item.price}
           image={item.image}
-          quantity={item.quantity}
           key={item.id}
           shop={shop.name}
           id={item.id}

@@ -5,12 +5,21 @@ import TableItemResponsive from "./components/TableItemResponsive";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import ModalShipping from "./components/ModalShipping";
+import PopupChangeInfo from "./components/PopupChangeInfo";
 
 export default function Purchase() {
   const [modalIsOpen, setModalOpen] = useState(false);
   const [isChange, setIsChange] = useState(false);
   const shipping = useSelector((state) => state.purchase.shipping);
   const products = useSelector((state) => state.product.shoppingCart);
+  const [information, setInformation] = useState({
+    name: "",
+    phone: "",
+    city: "",
+    district: "",
+    ward: "",
+    address: "",
+  });
 
   const changeShipping = () => {
     setModalOpen(!modalIsOpen);
@@ -21,6 +30,29 @@ export default function Purchase() {
     } else {
       document.body.classList.add("body-modal");
     }
+  };
+
+  const handleChangeInput = (event) => {
+    setInformation({
+      ...information,
+      [event.target.name]: event.target.value,
+    });
+  };
+
+  const finishUpdateInfomation = () => {
+    setIsChange(false);
+  };
+
+  const closeUpdateInfomation = () => {
+    setIsChange(false);
+    setInformation({
+      name: "",
+      phone: "",
+      city: "",
+      district: "",
+      ward: "",
+      address: "",
+    });
   };
 
   const summarizeQuantity = (list) => {
@@ -58,40 +90,41 @@ export default function Purchase() {
               onClick={() => setIsChange(!isChange)}
               className="text-blue-400 font-bold max-lg:w-full lg:py-0 py-3 px-3"
             >
-              {isChange ? "Save" : "Edit"}
+              Change
             </button>
           </div>
         </div>
         <div className="flex lg:flex-row flex-col">
-          <div className="bg-light-silver p-2 max-lg:mb-2 grow">
-            <label
-              className="block text-gray-700 text-sm font-bold mb-1"
-              htmlFor="username"
-            >
-              Username
-            </label>
-            <input
-              className="bg-transparent appearance-none w-full leading-tight focus:outline-none focus:shadow-outline"
-              id="username"
-              type="text"
-              placeholder="Username"
-              disabled={!isChange}
+          {isChange && (
+            <PopupChangeInfo
+              changeFunc={(event) => handleChangeInput(event)}
+              close={() => closeUpdateInfomation()}
+              open={() => finishUpdateInfomation()}
             />
-          </div>
-          <div className="lg:ml-4 bg-light-silver p-2 grow-2">
-            <label
-              className="block text-gray-700 text-sm font-bold mb-1"
-              htmlFor="address"
-            >
-              Address
-            </label>
-            <input
-              className="bg-transparent appearance-none w-full leading-tight focus:outline-none focus:shadow-outline"
-              id="address"
-              type="text"
-              placeholder="Address"
-              disabled={!isChange}
-            />
+          )}
+          <div className="flex gap-x-3 ml-2">
+            <div className="name font-bold">
+              <p> {information.name ? information.name : "No name"}</p>
+            </div>
+            <div className="phone font-bold">
+              <p>{information.phone ? information.phone : "No phone number"}</p>
+            </div>
+            <div className="address">
+              <p>
+                {information.address ||
+                information.city ||
+                information.district ||
+                information.ward
+                  ? information.address +
+                    "," +
+                    information.city +
+                    "," +
+                    information.district +
+                    "," +
+                    information.ward
+                  : "No address"}
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -159,7 +192,7 @@ export default function Purchase() {
                   </div>
                   <div
                     id="dimScreen"
-                    className={modalIsOpen ? "block" : "hidden"}
+                    className={modalIsOpen || isChange ? "block" : "hidden"}
                   ></div>
                 </div>
                 <div className="total lg:mt-0 mt-5 max-lg:text-right">

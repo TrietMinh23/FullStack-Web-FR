@@ -17,7 +17,6 @@ export default function ItemTS({ shop }) {
           name={item.name}
           price={item.price}
           image={item.image}
-          quantity={item.quantity}
           key={item.id}
           id={item.id}
           shop={shop.name}

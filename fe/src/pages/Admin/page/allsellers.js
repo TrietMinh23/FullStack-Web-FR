@@ -1,68 +1,55 @@
-import React from 'react'
+import React from "react";
 import Tracker from "../components/Tracker";
-import Table from "../../Seller/components/Table";
-import LocalShippingIcon from "@mui/icons-material/LocalShipping";
-import CurrencyExchangeIcon from "@mui/icons-material/CurrencyExchange";
-import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
-import CancelIcon from "@mui/icons-material/Cancel";
-import Card from "../../Home/PersonalProfile/components/card";
+import Table from "../components/Table";
 
 const staticTable = [
   {
-    icon: <LocalShippingIcon />,
+    icon: "",
     id: 1,
-    text: "This month",
-    number: "10",
-    money: "53",
+    text: "Negative Review",
+    today: "10",
+    all: "53",
     color: "blue",
-    title: "Positive Reviews",
   },
   {
-    icon: <AssignmentTurnedInIcon />,
+    icon: "",
     id: 2,
-    text: "This month",
-    number: "10",
-    money: "53",
+    text: "Positive Review",
+    today: "10",
+    all: "53",
     color: "orange",
-    title: "Negative Reviews",
   },
   {
-    icon: <CurrencyExchangeIcon />,
+    icon: "",
     id: 3,
-    text: "This month",
-    number: "10",
-    money: "53",
+    text: "Income",
+    today: "10",
+    all: "53",
     color: "green",
-    title: "Total income",
   },
 ];
 
-
-export default function Allsellers () {
+export default function Allsellers() {
   return (
     <React.Fragment>
       <div>
-        <div className="mb-12 grid gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-4 md:gap-6 xl:grid-cols-4 2xl:gap-7.5">
           {staticTable.map((item) => (
-            <Card
+            <Tracker
               icon={item.icon}
               text={item.text}
-              number={item.number}
-              money={item.money}
+              today={item.today}
+              all={item.all}
               color={item.color}
-              title={item.title}
+              title={item.text}
               key={item.id}
             />
           ))}
         </div>
-        <div className="mt:inline-block hidden mt-9	">
+        <div className="mt-8 w-full">
           <Table />
         </div>
       </div>
-      <div className="inline-block w-full">
-        <Table />
-      </div>
     </React.Fragment>
-  )
+  );
 }
-

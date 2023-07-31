@@ -7,6 +7,7 @@ import { auth } from "../../firebase/firebase";
 import { login } from "../../api/login";
 import { useSelector } from "react-redux";
 import LoadingIcon from "../../components/ui/LoadingIcon";
+import ButtonReport from "../../components/ButtonReport";
 
 const initialStateDialog = {
   stateDialogEmail: true,
@@ -179,14 +180,17 @@ export default function Login() {
               {isLoading ? <LoadingIcon /> : "Sign In"}
             </button>
           </div>
-          <div className="mt-4">
-            Don’t have an account?{" "}
-            <Link
-              to="/signup"
-              className="text-dark-pastel-red font-bold hover:underline"
-            >
-              Sign up
-            </Link>
+          <div className="mt-4 flex justify-between">
+            <div>
+              Don’t have an account?{" "}
+              <Link
+                to="/signup"
+                className="text-dark-pastel-red font-bold hover:underline"
+              >
+                Sign up
+              </Link>
+            </div>
+            <ButtonReport />
           </div>
           <div className="flex items-center py-4">
             <div className="flex-grow h-px bg-gray-400"></div>

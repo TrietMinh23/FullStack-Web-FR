@@ -24,6 +24,9 @@ module.exports = {
       flexGrow: {
         2: "2",
       },
+      boxShadow: {
+        inner: "inset 0 2px 0 0 rgba(0, 0, 0, .02)",
+      },
     },
   },
   corePlugins: {

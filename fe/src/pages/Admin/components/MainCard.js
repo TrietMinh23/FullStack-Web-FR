@@ -1,17 +1,23 @@
-import PropTypes from 'prop-types';
-import { forwardRef } from 'react';
+import PropTypes from "prop-types";
+import { forwardRef } from "react";
 
 // material-ui
-import { useTheme } from '@mui/material/styles';
-import { Card, CardContent, CardHeader, Divider, Typography } from '@mui/material';
+import { useTheme } from "@mui/material/styles";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  Divider,
+  Typography,
+} from "@mui/material";
 
 // project import
-import Highlighter from './Highlighter';
+// import Highlighter from "./Highlighter";
 
 // header style
 const headerSX = {
   p: 2.5,
-  '& .MuiCardHeader-action': { m: '0px auto', alignSelf: 'center' }
+  "& .MuiCardHeader-action": { m: "0px auto", alignSelf: "center" },
 };
 
 // ==============================|| CUSTOM - MAIN CARD ||============================== //
@@ -36,7 +42,7 @@ const MainCard = forwardRef(
     ref
   ) => {
     const theme = useTheme();
-    boxShadow = theme.palette.mode === 'dark' ? boxShadow || true : boxShadow;
+    boxShadow = theme.palette.mode === "dark" ? boxShadow || true : boxShadow;
 
     return (
       <Card
@@ -44,27 +50,44 @@ const MainCard = forwardRef(
         ref={ref}
         {...others}
         sx={{
-          border: border ? '1px solid' : 'none',
+          border: border ? "1px solid" : "none",
           borderRadius: 2,
-          borderColor: theme.palette.mode === 'dark' ? theme.palette.divider : theme.palette.grey.A800,
-          boxShadow: boxShadow && (!border || theme.palette.mode === 'dark') ? shadow || theme.customShadows.z1 : 'inherit',
-          ':hover': {
-            boxShadow: boxShadow ? shadow || theme.customShadows.z1 : 'inherit'
+          borderColor:
+            theme.palette.mode === "dark"
+              ? theme.palette.divider
+              : theme.palette.grey.A800,
+          boxShadow:
+            boxShadow && (!border || theme.palette.mode === "dark")
+              ? shadow || theme.customShadows.z1
+              : "inherit",
+          ":hover": {
+            boxShadow: boxShadow ? shadow || theme.customShadows.z1 : "inherit",
           },
-          '& pre': {
+          "& pre": {
             m: 0,
-            p: '16px !important',
+            p: "16px !important",
             fontFamily: theme.typography.fontFamily,
-            fontSize: '0.75rem'
+            fontSize: "0.75rem",
           },
-          ...sx
+          ...sx,
         }}
       >
         {/* card header and action */}
         {!darkTitle && title && (
-          <CardHeader sx={headerSX} titleTypographyProps={{ variant: 'subtitle1' }} title={title} action={secondary} />
+          <CardHeader
+            sx={headerSX}
+            titleTypographyProps={{ variant: "subtitle1" }}
+            title={title}
+            action={secondary}
+          />
         )}
-        {darkTitle && title && <CardHeader sx={headerSX} title={<Typography variant="h3">{title}</Typography>} action={secondary} />}
+        {darkTitle && title && (
+          <CardHeader
+            sx={headerSX}
+            title={<Typography variant="h3">{title}</Typography>}
+            action={secondary}
+          />
+        )}
 
         {/* card content */}
         {content && <CardContent sx={contentSX}>{children}</CardContent>}
@@ -73,10 +96,10 @@ const MainCard = forwardRef(
         {/* card footer - clipboard & highlighter  */}
         {codeHighlight && (
           <>
-            <Divider sx={{ borderStyle: 'dashed' }} />
-            <Highlighter codeHighlight={codeHighlight} main>
+            <Divider sx={{ borderStyle: "dashed" }} />
+            {/* <Highlighter codeHighlight={codeHighlight} main>
               {children}
-            </Highlighter>
+            </Highlighter> */}
           </>
         )}
       </Card>
@@ -97,7 +120,7 @@ MainCard.propTypes = {
   title: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
   codeHighlight: PropTypes.bool,
   content: PropTypes.bool,
-  children: PropTypes.node
+  children: PropTypes.node,
 };
 
 export default MainCard;

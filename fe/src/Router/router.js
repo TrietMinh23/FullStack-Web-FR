@@ -35,6 +35,16 @@ const Review = lazy(() => import("../pages/Seller/Review/review"));
 const LayoutSeller = lazy(() => import("../pages/Seller/Home/LayoutSeller"));
 const Home = lazy(() => import("../pages/Home/home"));
 const LayoutHomePage = lazy(() => import("../pages/Home/LayoutHomePage"));
+const Admin = lazy(() => import("../pages/Admin/Admin"));
+const FinancialManagement = lazy(() =>
+  import("../pages/Admin/page/financialmanagement")
+);
+const Usemanagement = lazy(() => import("../pages/Admin/page/usemanagement"));
+const Allbuyer = lazy(() => import("../pages/Admin/page/allbuyer"));
+const Allitems = lazy(() => import("../pages/Admin/page/allitems"));
+const Allsellers = lazy(() => import("../pages/Admin/page/allsellers"));
+const Report = lazy(() => import("../pages/Admin/page/report"));
+const ReportForm = lazy(() => import("../components/Report"));
 
 
 
@@ -79,14 +89,19 @@ export default function Router() {
           path="/forgotpassword"
           element={<ForgotPassword></ForgotPassword>}
         ></Route>
+        <Route path="/report" element={<ReportForm />}></Route>
         <Route path="/type" element={<ChooseType />}></Route>
-        <Route path="/admin" element={<Admin/>}>
-          <Route exact path="financialmanagement" element={<FinancialManagement/>}></Route>
-          <Route path="usemanagement" element={<Usemanagement/>}>
-            <Route path="allbuyer" element={<Allbuyer/>}></Route>
-            <Route path="allitems" element={<Allitems/>}></Route>
-            <Route path="allsellers" element={<Allsellers/>}></Route>
-            <Route path="report" element={<Report/>}></Route>
+        <Route path="/admin" element={<Admin />}>
+          <Route
+            exact
+            path="/admin/financialmanagement"
+            element={<FinancialManagement />}
+          />
+          <Route path="usemanagement" element={<Usemanagement />}>
+            <Route path="allbuyer" element={<Allbuyer />} />
+            <Route path="allitems" element={<Allitems />} />
+            <Route path="allsellers" element={<Allsellers />} />
+            <Route path="report" element={<Report />} />
           </Route>
         </Route>
       </Routes>

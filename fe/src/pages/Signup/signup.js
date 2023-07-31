@@ -5,6 +5,7 @@ import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
 import { ValidationEmail } from "../../utils/Validation";
 import { useSelector } from "react-redux";
 import { signup } from "../../api/signup";
+import ButtonReport from "../../components/ButtonReport";
 
 const initialStateDialog = {
   stateDialogEmail: true,
@@ -228,14 +229,17 @@ export default function Signup() {
               Sign In
             </button>
           </div>
-          <div className="mt-4">
-            Already have account?{" "}
-            <Link
-              to="/login"
-              className="text-dark-pastel-red font-bold hover:underline"
-            >
-              Login
-            </Link>
+          <div className="mt-4 flex justify-between">
+            <div>
+              Already have account?{" "}
+              <Link
+                to="/login"
+                className="text-dark-pastel-red font-bold hover:underline"
+              >
+                Login
+              </Link>
+            </div>
+            <ButtonReport />
           </div>
         </form>
       </div>

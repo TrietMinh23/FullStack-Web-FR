@@ -1,40 +1,14 @@
 import { useDispatch } from "react-redux";
 import ClearIcon from "@mui/icons-material/Clear";
-import {
-  DELETE,
-  INCREASEITEM,
-  REMOVEFROMCART,
-} from "../../../../utils/redux/productsSlice";
-import { useState } from "react";
+import { DELETE } from "../../../../utils/redux/productsSlice";
 import React from "react";
 
-export default function ItemItemTS({ shop, name, price, quantity, image, id }) {
+export default function ItemItemTS({ shop, name, price, image, id }) {
   const dispatch = useDispatch();
-  const [currentProducts, setCurrentProducts] = useState(quantity);
 
   const deleteItem = () => {
     dispatch(
       DELETE({
-        id: id,
-        shop: shop,
-      })
-    );
-  };
-
-  const decreaseItem = () => {
-    setCurrentProducts(currentProducts - 1);
-    dispatch(
-      REMOVEFROMCART({
-        id: id,
-        shop: shop,
-      })
-    );
-  };
-
-  const increaseItem = () => {
-    setCurrentProducts(currentProducts + 1);
-    dispatch(
-      INCREASEITEM({
         id: id,
         shop: shop,
       })
@@ -60,29 +34,7 @@ export default function ItemItemTS({ shop, name, price, quantity, image, id }) {
               <div className="price text-sm font-medium text-black">
                 ${price}
               </div>
-              <div>
-                <div className="v-counter">
-                  <input
-                    onClick={decreaseItem}
-                    type="button"
-                    className="minusBtn"
-                    defaultValue="-"
-                  />
-                  <input
-                    type="text"
-                    size={25}
-                    value={quantity}
-                    className="count"
-                    readOnly
-                  />
-                  <input
-                    onClick={increaseItem}
-                    type="button"
-                    className="plusBtn"
-                    defaultValue="+"
-                  />
-                </div>
-              </div>
+              <div>x1</div>
             </div>
           </div>
         </div>

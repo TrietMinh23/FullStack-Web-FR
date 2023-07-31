@@ -1,21 +1,21 @@
 // import { ApexOptions } from 'apexcharts';
-import React, { useState } from 'react';
-import ReactApexChart from 'react-apexcharts';
+import React from "react";
+import ReactApexChart from "react-apexcharts";
 
 const options = {
   legend: {
     show: false,
-    position: 'top',
-    horizontalAlign: 'left',
+    position: "top",
+    horizontalAlign: "left",
   },
-  colors: ['#3C50E0', '#80CAEE'],
+  colors: ["#3C50E0", "#80CAEE"],
   chart: {
-    fontFamily: 'Satoshi, sans-serif',
+    fontFamily: "Satoshi, sans-serif",
     height: 335,
-    type: 'area',
+    type: "area",
     dropShadow: {
       enabled: true,
-      color: '#623CEA14',
+      color: "#623CEA14",
       top: 10,
       blur: 4,
       left: 0,
@@ -46,7 +46,7 @@ const options = {
   ],
   stroke: {
     width: [2, 2],
-    curve: 'straight',
+    curve: "straight",
   },
   // labels: {
   //   show: false,
@@ -69,8 +69,8 @@ const options = {
   },
   markers: {
     size: 4,
-    colors: '#fff',
-    strokeColors: ['#3056D3', '#80CAEE'],
+    colors: "#fff",
+    strokeColors: ["#3056D3", "#80CAEE"],
     strokeWidth: 3,
     strokeOpacity: 0.9,
     strokeDashArray: 0,
@@ -82,20 +82,20 @@ const options = {
     },
   },
   xaxis: {
-    type: 'category',
+    type: "category",
     categories: [
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
     ],
     axisBorder: {
       show: false,
@@ -107,7 +107,7 @@ const options = {
   yaxis: {
     title: {
       style: {
-        fontSize: '0px',
+        fontSize: "0px",
       },
     },
     min: 0,
@@ -115,25 +115,23 @@ const options = {
   },
 };
 
-
-
-export default function ChartOne () {
-  const [state, setState] = useState({
+export default function ChartOne() {
+  const state = {
     series: [
       {
-        name: 'Product One',
+        name: "Product One",
         data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30, 45],
       },
 
       {
-        name: 'Product Two',
+        name: "Product Two",
         data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39, 51],
       },
     ],
-  });
+  };
 
   return (
-    <div className="col-span-12 rounded-sm border border-stroke bg-white px-5 pt-7.5 pb-5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:col-span-8">
+    <div className="col-span-12 rounded-sm border border-stroke bg-white px-5 pt-7.5 pb-5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5">
       <div className="flex flex-wrap items-start justify-between gap-3 sm:flex-nowrap">
         <div className="flex w-full flex-wrap gap-3 sm:gap-5 mt-5">
           <div className="flex min-w-47.5">
@@ -182,5 +180,4 @@ export default function ChartOne () {
       </div>
     </div>
   );
-};
-
+}

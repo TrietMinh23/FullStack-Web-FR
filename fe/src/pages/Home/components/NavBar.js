@@ -60,7 +60,7 @@ const Navbar = () => {
           </div>
           <div className="hidden lg:block">
             <div className="flex space-x-4">
-              {!localStorage.getItem("currentUser") ? (
+              {localStorage.getItem("currentUser") ? (
                 <React.Fragment>
                   <ButtonLogin />
                   <ButtonSignUp />
