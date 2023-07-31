@@ -28,7 +28,15 @@ export const createUser = async (req, res) => {
     await newUser.save();
 
     return res.status(200).json({
-      newUser: newUser,
+      newUser: {
+        _id: newUser._id,
+        name: newUser.name,
+        email: newUser.email,
+        mobile: newUser.mobile,
+        address: newUser.address,
+        role: newUser.role,
+        wishList: newUser.wishlist,
+      },
       token: accessToken,
     });
   } catch (err) {
@@ -44,7 +52,7 @@ export const loginUser = async (req, res) => {
     const findUser = await User.findOne({ email });
 
     if (findUser?.isBlocked) {
-      res.status(403).json({ error: "Your account has been blocked!" });
+      res.status(403).json({ message: "Your account has been blocked!" });
       return;
     }
 
@@ -52,7 +60,7 @@ export const loginUser = async (req, res) => {
       const passwordMatch = await bcrypt.compare(password, findUser.password);
 
       if (!passwordMatch) {
-        res.status(400).json({ error: "Password doesn't match" });
+        res.status(400).json({ message: "Password doesn't match" });
         return;
       }
 
