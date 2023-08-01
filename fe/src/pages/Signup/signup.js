@@ -45,7 +45,7 @@ export default function Signup() {
     email: "",
     password: "",
     confirm_password: "",
-    mobile: "",
+
     role: role,
   });
 
@@ -81,13 +81,12 @@ export default function Signup() {
       stateConfirmPassword
     ) {
       setLoading(true);
-      const { email, password, username, role, mobile } = formData;
+      const { email, password, username, role } = formData;
       await signup({
         email,
         password,
         name: username,
         role,
-        mobile,
       })
         .then((res) => {
           localStorage.setItem("currentUser", JSON.stringify(res.data.newUser));
@@ -139,22 +138,6 @@ export default function Signup() {
               id="email"
               type="email"
               name="email"
-              className={`py-2 px-3 border focus:outline-none focus:ring focus:ring-red-200 focus:ring-opacity-50 rounded-md shadow-sm disabled:bg-gray-100 mt-1 block w-full ${
-                !stateDialog.stateDialogEmail
-                  ? "border-red-300"
-                  : "border-gray-300"
-              }`}
-              onChange={(e) => handleSignUpInputChange(e)}
-            />
-          </div>
-          <div className={!stateDialog.stateDialogEmail ? "mb-2" : "mb-4"}>
-            <label className="block mb-1" htmlFor="mobile">
-              Phone number
-            </label>
-            <input
-              id="mobile"
-              type="text"
-              name="mobile"
               className={`py-2 px-3 border focus:outline-none focus:ring focus:ring-red-200 focus:ring-opacity-50 rounded-md shadow-sm disabled:bg-gray-100 mt-1 block w-full ${
                 !stateDialog.stateDialogEmail
                   ? "border-red-300"

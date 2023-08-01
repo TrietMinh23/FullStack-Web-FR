@@ -80,13 +80,15 @@ export const loginUser = async (req, res) => {
 
       // return token
       res.status(200).json({
-        _id: findUser._id,
-        name: findUser.name,
-        email: findUser.email,
-        mobile: findUser.mobile,
-        address: findUser?.address,
-        role: findUser.role,
-        wishList: findUser.wishlist,
+        User: {
+          _id: findUser._id,
+          name: findUser.name,
+          email: findUser.email,
+          mobile: findUser?.mobile,
+          address: findUser?.address,
+          role: findUser.role,
+          wishList: findUser.wishlist,
+        },
         token: accessToken,
       });
     } else {

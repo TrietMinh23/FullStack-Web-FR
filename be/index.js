@@ -8,6 +8,9 @@ import productRouter from "./routers/producRoute.js";
 import pCategoryRouter from "./routers/pCategoryRoute.js";
 import orderRouter from "./routers/orderRoute.js";
 import mongoose from "mongoose";
+import { Product } from "./models/productModel.js";
+import { data } from "./data.js";
+import slugify from "slugify";
 
 const app = express(process.env.DATABASE);
 const PORT = process.env.PORT || 5000;
@@ -31,8 +34,20 @@ app.use("/orders", orderRouter);
 
 mongoose
   .connect(URI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => {
+  .then(async () => {
     console.log("Connected to DB.");
+    try {
+      // Thêm từng sản phẩm vào collection "products"
+      for (const productData of data) {
+        const product = new Product(productData);
+        product.slug = slugify(product.title, { lower: true });
+        await product.save();
+      }
+
+      console.log("Đã lưu dữ liệu sản phẩm vào MongoDB.");
+    } catch (error) {
+      console.error("Lỗi khi lưu dữ liệu sản phẩm vào MongoDB:", error);
+    }
     app.listen(PORT, () => {
       console.log(`Server is connecting to ${PORT}`);
     });

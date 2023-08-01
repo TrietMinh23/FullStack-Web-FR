@@ -6,9 +6,9 @@ const userSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     email: { type: String, required: true },
-    mobile: { type: String },
+    mobile: { type: String, default: "" },
     password: { type: String, required: true },
-    address: { type: String },
+    address: { type: String, default: "" },
     role: { type: String, default: "buyer" },
     isBlocked: { type: Boolean, default: false },
     wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
