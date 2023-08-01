@@ -36,18 +36,6 @@ mongoose
   .connect(URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(async () => {
     console.log("Connected to DB.");
-    try {
-      // Thêm từng sản phẩm vào collection "products"
-      for (const productData of data) {
-        const product = new Product(productData);
-        product.slug = slugify(product.title, { lower: true });
-        await product.save();
-      }
-
-      console.log("Đã lưu dữ liệu sản phẩm vào MongoDB.");
-    } catch (error) {
-      console.error("Lỗi khi lưu dữ liệu sản phẩm vào MongoDB:", error);
-    }
     app.listen(PORT, () => {
       console.log(`Server is connecting to ${PORT}`);
     });

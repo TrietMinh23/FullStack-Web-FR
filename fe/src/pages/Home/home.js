@@ -4,7 +4,7 @@ import Pagination from "./components/Pagination";
 
 export default function Home() {
   return (
-    <div className="py-12 bg-white sm:py-16 lg:py-20 px-4 mx-auto sm:px-6 lg:px-8 max-w-7xl">
+    <div className="py-12 bg-[#F5F5F5] sm:py-16 lg:py-20 px-4 mx-auto sm:px-6 lg:px-8 max-w-7xl">
       <ShoppingList></ShoppingList>
       <Pagination />
     </div>

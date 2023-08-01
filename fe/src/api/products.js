@@ -1,3 +1,5 @@
-import { fakeapi } from "./config";
+import { fakeapi, instance } from "./config";
 
-export const products = async () => await fakeapi.get();
+export const productsFake = async () => await fakeapi.get();
+
+export const products = async () => await instance.get("/products");
