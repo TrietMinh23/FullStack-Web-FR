@@ -15,18 +15,16 @@ export default function ShoppingList() {
       })
       .catch((err) => console.log(err));
   }, []);
-
-  console.log(productsList);
   return (
     <section
       id="Projects"
-      class="w-fit mx-auto grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 justify-items-center justify-center gap-y-14 gap-x-14 mt-10 mb-5"
+      class="w-fit mx-auto grid grid-cols-1 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 justify-items-center justify-center gap-y-14 gap-x-14 mt-10 mb-5"
     >
       {productsList ? (
         productsList.map((item) => (
           <ShoppingCard
-            id={item.id}
-            key={item.id}
+            id={item._id}
+            key={item._id}
             title={item.title}
             image={item.image}
             price={item.price}

@@ -6,11 +6,11 @@ export default function CardSkeleton({ cards }) {
     .fill(0)
     .map((item, i) => (
       <div
-        class="w-72 bg-white shadow-md rounded-xl duration-500 hover:scale-105 hover:shadow-xl mb-24"
+        class="w-72 bg-white shadow-md rounded-xl duration-500 hover:scale-105 hover:shadow-xl"
         key={i}
       >
         <a href="#">
-          <Skeleton className="h-full" />
+          <Skeleton height={300} />
           <div class="px-4 py-3 w-72">
             <span class="text-gray-400 mr-3 uppercase text-xs">Brand</span>
             <p class="text-lg font-bold text-black truncate block capitalize">

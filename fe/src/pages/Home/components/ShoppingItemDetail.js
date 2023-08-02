@@ -1,11 +1,12 @@
 import "react-toastify/dist/ReactToastify.css";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router";
-import { fakeapi } from "../../../api/config";
+import { instance } from "../../../api/config";
 import { ToastContainer, toast } from "react-toastify";
 import { ADDTOCART } from "../../../utils/redux/productsSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import CheapIcon from "../../../assets/CheapIcon";
 import CardSkeletonDetail from "../../../components/ui/CardSkeletonDetail";
 
 export default function ProductDetail() {
@@ -56,9 +57,42 @@ export default function ProductDetail() {
     );
   };
 
+  function formatNumberWithCommas(number) {
+    const numberStr = number.toString();
+
+    const [integerPart, decimalPart] = numberStr.split(".");
+
+    const reversedInteger = integerPart.split("").reverse().join("");
+
+    const formattedInteger = reversedInteger
+      .match(/.{1,3}/g)
+      .join(",")
+      .split("")
+      .reverse()
+      .join("");
+
+    // Kết hợp phần nguyên và phần thập phân (nếu có)
+    let formattedNumber = formattedInteger;
+    if (decimalPart) {
+      formattedNumber += "." + decimalPart;
+    }
+
+    return formattedNumber;
+  }
+
   useEffect(() => {
-    fakeapi.get(`/${params.slug}`).then((res) => setData(res.data));
+    instance
+      .get(`products/${params.slug}`, null, {
+        params: {
+          id: params.slug,
+        },
+      })
+      .then((res) => setData(res.data[0]));
   }, [params.slug]);
+
+  {
+    console.log(data);
+  }
 
   return (
     <section className="text-gray-700 body-font overflow-hidden bg-white">
@@ -73,9 +107,9 @@ export default function ProductDetail() {
               />
               <div className="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
                 <h2 className="text-sm title-font uppercase text-gray-500 tracking-widest">
-                  {data?.category}
+                  BRAND : {data.brandName}
                 </h2>
-                <h1 className="text-gray-900 text-3xl title-font font-medium mb-1">
+                <h1 className="text-gray-900 text-3xl title-font font-medium mb-1 mt-3">
                   {data?.title}
                 </h1>
                 <div className="flex mb-4">
@@ -123,11 +157,55 @@ export default function ProductDetail() {
                 <div>
                   <div className="first-part">
                     <div className="sub-first-part">
-                      <div>
-                        <span className="title-font font-medium text-2xl text-gray-900">
-                          Price :{" "}
-                          <span className="text-4xl">{data?.price}</span> $
-                        </span>
+                      <div className="py-4 px-3 bg-lotion">
+                        <div className="above">
+                          <span className="title-font font-medium text-2xl text-gray-900">
+                            Price :{" "}
+                            <span className="text-4xl text-venetian-red">
+                              {formatNumberWithCommas(data?.price)}
+                            </span>
+                            <span className="text-venetian-red">₫</span>
+                          </span>
+                        </div>
+                        <div className="below flex mt-2">
+                          <div className="flex items-center">
+                            <CheapIcon />
+                          </div>
+                          <div className="ml-3">
+                            <div>
+                              <div className="text-venetian-red">
+                                Anything Cheap
+                              </div>
+                            </div>
+                            <div className="text-xs">
+                              Best price compared to other products on the
+                              market on Fashion Revive
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="mt-6">
+                        <h2 className="mb-2 text-lg font-semibold text-gray-900">
+                          PRODUCT DETAILS:
+                        </h2>
+                        <ul className="max-w-md space-y-1 text-gray-500 list-disc list-inside dark:text-gray-400">
+                          <li>
+                            Color : <span>{data?.color}</span>
+                          </li>
+                          <li>
+                            {" "}
+                            Category :{" "}
+                            <div className="inline-block">
+                              <div className="flex">
+                                {data?.category.map((item, i) => (
+                                  <p key={i} className="px-1">
+                                    {item}
+                                  </p>
+                                ))}
+                              </div>
+                            </div>
+                          </li>
+                        </ul>
                       </div>
                     </div>
                   </div>
