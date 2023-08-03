@@ -11,6 +11,7 @@ import mongoose from "mongoose";
 import { Product } from "./models/productModel.js";
 import { data } from "./data.js";
 import slugify from "slugify";
+import vnpayRoute from "./routers/vnpayRoute.js";
 
 const app = express(process.env.DATABASE);
 const PORT = process.env.PORT || 5000;
@@ -31,6 +32,7 @@ app.use("/buyers", userRouter);
 app.use("/products", productRouter);
 app.use("/pcategories", pCategoryRouter);
 app.use("/orders", orderRouter);
+app.use("/vnpay", vnpayRoute);
 
 mongoose
   .connect(URI, { useNewUrlParser: true, useUnifiedTopology: true })
