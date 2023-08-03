@@ -71,10 +71,11 @@ export default function Login() {
       setLoading(true);
       await login(formData)
         .then((res) => {
-          if (res.data.data) setLoading(false);
+          if (!res.data.error) setLoading(false);
+          console.log(res.data);
         })
         .catch((err) => {
-          setMessage(err.response.data.message);
+          setMessage(err.response.data.error);
           setLoading(false);
         });
     }
@@ -177,7 +178,7 @@ export default function Login() {
               onClick={(e) => Login(e)}
               className="w-full inline-flex items-center justify-center px-4 py-2 bg-green-sheen hover:bg-emerald border border-transparent rounded-md font-semibold capitalize text-white focus:outline-none disabled:opacity-25 transition"
             >
-              {isLoading ? <LoadingIcon /> : "Sign In"}
+              {isLoading ? <LoadingIcon /> : "Login"}
             </button>
           </div>
           <div className="mt-4 flex justify-between">

@@ -4,14 +4,14 @@ import crypto from "crypto";
 
 const userSchema = new mongoose.Schema(
   {
-    name: {type: String, required: true},
-    email: {type: String, required: true},
-    mobile: {type: String, unique: true},
-    password: {type: String, required: true},
-    address: {type: String},
-    role: {type: String, default: "buyer"},
-    isBlocked: {type: Boolean, default: false},
-    wishlist: [{type: mongoose.Schema.Types.ObjectId, ref: "Product"}],
+    name: { type: String, required: true },
+    email: { type: String, required: true },
+    mobile: { type: String },
+    password: { type: String, required: true },
+    address: { type: String },
+    role: { type: String, default: "buyer" },
+    isBlocked: { type: Boolean, default: false },
+    wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
     passwordChangeAt: Date,
     passwordResetToken: String,
     passwordResetExpires: Date,
@@ -36,10 +36,13 @@ userSchema.methods.isPasswordMatched = async function (enteredPassword) {
 };
 
 userSchema.methods.createPasswordResetToken = async function () {
- const resetToken = crypto.randomBytes(32).toString("hex");
- this.passwordResetToken = crypto.createHash("sha256").update(resetToken).digest("hex");
- this.passwordResetExpires = Date.now() + 30*60*1000;
- return resetToken;
-}
+  const resetToken = crypto.randomBytes(32).toString("hex");
+  this.passwordResetToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+  this.passwordResetExpires = Date.now() + 30 * 60 * 1000;
+  return resetToken;
+};
 
 export const User = mongoose.model("User", userSchema);
