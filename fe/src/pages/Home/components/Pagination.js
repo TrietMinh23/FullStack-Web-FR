@@ -10,7 +10,7 @@ export default function PaginationComponent({ setPage, page }) {
     <div className="flex justify-center mt-10">
       <Stack spacing={2}>
         <Pagination
-          count={10}
+          count={20}
           defaultPage={1}
           page={page}
           size="large"

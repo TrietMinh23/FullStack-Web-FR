@@ -3,17 +3,18 @@ import ShoppingCard from "./ShoppingCard";
 import { products } from "../../../api/products";
 import React from "react";
 import CardSkeleton from "../../../components/ui/CardSkeleton";
-import axios from "axios";
 
 export default function ShoppingList({ page }) {
   const [productsList, setProducts] = useState(null);
   useEffect(() => {
-    products()
+    setProducts(null);
+    window.scrollTo(0, 0);
+    products(page)
       .then((res) => {
         setProducts(res.data.products);
       })
       .catch((err) => console.log(err));
-  }, []);
+  }, [page]);
   return (
     <section
       id="Projects"

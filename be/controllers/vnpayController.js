@@ -52,7 +52,7 @@ export const createPaymentUrl = async (req, res, next) => {
 
     let bankCode = "";
 
-    let locale = "vn"
+    let locale = "vn";
 
     let currCode = "VND";
 
@@ -118,16 +118,16 @@ export const getVnPayReturn = (req, res, next) => {
       // Kiem tra xem du lieu trong db co hop le hay khong va thong bao ket qua
 
       return res
-  .cookie("vnpay", "success", vnp_Params["vnp_OrderInfo"] , { maxAge: 720000 })
-  .redirect(`http://localhost:3000/purchase/`);
-
+        .cookie("vnp_params", JSON.stringify(vnp_Params), {
+          maxAge: 720000,
+        })
+        .redirect(`http://localhost:3000/purchase`);
     } catch (err) {
       next(err);
     }
   } else {
     res
-  .cookie("vnpay", "fail", vnp_Params["vnp_OrderInfo"], { maxAge: 720000 })
-  .redirect(`http://localhost:3000/purchase/`);
-
+      .cookie("vnpay", "fail", vnp_Params["vnp_OrderInfo"], { maxAge: 720000 })
+      .redirect(`http://localhost:3000/purchase/`);
   }
 };

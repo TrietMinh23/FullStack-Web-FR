@@ -5,6 +5,7 @@ export const createPaymentUrl = async ({ order }) => {
     const { data } = await instance.post("/vnpay/create_payment_url", {
       order,
     });
+
     if (data) {
       if (data.code === "00") {
         window.location.href = data.vnpUrl;

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 export default function ShoppingCard({ title, price, image, id }) {
   return (
     <Link to={`/products/${id}`} className="group">
-      <div class="w-72 bg-white shadow-md rounded-xl duration-500 hover:scale-105 hover:shadow-xl">
+      <div class="w-72 bg-white shadow-md duration-500 hover:scale-105 hover:shadow-xl">
         <a href="#">
           <img
             src={image}

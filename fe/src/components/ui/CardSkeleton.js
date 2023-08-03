@@ -6,7 +6,7 @@ export default function CardSkeleton({ cards }) {
     .fill(0)
     .map((item, i) => (
       <div
-        class="w-72 bg-white shadow-md rounded-xl duration-500 hover:scale-105 hover:shadow-xl"
+        class="w-72 bg-white shadow-md duration-500 hover:scale-105 hover:shadow-xl"
         key={i}
       >
         <a href="#">

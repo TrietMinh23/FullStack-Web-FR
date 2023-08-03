@@ -75,8 +75,8 @@ export const getProductsByCategory = async (req, res) => {
 export const getAllProducts = async (req, res) => {
   try {
     // pagination
-    var page = parseInt(req.params.page) || 1;
-    var limit = parseInt(req.params.limit) || 20;
+    var page = parseInt(req.query.page) || 1;
+    var limit = parseInt(req.query.limit) || 20;
 
     const skip = (page - 1) * limit;
     const products = await Product.find()

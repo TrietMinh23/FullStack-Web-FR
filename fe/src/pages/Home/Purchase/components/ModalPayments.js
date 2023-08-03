@@ -109,9 +109,8 @@ export default function CheckoutModal() {
   // Xử lý sự kiện khi người dùng click vào nút "Place Order"
   const handlePlaceOrderClick = useCallback(async () => {
     try {
-
       // Gửi yêu cầu tạo URL thanh toán với thông tin đơn hàng
-      const response = await createPaymentUrl({ order });
+      await createPaymentUrl({ order });
     } catch (error) {
       // Xử lý lỗi nếu có
       console.error("Error creating payment URL:", error);
@@ -147,11 +146,10 @@ export default function CheckoutModal() {
             onClick={handlePlaceOrderClick}
             className="ml-2 bg-dark-jungle-green text-white p-2 rounded-sm md:w-1/2 w-32"
           >
-          Place Order
+            Place Order
           </button>
         </div>
       </div>
-
     </div>
   );
 }
