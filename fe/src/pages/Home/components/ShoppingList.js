@@ -5,12 +5,11 @@ import React from "react";
 import CardSkeleton from "../../../components/ui/CardSkeleton";
 import axios from "axios";
 
-export default function ShoppingList() {
+export default function ShoppingList({ page }) {
   const [productsList, setProducts] = useState(null);
   useEffect(() => {
     products()
       .then((res) => {
-        console.log(res.data.products);
         setProducts(res.data.products);
       })
       .catch((err) => console.log(err));

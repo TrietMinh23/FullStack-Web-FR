@@ -18,6 +18,8 @@ module.exports = {
         "philippine-yellow": "#F7CA00",
         "venetian-red": "#ee4d2d",
         lotion: "#fafafa",
+        primary: "#3C50E0",
+        secondary: "#80CAEE",
       },
       flexGrow: {
         2: "2",
