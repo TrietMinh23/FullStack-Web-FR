@@ -1,5 +1,8 @@
-import React, { useState } from "react";
+import React, { useState ,useEffect } from "react";
 import { FaTrashAlt, FaPen } from "react-icons/fa";
+import {PiMagnifyingGlass} from "react-icons/pi";
+import {AiOutlineCheckCircle} from "react-icons/ai";
+import PopupProcess from "../PopUp/PopupProcess";
 const Table = ({rows}) => {
   const [perPage, setPerPage] = useState(5); // Số hàng trên mỗi trang
   const [currentPage] = useState(1); // Trang hiện tại
@@ -8,8 +11,9 @@ const Table = ({rows}) => {
   const [searchTerm, setSearchTerm] = useState(""); // Giá trị tìm kiếm
   const [selectedItems, setSelectedItems] = useState([]); // Các sản phẩm được chọn
   const [selectAll, setSelectAll] = useState(false); // Tất cả sản phẩm được chọn
-
-
+  const [isHandle, setIsHandle] = useState(1);
+  const [isReview, setIsReview] = useState(false);
+  const [isProcess, setIsProcess] = useState(false);
 
   const handleSort = (column) => {
     if (column === sortColumn) {
@@ -21,7 +25,10 @@ const Table = ({rows}) => {
       setSortOrder("asc");
     }
   };
-
+  const finishProcess = () => {
+    setIsProcess(false);
+    rows[isHandle].status = "Done";
+  }
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
   };
@@ -34,7 +41,7 @@ const Table = ({rows}) => {
     } else {
       setSelectedItems((prevSelectedItems) =>
         prevSelectedItems.filter(
-          (selectedItem) => selectedItem.tradeCode !== item.tradeCode
+          (selectedItem) => selectedItem.reporter !== item.reporter
         )
       );
     }
@@ -87,7 +94,7 @@ const Table = ({rows}) => {
 
   return (
     <div className="p-5 h-full bg-gray-100 w-full rounded-md">
-      <h1 className="text-xl mb-2">Your orders</h1>
+      <h1 className="text-xl mb-2">All reports</h1>
 
       <div className="flex items-center mb-4">
         <label htmlFor="search" className="mr-2">
@@ -101,14 +108,14 @@ const Table = ({rows}) => {
           onChange={handleSearch}
         />
         <button
-          className="ml-2 p-2 hover:bg-red-600 bg-red-500 text-white rounded-md"
+          className="ml-2 p-4 bg-red-500 text-white rounded-md"
           onClick={handleDelete}
         >
           <FaTrashAlt />
         </button>
       </div>
 
-      <div className="overflow-auto rounded-lg shadow hidden xl:block">
+      <div className="overflow-auto rounded-lg shadow hidden lg:block">
         <table className="w-full">
           <thead className="bg-gray-50 border-b-2 border-gray-200">
             <tr>
@@ -121,32 +128,25 @@ const Table = ({rows}) => {
               </th>
               <th
                 className="w-20 p-3 text-sm font-semibold tracking-wide text-left"
-                onClick={() => handleSort("tradeCode")}
+                onClick={() => handleSort("reporter")}
               >
-                TradeCode{" "}
-                {sortColumn === "tradeCode" &&
+                Reporter{" "}
+                {sortColumn === "reporter" &&
                   (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
-                className="p-3 text-sm font-semibold tracking-wide text-left"
-                onClick={() => handleSort("itemName")}
-              >
-                Item name{" "}
-                {sortColumn === "itemName" && (sortOrder === "asc" ? "▲" : "▼")}
-              </th>
-              <th
-                className="p-3 text-sm font-semibold tracking-wide text-left"
-                onClick={() => handleSort("price")}
-              >
-                Price{" "}
-                {sortColumn === "price" && (sortOrder === "asc" ? "▲" : "▼")}
-              </th>
-              <th
                 className="w-24 p-3 text-sm font-semibold tracking-wide text-left"
-                onClick={() => handleSort("status")}
+                onClick={() => handleSort("reported")}
               >
-                Status{" "}
-                {sortColumn === "status" && (sortOrder === "asc" ? "▲" : "▼")}
+                Reported{" "}
+                {sortColumn === "reported" && (sortOrder === "asc" ? "▲" : "▼")}
+              </th>
+              <th
+                className="p-3 text-sm font-semibold tracking-wide text-left"
+                onClick={() => handleSort("title")}
+              >
+                Report title{" "}
+                {sortColumn === "title" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
                 className="w-24 p-3 text-sm font-semibold tracking-wide text-left"
@@ -154,6 +154,9 @@ const Table = ({rows}) => {
               >
                 Post date{" "}
                 {sortColumn === "postDate" && (sortOrder === "asc" ? "▲" : "▼")}
+              </th>
+              <th className="w-32 p-3 text-sm font-semibold tracking-wide text-left">
+                Status
               </th>
               <th className="w-32 p-3 text-sm font-semibold tracking-wide text-left">
                 Action
@@ -164,65 +167,72 @@ const Table = ({rows}) => {
             {getCurrentPageData().map((row, index) => (
               <tr
                 className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
-                key={row.tradeCode}
+                key={row.reporter}
               >
-                <td className="p-3 text-sm text-center text-gray-700 whitespace-nowrap">
+                <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
                   <input
                     type="checkbox"
                     checked={selectedItems.some(
-                      (item) => item.tradeCode === row.tradeCode
+                      (item) => item.reporter === row.reporter
                     )}
                     onChange={(event) => handleCheckboxChange(event, row)}
                   />
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                  {row.tradeCode}
+                  {row.reporter}
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                  {row.itemName}
+                  {row.reported}
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                  {row.price}
+                  {row.title}
+                </td>
+                <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                  {row.postDate}
                 </td>
                 <td className="p-3 text-xs font-medium uppercase text-gray-700 whitespace-nowrap ">
                   <span
-                    className={
-                      "block text-center p-2 rounded-md bg-opacity-50  " +
-                      (row.status === "ONL"
+                    className={`p-1.5 text-xs font-medium uppercase tracking-wider ${
+                      row.status === "Done"
                         ? "text-green-800 bg-green-200"
-                        : row.status === "OFF > 15 day"
-                        ? "text-gray-800 bg-gray-200"
-                        : row.status === "OFF"
-                        ? "text-red-800 bg-red-200"
-                        : "")
-                    }
+                        : row.status === "Pending"
+                        ? "text-yellow-800 bg-yellow-200"
+                        : ""
+                    } rounded-lg bg-opacity-50`}
                   >
                     {row.status}
                   </span>
                 </td>
-
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                  {row.postDate}
-                </td>
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                {row.status === "Done" ?
+                <td className="p-3 text-sm text-gray-700 whitespace-nowrap ">
                   <button className="text-blue-500 font-bold hover:underline">
-                    <FaPen />
-                  </button>
-                  <button className="text-red-500 font-bold hover:underline ml-2">
-                    <FaTrashAlt />
+                    <AiOutlineCheckCircle className="w-5 h-5 text-blue-500" />
                   </button>
                 </td>
+                 :
+                <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                  <button 
+                    onClick ={() => {
+                      setIsProcess(!isProcess);
+                      setIsHandle(index);
+                    } }
+                    className="text-blue-500 font-bold hover:underline "
+                    >
+                    <PiMagnifyingGlass className="w-5 h-5 text-blue-500"/>
+                  </button>
+                </td>
+                }
               </tr>
             ))}
           </tbody>
         </table>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 xl:hidden">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:hidden">
         {getCurrentPageData().map((row) => (
           <div
             className="bg-white space-y-3 p-4 rounded-lg shadow"
-            key={row.tradeCode}
+            key={row.reporter}
           >
             <div className="flex items-center space-x-2 text-sm">
               <div>
@@ -230,21 +240,17 @@ const Table = ({rows}) => {
                   href="/#"
                   className="text-blue-500 font-bold hover:underline"
                 >
-                  TradeCode {row.tradeCode}
+                  reporter {row.reporter}
                 </a>
               </div>
               <div className="text-gray-500">{row.postDate}</div>
               <div>
                 <span
                   className={`p-1.5 text-xs font-medium uppercase tracking-wider ${
-                    row.status === "Available"
+                    row.status === "Done"
                       ? "text-green-800 bg-green-200"
-                      : row.status === "Sold out"
-                      ? "text-gray-800 bg-gray-200"
-                      : row.status === "Shipping"
+                      : row.status === "Pending"
                       ? "text-yellow-800 bg-yellow-200"
-                      : row.status === "Refund"
-                      ? "text-red-800 bg-red-200"
                       : ""
                   } rounded-lg bg-opacity-50`}
                 >
@@ -252,16 +258,8 @@ const Table = ({rows}) => {
                 </span>
               </div>
             </div>
-            <div className="text-sm text-gray-700">{row.itemName}</div>
+            <div className="text-sm text-gray-700">{row.title}</div>
             <div className="text-sm font-medium text-black">${row.price}</div>
-            <div className="flex justify-end">
-              <button className="text-blue-500 font-bold hover:underline">
-                <FaPen />
-              </button>
-              <button className="text-red-500 font-bold hover:underline ml-2">
-                <FaTrashAlt />
-              </button>
-            </div>
           </div>
         ))}
       </div>
@@ -357,6 +355,16 @@ const Table = ({rows}) => {
           </a>
         </div>
       </div>
+      {isProcess && (
+        <div className="flex lg:flex-row flex-col">
+        <PopupProcess
+          close = {() => setIsProcess(false)}
+          finish = {finishProcess}
+          i = {isHandle}
+          />
+        </div>
+        )
+      }
     </div>
   );
 };

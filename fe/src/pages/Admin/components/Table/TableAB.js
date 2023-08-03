@@ -34,7 +34,7 @@ const Table = ({rows}) => {
     } else {
       setSelectedItems((prevSelectedItems) =>
         prevSelectedItems.filter(
-          (selectedItem) => selectedItem.tradeCode !== item.tradeCode
+          (selectedItem) => selectedItem.userName !== item.userName
         )
       );
     }
@@ -87,7 +87,7 @@ const Table = ({rows}) => {
 
   return (
     <div className="p-5 h-full bg-gray-100 w-full rounded-md">
-      <h1 className="text-xl mb-2">Your orders</h1>
+      <h1 className="text-xl mb-2">All Buyers</h1>
 
       <div className="flex items-center mb-4">
         <label htmlFor="search" className="mr-2">
@@ -121,25 +121,32 @@ const Table = ({rows}) => {
               </th>
               <th
                 className="w-20 p-3 text-sm font-semibold tracking-wide text-left"
-                onClick={() => handleSort("tradeCode")}
+                onClick={() => handleSort("userName")}
               >
-                TradeCode{" "}
-                {sortColumn === "tradeCode" &&
+                userName{" "}
+                {sortColumn === "userName" &&
                   (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
                 className="p-3 text-sm font-semibold tracking-wide text-left"
-                onClick={() => handleSort("itemName")}
+                onClick={() => handleSort("purchase")}
               >
-                Item name{" "}
-                {sortColumn === "itemName" && (sortOrder === "asc" ? "▲" : "▼")}
+                Purchase orders{" "}
+                {sortColumn === "purchase" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
                 className="p-3 text-sm font-semibold tracking-wide text-left"
-                onClick={() => handleSort("price")}
+                onClick={() => handleSort("canceled")}
               >
-                Price{" "}
-                {sortColumn === "price" && (sortOrder === "asc" ? "▲" : "▼")}
+                Canceled orders{" "}
+                {sortColumn === "canceled" && (sortOrder === "asc" ? "▲" : "▼")}
+              </th>
+              <th
+                className="p-3 text-sm font-semibold tracking-wide text-left"
+                onClick={() => handleSort("totalIncome")}
+              >
+                Total Income{" "}
+                {sortColumn === "totalIncome" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
                 className="w-24 p-3 text-sm font-semibold tracking-wide text-left"
@@ -150,10 +157,10 @@ const Table = ({rows}) => {
               </th>
               <th
                 className="w-24 p-3 text-sm font-semibold tracking-wide text-left"
-                onClick={() => handleSort("postDate")}
+                onClick={() => handleSort("signUpDate")}
               >
-                Post date{" "}
-                {sortColumn === "postDate" && (sortOrder === "asc" ? "▲" : "▼")}
+                signUpDate{" "}
+                {sortColumn === "signUpDate" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th className="w-32 p-3 text-sm font-semibold tracking-wide text-left">
                 Action
@@ -164,25 +171,28 @@ const Table = ({rows}) => {
             {getCurrentPageData().map((row, index) => (
               <tr
                 className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
-                key={row.tradeCode}
+                key={row.userName}
               >
                 <td className="p-3 text-sm text-center text-gray-700 whitespace-nowrap">
                   <input
                     type="checkbox"
                     checked={selectedItems.some(
-                      (item) => item.tradeCode === row.tradeCode
+                      (item) => item.userName === row.userName
                     )}
                     onChange={(event) => handleCheckboxChange(event, row)}
                   />
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                  {row.tradeCode}
+                  {row.userName}
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                  {row.itemName}
+                  {row.purchase}
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                  {row.price}
+                  {row.canceled}
+                </td>
+                <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                  {row.totalIncome}
                 </td>
                 <td className="p-3 text-xs font-medium uppercase text-gray-700 whitespace-nowrap ">
                   <span
@@ -202,7 +212,7 @@ const Table = ({rows}) => {
                 </td>
 
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                  {row.postDate}
+                  {row.signUpDate}
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
                   <button className="text-blue-500 font-bold hover:underline">
@@ -222,7 +232,7 @@ const Table = ({rows}) => {
         {getCurrentPageData().map((row) => (
           <div
             className="bg-white space-y-3 p-4 rounded-lg shadow"
-            key={row.tradeCode}
+            key={row.userName}
           >
             <div className="flex items-center space-x-2 text-sm">
               <div>
@@ -230,21 +240,19 @@ const Table = ({rows}) => {
                   href="/#"
                   className="text-blue-500 font-bold hover:underline"
                 >
-                  TradeCode {row.tradeCode}
+                  userName {row.userName}
                 </a>
               </div>
-              <div className="text-gray-500">{row.postDate}</div>
+              <div className="text-gray-500">{row.signUpDate}</div>
               <div>
                 <span
                   className={`p-1.5 text-xs font-medium uppercase tracking-wider ${
-                    row.status === "Available"
+                    row.status === "ONL"
                       ? "text-green-800 bg-green-200"
-                      : row.status === "Sold out"
+                      : row.status === "OFF > 15 day"
                       ? "text-gray-800 bg-gray-200"
-                      : row.status === "Shipping"
+                      : row.status === "OFF"
                       ? "text-yellow-800 bg-yellow-200"
-                      : row.status === "Refund"
-                      ? "text-red-800 bg-red-200"
                       : ""
                   } rounded-lg bg-opacity-50`}
                 >
@@ -252,8 +260,8 @@ const Table = ({rows}) => {
                 </span>
               </div>
             </div>
-            <div className="text-sm text-gray-700">{row.itemName}</div>
-            <div className="text-sm font-medium text-black">${row.price}</div>
+            <div className="text-sm text-gray-700">Purchase order: {row.purchase}</div>
+            <div className="text-sm font-medium text-black">${row.totalIncome}</div>
             <div className="flex justify-end">
               <button className="text-blue-500 font-bold hover:underline">
                 <FaPen />
