@@ -16,6 +16,10 @@ module.exports = {
         "light-grey": "#D2D2D2",
         cultured: "#F5F5F5",
         "philippine-yellow": "#F7CA00",
+        "venetian-red": "#ee4d2d",
+        lotion: "#fafafa",
+        primary: "#3C50E0",
+        secondary: "#80CAEE",
       },
       flexGrow: {
         2: "2",
