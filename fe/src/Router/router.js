@@ -1,4 +1,3 @@
-
 import { Route, Routes } from "react-router-dom";
 import React, { Suspense, lazy } from "react";
 import Loading from "../components/ui/Loading";
@@ -40,7 +39,6 @@ const Allsellers = lazy(() => import("../pages/Admin/page/allsellers"));
 const Report = lazy(() => import("../pages/Admin/page/report"));
 const ReportForm = lazy(() => import("../components/Report"));
 
-<<<<<<< HEAD
 const AppRouter = () => {
   withAuth(
     <React.Fragment>
@@ -79,11 +77,6 @@ const AppRouter = () => {
 };
 
 function Router() {
-=======
-
-
-export default function Router() {
->>>>>>> 163db289907d109bb3fe999f6a80a789ec74f4ba
   return (
     <Suspense fallback={<Loading />}>
       <Routes>
