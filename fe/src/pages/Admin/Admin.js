@@ -23,6 +23,14 @@ export default function Admin () {
             <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
               <Outlet />
             </div>
+            <div>
+              {sidebarOpen && 
+                (<div
+                    id="dimScreen"
+                    className={"block "}
+                  ></div>)
+              }
+            </div>
           </main>
           {/* <!-- ===== Main Content End ===== --> */}
         </div>

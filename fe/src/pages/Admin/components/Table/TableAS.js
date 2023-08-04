@@ -260,7 +260,7 @@ const Table = ({rows}) => {
                 </span>
               </div>
             </div>
-            <div className="text-sm text-gray-700">positive reviews: {row.positive}</div>
+            <div className="text-sm text-gray-700">positive reviews: <span className ="text-sky-500	">{row.positive}</span>, negative reviews: <span className ="text-red-400	">{row.negative}</span></div>
             <div className="text-sm font-medium text-black">${row.totalIncome}</div>
             <div className="flex justify-end">
               <button className="text-blue-500 font-bold hover:underline">

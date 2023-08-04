@@ -41,15 +41,6 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
     console.log(sidebarOpen);
   }, [sidebarOpen]);
 
-  // useEffect(() => {
-  //   const keyHandler = ({ keyCode }) => {
-  //     if (sidebarOpen || keyCode !== 27) return;
-  //     setSidebarOpen(true);
-  //   };
-  //   document.addEventListener('keydown', keyHandler);
-  //   return () => document.removeEventListener('keydown', keyHandler);
-  // });
-
 
   useEffect(() => {
     localStorage.setItem('sidebar-expanded', sidebarExpanded.toString());

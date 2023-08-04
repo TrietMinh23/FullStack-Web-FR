@@ -5,14 +5,23 @@ import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import ItemCart from "./components/ItemCart";
 import TableItemResponsive from "./components/TableItemResponsive";
 import ModalShipping from "./components/ModalShipping";
-import PopupChangeInfo from "./components/PopupChangeInfo";
+import PopupChangeInfo from "./components/PopUp/PopupChangeInfo";
 import CheckoutModal from "./components/ModalPayments";
+import PopupPaySuccess from "./components/PopUp/PopupPaySuccess";
+import PopupPayUnsuccess from "./components/PopUp/PopupPayUnsuccess";
+
+
 import {
   updatedPayments,
   updatedProductPrice,
 } from "../../../utils/redux/purchaseSlice";
 
 export default function Purchase() {
+  const [VNpaySuccessful, setVNPaySucessful] = useState(false);
+
+  const [paySuccessful, setPaySucessful] = useState(true);
+  const [payUnsuccessful, setPayUnsucessful] = useState(false);
+
   const [modalIsOpen, setModalOpen] = useState(false);
 
   const [isCashPayment, setCashPayment] = useState(true);
@@ -31,6 +40,13 @@ export default function Purchase() {
     address: "",
   });
 
+  const finishPopupSuccess = () => {
+    setPaySucessful(false);
+  }
+
+  const finishPopupUnsuccess = () => {
+    setPayUnsucessful(false);
+  }
   const changeShipping = () => {
     setModalOpen(!modalIsOpen);
     const bodyModal = document.getElementsByClassName("body-modal")[0];
@@ -280,6 +296,28 @@ export default function Purchase() {
           </div>
         </div>
       </div>
+      { paySuccessful && (
+         <div className="flex lg:flex-row flex-col">
+         <PopupPaySuccess
+           finish = {finishPopupSuccess}
+           />
+         <div
+           id="dimScreen"
+           className={"block "}
+           ></div>
+           </div>
+      )}
+      { payUnsuccessful && (
+         <div className="flex lg:flex-row flex-col">
+         <PopupPayUnsuccess
+           finish = {finishPopupUnsuccess}
+           />
+         <div
+           id="dimScreen"
+           className={"block "}
+           ></div>
+           </div>
+      )}
     </div>
   );
 }

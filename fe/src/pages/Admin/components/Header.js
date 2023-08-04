@@ -1,6 +1,6 @@
 export default function Header({ sidebarOpen, setSidebarOpen }) {
   return (
-    <header className="sticky top-0 z-40 shadow-model-9 flex w-full bg-white drop-shadow-1 dark:bg-boxdark dark:drop-shadow-none">
+    <header className="sticky top-0 z-20 shadow-model-9 flex w-full bg-white drop-shadow-1 dark:bg-boxdark dark:drop-shadow-none">
       <div className="flex flex-grow items-center justify-between py-4 px-4 shadow-2 md:px-6 2xl:px-11">
         <div className="flex items-center gap-2 sm:gap-4 lg:hidden">
           {/* <!-- Nut mo, dong --> */}
