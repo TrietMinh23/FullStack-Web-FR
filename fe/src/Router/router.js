@@ -1,10 +1,3 @@
-import Admin from "../pages/Admin/Admin";
-import FinancialManagement from "../pages/Admin/page/financialmanagement";
-import Usemanagement from "../pages/Admin/page/usemanagement";
-import Allbuyer from "../pages/Admin/page/allbuyer";
-import Allitems from "../pages/Admin/page/allitems";
-import Allsellers from "../pages/Admin/page/allsellers";
-import Report from "../pages/Admin/page/report";
 
 import { Route, Routes } from "react-router-dom";
 import React, { Suspense, lazy } from "react";
