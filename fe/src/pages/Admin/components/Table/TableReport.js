@@ -29,6 +29,10 @@ const Table = ({rows}) => {
     setIsProcess(false);
     rows[isHandle].status = "Done";
   }
+
+  const closeProcess = () => {
+    setIsProcess(false);
+  }
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
   };
@@ -229,7 +233,7 @@ const Table = ({rows}) => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:hidden">
-        {getCurrentPageData().map((row) => (
+        {getCurrentPageData().map((row, index) => (
           <div
             className="bg-white space-y-3 p-4 rounded-lg shadow"
             key={row.reporter}
@@ -259,7 +263,25 @@ const Table = ({rows}) => {
               </div>
             </div>
             <div className="text-sm text-gray-700">{row.title}</div>
-            <div className="text-sm font-medium text-black">${row.price}</div>
+            <div className="text-sm font-medium text-black ">Post Date: {row.postDate}</div>
+            <div className="flex justify-end">
+              {row.status === "Done" ?
+                <button className="text-blue-500 font-bold hover:underline">
+                  <AiOutlineCheckCircle className="w-5 h-5 text-blue-500" />
+                </button>
+                
+                 :
+                <button 
+                  onClick ={() => {
+                    setIsProcess(!isProcess);
+                    setIsHandle(index);
+                  } }
+                  className="text-blue-500 font-bold hover:underline "
+                  >
+                  <PiMagnifyingGlass className="w-5 h-5 text-blue-500"/>
+                </button>   
+                }
+            </div>
           </div>
         ))}
       </div>
@@ -357,11 +379,15 @@ const Table = ({rows}) => {
       </div>
       {isProcess && (
         <div className="flex lg:flex-row flex-col">
-        <PopupProcess
-          close = {() => setIsProcess(false)}
-          finish = {finishProcess}
-          i = {isHandle}
-          />
+          <PopupProcess
+            close = {closeProcess}
+            finish = {finishProcess}
+            i = {isHandle}
+            />
+          <div
+            id="dimScreen"
+            className={"block "}
+            ></div>
         </div>
         )
       }

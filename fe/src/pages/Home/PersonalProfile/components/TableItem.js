@@ -235,10 +235,14 @@ const TableItem = ({rows}) => {
                       >Report</button>
                       {isReview && (
                         <div className="flex lg:flex-row flex-col">
-                        <PopupReview
-                          close = {close}
-                          finish = {finish}
-                          />
+                          <PopupReview
+                            close = {close}
+                            finish = {finish}
+                            />
+                          <div
+                            id="dimScreen"
+                            className={"block "}
+                            ></div>
                         </div>
                       )}
                     </div>

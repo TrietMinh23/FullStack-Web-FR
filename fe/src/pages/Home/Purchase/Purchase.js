@@ -13,6 +13,8 @@ import {
 } from "../../../utils/redux/purchaseSlice";
 
 export default function Purchase() {
+  const [VNpaySuccessful, setVNPaySucessful] = useState(false);
+  const [paySuccessful, setPaySucessful] = useState(false);
   const [modalIsOpen, setModalOpen] = useState(false);
 
   const [isCashPayment, setCashPayment] = useState(true);
@@ -30,7 +32,11 @@ export default function Purchase() {
     ward: "",
     address: "",
   });
-
+  const checkPayment = () => {
+    if (isCashPayment || VNpaySuccessful){
+      setPaySucessful(true);
+    }
+  }
   const changeShipping = () => {
     setModalOpen(!modalIsOpen);
     const bodyModal = document.getElementsByClassName("body-modal")[0];
