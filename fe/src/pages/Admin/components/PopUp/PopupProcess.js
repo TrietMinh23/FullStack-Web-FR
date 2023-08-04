@@ -8,7 +8,7 @@ export default function PopupReview ({close, finish, i}) {
     const [currentStep, setCurrentStep] = useState(1);
     const [complete, setComplete] = useState(false);
     return (
-        <div className =" container absolute modal  h-auto">
+        <div className ="container modal">
             <div className ="model-wrapper p-10">
                 {complete &&
                     <div className="mb-16 rounded-md ">

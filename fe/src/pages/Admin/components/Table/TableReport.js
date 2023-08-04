@@ -386,7 +386,7 @@ const Table = ({rows}) => {
             />
           <div
             id="dimScreen"
-            className={"block "}
+            className={"block"}
             ></div>
         </div>
         )
