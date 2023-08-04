@@ -240,7 +240,7 @@ const Table = ({rows}) => {
                   href="/#"
                   className="text-blue-500 font-bold hover:underline"
                 >
-                  itemName {row.itemName}
+                  Itemname: {row.itemName}
                 </a>
               </div>
               <div className="text-gray-500">{row.postDate}</div>

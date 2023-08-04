@@ -1,4 +1,4 @@
-import React from "react";
+import React,{ useState } from "react";
 import Tracker from "../components/Tracker";
 import TableReport from "../components/Table/TableReport";
 import CancelIcon from "@mui/icons-material/Cancel";
@@ -9,7 +9,7 @@ import BlockIcon from '@mui/icons-material/Block';
 import { rows } from "../data/dataReport";
 
 const staticTable = [
-  {
+    {
     icon: <PhonelinkIcon/>,
     id: 1,
     title: "ONL",
@@ -60,7 +60,7 @@ export default function Report() {
   return (
     <React.Fragment>
       <div>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-4 md:gap-6 xl:grid-cols-5 2xl:gap-7.5">
+        <div className="mb-12 grid gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-4">
           {staticTable.map((item) => (
             <Tracker
               icon={item.icon}
@@ -73,10 +73,12 @@ export default function Report() {
             />
           ))}
         </div>
-        <div className="mt-8 w-full">
-          <TableReport rows = {rows}
+        <div className="w-full">
+          <TableReport 
+            rows = {rows}
           />
         </div>
+       
       </div>
     </React.Fragment>
   );
