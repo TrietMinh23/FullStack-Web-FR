@@ -20,6 +20,10 @@ module.exports = {
         'meta-4': "#313D4A",
         primary: '#3C50E0',
         secondary: '#80CAEE',
+        "venetian-red": "#ee4d2d",
+        lotion: "#fafafa",
+        primary: "#3C50E0",
+        secondary: "#80CAEE",
       },
       flexGrow: {
         2: "2",

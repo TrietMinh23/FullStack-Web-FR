@@ -1,14 +1,24 @@
+import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import FmdGoodIcon from "@mui/icons-material/FmdGood";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import ItemCart from "./components/ItemCart";
 import TableItemResponsive from "./components/TableItemResponsive";
-import { useState } from "react";
-import { useSelector } from "react-redux";
 import ModalShipping from "./components/ModalShipping";
 import PopupChangeInfo from "./components/PopupChangeInfo";
+import CheckoutModal from "./components/ModalPayments";
+import {
+  updatedPayments,
+  updatedProductPrice,
+} from "../../../utils/redux/purchaseSlice";
 
 export default function Purchase() {
   const [modalIsOpen, setModalOpen] = useState(false);
+
+  const [isCashPayment, setCashPayment] = useState(true);
+  const [isVNPAYPayment, setVNPAYPayment] = useState(false);
+  const dispatch = useDispatch();
+
   const [isChange, setIsChange] = useState(false);
   const shipping = useSelector((state) => state.purchase.shipping);
   const products = useSelector((state) => state.product.shoppingCart);
@@ -54,6 +64,25 @@ export default function Purchase() {
       address: "",
     });
   };
+  const handleCashPayment = () => {
+    setCashPayment(true);
+    setVNPAYPayment(false);
+    dispatch(
+      updatedPayments({
+        payments: "Cash",
+      })
+    );
+  };
+
+  const handleVNPAYPayment = () => {
+    setVNPAYPayment(true);
+    setCashPayment(false);
+    dispatch(
+      updatedPayments({
+        payments: "VNPAY",
+      })
+    );
+  };
 
   const summarizeQuantity = (list) => {
     let sum = 0;
@@ -73,6 +102,11 @@ export default function Purchase() {
         sum += j.quantity * j.price;
       }
     }
+    dispatch(
+      updatedProductPrice({
+        productPrice: sum,
+      })
+    );
 
     return sum;
   };
@@ -201,6 +235,46 @@ export default function Purchase() {
                     ${summarizePrice(products)}
                   </span>
                 </div>
+              </div>
+            </div>
+
+            <div className="payments-method pb-2 mt-6">
+              <div className="bg-white px-6 py-4 flex items-center">
+                <div className="border-r border-red-600 pr-3 items-center text-2xl">
+                  <span className="font-bold md:text-xl text-sm">
+                    Payment Method
+                  </span>
+                </div>
+                <div className="grow flex md:gap-10 md:ml-20 gap-2 ml-2">
+                  <div className="method-cash btn-change md:w-1/6 w-16">
+                    <button
+                      onClick={handleCashPayment}
+                      className={`uppercase text-sm border-2 w-full py-2 bg-gray-300 ${
+                        isCashPayment
+                          ? "border-gray-500 text-black"
+                          : "text-white  hover:border-gray-500 hover:text-black"
+                      }`}
+                    >
+                      CASH
+                    </button>
+                  </div>
+                  <div className="method-VNPAY btn-change md:w-1/6 w-16">
+                    <button
+                      onClick={handleVNPAYPayment}
+                      className={`uppercase text-sm border-2 w-full py-2 bg-gray-300 ${
+                        isVNPAYPayment
+                          ? "border-gray-500 text-black"
+                          : "text-white  hover:border-gray-500 hover:text-black"
+                      }`}
+                    >
+                      VNPAY
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <hr />
+              <div>
+                <CheckoutModal />
               </div>
             </div>
           </div>

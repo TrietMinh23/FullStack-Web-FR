@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import { FaTrashAlt, FaPen } from "react-icons/fa";
-import { rows } from "../../Seller/data/dataTable";
-
-const Table = () => {
+const Table = ({rows}) => {
   const [perPage, setPerPage] = useState(5); // Số hàng trên mỗi trang
   const [currentPage] = useState(1); // Trang hiện tại
   const [sortColumn, setSortColumn] = useState(""); // Cột hiện tại được sắp xếp
@@ -10,6 +8,8 @@ const Table = () => {
   const [searchTerm, setSearchTerm] = useState(""); // Giá trị tìm kiếm
   const [selectedItems, setSelectedItems] = useState([]); // Các sản phẩm được chọn
   const [selectAll, setSelectAll] = useState(false); // Tất cả sản phẩm được chọn
+
+
 
   const handleSort = (column) => {
     if (column === sortColumn) {
@@ -188,13 +188,11 @@ const Table = () => {
                   <span
                     className={
                       "block text-center p-2 rounded-md bg-opacity-50  " +
-                      (row.status === "Available"
+                      (row.status === "ONL"
                         ? "text-green-800 bg-green-200"
-                        : row.status === "Sold out"
+                        : row.status === "OFF > 15 day"
                         ? "text-gray-800 bg-gray-200"
-                        : row.status === "Shipping"
-                        ? "text-yellow-800 bg-yellow-200"
-                        : row.status === "Refund"
+                        : row.status === "OFF"
                         ? "text-red-800 bg-red-200"
                         : "")
                     }

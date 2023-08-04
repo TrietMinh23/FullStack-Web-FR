@@ -1,9 +1,12 @@
 import CheckIcon from "@mui/icons-material/Check";
 import { useDispatch } from "react-redux";
 import { useState } from "react";
-import { updatedShipping } from "../../../../utils/redux/purchaseSlice";
+import { updatedShipTotal, updatedShipping } from "../../../../utils/redux/purchaseSlice";
 
 export default function ModalShipping({ modal, closeModal }) {
+  let fastPriceShipping = 20000;
+  let normalPriceShipping = 10000;
+
   const [isFastShipping, setFastShipping] = useState(true);
   const [isNormalShipping, setNormalShipping] = useState(false);
   const dispatch = useDispatch();
@@ -22,7 +25,12 @@ export default function ModalShipping({ modal, closeModal }) {
     dispatch(
       updatedShipping({
         shipping: isFastShipping ? "Fast" : "Normal",
-      })
+      }),
+    );
+    dispatch(
+      updatedShipTotal({
+        shipPrice: isFastShipping ? fastPriceShipping : normalPriceShipping,
+      }),
     );
 
     closeModal();
@@ -37,7 +45,7 @@ export default function ModalShipping({ modal, closeModal }) {
             SHIPPING CHANNEL affiliated with FASHION REVIVE
           </h2>
           <p className="text-xs text-gray-500 mb-3">
-            You can track your order on Shopee app when you choose one of the
+            You can track your order on FASHION REVIVE app when you choose one of the
             shipping units:
           </p>
         </div>
@@ -48,7 +56,7 @@ export default function ModalShipping({ modal, closeModal }) {
           <div className="left-side">
             <div className="above flex">
               <div className="name mr-5">Fast</div>
-              <div className="price text-red-500 font-semibold">₫12.800</div>
+              <div className="price text-red-500 font-semibold">₫{fastPriceShipping}</div>
             </div>
             <div className="below text-xs mt-1">
               Nhận hàng vào 18 Th07 - 19 Th07
@@ -65,7 +73,7 @@ export default function ModalShipping({ modal, closeModal }) {
           <div className="left-side">
             <div className="above flex">
               <div className="name mr-5">Normal</div>
-              <div className="price text-red-500 font-semibold">₫12.800</div>
+              <div className="price text-red-500 font-semibold">₫{normalPriceShipping}</div>
             </div>
             <div className="below text-xs mt-1">
               Nhận hàng vào 18 Th07 - 19 Th07

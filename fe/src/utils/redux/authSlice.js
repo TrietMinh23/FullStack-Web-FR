@@ -11,6 +11,7 @@ export const authSlice = createSlice({
     SETROLE: (state, action) => {
       state.role = action.payload.role;
     },
+    SETUSER: (state, action) => {},
   },
 });
 

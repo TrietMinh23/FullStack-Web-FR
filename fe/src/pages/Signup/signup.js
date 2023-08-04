@@ -5,6 +5,7 @@ import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
 import { ValidationEmail } from "../../utils/Validation";
 import { useSelector } from "react-redux";
 import { signup } from "../../api/signup";
+import LoadingIcon from "../../components/ui/LoadingIcon";
 import ButtonReport from "../../components/ButtonReport";
 
 const initialStateDialog = {
@@ -34,6 +35,7 @@ export default function Signup() {
 
   const [message, setMessage] = useState("");
   const role = useSelector((state) => state.auth.role);
+  const [isLoading, setLoading] = useState(false);
 
   const [stateConfirmPassword, setStateConfirmPassword] = useState(true);
   const [stateRequiredPassword, setStateRequiredPassword] = useState(false);
@@ -43,6 +45,7 @@ export default function Signup() {
     email: "",
     password: "",
     confirm_password: "",
+
     role: role,
   });
 
@@ -77,15 +80,22 @@ export default function Signup() {
       formData.password !== "" &&
       stateConfirmPassword
     ) {
+      setLoading(true);
       const { email, password, username, role } = formData;
       await signup({
         email,
         password,
-        username,
+        name: username,
         role,
       })
-        .then((res) => console.log(res))
-        .catch((err) => setMessage(err.response.data.message));
+        .then((res) => {
+          localStorage.setItem("currentUser", JSON.stringify(res.data.newUser));
+        })
+        .catch((err) => {
+          console.log(err);
+          setMessage(err.response.data.message);
+        });
+      setLoading(false);
     }
   };
 
@@ -135,16 +145,6 @@ export default function Signup() {
               }`}
               onChange={(e) => handleSignUpInputChange(e)}
             />
-          </div>
-          <div
-            className={`alert-box-inner alert-container mb-4 flex font-semibold text-red-600 ${
-              !stateDialog.stateDialogEmail ? "block" : "hidden"
-            }`}
-          >
-            <PriorityHighIcon className="icon-alert"></PriorityHighIcon>
-            <div className="alert-content text-xs ml-2">
-              <p>Enter your email</p>
-            </div>
           </div>
           <div className={!stateDialog.stateDialogPassword ? "mb-2" : "mb-4"}>
             <label className="block mb-1" htmlFor="password">
@@ -223,10 +223,11 @@ export default function Signup() {
           </div>
           <div className="mt-6">
             <button
+              disabled={isLoading}
               onClick={(e) => signIn(e)}
               className="w-full inline-flex items-center justify-center px-4 py-2 bg-green-sheen hover:bg-emerald border border-transparent rounded-md font-semibold capitalize text-white focus:outline-none disabled:opacity-25 transition"
             >
-              Sign In
+              {isLoading ? <LoadingIcon /> : "Sign In"}
             </button>
           </div>
           <div className="mt-4 flex justify-between">
