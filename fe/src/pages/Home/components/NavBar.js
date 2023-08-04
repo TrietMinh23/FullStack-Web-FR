@@ -6,6 +6,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import getCookie from "../../../utils/getCookie";
 import ButtonLogin from "./ButtonLogin";
 import ButtonSignUp from "./ButtonSignUp";
 
@@ -60,25 +61,30 @@ const Navbar = () => {
           </div>
           <div className="hidden lg:block">
             <div className="flex space-x-4">
-              {localStorage.getItem("currentUser") ? (
+              <ButtonNotification />
+              {!getCookie("access_token") ? (
                 <React.Fragment>
                   <ButtonLogin />
                   <ButtonSignUp />
                 </React.Fragment>
               ) : (
-                <React.Fragment>
-                  <ButtonNotification />
-                  <ButtonUser />
-                  <ButtonShoppingCart />
-                </React.Fragment>
+                <ButtonUser />
               )}
+              <ButtonShoppingCart />
             </div>
           </div>
         </div>
       </div>
       <div className={isDropdownOpenMenu ? "block" : "hidden"} id="mobile-menu">
         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-          {!localStorage.getItem("currentUser") ? (
+          <Link
+            to="notification"
+            onClick={() => setIsDropdownOpenMenu(!isDropdownOpenMenu)}
+            className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+          >
+            Notification
+          </Link>
+          {!getCookie("access_token") ? (
             <div className="flex flex-col">
               <Link
                 to="/type"
@@ -94,30 +100,21 @@ const Navbar = () => {
               </Link>
             </div>
           ) : (
-            <React.Fragment>
-              <Link
-                to="notification"
-                onClick={() => setIsDropdownOpenMenu(!isDropdownOpenMenu)}
-                className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
-              >
-                Notification
-              </Link>
-              <Link
-                to="profile"
-                onClick={() => setIsDropdownOpenMenu(!isDropdownOpenMenu)}
-                className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
-              >
-                My Account
-              </Link>
-              <Link
-                to="shoppingcart"
-                onClick={() => setIsDropdownOpenMenu(!isDropdownOpenMenu)}
-                className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
-              >
-                Shopping Cart
-              </Link>
-            </React.Fragment>
+            <Link
+              to="profile"
+              onClick={() => setIsDropdownOpenMenu(!isDropdownOpenMenu)}
+              className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+            >
+              My Account
+            </Link>
           )}
+          <Link
+            to="shoppingcart"
+            onClick={() => setIsDropdownOpenMenu(!isDropdownOpenMenu)}
+            className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+          >
+            Shopping Cart
+          </Link>
         </div>
       </div>
     </nav>

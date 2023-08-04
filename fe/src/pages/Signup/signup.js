@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useReducer, useState } from "react";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
@@ -7,6 +7,8 @@ import { useSelector } from "react-redux";
 import { signup } from "../../api/signup";
 import LoadingIcon from "../../components/ui/LoadingIcon";
 import ButtonReport from "../../components/ButtonReport";
+import axios from "axios";
+import setCookie from "../../utils/setCookie";
 
 const initialStateDialog = {
   stateDialogEmail: true,
@@ -32,6 +34,8 @@ export default function Signup() {
     dialogReducer,
     initialStateDialog
   );
+
+  const navigate = useNavigate();
 
   const [message, setMessage] = useState("");
   const role = useSelector((state) => state.auth.role);
@@ -89,7 +93,20 @@ export default function Signup() {
         role,
       })
         .then((res) => {
-          localStorage.setItem("currentUser", JSON.stringify(res.data.newUser));
+          setCookie("access_token", res.data.access_token, 1 * 24 * 60 * 60);
+          setCookie("refresh_token", res.data.refresh_token, 3 * 24 * 60 * 60);
+          axios
+            .get("http://localhost:5000/users/user_info", {
+              headers: {
+                Authorization: `${res.data.access_token}`,
+                "Content-Type": "application/x-www-form-urlencoded",
+              },
+            })
+            .then((res) => {
+              console.log(res.status);
+              if (res.status === 200) navigate("/");
+            })
+            .catch((err) => console.log(err));
         })
         .catch((err) => {
           console.log(err);
