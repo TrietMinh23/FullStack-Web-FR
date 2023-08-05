@@ -30,7 +30,6 @@ export const getUserInformation = async (req, res) => {
   } else {
     console.log("Access token is valid");
     User.find({ _id: decoded_token.id }).then((user) => {
-      console.log(user);
       const selectedData = {
         address: user[0].address,
         email: user[0].email,
@@ -51,6 +50,29 @@ export const getUsers = async (req, res) => {
     res.status(200).json(users);
   } catch (err) {
     res.status(404).json({ error: err.message });
+  }
+};
+
+export const updateUser = async (req, res) => {
+  const { cartItem, userId } = req.body;
+
+  try {
+    // Kiểm tra xem người dùng muốn thêm cartItem vào listWish
+    if (cartItem !== undefined) {
+      const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        { $push: { listWish: cartItem } },
+        { new: true } // Trả về bản ghi sau khi cập nhật
+      );
+      res
+        .status(200)
+        .json({ message: "Cập nhật thành công.", user: updatedUser });
+    } else {
+      res.status(400).json({ message: "Không có thông tin cần cập nhật." });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Có lỗi xảy ra." });
   }
 };
 
@@ -83,47 +105,94 @@ export const createUser = async (req, res) => {
 
 export const loginUser = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, role, otp } = req.body;
+    if (otp) {
+      const findUser = await User.findOne({ email });
+      if (findUser) {
+        const passwordMatch = await bcrypt.compare(password, findUser.password);
 
-    // check if user exists or not
-    const findUser = await User.findOne({ email });
+        if (!passwordMatch) {
+          res.status(400).json({ message: "Password doesn't match" });
+          return;
+        }
 
-    if (findUser?.isBlocked) {
-      res.status(403).json({ message: "Your account has been blocked!" });
-      return;
-    }
+        if (otp !== "123456") {
+          res.status(400).json({ message: "Wrong OTP" });
+          return;
+        }
 
-    if (findUser) {
-      const passwordMatch = await bcrypt.compare(password, findUser.password);
+        const accessToken = generateToken(findUser._id, "1d");
+        const refreshtoken = generateToken(`${findUser._id}fr`, "3d");
 
-      if (!passwordMatch) {
-        res.status(400).json({ message: "Password doesn't match" });
+        // const updateUser = await User.findByIdAndUpdate(
+        //   findUser?._id,
+        //   { refreshToken: refreshToken },
+        //   { new: true }
+        // );
+        // res.cookie("refreshToken", refreshToken, {
+        //   httpOnly: true,
+        //   maxAge: 72 * 60 * 60 * 1000,
+        // });
+
+        // return token
+
+        res.status(200).json({
+          status: "OK",
+          access_token: accessToken,
+          refresh_token: refreshtoken,
+        });
+        return;
+      } else {
+        res.status(404).json({ message: "Buyer doesn't exist" });
+      }
+    } else {
+      // check if user exists or not
+      const findUser = await User.findOne({ email });
+
+      if (findUser?.isBlocked) {
+        res.status(403).json({ message: "Your account has been blocked!" });
         return;
       }
 
-      const accessToken = generateToken(findUser._id, "1d");
-      const refreshtoken = generateToken(`${findUser._id}fr`, "3d");
+      if (findUser) {
+        if (findUser.role !== role) {
+          res.status(400).json({ message: "Your role doesn't match" });
+          return;
+        }
+      }
 
-      // const updateUser = await User.findByIdAndUpdate(
-      //   findUser?._id,
-      //   { refreshToken: refreshToken },
-      //   { new: true }
-      // );
-      // res.cookie("refreshToken", refreshToken, {
-      //   httpOnly: true,
-      //   maxAge: 72 * 60 * 60 * 1000,
-      // });
+      if (findUser) {
+        const passwordMatch = await bcrypt.compare(password, findUser.password);
 
-      // return token
+        if (!passwordMatch) {
+          res.status(400).json({ message: "Password doesn't match" });
+          return;
+        }
 
-      res.status(200).json({
-        status: "OK",
-        access_token: accessToken,
-        refresh_token: refreshtoken,
-      });
-      return;
-    } else {
-      res.status(404).json({ message: "Buyer doesn't exist" });
+        const accessToken = generateToken(findUser._id, "1d");
+        const refreshtoken = generateToken(`${findUser._id}fr`, "3d");
+
+        // const updateUser = await User.findByIdAndUpdate(
+        //   findUser?._id,
+        //   { refreshToken: refreshToken },
+        //   { new: true }
+        // );
+        // res.cookie("refreshToken", refreshToken, {
+        //   httpOnly: true,
+        //   maxAge: 72 * 60 * 60 * 1000,
+        // });
+
+        // return token
+
+        res.status(200).json({
+          status: "OK",
+          access_token: accessToken,
+          refresh_token: refreshtoken,
+        });
+        return;
+      } else {
+        res.status(404).json({ message: "Buyer doesn't exist" });
+      }
     }
   } catch (err) {
     res.status(400).json({ message: err.message });

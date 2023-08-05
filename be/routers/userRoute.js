@@ -10,6 +10,7 @@ import {
   deleteUser,
   getUserInformation,
   refreshTokenHandle,
+  updateUser,
 } from "../controllers/userController.js";
 
 const router = express.Router();
@@ -25,5 +26,6 @@ router.put("/unblock/:id", unblockUser);
 router.delete("/delete/:id", authenticationUser, deleteUser);
 router.get("/user_info", getUserInformation);
 router.get("/refresh_token", refreshTokenHandle);
+router.get("/update", updateUser);
 
 export default router;

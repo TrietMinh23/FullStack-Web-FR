@@ -1,15 +1,22 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { GoDotFill } from "react-icons/go";
 import { MdOutlineLocalGroceryStore } from "react-icons/md";
 import { BsShop } from "react-icons/bs";
 import { useDispatch } from "react-redux";
 import { SETROLE } from "../../utils/redux/authSlice";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import getCookie from "../../utils/getCookie";
+import setCookie from "../../utils/setCookie";
 
 export default function ChooseType() {
   const [isBuyerSelected, setBuyerSelected] = useState(true);
   const [isSellerSelected, setSellerSelected] = useState(false);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (getCookie("refresh_token"))
+      getCookie("role") === "buyer" ? navigate("/") : navigate("/seller");
+  }, []);
 
   const handleBuyerClick = () => {
     setBuyerSelected(true);
@@ -24,11 +31,10 @@ export default function ChooseType() {
   const Continue = () => {
     dispatch(
       SETROLE({
-        payload: {
-          role: isBuyerSelected ? "buyer" : "seller",
-        },
+        role: isBuyerSelected ? "buyer" : "seller",
       })
     );
+    setCookie("role", isBuyerSelected ? "buyer" : "seller", Infinity);
   };
 
   return (

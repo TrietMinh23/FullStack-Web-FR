@@ -1,53 +1,60 @@
-import { NavLink, useLocation } from 'react-router-dom';
-import SidebarLinkGroup from './SidebarLinkGroup';
-import React, { useEffect, useRef, useState } from 'react';
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import SidebarLinkGroup from "./SidebarLinkGroup";
+import deleteAllCookies from "../../../utils/deleteCookie";
+import React, { useEffect, useRef, useState } from "react";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
   const location = useLocation();
   const { pathname } = location;
+  const navigate = useNavigate();
 
-  const storedSidebarExpanded = localStorage.getItem('sidebar-expanded');
+  const logOut = () => {
+    deleteAllCookies();
+    navigate("/auth-admin");
+  };
+
+  const storedSidebarExpanded = localStorage.getItem("sidebar-expanded");
   const [sidebarExpanded, setSidebarExpanded] = useState(
-    storedSidebarExpanded === null ? false : storedSidebarExpanded === 'true'
+    storedSidebarExpanded === null ? false : storedSidebarExpanded === "true"
   );
 
   const trigger = useRef(false);
   const sidebar = useRef(false);
 
-
   useEffect(() => {
     const clickHandler = ({ target }) => {
-      if (!sidebar.current || !trigger.current){
+      if (!sidebar.current || !trigger.current) {
         console.log("eh");
         return;
-      } 
+      }
       if (
         !sidebarOpen ||
         sidebar.current.contains(target) ||
         trigger.current.contains(target)
-      ){
+      ) {
         console.log("soon");
-        return;}
+        return;
+      }
       console.log(sidebar);
       console.log(trigger);
       console.log("work");
       setSidebarOpen(false);
     };
-    document.addEventListener('click', clickHandler);
-    return () => document.removeEventListener('click', clickHandler);
+    document.addEventListener("click", clickHandler);
+    return () => document.removeEventListener("click", clickHandler);
   });
 
   useEffect(() => {
     console.log(sidebarOpen);
   }, [sidebarOpen]);
 
-
   useEffect(() => {
-    localStorage.setItem('sidebar-expanded', sidebarExpanded.toString());
+    localStorage.setItem("sidebar-expanded", sidebarExpanded.toString());
     if (sidebarExpanded) {
-      document.querySelector('body')?.classList.add('sidebar-expanded');
+      document.querySelector("body")?.classList.add("sidebar-expanded");
     } else {
-      document.querySelector('body')?.classList.remove('sidebar-expanded');
+      document.querySelector("body")?.classList.remove("sidebar-expanded");
     }
   }, [sidebarExpanded]);
 
@@ -55,11 +62,13 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
     <aside
       ref={sidebar}
       className={`absolute left-0 top-0 z-10 flex h-screen w-72.5 flex-col overflow-y-hidden bg-gray-800 duration-300 ease-linear dark:bg-boxdark lg:static lg:translate-x-0 
-      ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+      ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
       `}
     >
       <div className="flex items-center justify-between gap-2 px-6 py-6	">
-        <span className="text-xl font-bold text-white hidden lg:block uppercase">FR-Admin</span>
+        <span className="text-xl font-bold text-white hidden lg:block uppercase">
+          FR-Admin
+        </span>
         <button
           ref={trigger}
           onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -87,14 +96,17 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
         <nav className="mt-5 py-4 px-4 lg:mt-9 lg:px-6">
           {/* <!-- Menu Group --> */}
           <div>
-            <h3 className="mb-4 ml-4 text-sm font-semibold text-gray-500">MENU</h3>
+            <h3 className="mb-4 ml-4 text-sm font-semibold text-gray-500">
+              MENU
+            </h3>
             <ul className="mb-6 flex flex-col gap-1.5">
               <li>
                 <NavLink
                   to="financialmanagement"
                   className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-gray-300 duration-300 ease-in-out hover:bg-green-sheen dark:hover:bg-meta-4      
                   ${
-                    pathname.includes('financialmanagement') && 'bg-green-sheen dark:bg-meta-4'
+                    pathname.includes("financialmanagement") &&
+                    "bg-green-sheen dark:bg-meta-4"
                   }`}
                 >
                   <svg
@@ -117,7 +129,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                       d="M6.10322 9.92822H2.53135C1.5751 9.92822 0.787598 10.7157 0.787598 11.672V15.2438C0.787598 16.2001 1.5751 16.9876 2.53135 16.9876H6.10322C7.05947 16.9876 7.84697 16.2001 7.84697 15.2438V11.7001C7.8751 10.7157 7.0876 9.92822 6.10322 9.92822ZM6.60947 15.272C6.60947 15.5532 6.38447 15.7782 6.10322 15.7782H2.53135C2.2501 15.7782 2.0251 15.5532 2.0251 15.272V11.7001C2.0251 11.4188 2.2501 11.1938 2.53135 11.1938H6.10322C6.38447 11.1938 6.60947 11.4188 6.60947 11.7001V15.272Z"
                       fill=""
                     />
-                  <path
+                    <path
                       d="M15.4689 9.92822H11.8971C10.9408 9.92822 10.1533 10.7157 10.1533 11.672V15.2438C10.1533 16.2001 10.9408 16.9876 11.8971 16.9876H15.4689C16.4252 16.9876 17.2127 16.2001 17.2127 15.2438V11.7001C17.2127 10.7157 16.4252 9.92822 15.4689 9.92822ZM15.9752 15.272C15.9752 15.5532 15.7502 15.7782 15.4689 15.7782H11.8971C11.6158 15.7782 11.3908 15.5532 11.3908 15.272V11.7001C11.3908 11.4188 11.6158 11.1938 11.8971 11.1938H15.4689C15.7502 11.1938 15.9752 11.4188 15.9752 11.7001V15.272Z"
                       fill=""
                     />
@@ -130,7 +142,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
               {/* <!-- Menu Item Forms --> */}
               <SidebarLinkGroup
                 activeCondition={
-                  pathname === '/forms' || pathname.includes('forms')
+                  pathname === "/forms" || pathname.includes("forms")
                 }
               >
                 {(handleClick, open) => {
@@ -139,9 +151,9 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                       <NavLink
                         to="usemanagement"
                         className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-gray-300 duration-300 ease-in-out hover:green-sheen dark:hover:bg-meta-4 ${
-                          (pathname === '/usemanagement' ||
-                            pathname.includes('usemanagement')) &&
-                          'bg-green-sheen dark:bg-meta-4'
+                          (pathname === "/usemanagement" ||
+                            pathname.includes("usemanagement")) &&
+                          "bg-green-sheen dark:bg-meta-4"
                         }`}
                         onClick={(e) => {
                           e.preventDefault();
@@ -167,10 +179,10 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             fill=""
                           />
                         </svg>
-                      User management
+                        User management
                         <svg
                           className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${
-                            open && 'rotate-180'
+                            open && "rotate-180"
                           }`}
                           width="20"
                           height="20"
@@ -189,7 +201,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                       {/* <!-- Dropdown Menu Start --> */}
                       <div
                         className={`translate transform overflow-hidden ${
-                          !open && 'hidden'
+                          !open && "hidden"
                         }`}
                       >
                         <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
@@ -197,8 +209,8 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             <NavLink
                               to="usemanagement/allsellers"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-gray-500 duration-300 ease-in-out hover:text-white ' +
-                                (isActive && '!text-white')
+                                "group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-gray-500 duration-300 ease-in-out hover:text-white " +
+                                (isActive && "!text-white")
                               }
                             >
                               All sellers
@@ -208,8 +220,8 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             <NavLink
                               to="usemanagement/allbuyer"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-gray-500 duration-300 ease-in-out hover:text-white ' +
-                                (isActive && '!text-white')
+                                "group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-gray-500 duration-300 ease-in-out hover:text-white " +
+                                (isActive && "!text-white")
                               }
                             >
                               All buyer
@@ -219,8 +231,8 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             <NavLink
                               to="usemanagement/allitems"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-gray-500 duration-300 ease-in-out hover:text-white ' +
-                                (isActive && '!text-white')
+                                "group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-gray-500 duration-300 ease-in-out hover:text-white " +
+                                (isActive && "!text-white")
                               }
                             >
                               All items
@@ -230,8 +242,8 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             <NavLink
                               to="usemanagement/report"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-gray-500 duration-300 ease-in-out hover:text-white ' +
-                                (isActive && '!text-white')
+                                "group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-gray-500 duration-300 ease-in-out hover:text-white " +
+                                (isActive && "!text-white")
                               }
                             >
                               Report
@@ -244,6 +256,17 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                   );
                 }}
               </SidebarLinkGroup>
+
+              <li>
+                <a
+                  onClick={logOut}
+                  href="/#"
+                  className="group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-gray-300 duration-300 ease-in-out hover:bg-green-sheen dark:hover:bg-meta-4"
+                >
+                  <LogoutIcon />
+                  Log out
+                </a>
+              </li>
               {/* <!-- Menu Item Forms --> */}
             </ul>
           </div>
@@ -252,5 +275,4 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
       </div>
     </aside>
   );
-  }
-  
+}

@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useReducer, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
 import { ValidationEmail } from "../../utils/Validation";
 import { useSignInWithGoogle } from "react-firebase-hooks/auth";
@@ -33,6 +33,17 @@ export default function Login() {
   const [signInWithGoogle] = useSignInWithGoogle(auth);
   const role = useSelector((state) => state.auth.role);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (getCookie("refresh_token"))
+      if (getCookie("role") === "buyer") {
+        navigate("/");
+        window.location.reload();
+      } else {
+        navigate("/seller");
+        window.location.reload();
+      }
+  }, []);
 
   const [isLoading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -85,8 +96,18 @@ export default function Login() {
               },
             })
             .then((res) => {
-              console.log(res.status);
-              if (res.status === 200) navigate("/");
+              for (let i in res.data) {
+                setCookie(i, res.data[i], Infinity);
+              }
+
+              if (res.status === 200)
+                if (role === "buyer") {
+                  navigate("/");
+                  window.location.reload();
+                } else {
+                  navigate("/seller");
+                  window.location.reload();
+                }
             })
             .catch((err) => console.log(err));
         })

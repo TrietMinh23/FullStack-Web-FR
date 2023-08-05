@@ -1,13 +1,15 @@
 import slugify from "slugify";
 import { Product } from "../models/productModel.js";
+import { User } from "../models/userModel.js";
 
 export const getProductById = async (req, res) => {
   try {
     const _id = req.params.id;
     const product = await Product.find({ _id });
+    const shop = await User.find({ _id: product[0].sellerId });
 
     if (product) {
-      res.status(200).json(product);
+      res.status(200).json({ product: product[0], shop: shop[0].name });
     } else {
       res.status(404).json({ message: "Not found!" });
     }

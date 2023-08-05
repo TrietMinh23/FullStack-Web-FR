@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useReducer, useState } from "react";
+import { useReducer, useState, useEffect } from "react";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
 import { ValidationEmail } from "../../utils/Validation";
@@ -9,6 +9,7 @@ import LoadingIcon from "../../components/ui/LoadingIcon";
 import ButtonReport from "../../components/ButtonReport";
 import axios from "axios";
 import setCookie from "../../utils/setCookie";
+import getCookie from "../../utils/getCookie";
 
 const initialStateDialog = {
   stateDialogEmail: true,
@@ -36,6 +37,16 @@ export default function Signup() {
   );
 
   const navigate = useNavigate();
+  useEffect(() => {
+    if (getCookie("refresh_token"))
+      if (getCookie("role") === "buyer") {
+        navigate("/");
+        window.location.reload();
+      } else {
+        navigate("/seller");
+        window.location.reload();
+      }
+  }, []);
 
   const [message, setMessage] = useState("");
   const role = useSelector((state) => state.auth.role);
@@ -99,12 +110,16 @@ export default function Signup() {
             .get("http://localhost:5000/users/user_info", {
               headers: {
                 Authorization: `${res.data.access_token}`,
+                Role: role,
                 "Content-Type": "application/x-www-form-urlencoded",
               },
             })
             .then((res) => {
-              console.log(res.status);
-              if (res.status === 200) navigate("/");
+              for (let i in res.data) {
+                setCookie(i, res.data[i], Infinity);
+              }
+              if (res.status === 200)
+                role === "buyer" ? navigate("/") : navigate("/seller");
             })
             .catch((err) => console.log(err));
         })
@@ -115,6 +130,8 @@ export default function Signup() {
       setLoading(false);
     }
   };
+
+  console.log(role);
 
   return (
     <div className="w-full min-h-screen bg-gray-50 flex flex-col sm:justify-center items-center pt-6 sm:pt-0">

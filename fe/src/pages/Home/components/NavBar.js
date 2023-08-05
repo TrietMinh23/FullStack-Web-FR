@@ -84,7 +84,7 @@ const Navbar = () => {
           >
             Notification
           </Link>
-          {!getCookie("access_token") ? (
+          {!getCookie("refresh_token") ? (
             <div className="flex flex-col">
               <Link
                 to="/type"

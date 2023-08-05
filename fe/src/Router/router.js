@@ -1,7 +1,8 @@
 import { Route, Routes } from "react-router-dom";
 import React, { Suspense, lazy } from "react";
 import Loading from "../components/ui/Loading";
-import withAuth from "./withAuth";
+import getCookie from "../utils/getCookie";
+const LoginAdmin = lazy(() => import("../pages/Admin/page/LoginAdmin/login"));
 
 const Login = lazy(() => import("../pages/Login/login"));
 const Signup = lazy(() => import("../pages/Signup/signup"));
@@ -39,43 +40,6 @@ const Allsellers = lazy(() => import("../pages/Admin/page/allsellers"));
 const Report = lazy(() => import("../pages/Admin/page/report"));
 const ReportForm = lazy(() => import("../components/Report"));
 
-const AppRouter = () => {
-  withAuth(
-    <React.Fragment>
-      <Route path="/" element={<LayoutHomePage />}>
-        <Route exact path="/" element={<Home />}></Route>
-        <Route path="products/:slug" element={<ShoppingItemDetail />}></Route>
-        <Route path="purchase" element={<Purchase />} />
-        <Route path="profile" element={<Profile />} />
-      </Route>
-
-      <Route path="/notification" element={<Notification />}></Route>
-
-      <Route path="/seller" element={<LayoutSeller />}>
-        <Route path="/seller" element={<HomeSeller />}></Route>
-        <Route path="all-item" element={<AllItems />}></Route>
-        <Route path="add-new-item" element={<NewItem />}></Route>
-        <Route path="review" element={<Review />}></Route>
-      </Route>
-
-      <Route path="/report" element={<ReportForm />}></Route>
-      <Route path="/admin" element={<Admin />}>
-        <Route
-          exact
-          path="/admin/financialmanagement"
-          element={<FinancialManagement />}
-        />
-        <Route path="usemanagement" element={<Usemanagement />}>
-          <Route path="allbuyer" element={<Allbuyer />} />
-          <Route path="allitems" element={<Allitems />} />
-          <Route path="allsellers" element={<Allsellers />} />
-          <Route path="report" element={<Report />} />
-        </Route>
-      </Route>
-    </React.Fragment>
-  );
-};
-
 function Router() {
   return (
     <Suspense fallback={<Loading />}>
@@ -93,7 +57,40 @@ function Router() {
           <Route path="products/:slug" element={<ShoppingItemDetail />}></Route>
           <Route path="shoppingcart" element={<ShoppingCart />} />
         </Route>
-        <Route element={<AppRouter />} />
+        <Route path="/auth-admin" element={<LoginAdmin />}></Route>
+        {getCookie("role") === "seller" ? (
+          <Route path="/seller" element={<LayoutSeller />}>
+            <Route path="/seller" element={<HomeSeller />} />
+            <Route path="all-item" element={<AllItems />} />
+            <Route path="add-new-item" element={<NewItem />} />
+            <Route path="review" element={<Review />} />
+          </Route>
+        ) : null}
+        {getCookie("role") === "buyer" ? (
+          <Route path="/" element={<LayoutHomePage />}>
+            <Route exact path="/" element={<Home />} />
+            <Route path="products/:slug" element={<ShoppingItemDetail />} />
+            <Route path="purchase" element={<Purchase />} />
+            <Route path="profile" element={<Profile />} />
+          </Route>
+        ) : null}
+        // //Admin page
+        {getCookie("role") === "admin" ? (
+          <Route path="/admin" element={<Admin />}>
+            <Route
+              exact
+              path="/admin/financialmanagement"
+              element={<FinancialManagement />}
+            />
+            <Route path="usemanagement" element={<Usemanagement />}>
+              <Route path="allbuyer" element={<Allbuyer />} />
+              <Route path="allitems" element={<Allitems />} />
+              <Route path="allsellers" element={<Allsellers />} />
+              <Route path="report" element={<Report />} />
+            </Route>
+            <Route path="report" element={<ReportForm />}></Route>
+          </Route>
+        ) : null}
       </Routes>
     </Suspense>
   );
