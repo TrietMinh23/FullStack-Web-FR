@@ -149,6 +149,11 @@ export const loginUser = async (req, res) => {
       // check if user exists or not
       const findUser = await User.findOne({ email });
 
+      if (findUser.role === "admin") {
+        res.status(403).json({ message: "Your account doesn't exist" });
+        return;
+      }
+
       if (findUser?.isBlocked) {
         res.status(403).json({ message: "Your account has been blocked!" });
         return;
