@@ -2,7 +2,7 @@ export const rows = [
     {
       reporter: "Vanilla",
       title: "This is a scam",
-      information: "Vel cras auctor at tortor imperdiet amet id sed rhoncus",
+      details: "Vel cras auctor at tortor imperdiet amet id sed rhoncus",
       postDate: "2021-02-05 08:28:36",
       reported: "Jackson",
       status:"Done",
@@ -10,7 +10,7 @@ export const rows = [
     {
       reporter: "Buck",
       title: "Bad clothing quality",
-      information: "Quam aliquam odio ullamcorper ornare eleifend ipsum",
+      details: "Quam aliquam odio ullamcorper ornare eleifend ipsum",
       postDate: "2021-02-03 19:49:33",
       reported: "Miami",
       status:"Pending",
@@ -19,7 +19,7 @@ export const rows = [
     {
       reporter: "Bil",
       title: "Shipping wrong cloths",
-      information: "Mauris quam tristique et parturient sapien.",
+      details: "Mauris quam tristique et parturient sapien.",
       postDate: "2021-02-02 19:17:15",
       reported: "Tam",
       status:"Pending",
@@ -28,7 +28,7 @@ export const rows = [
     {
       reporter: "Bao",
       title: "Bad clothing quality",
-      information: "Fermentum porttitor amet, vulputate ornare tortor nisi",
+      details: "Fermentum porttitor amet, vulputate ornare tortor nisi",
       postDate: "2021-02-02 09:46:33",
       reported: "Linh",
       status:"Pending",
@@ -36,7 +36,7 @@ export const rows = [
     {
       reporter: "Mike",
       title: "Bad clothing quality",
-      information: "Sed at ornare scelerisque in facilisis tincidunt",
+      details: "Sed at ornare scelerisque in facilisis tincidunt",
       postDate: "2021-02-02 07:57:01",
       reported: "Tam",
       status:"Done",
@@ -44,7 +44,7 @@ export const rows = [
     {
       reporter: "Clothes",
       title: "Return and Refund Request",
-      information: "Molestie est pharetra eu congue velit felis ipsum velit",
+      details: "Molestie est pharetra eu congue velit felis ipsum velit",
       postDate: "2021-02-02 05:01:54",
       reported: "Ebony",
       status:"Done",
@@ -52,7 +52,7 @@ export const rows = [
     {
       reporter: "Mike",
       title: "Return and Refund Request",
-      information: "Et adipiscing vitae amet mauris eget vel.",
+      details: "Et adipiscing vitae amet mauris eget vel.",
       postDate: "2021-02-02 00:18:11",
       reported: "Linh",
       status:"Pending",
@@ -60,7 +60,7 @@ export const rows = [
     {
       reporter: "Bil",
       title: "Missing product delivery",
-      information: "Leo maecenas quis sapien morbi nunc, porta nibh.",
+      details: "Leo maecenas quis sapien morbi nunc, porta nibh.",
       postDate: "2021-02-01 11:03:33",
       reported: "Ebony",
       status:"Pending",
@@ -68,7 +68,7 @@ export const rows = [
     {
       reporter: "Mike",
       title: "Missing product delivery",
-      information: "Nulla a aliquet donec curabitur risus blandit.",
+      details: "Nulla a aliquet donec curabitur risus blandit.",
       postDate: "2021-01-31 03:42:50",
       reported: "Tam",
       status:"Pending",

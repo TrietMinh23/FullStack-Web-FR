@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { FaTrashAlt, FaPen } from "react-icons/fa";
+import React, { useState, } from "react";
+import { FaTrashAlt, } from "react-icons/fa";
 import PopupReview from "./Popup/PopupReview";
 import PopupCancel from "./Popup/PopupCancel";
 import PopupReport from "./Popup/PopupReport";
@@ -16,6 +16,7 @@ const TableItem = ({rows}) => {
   const [isCancel, setIsCancel] = useState(false); 
   const [isReport, setIsReport] = useState(false); 
 
+  const [indexReport, setIndexReport] = useState(''); 
   const [indexCancel, setIndexCancel] = useState(''); 
 
   const closeReview = () => {
@@ -250,12 +251,14 @@ const TableItem = ({rows}) => {
                         onClick ={() => setIsReview(!isReview)}
                         className="mr-2 md:w-1/2 bg-green-sheen py-2 px-4 text-white font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-green-sheen hover:text-green-sheen"
                       >Review</button>
-
                       <button
-                        onClick ={() =>setIsReport(!isReport)}
+                        onClick ={() =>{
+                            setIsReport(!isReport);
+                            setIndexReport(index);
+                          }
+                        }
                         className=" md:w-1/2 bg-orange-500 py-2 px-4 text-white font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-orange-500 hover:text-orange-500"
                       >Report</button>
-
                     </div>
                   }
                     {row.status === "Shipping" &&
@@ -267,13 +270,14 @@ const TableItem = ({rows}) => {
                           }}
                           className="mr-2 md:w-1/2 bg-red-500 py-2 px-4 text-white font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-red-500 hover:text-red-500"
                           >Cancel</button>
-
                         <button
-                          onClick ={() =>setIsReport(!isReport)}
+                          onClick ={() =>{
+                              setIsReport(!isReport);
+                              setIndexReport(index);
+                            }
+                          }
                           className=" md:w-1/2 bg-orange-500 py-2 px-4 text-white font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-orange-500 hover:text-orange-500"
-                          >Report</button>
-
-                          
+                        >Report</button>
                       </div>
                     }
                     {row.status === "Expense" &&
@@ -282,17 +286,25 @@ const TableItem = ({rows}) => {
                           className="mr-2 md:w-1/2 bg-yellow-500 py-2 px-4 text-white font-semibold rounded-md border-2 border-transparent "
                           >Waiting</button>
                         <button
-                          onClick ={() =>setIsReport(!isReport)}
-                          className="md:w-1/2 bg-orange-500 py-2 px-4 text-white font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-orange-500 hover:text-orange-500"
-                          >Report</button>
+                          onClick ={() =>{
+                              setIsReport(!isReport);
+                              setIndexReport(index);
+                            }
+                          }
+                          className=" md:w-1/2 bg-orange-500 py-2 px-4 text-white font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-orange-500 hover:text-orange-500"
+                        >Report</button>
                       </div>
                     }
                     {row.status === "Cancel" &&
                       <div className ="grow flex">
                         <button
-                          onClick ={() =>setIsReport(!isReport)}
+                          onClick ={() =>{
+                              setIsReport(!isReport);
+                              setIndexReport(index);
+                            }
+                          }
                           className="md:w-full bg-orange-500 py-2 px-16 text-white font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-orange-500 hover:text-orange-500"
-                          >Report</button>
+                        >Report</button>
                       </div>
                     }
                 </td>
@@ -321,13 +333,15 @@ const TableItem = ({rows}) => {
               <div>
                 <span
                   className={`p-1.5 text-xs font-medium uppercase tracking-wider ${
-                    row.status === "ONL"
-                      ? "text-green-800 bg-green-200"
-                      : row.status === "OFF > 15 day"
-                      ? "text-gray-800 bg-gray-200"
-                      : row.status === "OFF"
-                      ? "text-yellow-800 bg-yellow-200"
-                      : ""
+                    (row.status === "Complete"
+                        ? "text-green-800 bg-green-200"
+                        : row.status === "Expense"
+                        ? "text-gray-800 bg-yellow-200"
+                        : row.status === "Shipping"
+                        ? "text-gray-800 bg-blue-200"
+                        : row.status === "Cancel"
+                        ? "text-red-800 bg-red-200"
+                        : "")
                   } rounded-lg bg-opacity-50`}
                 >
                   {row.status}
@@ -344,7 +358,11 @@ const TableItem = ({rows}) => {
                     className="mr-2 md:w-1/2 bg-green-sheen py-2 px-4 text-white font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-green-sheen hover:text-green-sheen"
                   >Review</button>
                   <button
-                    onClick ={() =>setIsReport(!isReport)}
+                    onClick ={() =>{
+                        setIsReport(!isReport);
+                        setIndexReport(index);
+                      }
+                    }
                     className=" md:w-1/2 bg-orange-500 py-2 px-4 text-white font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-orange-500 hover:text-orange-500"
                     >Report</button>
                     </div>
@@ -358,8 +376,12 @@ const TableItem = ({rows}) => {
                       }}
                       className="mr-2 md:w-1/2 bg-red-500 py-2 px-4 text-white font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-red-500 hover:text-red-500"
                       >Cancel</button>
-                    <button
-                      onClick ={() =>setIsReport(!isReport)}
+                     <button
+                      onClick ={() =>{
+                          setIsReport(!isReport);
+                          setIndexReport(index);
+                        }
+                      }
                       className=" md:w-1/2 bg-orange-500 py-2 px-4 text-white font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-orange-500 hover:text-orange-500"
                       >Report</button>
                   </div>
@@ -370,26 +392,26 @@ const TableItem = ({rows}) => {
                       className="mr-2 md:w-1/2 bg-yellow-500 py-2 px-4 text-white font-semibold rounded-md border-2 border-transparent "
                       >Waiting</button>
                     <button
-                      onClick ={() =>setIsReport(!isReport)}
-                      className="md:w-1/2 bg-orange-500 py-2 px-4 text-white font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-orange-500 hover:text-orange-500"
+                      onClick ={() =>{
+                          setIsReport(!isReport);
+                          setIndexReport(index);
+                        }}
+                      className=" md:w-1/2 bg-orange-500 py-2 px-4 text-white font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-orange-500 hover:text-orange-500"
                       >Report</button>
                   </div>
                   }
                   {row.status === "Cancel" &&
                     <div className ="grow flex">
-                      <button
-                        onClick ={() =>setIsReport(!isReport)}
-                        className="md:w-full bg-orange-500 py-2 px-16 text-white font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-orange-500 hover:text-orange-500"
+                        <button
+                          onClick ={() =>{
+                              setIsReport(!isReport);
+                              setIndexReport(index);
+                            }
+                          }
+                          className="md:w-full bg-orange-500 py-2 px-16 text-white font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-orange-500 hover:text-orange-500"
                         >Report</button>
                     </div>
                   }
-              {/* <button 
-              className="text-blue-500 font-bold hover:underline">
-                <FaPen />
-              </button>
-              <button className="text-red-500 font-bold hover:underline ml-2">
-                <FaTrashAlt />
-              </button> */}
             </div>
           </div>
         ))}
@@ -491,6 +513,7 @@ const TableItem = ({rows}) => {
         <PopupReport
           close = {closeReport}
           finish = {finishReport}
+          i = {indexReport}
           />
         <div
           id="dimScreen"

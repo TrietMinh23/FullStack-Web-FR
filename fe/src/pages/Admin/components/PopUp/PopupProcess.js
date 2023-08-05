@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { TiTick } from "react-icons/ti";
 import { rows } from "../../data/dataReport";
-import VerifiedIcon from '@mui/icons-material/Verified';
 
 export default function PopupReview ({close, finish, i}) {
     const steps = ["Report Info", "Action","Informing" ];
@@ -30,7 +29,7 @@ export default function PopupReview ({close, finish, i}) {
                                     {i + 1 < currentStep || complete ? <TiTick size={24} /> : i + 1}
                                 </div>
 
-                                { i != 0 &&
+                                { i !== 0 &&
                                 <div className ={`content-['']  absolute w-full h-[3px] right-2/3 top-1/3 -translate-y-2/4 
                                 ${currentStep > i ? "bg-green-600" : "bg-slate-200"}
                                 `}>
@@ -67,7 +66,7 @@ export default function PopupReview ({close, finish, i}) {
                         </div>
                         <div className = "flex mt-5">
                             <div>Content: </div>
-                            <div className="ml-20 ">{rows[i].information}</div>
+                            <div className="ml-20 ">{rows[i].details}</div>
                         </div>
                     </div>
                 }
@@ -117,7 +116,7 @@ export default function PopupReview ({close, finish, i}) {
                             <button
                                 className="bg-red-500 py-2 px-4 text-white font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-red-500 hover:text-red-500"
                                 onClick = {() => {
-                                    currentStep != 1 ?
+                                    currentStep !== 1 ?
                                     setCurrentStep(currentStep - 1) 
                                     :
                                     close()
