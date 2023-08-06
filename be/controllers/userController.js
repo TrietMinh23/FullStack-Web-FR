@@ -29,18 +29,22 @@ export const getUserInformation = async (req, res) => {
     });
   } else {
     console.log("Access token is valid");
-    User.find({ _id: decoded_token.id }).then((user) => {
-      const selectedData = {
-        address: user[0].address,
-        email: user[0].email,
-        mobile: user[0].mobile,
-        name: user[0].name,
-        role: user[0].role,
-        list: user[0].wishlist,
-        _id: user[0]._id,
-      };
-      res.status(200).json(selectedData);
-    });
+    User.find({ _id: decoded_token.id })
+      .populate("wishlist")
+      .then((user) => {
+        let arr = [];
+        user[0].wishlist.forEach((item) => arr.push(item));
+        const selectedData = {
+          address: user[0].address,
+          email: user[0].email,
+          mobile: user[0].mobile,
+          name: user[0].name,
+          role: user[0].role,
+          list: arr,
+          _id: user[0]._id,
+        };
+        res.status(200).json(selectedData);
+      });
   }
 };
 
@@ -54,19 +58,19 @@ export const getUsers = async (req, res) => {
 };
 
 export const updateUser = async (req, res) => {
-  const { cartItem, userId } = req.body;
-
+  const { id, userId } = req.body;
   try {
     // Kiểm tra xem người dùng muốn thêm cartItem vào listWish
-    if (cartItem !== undefined) {
-      const updatedUser = await User.findByIdAndUpdate(
-        userId,
-        { $push: { listWish: cartItem } },
-        { new: true } // Trả về bản ghi sau khi cập nhật
-      );
-      res
-        .status(200)
-        .json({ message: "Cập nhật thành công.", user: updatedUser });
+    if (id !== undefined) {
+      const user = await User.findById(userId.replace(/^"(.*)"$/, "$1"));
+      user.wishlist.push(id);
+      await user.save(); // Lưu lại thông tin người dùng sau khi cập nhật
+      let arr = [];
+      user
+        .populate("wishlist")
+        .then((user) => (arr = user.wishlist.map((item) => console.log(item))));
+      console.log(arr);
+      res.status(200).json({ message: "Cập nhật thành công.", list: arr });
     } else {
       res.status(400).json({ message: "Không có thông tin cần cập nhật." });
     }

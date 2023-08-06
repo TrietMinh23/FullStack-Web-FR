@@ -97,7 +97,7 @@ export default function Login() {
             })
             .then((res) => {
               for (let i in res.data) {
-                setCookie(i, res.data[i], Infinity);
+                setCookie(i, res.data[i], 9999 * 24 * 60 * 60);
               }
 
               if (res.status === 200)

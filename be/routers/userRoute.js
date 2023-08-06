@@ -26,6 +26,6 @@ router.put("/unblock/:id", unblockUser);
 router.delete("/delete/:id", authenticationUser, deleteUser);
 router.get("/user_info", getUserInformation);
 router.get("/refresh_token", refreshTokenHandle);
-router.get("/update", updateUser);
+router.post("/update", updateUser);
 
 export default router;

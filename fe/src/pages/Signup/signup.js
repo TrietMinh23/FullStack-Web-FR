@@ -116,7 +116,7 @@ export default function Signup() {
             })
             .then((res) => {
               for (let i in res.data) {
-                setCookie(i, res.data[i], Infinity);
+                setCookie(i, res.data[i], 9999 * 24 * 60 * 60);
               }
               if (res.status === 200)
                 role === "buyer" ? navigate("/") : navigate("/seller");

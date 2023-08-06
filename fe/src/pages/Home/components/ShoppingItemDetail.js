@@ -10,6 +10,7 @@ import CheapIcon from "../../../assets/CheapIcon";
 import CardSkeletonDetail from "../../../components/ui/CardSkeletonDetail";
 import getCookie from "../../../utils/getCookie";
 import StoreIcon from "@mui/icons-material/Store";
+import setCookie from "../../../utils/setCookie";
 
 export default function ProductDetail() {
   const params = useParams();
@@ -56,6 +57,17 @@ export default function ProductDetail() {
         quantity: 1,
       })
     );
+
+    instance
+      .post("/users/update", {
+        id: params.slug,
+        userId: getCookie("_id"),
+      })
+      .then((res) => {
+        console.log(res);
+        setCookie("list", JSON.stringify(res.list), Infinity);
+      })
+      .catch((err) => console.log(err));
   };
 
   function formatNumberWithCommas(number) {
@@ -90,6 +102,10 @@ export default function ProductDetail() {
       })
       .then((res) => setData(res.data));
   }, [params.slug]);
+
+  {
+    console.log(data);
+  }
 
   return (
     <section className="text-gray-700 body-font overflow-hidden bg-white">
