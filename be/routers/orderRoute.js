@@ -5,13 +5,20 @@ import {
   createOrder,
   updateOrder,
   deleteOrder,
+  getUserOrders,
 } from "../controllers/orderController.js";
+import {
+  verifyToken,
+  verifyTokenAndAuthorization,
+  verifyTokenAndAdmin,
+  verifyTokenAndSeller,
+} from "../middlewares/verifyToken.js";
 
 const router = express.Router();
-router.get("/", getAllOrders);
-router.get("/:id", getOrderById);
-router.post("/", createOrder);
-router.put("/:id", updateOrder);
-router.delete("/:id", deleteOrder);
+router.get("/", verifyTokenAndAdmin, getAllOrders);
+router.get("/find/:userId", verifyTokenAndAuthorization, getUserOrders); 
+router.post("/",   verifyToken, createOrder);
+router.put("/:id", verifyTokenAndAdmin,updateOrder);
+router.delete("/:id", verifyTokenAndAdmin ,deleteOrder);
 
 export default router;
