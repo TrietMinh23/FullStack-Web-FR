@@ -9,11 +9,11 @@ export default function LayoutHomePage() {
   const dispatch = useDispatch();
   useEffect(() => {
     if (getCookie("refresh_token")) {
-      dispatch(
-        UPDATEPRODUCT({
-          listProduct: JSON.parse(localStorage.getItem("list")),
-        })
-      );
+      const listFromLocalStorage = JSON.parse(localStorage.getItem("list"));
+      // Check if listFromLocalStorage is not null before accessing length
+      if (listFromLocalStorage && listFromLocalStorage.length) {
+        dispatch(UPDATEPRODUCT({ listProduct: listFromLocalStorage }));
+      }
     }
   }, []);
   return (
