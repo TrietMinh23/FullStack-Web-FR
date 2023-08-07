@@ -1,14 +1,14 @@
 import mongoose from "mongoose";
 
 const paymentSchema = {
-  paymentMethod: { type: String, required: true },
-  paymentDetail: { type: Object },
+  paymentMethod: {type: String, required: true},
+  paymentDetail: {type: Object},
 };
 
 const shippingSchema = {
-  address: { type: String, required: true },
-  city: { type: String, required: true },
-  ward: { type: String, required: true },
+  address: {type: String, required: true},
+  city: {type: String, required: true},
+  ward: {type: String, required: true},
 };
 
 const orderSchema = new mongoose.Schema(
@@ -23,8 +23,8 @@ const orderSchema = new mongoose.Schema(
         },
       },
     ],
-    totalPrice: { type: Number },
-    quantity: { type: Number },
+    totalPrice: {type: Number},
+    quantity: {type: Number},
     orderStatus: {
       type: String,
       default: "Not Processed",
@@ -55,9 +55,17 @@ const orderSchema = new mongoose.Schema(
     },
   },
   {
-    timestamp: true,
+    timestamps: true,
+    versionKey: false,
   }
 );
+
+orderSchema.methods.calculateTotalPrice = async () => {
+  this.totalPrice = 0;
+  for (var item of this.products) {
+    this.totalPrice += item.product.price;
+  }
+};
 
 export const Payment = mongoose.model("Payment", paymentSchema);
 export const Shipping = mongoose.model("Shipping", shippingSchema);

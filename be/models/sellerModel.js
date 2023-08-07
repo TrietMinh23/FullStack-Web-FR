@@ -15,4 +15,8 @@ sellerSchema.pre("save", function(next){
   next();
 });
 
+sellerSchema.methods.isSeller = async function () {
+  return this.role === "seller";
+}
+
 export const Seller = User.discriminator ("Seller", sellerSchema);

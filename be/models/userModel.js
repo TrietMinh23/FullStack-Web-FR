@@ -45,4 +45,8 @@ userSchema.methods.createPasswordResetToken = async function () {
   return resetToken;
 };
 
+userSchema.method.isAdmin = async function () {
+  return this.role === "admin";
+}
+
 export const User = mongoose.model("User", userSchema);
