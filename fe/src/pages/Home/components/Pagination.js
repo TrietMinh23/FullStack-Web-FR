@@ -12,7 +12,7 @@ export default function PaginationComponent({ setPage, page }) {
         <Pagination
           count={20}
           defaultPage={1}
-          page={page}
+          page={Number(page)}
           size="large"
           onChange={handleChange}
         />
