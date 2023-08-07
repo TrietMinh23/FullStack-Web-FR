@@ -8,19 +8,20 @@ const pCategorySchema = new mongoose.Schema(
       required: true,
       unique: true,
       index: true,
-    }, 
+    },
     slug: {
       type: String,
       unique: true,
       lowercase: true,
-    }
-  }, {
+    },
+  },
+  {
     timestamp: true,
-    versionKey: true;
+    versionKey: false,
   }
 );
 
-pCategorySchema.pre("save", function(next) {
+pCategorySchema.pre("save", function (next) {
   this.slug = slugify(this.title, {lower: true});
   next();
 });
