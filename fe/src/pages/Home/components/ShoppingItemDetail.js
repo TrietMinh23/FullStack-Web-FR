@@ -33,10 +33,12 @@ export default function ProductDetail() {
 
   const addToCart = () => {
     // Check if product has been available in shopping cart
+    console.log(currentShoppingCart.length);
     if (currentShoppingCart.length) {
       let index;
       for (const item of currentShoppingCart) {
         if (item.name === data.shop) {
+          item.item.forEach((item) => console.log(item));
           index = item.item.findIndex((item) => item.id === data.product._id);
           if (index >= 0) {
             notifyFail();
@@ -47,8 +49,6 @@ export default function ProductDetail() {
 
       if (!index) return false;
     }
-
-    console.log("Banana");
 
     // If the loop completes without finding a duplicate item, proceed to add to the cart
     dispatch(

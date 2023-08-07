@@ -47,6 +47,7 @@ export const getUserInformation = async (req, res) => {
               sellerId: item.sellerId,
             };
             const sellerInfo = await item.populate("sellerId");
+            console.log(sellerInfo);
             temp.nameSeller = sellerInfo.sellerId.name;
             temp.email_seller = sellerInfo.sellerId.email;
             arr.push(temp);
