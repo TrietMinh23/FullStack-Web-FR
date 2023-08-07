@@ -51,8 +51,41 @@ export const getUserOrders = async (req, res) => {
       .populate("paymentMethod", "paymentMethod")
       .populate("shippingMethod", "address city ward")
       .sort({createAt: -1}); //sorr by createAt desc
-      
+
     res.status(200).json(orders);
+  } catch (err) {
+    res.status(400).json({error: err.message});
+  }
+};
+
+// get monthly income floor
+export const getMonthlyIncome = async (req, res) => {
+  const currentDate = new Date();
+  const lastMonth = new Date(currentDate.getMonth() - 1);
+
+  try {
+    const income = await Order.aggregate([
+      {
+        $match: {
+          createdAt: {$gte: lastMonth},
+          orderStatus: "Delivered",
+        },
+      },
+      {
+        $project: {
+          month: {$month: "$createdAt"},
+          sales: "$totalPrice",
+        },
+      },
+      {
+        $group: {
+          _id: "$month",
+          total: {$sum: "$sales"},
+        },
+      },
+    ]);
+
+    res.status(200).json(income);
   } catch (err) {
     res.status(400).json({error: err.message});
   }

@@ -33,17 +33,37 @@ export const getUserInformation = async (req, res) => {
       .populate("wishlist")
       .then((user) => {
         let arr = [];
-        user[0].wishlist.forEach((item) => arr.push(item));
-        const selectedData = {
-          address: user[0].address,
-          email: user[0].email,
-          mobile: user[0].mobile,
-          name: user[0].name,
-          role: user[0].role,
-          list: arr,
-          _id: user[0]._id,
-        };
-        res.status(200).json(selectedData);
+        async function populateWishlist() {
+          for (const item of user[0].wishlist) {
+            let temp = {
+              _id: item._id,
+              title: item.title,
+              description: item.description,
+              price: item.price,
+              brandName: item.brandName,
+              category: item.category,
+              image: item.image,
+              color: item.color,
+              sellerId: item.sellerId,
+            };
+            const sellerInfo = await item.populate("sellerId");
+            temp.nameSeller = sellerInfo.sellerId.name;
+            temp.email_seller = sellerInfo.sellerId.email;
+            arr.push(temp);
+          }
+        }
+        populateWishlist().then(() => {
+          const selectedData = {
+            address: user[0].address,
+            email: user[0].email,
+            mobile: user[0].mobile,
+            name: user[0].name,
+            role: user[0].role,
+            list: arr,
+            _id: user[0]._id,
+          };
+          res.status(200).json(selectedData);
+        });
       });
   }
 };
@@ -68,9 +88,15 @@ export const updateUser = async (req, res) => {
       let arr = [];
       user
         .populate("wishlist")
-        .then((user) => (arr = user.wishlist.map((item) => console.log(item))));
-      console.log(arr);
-      res.status(200).json({ message: "Cập nhật thành công.", list: arr });
+        .then((user) => {
+          for (let i of user.wishlist) {
+            arr.push(i);
+          }
+          res
+            .status(200)
+            .json({ status: "OK", message: "Cập nhật thành công.", list: arr });
+        })
+        .catch((err) => console.log(err));
     } else {
       res.status(400).json({ message: "Không có thông tin cần cập nhật." });
     }

@@ -97,10 +97,11 @@ export default function Login() {
             })
             .then((res) => {
               for (let i in res.data) {
-                setCookie(i, res.data[i], 9999 * 24 * 60 * 60);
+                localStorage.setItem(i, JSON.stringify(res.data[i]));
               }
 
-              if (res.status === 200)
+              if (res.status === 200) {
+                setLoading(false);
                 if (role === "buyer") {
                   navigate("/");
                   window.location.reload();
@@ -108,13 +109,17 @@ export default function Login() {
                   navigate("/seller");
                   window.location.reload();
                 }
+              }
             })
-            .catch((err) => console.log(err));
+            .catch((err) => {
+              console.log(err);
+              setLoading(false);
+            });
         })
         .catch((err) => {
           setMessage(err.response.data.message);
+          setLoading(false);
         });
-      setLoading(false);
     }
   };
 

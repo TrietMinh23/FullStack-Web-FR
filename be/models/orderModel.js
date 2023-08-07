@@ -60,6 +60,13 @@ const orderSchema = new mongoose.Schema(
   }
 );
 
+orderSchema.methods.calculateTotalPrice = async () => {
+  this.totalPrice = 0;
+  for (var item of this.products) {
+    this.totalPrice += item.product.price;
+  }
+};
+
 export const Payment = mongoose.model("Payment", paymentSchema);
 export const Shipping = mongoose.model("Shipping", shippingSchema);
 export const Order = mongoose.model("Order", orderSchema);

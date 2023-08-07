@@ -23,6 +23,18 @@ const productSchema = new mongoose.Schema(
       ref: "Seller",
       required: true,
     },
+<<<<<<< HEAD
+  ],
+  slug: { type: String, required: true, lowercase: true, default: "" },
+  sold: { type: Number, default: 0 },
+  image: { type: String },
+  color: { type: String },
+  sellerId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+=======
+>>>>>>> 7696c19a4bbbff96fc4bf5d42bf709232265482b
   },
   {
     timestamps: true,
