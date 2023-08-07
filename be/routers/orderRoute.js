@@ -1,7 +1,7 @@
 import express from "express";
 import {
   getAllOrders,
-  getOrderById,
+  // getOrderById,
   createOrder,
   updateOrder,
   deleteOrder,

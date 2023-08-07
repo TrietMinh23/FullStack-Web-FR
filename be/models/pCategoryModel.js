@@ -16,7 +16,7 @@ const pCategorySchema = new mongoose.Schema(
     }
   }, {
     timestamp: true,
-    versionKey: true;
+    versionKey: true
   }
 );
 

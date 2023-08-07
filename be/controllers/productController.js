@@ -1,6 +1,10 @@
 import slugify from "slugify";
 import { Product } from "../models/productModel.js";
 import { User } from "../models/userModel.js";
+import { uploadFile } from "./s3Controller.js";
+import util from "util";
+import fs from "fs";
+
 
 export const getProductById = async (req, res) => {
   try {
@@ -105,6 +109,9 @@ export const getAllProducts = async (req, res) => {
   }
 };
 
+
+const unlinkFile = util.promisify(fs.unlink);
+
 export const createProduct = async (req, res) => {
   try {
     if (req.body.role === "seller") {
@@ -114,16 +121,30 @@ export const createProduct = async (req, res) => {
 
     if (req.body.title) {
       req.body.slug = slugify(req.body.title, { lower: true });
+     
+      const file = req.file;
+      const url_link = await uploadFile(file);
+
+      req.body.image = url_link;
+  
+      delete req.file;
 
       const newProduct = new Product(req.body);
       await newProduct.save();
       res.status(201).json(newProduct);
     }
+
+    const file = req.file;
+    console.log(file);
+    const title = req.body.title
+    console.log(title);
+
   } catch (err) {
     res.status(400).json({ error: err.message });
     console.log(err);
   }
 };
+
 
 export const updateProduct = async (req, res) => {
   try {
