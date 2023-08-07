@@ -8,9 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import CheapIcon from "../../../assets/CheapIcon";
 import CardSkeletonDetail from "../../../components/ui/CardSkeletonDetail";
-import getCookie from "../../../utils/getCookie";
 import StoreIcon from "@mui/icons-material/Store";
-import setCookie from "../../../utils/setCookie";
 
 export default function ProductDetail() {
   const params = useParams();
@@ -35,21 +33,27 @@ export default function ProductDetail() {
 
   const addToCart = () => {
     // Check if product has been available in shopping cart
-    for (const item of currentShoppingCart || []) {
-      if (item.name === data.shop) {
-        const index = item.item.findIndex((item) => item.name === data.title);
-        if (index >= 0) {
-          notifyFail();
-          return false; // Function ends here
+    if (currentShoppingCart.length) {
+      let index;
+      for (const item of currentShoppingCart) {
+        if (item.name === data.shop) {
+          index = item.item.findIndex((item) => item.id === data.product._id);
+          if (index >= 0) {
+            notifyFail();
+            return;
+          }
         }
       }
+
+      if (!index) return false;
     }
 
+    console.log("Banana");
+
     // If the loop completes without finding a duplicate item, proceed to add to the cart
-    notify();
     dispatch(
       ADDTOCART({
-        id: data.product.id,
+        id: data.product._id,
         name: data.product.title,
         image: data.product.image,
         price: data.product.price,
@@ -58,16 +62,16 @@ export default function ProductDetail() {
       })
     );
 
-    instance
-      .post("/users/update", {
-        id: params.slug,
-        userId: getCookie("_id"),
-      })
-      .then((res) => {
-        console.log(res);
-        setCookie("list", JSON.stringify(res.list), Infinity);
-      })
-      .catch((err) => console.log(err));
+    let listItem = JSON.parse(localStorage.getItem("list"));
+    listItem.push(data.product);
+    localStorage.setItem("list", JSON.stringify(listItem));
+
+    notify();
+
+    instance.post("/users/update", {
+      id: params.slug,
+      userId: JSON.parse(localStorage.getItem("_id")),
+    });
   };
 
   function formatNumberWithCommas(number) {
@@ -102,10 +106,6 @@ export default function ProductDetail() {
       })
       .then((res) => setData(res.data));
   }, [params.slug]);
-
-  {
-    console.log(data);
-  }
 
   return (
     <section className="text-gray-700 body-font overflow-hidden bg-white">

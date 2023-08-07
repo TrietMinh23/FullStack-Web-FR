@@ -38,7 +38,7 @@ export default function LoginAdmin() {
           .then((res) => {
             if (res.status === 200) {
               for (let i in res.data) {
-                setCookie(i, res.data[i], Infinity);
+                localStorage(i, JSON.stringify(res.data[i]));
               }
               navigate("/admin");
               window.location.reload();

@@ -34,11 +34,7 @@ export default function ChooseType() {
         role: isBuyerSelected ? "buyer" : "seller",
       })
     );
-    setCookie(
-      "role",
-      isBuyerSelected ? "buyer" : "seller",
-      9999 * 24 * 60 * 60
-    );
+    localStorage.setItem("role", isBuyerSelected ? "buyer" : "seller");
   };
 
   return (

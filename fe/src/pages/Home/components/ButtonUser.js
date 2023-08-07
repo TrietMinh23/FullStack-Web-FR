@@ -10,6 +10,7 @@ export default function Example() {
   const location = useLocation();
 
   const logOut = () => {
+    localStorage.clear();
     deleteAllCookies();
     if (location.pathname == "/") window.location.reload();
     else {
