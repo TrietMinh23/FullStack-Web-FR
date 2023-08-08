@@ -6,6 +6,7 @@ import {
   deleteOrder,
   getUserOrders,
   getMonthlyIncome,
+  getMonthlyIncomeBySeller,
 } from "../controllers/orderController.js";
 import {
   verifyToken,
@@ -21,5 +22,6 @@ router.post("/",   verifyToken, createOrder);
 router.put("/:id", verifyTokenAndAdmin,updateOrder);
 router.delete("/:id", verifyTokenAndAdmin ,deleteOrder);
 router.get("/income", verifyTokenAndAdmin, getMonthlyIncome);
+router.get("/income/:sellerId", verifyTokenAndSeller, getMonthlyIncomeBySeller);
 
 export default router;
