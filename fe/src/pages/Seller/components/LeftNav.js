@@ -16,6 +16,10 @@ const routerSeller = [
     url: "add-new-item",
   },
   {
+    name: "All orders",
+    url: "all-orders",
+  },
+  {
     name: "Seller review",
     url: "review",
   },

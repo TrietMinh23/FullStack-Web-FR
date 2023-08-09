@@ -16,3 +16,14 @@ export const createPaymentUrl = async ({ order }) => {
     throw error;
   }
 };
+
+export const getOrdersBySellerId = async (id) => {
+  try {
+    const respone = await instance.get(`/orders/sellerId/${id}`);
+    return respone;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.error || "Error get products by seller id."
+    );
+  }
+};

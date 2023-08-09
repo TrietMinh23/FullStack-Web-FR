@@ -8,15 +8,15 @@ import fs from "fs";
 export const getProductById = async (req, res) => {
   try {
     const id = req.params.id;
-    const product = await Product.find({ _id: id});
+    const product = await Product.find({ _id: id });
 
     if (product) {
       res.status(200).json(product);
     } else {
-      res.status(404).json({error: "Not found!"});
+      res.status(404).json({ error: "Not found!" });
     }
   } catch (err) {
-    res.json({error: err.message});
+    res.json({ error: err.message });
   }
 };
 
@@ -42,11 +42,25 @@ export const getProductBySellerId = async (req, res) => {
     const totalProducts = await Product.find({
       sellerId: _id,
     }).countDocuments();
+
+    // Counting products with sold status 0 and 1
+    const totalSold0 = await Product.find({
+      sellerId: _id,
+      sold: 0,
+    }).countDocuments();
+
+    const totalSold1 = await Product.find({
+      sellerId: _id,
+      sold: 1,
+    }).countDocuments();
+
     const totalPages = Math.ceil(totalProducts / limit);
 
     res.status(200).json({
       currentPage: page,
       totalProducts,
+      totalSold0,
+      totalSold1,
       totalPages,
       products: products,
     });
@@ -159,7 +173,7 @@ export const createProduct = async (req, res) => {
 
       req.body.image = url_link;
 
-      req.body.category = req.body.category.map(category => category.trim());
+      req.body.category = req.body.category.map((category) => category.trim());
 
       delete req.file;
       const newProduct = new Product(req.body);
@@ -175,11 +189,27 @@ export const createProduct = async (req, res) => {
 export const updateProduct = async (req, res) => {
   try {
     if (req.body.role === "seller" || true) {
-      const {id} = req.params;
-      const product = await Product.findOneAndUpdate({ id });
+      const id = req.params.id;
+      const product = await Product.findOne({ _id: id });
 
       if (!product) {
         res.status(404).json({ error: "Not found!" });
+      }
+
+      if (req.file != null) {
+        const file = req.file;
+        const url_link = await uploadFile(file);
+        req.body.image = url_link;
+        delete req.file;
+
+        try {        
+          const filename = product.image.split('/').pop();
+          console.log(product.image)
+          const respont = await deleteS3(filename);
+          console.log(respont);
+        } catch (deleteError) {
+          console.error("Error deleting S3 file: ", deleteError);
+        }
       }
 
       if (req.body.title) {
@@ -189,6 +219,7 @@ export const updateProduct = async (req, res) => {
       const productUpdated = await Product.findByIdAndUpdate(id, req.body, {
         new: true,
       });
+
       res.status(200).json(productUpdated);
     } else {
       res.status(400).json({ error: "You are not a seller." });
@@ -201,29 +232,30 @@ export const updateProduct = async (req, res) => {
 // delete product by seller
 export const deleteProductById = async (req, res) => {
   try {
-
     if (req.params.role === "seller" || true) {
       const id = req.params.id;
 
       //if the product has been delivered, seller can't delete it
       //const status = await Product.findOne({ id }).populate("status");
-     // if (status === "Delivered") {
+      // if (status === "Delivered") {
       //  res.status(400).json({ error: "You can't delete this product." });
-     // } else {
+      // } else {
 
-        const deleteProduct = await Product.findOneAndDelete({ _id: id });
-        const key = deleteProduct.image.slice(deleteProduct.image.lastIndexOf('/') + 1);
+      const deleteProduct = await Product.findOneAndDelete({ _id: id });
+      const key = deleteProduct.image.slice(
+        deleteProduct.image.lastIndexOf("/") + 1
+      );
 
-        if (!deleteProduct) {
-          res.status(404).json({ error: "Not found!" });
-        }
+      if (!deleteProduct) {
+        res.status(404).json({ error: "Not found!" });
+      }
 
-        // Delete associated image from S3
-        if (key) {
-          // Assuming you store S3 object key in 'imageKey' field
-          await deleteS3(key);
-        }
-        res.status(200).json({ message: "Product deleted." });
+      // Delete associated image from S3
+      if (key) {
+        // Assuming you store S3 object key in 'imageKey' field
+        await deleteS3(key);
+      }
+      res.status(200).json({ message: "Product deleted." });
     }
   } catch (err) {
     console.log(5);
