@@ -60,7 +60,6 @@ export default function Signup() {
     email: "",
     password: "",
     confirm_password: "",
-
     role: role,
   });
 
@@ -118,8 +117,16 @@ export default function Signup() {
               for (let i in res.data) {
                 localStorage.setItem(i, JSON.stringify(res.data[i]));
               }
-              if (res.status === 200)
-                role === "buyer" ? navigate("/") : navigate("/seller");
+              if (res.status === 200) {
+                setLoading(false);
+                if (role === "buyer") {
+                  navigate("/");
+                  window.location.reload();
+                } else {
+                  navigate("/seller");
+                  window.location.reload();
+                }
+              }
             })
             .catch((err) => console.log(err));
         })
@@ -127,7 +134,6 @@ export default function Signup() {
           console.log(err);
           setMessage(err.response.data.message);
         });
-      setLoading(false);
     }
   };
 

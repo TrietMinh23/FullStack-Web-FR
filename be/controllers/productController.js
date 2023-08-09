@@ -9,14 +9,15 @@ export const getProductById = async (req, res) => {
   try {
     const id = req.params.id;
     const product = await Product.find({ _id: id });
+    const shop = await User.find({ _id: product[0].sellerId });
 
     if (product) {
-      res.status(200).json(product);
+      res.status(200).json({ product: product[0], shop: shop[0].name });
     } else {
-      res.status(404).json({ error: "Not found!" });
+      res.status(404).json({ message: "Not found!" });
     }
   } catch (err) {
-    res.json({ error: err.message });
+    res.json({ message: err.message });
   }
 };
 

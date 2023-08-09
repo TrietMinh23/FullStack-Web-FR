@@ -1,4 +1,4 @@
-import React,{ useState } from "react";
+import React,{ useState,useEffect } from "react";
 import Tracker from "../components/Tracker";
 import TableReport from "../components/Table/TableReport";
 import CancelIcon from "@mui/icons-material/Cancel";
@@ -6,7 +6,7 @@ import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import PhonelinkIcon from '@mui/icons-material/Phonelink';
 import PhonelinkOffIcon from '@mui/icons-material/PhonelinkOff';
 import BlockIcon from '@mui/icons-material/Block';
-import { rows } from "../data/dataReport";
+import {data} from "../data/dataReport";
 
 const staticTable = [
     {
@@ -57,6 +57,7 @@ const staticTable = [
 ];
 
 export default function Report() {
+
   return (
     <React.Fragment>
       <div>
@@ -75,7 +76,7 @@ export default function Report() {
         </div>
         <div className="w-full">
           <TableReport 
-            rows = {rows}
+            rows = {data}
           />
         </div>
        
