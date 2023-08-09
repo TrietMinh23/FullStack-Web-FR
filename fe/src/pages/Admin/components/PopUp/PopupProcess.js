@@ -1,12 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { TiTick } from "react-icons/ti";
-import { rows } from "../../data/dataReport";
-import VerifiedIcon from '@mui/icons-material/Verified';
+import {data} from "../../data/dataReport";
 
 export default function PopupReview ({close, finish, i}) {
     const steps = ["Report Info", "Action","Informing" ];
     const [currentStep, setCurrentStep] = useState(1);
     const [complete, setComplete] = useState(false);
+
+    const formatDate = (date) => {
+        const options = { year: 'numeric', month: 'short', day: 'numeric' };
+        const parts = new Date(date).toLocaleDateString(undefined, options).split(' ');
+        return `${parts[1]} ${parts[0]}, ${parts[2]}`;
+      }
     return (
         <div className ="container modal">
             <div className ="model-wrapper p-10">
@@ -30,7 +35,7 @@ export default function PopupReview ({close, finish, i}) {
                                     {i + 1 < currentStep || complete ? <TiTick size={24} /> : i + 1}
                                 </div>
 
-                                { i != 0 &&
+                                { i !== 0 &&
                                 <div className ={`content-['']  absolute w-full h-[3px] right-2/3 top-1/3 -translate-y-2/4 
                                 ${currentStep > i ? "bg-green-600" : "bg-slate-200"}
                                 `}>
@@ -50,24 +55,24 @@ export default function PopupReview ({close, finish, i}) {
                                 className="flex justify-center w-1/2 ml-1" 
                             >   
                                 <div>
-                                    <span className ="text-blue-400	">{rows[i].reporter}</span> 
+                                    <span className ="text-blue-400	">{data[i].id_reporter.name}</span> 
                                     <span>  was reported  </span>
-                                    <span className ="text-blue-400	">{rows[i].reported}</span>
+                                    <span className ="text-blue-400	">{data[i].id_reported.name}</span>
                                 </div>
                             </div>
                         </div>
                         <div className = "flex mt-5">
                             <div>Post date: </div>
                             <div className ="ml-16 pl-2" 
-                            >{rows[i].postDate}</div>
+                            >{formatDate(data[i].createdAt)}</div>
                         </div>
                         <div className = "flex mt-5 ">
                             <div>Title: </div>
-                            <div className="ml-24 pl-3 ">{rows[i].title}</div>
+                            <div className="ml-24 pl-3 ">{data[i].title}</div>
                         </div>
                         <div className = "flex mt-5">
                             <div>Content: </div>
-                            <div className="ml-20 ">{rows[i].information}</div>
+                            <div className="ml-20 ">{data[i].details}</div>
                         </div>
                     </div>
                 }
@@ -117,7 +122,7 @@ export default function PopupReview ({close, finish, i}) {
                             <button
                                 className="bg-red-500 py-2 px-4 text-white font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-red-500 hover:text-red-500"
                                 onClick = {() => {
-                                    currentStep != 1 ?
+                                    currentStep !== 1 ?
                                     setCurrentStep(currentStep - 1) 
                                     :
                                     close()
@@ -144,7 +149,6 @@ export default function PopupReview ({close, finish, i}) {
                         Return to report page
                         </button>
                     }
-                    
                 </div>
             
             </div>
