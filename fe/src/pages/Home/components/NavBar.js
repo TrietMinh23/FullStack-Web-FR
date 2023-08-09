@@ -62,7 +62,7 @@ const Navbar = () => {
           <div className="hidden lg:block">
             <div className="flex space-x-4">
               <ButtonNotification />
-              {!getCookie("access_token") ? (
+              {!getCookie("refresh_token") ? (
                 <React.Fragment>
                   <ButtonLogin />
                   <ButtonSignUp />

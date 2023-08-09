@@ -1,10 +1,10 @@
 import { User } from "../models/userModel.js";
 import { generateToken, decodeToken } from "../config/jwtToken.js";
 import bcrypt from "bcryptjs";
-import { ObjectId } from "mongoose";
 
 export const refreshTokenHandle = async (req, res) => {
-  const decoded_token = decodeToken(req.headers.refresh_token);
+  const requestToken = req.headers.refresh_token;
+  const decoded_token = decodeToken(requestToken);
   const refresh_token = decoded_token.id.slice(0, -2);
   User.find({ _id: refresh_token }).then((user) => {
     if (user) {

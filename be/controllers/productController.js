@@ -5,6 +5,11 @@ import { uploadFile } from "./s3Controller.js";
 import util from "util";
 import fs from "fs";
 
+export const getProductbySellerId = async (req, res) => {
+  const _id = req.params.id;
+  const product = await Product.find({ _id });
+  res.send(product[0].sellerId);
+};
 
 export const getProductById = async (req, res) => {
   try {
@@ -109,7 +114,6 @@ export const getAllProducts = async (req, res) => {
   }
 };
 
-
 const unlinkFile = util.promisify(fs.unlink);
 
 export const createProduct = async (req, res) => {
@@ -121,12 +125,12 @@ export const createProduct = async (req, res) => {
 
     if (req.body.title) {
       req.body.slug = slugify(req.body.title, { lower: true });
-     
+
       const file = req.file;
       const url_link = await uploadFile(file);
 
       req.body.image = url_link;
-  
+
       delete req.file;
 
       const newProduct = new Product(req.body);
@@ -136,15 +140,13 @@ export const createProduct = async (req, res) => {
 
     const file = req.file;
     console.log(file);
-    const title = req.body.title
+    const title = req.body.title;
     console.log(title);
-
   } catch (err) {
     res.status(400).json({ error: err.message });
     console.log(err);
   }
 };
-
 
 export const updateProduct = async (req, res) => {
   try {

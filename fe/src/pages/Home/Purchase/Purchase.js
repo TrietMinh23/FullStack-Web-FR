@@ -31,8 +31,10 @@ export default function Purchase() {
   const shipping = useSelector((state) => state.purchase.shipping);
   const products = useSelector((state) => state.product.shoppingCart);
   const [information, setInformation] = useState({
-    name: "",
-    phone: "",
+    name: localStorage.getItem("address") || "",
+    phone: localStorage.getItem("mobile").search("NULL")
+      ? ""
+      : localStorage.getItem("mobile").search("NULL"),
     city: "",
     district: "",
     ward: "",

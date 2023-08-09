@@ -7,7 +7,7 @@ import setCookie from "./utils/setCookie";
 let tokenRefreshInterval;
 
 const refreshTokenHandle = async () => {
-  const refreshToken = getCookie("refresh_token");
+  const refreshToken = getCookie("refresh_token").replace(/^"(.*)"$/, "$1");
 
   if (!refreshToken) {
     console.error("No refresh token available.");
@@ -49,7 +49,7 @@ const checkAndRefreshToken = () => {
 };
 
 function App() {
-  //tokenRefreshInterval = setInterval(checkAndRefreshToken, 5000);
+  tokenRefreshInterval = setInterval(checkAndRefreshToken, 5000);
   return (
     <div className="App bg-light-silver">
       <Router></Router>

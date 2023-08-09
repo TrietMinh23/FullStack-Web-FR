@@ -20,7 +20,7 @@ const productSchema = new mongoose.Schema(
     color: { type: String },
     sellerId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "Seller",
       required: true,
     },
   },
