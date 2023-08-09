@@ -2,6 +2,8 @@ import { useDispatch } from "react-redux";
 import ClearIcon from "@mui/icons-material/Clear";
 import { DELETE } from "../../../../utils/redux/productsSlice";
 import React from "react";
+import { instance } from "../../../../api/config";
+import axios from "axios";
 
 export default function ItemItemTS({ shop, name, price, image, id }) {
   const dispatch = useDispatch();

@@ -108,4 +108,5 @@ export const logoutSeller = async (req, res) => {
   } catch (err) {
     res.status(400).json({error: err.message});
   }
-}
+}; 
+

@@ -1,18 +1,26 @@
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useDispatch } from "react-redux";
 import { DELETE } from "../../../../utils/redux/productsSlice";
+import { instance } from "../../../../api/config";
 
-export default function ItemItemShoppingCart({
-  name,
-  image,
-  price,
-  quantity,
-  shop,
-  id,
-}) {
+export default function ItemItemShoppingCart({ name, image, price, shop, id }) {
   const dispatch = useDispatch();
 
-  const deleteItem = () => {
+  const deleteItem = async () => {
+    const list = JSON.parse(localStorage.getItem("list"));
+    const index = list.findIndex((item) => item._id === id);
+
+    await instance
+      .post(`http://localhost:5000/users/list_remove`, {
+        productId: id,
+        userId: JSON.parse(localStorage.getItem("_id")),
+      })
+      .then((response) => console.log(response.data.message))
+      .catch((err) => console.log(err));
+
+    list.splice(index, 1);
+    localStorage.setItem("list", JSON.stringify(list));
+
     dispatch(
       DELETE({
         id: id,
@@ -32,13 +40,13 @@ export default function ItemItemShoppingCart({
         </div>
       </td>
       <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
-        ${price}
+        {price}₫
       </td>
       <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
         1
       </td>
       <td className="total-price p-3 text-sm text-gray-700 whitespace-nowrap text-center">
-        ${price}
+        {price}₫
       </td>
       <td className="p-3 text-sm text-white whitespace-nowrap text-center">
         <button

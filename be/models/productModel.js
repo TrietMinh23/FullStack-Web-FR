@@ -3,10 +3,10 @@ import nodeCron from "node-cron";
 
 const productSchema = new mongoose.Schema(
   {
-    title: {type: String, required: true, trim: true},
-    description: {type: String, required: true, trim: true},
-    price: {type: Number, required: true},
-    brandName: {type: String},
+    title: { type: String, required: true, trim: true },
+    description: { type: String, required: true, trim: true },
+    price: { type: Number, required: true },
+    brandName: { type: String },
     category: [
       {
         type: String,
@@ -21,7 +21,7 @@ const productSchema = new mongoose.Schema(
     condition: {type: Number, default: 100},
     sellerId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Seller",
+      ref: "User",
       required: true,
     },
   },
@@ -40,10 +40,10 @@ productSchema.virtual("status", {
 
 // justOne true --> return one object instead of array of objects
 
-// // delete product automatically after 24h the product has heen Delivered
-// nodeCron.schedule("0 0 * * *", async () => {
-//   try {
-//     const products = await Product.find({status: "Delivered"});
+// delete product automatically after 24h the product has heen Delivered
+nodeCron.schedule("0 0 * * *", async () => {
+  try {
+    const products = await Product.find({status: "Delivered"});
 
 //     for (var i of products) {
 //       const day = (Date.now() - i.status.orderDate) / (3600 * 24);
