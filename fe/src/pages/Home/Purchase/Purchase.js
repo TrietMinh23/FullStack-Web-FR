@@ -10,7 +10,6 @@ import CheckoutModal from "./components/ModalPayments";
 import PopupPaySuccess from "./components/PopUp/PopupPaySuccess";
 import PopupPayUnsuccess from "./components/PopUp/PopupPayUnsuccess";
 
-
 import {
   updatedPayments,
   updatedProductPrice,
@@ -42,11 +41,11 @@ export default function Purchase() {
 
   const finishPopupSuccess = () => {
     setPaySucessful(false);
-  }
+  };
 
   const finishPopupUnsuccess = () => {
     setPayUnsucessful(false);
-  }
+  };
   const changeShipping = () => {
     setModalOpen(!modalIsOpen);
     const bodyModal = document.getElementsByClassName("body-modal")[0];
@@ -103,9 +102,7 @@ export default function Purchase() {
   const summarizeQuantity = (list) => {
     let sum = 0;
     for (let i of list) {
-      for (let j of i.item) {
-        sum += j.quantity;
-      }
+      sum += i.item.length;
     }
 
     return sum;
@@ -115,7 +112,7 @@ export default function Purchase() {
     let sum = 0;
     for (let i of list) {
       for (let j of i.item) {
-        sum += j.quantity * j.price;
+        sum += j.price;
       }
     }
     dispatch(
@@ -236,6 +233,7 @@ export default function Purchase() {
                       change
                     </button>
                     <ModalShipping
+                      at={document.documentElement.scrollTop}
                       modal={modalIsOpen}
                       closeModal={changeShipping}
                     />
@@ -248,7 +246,7 @@ export default function Purchase() {
                 <div className="total lg:mt-0 mt-5 max-lg:text-right">
                   Order Total ({summarizeQuantity(products)} items){" "}
                   <span className="text-lg text-red-400 ml-3">
-                    ${summarizePrice(products)}
+                    {summarizePrice(products)}₫
                   </span>
                 </div>
               </div>
@@ -296,27 +294,17 @@ export default function Purchase() {
           </div>
         </div>
       </div>
-      { paySuccessful && (
-         <div className="flex lg:flex-row flex-col">
-         <PopupPaySuccess
-           finish = {finishPopupSuccess}
-           />
-         <div
-           id="dimScreen"
-           className={"block "}
-           ></div>
-           </div>
+      {paySuccessful && (
+        <div className="flex lg:flex-row flex-col">
+          <PopupPaySuccess finish={finishPopupSuccess} />
+          <div id="dimScreen" className={"block "}></div>
+        </div>
       )}
-      { payUnsuccessful && (
-         <div className="flex lg:flex-row flex-col">
-         <PopupPayUnsuccess
-           finish = {finishPopupUnsuccess}
-           />
-         <div
-           id="dimScreen"
-           className={"block "}
-           ></div>
-           </div>
+      {payUnsuccessful && (
+        <div className="flex lg:flex-row flex-col">
+          <PopupPayUnsuccess finish={finishPopupUnsuccess} />
+          <div id="dimScreen" className={"block "}></div>
+        </div>
       )}
     </div>
   );

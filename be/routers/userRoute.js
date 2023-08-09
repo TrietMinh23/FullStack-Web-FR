@@ -11,6 +11,7 @@ import {
   getUserInformation,
   refreshTokenHandle,
   updateUser,
+  deleteProductFromListUser,
 } from "../controllers/userController.js";
 
 const router = express.Router();
@@ -27,5 +28,6 @@ router.delete("/delete/:id", authenticationUser, deleteUser);
 router.get("/user_info", getUserInformation);
 router.get("/refresh_token", refreshTokenHandle);
 router.post("/update", updateUser);
+router.post("/list_remove", deleteProductFromListUser);
 
 export default router;

@@ -1,6 +1,7 @@
 import { User } from "../models/userModel.js";
 import { generateToken, decodeToken } from "../config/jwtToken.js";
 import bcrypt from "bcryptjs";
+import { ObjectId } from "mongoose";
 
 export const refreshTokenHandle = async (req, res) => {
   const decoded_token = decodeToken(req.headers.refresh_token);
@@ -47,6 +48,7 @@ export const getUserInformation = async (req, res) => {
               sellerId: item.sellerId,
             };
             const sellerInfo = await item.populate("sellerId");
+            console.log(sellerInfo);
             temp.nameSeller = sellerInfo.sellerId.name;
             temp.email_seller = sellerInfo.sellerId.email;
             arr.push(temp);
@@ -77,11 +79,22 @@ export const getUsers = async (req, res) => {
   }
 };
 
+export const deleteProductFromListUser = async (req, res) => {
+  const { userId, productId } = req.body;
+  await User.findOneAndUpdate(
+    { _id: userId },
+    { $pull: { wishlist: productId } },
+    { new: true }
+  );
+  res.status(200).json({ message: "Remove the product successfully" });
+};
+
 export const updateUser = async (req, res) => {
-  const { id, userId } = req.body;
+  const { id, userId, address, phone, name } = req.body;
   try {
     // Kiểm tra xem người dùng muốn thêm cartItem vào listWish
     if (id !== undefined) {
+      console.log("User want to add new item to data");
       const user = await User.findById(userId.replace(/^"(.*)"$/, "$1"));
       user.wishlist.push(id);
       await user.save(); // Lưu lại thông tin người dùng sau khi cập nhật
@@ -95,10 +108,16 @@ export const updateUser = async (req, res) => {
           res
             .status(200)
             .json({ status: "OK", message: "Cập nhật thành công.", list: arr });
+          return;
         })
         .catch((err) => console.log(err));
+      return;
+    }
+    if (address || phone || name) {
+      console.log("User want to update ");
     } else {
       res.status(400).json({ message: "Không có thông tin cần cập nhật." });
+      return;
     }
   } catch (error) {
     console.error(error);

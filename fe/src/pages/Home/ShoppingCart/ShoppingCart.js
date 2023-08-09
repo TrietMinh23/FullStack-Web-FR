@@ -8,11 +8,10 @@ export default function ShoppingCart() {
   const products = useSelector((state) => state.product.shoppingCart);
 
   const summarizeQuantity = (list) => {
+    console.log(list);
     let sum = 0;
     for (let i of list) {
-      for (let j of i.item) {
-        sum += j.quantity;
-      }
+      sum += i.item.length;
     }
 
     return sum;
@@ -22,7 +21,7 @@ export default function ShoppingCart() {
     let sum = 0;
     for (let i of list) {
       for (let j of i.item) {
-        sum += j.quantity * j.price;
+        sum += j.price;
       }
     }
 
@@ -55,8 +54,8 @@ export default function ShoppingCart() {
                 </tr>
               </thead>
               <tbody>
-                {products?.map((item) => (
-                  <ItemShoppingCart shop={item} key={item.name} />
+                {products?.map((item, i) => (
+                  <ItemShoppingCart shop={item} key={i} />
                 ))}
               </tbody>
             </table>

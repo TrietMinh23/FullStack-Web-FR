@@ -1,4 +1,4 @@
-export default function ItemItemCart({ image, name, quantity, price }) {
+export default function ItemItemCart({ image, name, price }) {
   return (
     <tr className="bg-white">
       <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
@@ -8,13 +8,13 @@ export default function ItemItemCart({ image, name, quantity, price }) {
         </div>
       </td>
       <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
-        ${price}
+        {price}₫
       </td>
       <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
-        {quantity}
+        1
       </td>
       <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
-        ${quantity * price}
+        {price}₫
       </td>
     </tr>
   );

@@ -18,12 +18,7 @@ export default function ItemCart({ shop }) {
         </th>
       </tr>
       {shop?.item.map((item) => (
-        <ItemItemCart
-          name={item.name}
-          price={item.price}
-          quantity={item.quantity}
-          image={item.image}
-        />
+        <ItemItemCart name={item.name} price={item.price} image={item.image} />
       ))}
     </React.Fragment>
   );

@@ -18,7 +18,7 @@ export default function ShoppingList({ page }) {
   return (
     <section
       id="Projects"
-      class="w-fit mx-auto grid grid-cols-1 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 justify-items-center justify-center gap-y-14 gap-x-14 mt-10 mb-5"
+      className="w-fit mx-auto grid grid-cols-1 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 justify-items-center justify-center gap-y-14 gap-x-14 mt-10 mb-5"
     >
       {productsList ? (
         productsList.map((item) => (

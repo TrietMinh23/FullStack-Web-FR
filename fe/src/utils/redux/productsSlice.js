@@ -80,15 +80,15 @@ export const productsSlice = createSlice({
       for (let item of listProduct) {
         const { title, price, image, _id, sellerId, nameSeller } = item;
         const targetIndex = state.shoppingCart.findIndex(
-          (item) => item.name === title
+          (item) => item.name === nameSeller
         );
 
         if (targetIndex >= 0) {
           state.shoppingCart[targetIndex].item.push({
-            title,
+            name: title,
             price,
             image,
-            _id,
+            id: _id,
             sellerId,
           });
         } else {
@@ -96,10 +96,10 @@ export const productsSlice = createSlice({
             name: nameSeller,
             item: [
               {
-                title,
+                name: title,
                 price,
                 image,
-                _id,
+                id: _id,
                 sellerId,
               },
             ],

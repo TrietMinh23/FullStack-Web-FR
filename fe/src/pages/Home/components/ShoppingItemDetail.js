@@ -45,10 +45,8 @@ export default function ProductDetail() {
         }
       }
 
-      if (!index) return false;
+      if (index >= 0) return false;
     }
-
-    console.log("Banana");
 
     // If the loop completes without finding a duplicate item, proceed to add to the cart
     dispatch(

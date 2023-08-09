@@ -1,9 +1,12 @@
 import CheckIcon from "@mui/icons-material/Check";
 import { useDispatch } from "react-redux";
 import { useState } from "react";
-import { updatedShipTotal, updatedShipping } from "../../../../utils/redux/purchaseSlice";
+import {
+  updatedShipTotal,
+  updatedShipping,
+} from "../../../../utils/redux/purchaseSlice";
 
-export default function ModalShipping({ modal, closeModal }) {
+export default function ModalShipping({ modal, closeModal, at }) {
   let fastPriceShipping = 20000;
   let normalPriceShipping = 10000;
 
@@ -25,19 +28,24 @@ export default function ModalShipping({ modal, closeModal }) {
     dispatch(
       updatedShipping({
         shipping: isFastShipping ? "Fast" : "Normal",
-      }),
+      })
     );
     dispatch(
       updatedShipTotal({
         shipPrice: isFastShipping ? fastPriceShipping : normalPriceShipping,
-      }),
+      })
     );
 
     closeModal();
   };
 
+  console.log("CHECK", at);
+
   return (
-    <div className={`modal ${modal ? "block" : "hidden"}`}>
+    <div
+      className={`modal ${modal ? "block" : "hidden"}`}
+      style={{ top: `calc(50% + ${at}px)` }}
+    >
       <div className="modal-wrapper p-7">
         <h1 className="text-lg mb-4">Choose a shipping unit</h1>
         <div className="sub-title">
@@ -45,8 +53,8 @@ export default function ModalShipping({ modal, closeModal }) {
             SHIPPING CHANNEL affiliated with FASHION REVIVE
           </h2>
           <p className="text-xs text-gray-500 mb-3">
-            You can track your order on FASHION REVIVE app when you choose one of the
-            shipping units:
+            You can track your order on FASHION REVIVE app when you choose one
+            of the shipping units:
           </p>
         </div>
         <div
@@ -56,7 +64,9 @@ export default function ModalShipping({ modal, closeModal }) {
           <div className="left-side">
             <div className="above flex">
               <div className="name mr-5">Fast</div>
-              <div className="price text-red-500 font-semibold">₫{fastPriceShipping}</div>
+              <div className="price text-red-500 font-semibold">
+                ₫{fastPriceShipping}
+              </div>
             </div>
             <div className="below text-xs mt-1">
               Nhận hàng vào 18 Th07 - 19 Th07
@@ -73,7 +83,9 @@ export default function ModalShipping({ modal, closeModal }) {
           <div className="left-side">
             <div className="above flex">
               <div className="name mr-5">Normal</div>
-              <div className="price text-red-500 font-semibold">₫{normalPriceShipping}</div>
+              <div className="price text-red-500 font-semibold">
+                ₫{normalPriceShipping}
+              </div>
             </div>
             <div className="below text-xs mt-1">
               Nhận hàng vào 18 Th07 - 19 Th07
