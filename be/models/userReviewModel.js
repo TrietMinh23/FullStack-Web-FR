@@ -19,7 +19,7 @@ const userReviewSchema = new mongoose.Schema(
     },
     seller: {
       type: mongoose.Schema.Types.ObjectId, 
-      ref: "User",
+      ref: "Seller",
       require: true,
       refPath: "orderedProduct.orderBy",
     },

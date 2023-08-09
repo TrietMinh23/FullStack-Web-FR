@@ -16,7 +16,7 @@ const userReportSchema = new mongoose.Schema(
     },
     id_reported: {
       type: mongoose.Schema.Types.ObjectId, 
-      ref: "User",
+      ref: "Seller",
       require: true,
     },
     status: {type: String, required: true}
