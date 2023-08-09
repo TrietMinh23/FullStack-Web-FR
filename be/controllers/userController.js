@@ -1,13 +1,127 @@
 import { User } from "../models/userModel.js";
-import { generateToken } from "../config/jwtToken.js";
+import { generateToken, decodeToken } from "../config/jwtToken.js";
 import bcrypt from "bcryptjs";
+import { ObjectId } from "mongoose";
+
+export const refreshTokenHandle = async (req, res) => {
+  const decoded_token = decodeToken(req.headers.refresh_token);
+  const refresh_token = decoded_token.id.slice(0, -2);
+  User.find({ _id: refresh_token }).then((user) => {
+    if (user) {
+      const accessToken = generateToken(user._id, "1d");
+      res.status(200).json({ access_token: accessToken });
+    }
+  });
+};
+
+export const getUserInformation = async (req, res) => {
+  const decoded_token = decodeToken(req.headers.authorization);
+  const currentTimestamp = Math.floor(Date.now() / 1000);
+  if (currentTimestamp > decoded_token.exp) {
+    console.log("Access token has expired");
+    res.status(400).json({
+      error: "true",
+      message: "Unauthorized access",
+      err: {
+        name: "TokenExpiredError",
+        message: "jwt expired",
+        expiredAt: decoded_token.exp,
+      },
+    });
+  } else {
+    console.log("Access token is valid");
+    User.find({ _id: decoded_token.id })
+      .populate("wishlist")
+      .then((user) => {
+        let arr = [];
+        async function populateWishlist() {
+          for (const item of user[0].wishlist) {
+            let temp = {
+              _id: item._id,
+              title: item.title,
+              description: item.description,
+              price: item.price,
+              brandName: item.brandName,
+              category: item.category,
+              image: item.image,
+              color: item.color,
+              sellerId: item.sellerId,
+            };
+            const sellerInfo = await item.populate("sellerId");
+            console.log(sellerInfo);
+            temp.nameSeller = sellerInfo.sellerId.name;
+            temp.email_seller = sellerInfo.sellerId.email;
+            arr.push(temp);
+          }
+        }
+        populateWishlist().then(() => {
+          const selectedData = {
+            address: user[0].address,
+            email: user[0].email,
+            mobile: user[0].mobile,
+            name: user[0].name,
+            role: user[0].role,
+            list: arr,
+            _id: user[0]._id,
+          };
+          res.status(200).json(selectedData);
+        });
+      });
+  }
+};
 
 export const getUsers = async (req, res) => {
   try {
     const users = await User.find({ role: "buyer" });
     res.status(200).json(users);
   } catch (err) {
-    res.status(404).json({ error: err.message });
+    res.status(400).json({ error: err.message });
+  }
+};
+
+export const deleteProductFromListUser = async (req, res) => {
+  const { userId, productId } = req.body;
+  await User.findOneAndUpdate(
+    { _id: userId },
+    { $pull: { wishlist: productId } },
+    { new: true }
+  );
+  res.status(200).json({ message: "Remove the product successfully" });
+};
+
+export const updateUser = async (req, res) => {
+  const { id, userId, address, phone, name } = req.body;
+  try {
+    // Kiểm tra xem người dùng muốn thêm cartItem vào listWish
+    if (id !== undefined) {
+      console.log("User want to add new item to data");
+      const user = await User.findById(userId.replace(/^"(.*)"$/, "$1"));
+      user.wishlist.push(id);
+      await user.save(); // Lưu lại thông tin người dùng sau khi cập nhật
+      let arr = [];
+      user
+        .populate("wishlist")
+        .then((user) => {
+          for (let i of user.wishlist) {
+            arr.push(i);
+          }
+          res
+            .status(200)
+            .json({ status: "OK", message: "Cập nhật thành công.", list: arr });
+          return;
+        })
+        .catch((err) => console.log(err));
+      return;
+    }
+    if (address || phone || name) {
+      console.log("User want to update ");
+    } else {
+      res.status(400).json({ message: "Không có thông tin cần cập nhật." });
+      return;
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Có lỗi xảy ra." });
   }
 };
 
@@ -21,23 +135,17 @@ export const createUser = async (req, res) => {
       return;
     }
 
+    req.body["mobile"] = `__MOBILE_NULL_FOR_${req.body.email}_`;
     const newUser = new User(req.body);
 
-    const accessToken = generateToken(newUser._id);
-    // const refreshtoken = await generateToken(newUser._id);
+    const accessToken = generateToken(newUser._id, "1d");
+    const refreshtoken = generateToken(`${newUser._id}fr`, "3d");
     await newUser.save();
 
     return res.status(200).json({
-      newUser: {
-        _id: newUser._id,
-        name: newUser.name,
-        email: newUser.email,
-        mobile: newUser.mobile,
-        address: newUser.address,
-        role: newUser.role,
-        wishList: newUser.wishlist,
-      },
-      token: accessToken,
+      status: "OK",
+      access_token: accessToken,
+      refresh_token: refreshtoken,
     });
   } catch (err) {
     res.status(400).json({ message: err.message });
@@ -46,53 +154,99 @@ export const createUser = async (req, res) => {
 
 export const loginUser = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, role, otp } = req.body;
+    if (otp) {
+      const findUser = await User.findOne({ email });
+      if (findUser) {
+        const passwordMatch = await bcrypt.compare(password, findUser.password);
 
-    // check if user exists or not
-    const findUser = await User.findOne({ email });
+        if (!passwordMatch) {
+          res.status(400).json({ message: "Password doesn't match" });
+          return;
+        }
 
-    if (findUser?.isBlocked) {
-      res.status(403).json({ message: "Your account has been blocked!" });
-      return;
-    }
+        if (otp !== "123456") {
+          res.status(400).json({ message: "Wrong OTP" });
+          return;
+        }
 
-    if (findUser) {
-      const passwordMatch = await bcrypt.compare(password, findUser.password);
+        const accessToken = generateToken(findUser._id, "1d");
+        const refreshtoken = generateToken(`${findUser._id}fr`, "3d");
 
-      if (!passwordMatch) {
-        res.status(400).json({ message: "Password doesn't match" });
+        // const updateUser = await User.findByIdAndUpdate(
+        //   findUser?._id,
+        //   { refreshToken: refreshToken },
+        //   { new: true }
+        // );
+        // res.cookie("refreshToken", refreshToken, {
+        //   httpOnly: true,
+        //   maxAge: 72 * 60 * 60 * 1000,
+        // });
+
+        // return token
+
+        res.status(200).json({
+          status: "OK",
+          access_token: accessToken,
+          refresh_token: refreshtoken,
+        });
+        return;
+      } else {
+        res.status(404).json({ message: "Buyer doesn't exist" });
+      }
+    } else {
+      // check if user exists or not
+      const findUser = await User.findOne({ email });
+
+      if (findUser.role === "admin") {
+        res.status(403).json({ message: "Your account doesn't exist" });
         return;
       }
 
-      const accessToken = generateToken(findUser._id);
-      // Refresh tokens are random strings generated by the authentication server.
-      // They are generated after successful authentication
-      const refreshToken = generateToken(findUser._id);
-      const updateUser = await User.findByIdAndUpdate(
-        findUser?._id,
-        { refreshToken: refreshToken },
-        { new: true }
-      );
-      res.cookie("refreshToken", refreshToken, {
-        httpOnly: true,
-        maxAge: 72 * 60 * 60 * 1000,
-      });
+      if (findUser?.isBlocked) {
+        res.status(403).json({ message: "Your account has been blocked!" });
+        return;
+      }
 
-      // return token
-      res.status(200).json({
-        User: {
-          _id: findUser._id,
-          name: findUser.name,
-          email: findUser.email,
-          mobile: findUser?.mobile,
-          address: findUser?.address,
-          role: findUser.role,
-          wishList: findUser.wishlist,
-        },
-        token: accessToken,
-      });
-    } else {
-      res.status(404).json({ message: "Buyer doesn't exist" });
+      if (findUser) {
+        if (findUser.role !== role) {
+          res.status(400).json({ message: "Your role doesn't match" });
+          return;
+        }
+      }
+
+      if (findUser) {
+        const passwordMatch = await bcrypt.compare(password, findUser.password);
+
+        if (!passwordMatch) {
+          res.status(400).json({ message: "Password doesn't match" });
+          return;
+        }
+
+        const accessToken = generateToken(findUser._id, "1d");
+        const refreshtoken = generateToken(`${findUser._id}fr`, "3d");
+
+        // const updateUser = await User.findByIdAndUpdate(
+        //   findUser?._id,
+        //   { refreshToken: refreshToken },
+        //   { new: true }
+        // );
+        // res.cookie("refreshToken", refreshToken, {
+        //   httpOnly: true,
+        //   maxAge: 72 * 60 * 60 * 1000,
+        // });
+
+        // return token
+
+        res.status(200).json({
+          status: "OK",
+          access_token: accessToken,
+          refresh_token: refreshtoken,
+        });
+        return;
+      } else {
+        res.status(404).json({ message: "Buyer doesn't exist" });
+      }
     }
   } catch (err) {
     res.status(400).json({ message: err.message });
@@ -101,12 +255,6 @@ export const loginUser = async (req, res) => {
 
 export const logoutUser = async (req, res) => {
   try {
-    // delete all cookie
-    // if (req.params.role !== "buyer") {
-    //   res.status(403).json({error: "You are not authorized to logout!"});
-    //   return;
-    // }
-
     const cookie = req.cookies;
     if (!cookie.refreshToken) {
       res.status(400).json({ message: "No refresh token in cookie" });

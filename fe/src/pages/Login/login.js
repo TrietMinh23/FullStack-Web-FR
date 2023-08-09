@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom";
-import { useReducer, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useReducer, useState } from "react";
 import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
 import { ValidationEmail } from "../../utils/Validation";
 import { useSignInWithGoogle } from "react-firebase-hooks/auth";
@@ -8,6 +8,9 @@ import { login } from "../../api/login";
 import { useSelector } from "react-redux";
 import LoadingIcon from "../../components/ui/LoadingIcon";
 import ButtonReport from "../../components/ButtonReport";
+import setCookie from "../../utils/setCookie";
+import axios from "axios";
+import getCookie from "../../utils/getCookie";
 
 const initialStateDialog = {
   stateDialogEmail: true,
@@ -29,6 +32,18 @@ const dialogReducer = (state, action) => {
 export default function Login() {
   const [signInWithGoogle] = useSignInWithGoogle(auth);
   const role = useSelector((state) => state.auth.role);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (getCookie("refresh_token"))
+      if (getCookie("role") === "buyer") {
+        navigate("/");
+        window.location.reload();
+      } else {
+        navigate("/seller");
+        window.location.reload();
+      }
+  }, []);
 
   const [isLoading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -71,12 +86,40 @@ export default function Login() {
       setLoading(true);
       await login(formData)
         .then((res) => {
-          console.log(res.data);
+          setCookie("access_token", res.data.access_token, 1 * 24 * 60 * 60);
+          setCookie("refresh_token", res.data.refresh_token, 3 * 24 * 60 * 60);
+          axios
+            .get("http://localhost:5000/users/user_info", {
+              headers: {
+                Authorization: `${res.data.access_token}`,
+                "Content-Type": "application/x-www-form-urlencoded",
+              },
+            })
+            .then((res) => {
+              for (let i in res.data) {
+                localStorage.setItem(i, JSON.stringify(res.data[i]));
+              }
+
+              if (res.status === 200) {
+                setLoading(false);
+                if (role === "buyer") {
+                  navigate("/");
+                  window.location.reload();
+                } else {
+                  navigate("/seller");
+                  window.location.reload();
+                }
+              }
+            })
+            .catch((err) => {
+              console.log(err);
+              setLoading(false);
+            });
         })
         .catch((err) => {
           setMessage(err.response.data.message);
+          setLoading(false);
         });
-      setLoading(false);
     }
   };
 

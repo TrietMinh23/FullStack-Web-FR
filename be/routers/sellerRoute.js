@@ -1,5 +1,5 @@
 import express from "express";
-import {getSellers, createSeller, loginSeller, logoutSeller} from "../controllers/sellerController.js";
+import {getSellers, createSeller, loginSeller, logoutSeller, getMonthlyIncomeABuyer} from "../controllers/sellerController.js";
 
 const router = express.Router();
 
@@ -9,5 +9,6 @@ router.get('/', getSellers);
 router.post('/register', createSeller);
 router.post('/login', loginSeller);
 router.delete('logout', logoutSeller);
+router.get('/income/:id', getMonthlyIncomeABuyer);
 
 export default router;

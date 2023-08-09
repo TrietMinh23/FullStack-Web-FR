@@ -8,9 +8,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import CheapIcon from "../../../assets/CheapIcon";
 import CardSkeletonDetail from "../../../components/ui/CardSkeletonDetail";
+import StoreIcon from "@mui/icons-material/Store";
 
 export default function ProductDetail() {
-  const demoShop = "AB SHOP";
   const params = useParams();
   const [data, setData] = useState(null);
   const dispatch = useDispatch();
@@ -33,28 +33,43 @@ export default function ProductDetail() {
 
   const addToCart = () => {
     // Check if product has been available in shopping cart
-    for (const item of currentShoppingCart || []) {
-      if (item.name === demoShop) {
-        const index = item.item.findIndex((item) => item.name === data.title);
-        if (index >= 0) {
-          notifyFail();
-          return false; // Function ends here
+    if (currentShoppingCart.length) {
+      let index;
+      for (const item of currentShoppingCart) {
+        if (item.name === data.shop) {
+          index = item.item.findIndex((item) => item.id === data.product._id);
+          if (index >= 0) {
+            notifyFail();
+            return;
+          }
         }
       }
+
+      if (index >= 0) return false;
     }
 
     // If the loop completes without finding a duplicate item, proceed to add to the cart
-    notify();
     dispatch(
       ADDTOCART({
-        id: data.id,
-        name: data.title,
-        image: data.image,
-        price: data.price,
-        shop: demoShop,
+        id: data.product._id,
+        name: data.product.title,
+        image: data.product.image,
+        price: data.product.price,
+        shop: data.shop,
         quantity: 1,
       })
     );
+
+    let listItem = JSON.parse(localStorage.getItem("list"));
+    listItem.push(data.product);
+    localStorage.setItem("list", JSON.stringify(listItem));
+
+    notify();
+
+    instance.post("/users/update", {
+      id: params.slug,
+      userId: JSON.parse(localStorage.getItem("_id")),
+    });
   };
 
   function formatNumberWithCommas(number) {
@@ -87,12 +102,8 @@ export default function ProductDetail() {
           id: params.slug,
         },
       })
-      .then((res) => setData(res.data[0]));
+      .then((res) => setData(res.data));
   }, [params.slug]);
-
-  {
-    console.log(data);
-  }
 
   return (
     <section className="text-gray-700 body-font overflow-hidden bg-white">
@@ -103,14 +114,25 @@ export default function ProductDetail() {
               <img
                 alt="ecommerce"
                 className="lg:w-1/2 w-full object-cover object-center rounded border border-gray-200"
-                src={data?.image}
+                src={data.product?.image}
               />
               <div className="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
-                <h2 className="text-sm title-font uppercase text-gray-500 tracking-widest">
-                  BRAND : {data.brandName}
+                <div className="mb-4">
+                  <h2 className="title-font uppercasetracking-widest inline-block mr-3">
+                    <StoreIcon className="mr-2"></StoreIcon>SHOP:
+                  </h2>
+                  <a
+                    className="uppercase inline-block hover:scale-110 hover:text-blue-600 font-bold hover:underline transition-all"
+                    href="/#"
+                  >
+                    {data?.shop} shop
+                  </a>
+                </div>
+                <h2 className="text-sm] title-font uppercase text-gray-500 tracking-widest">
+                  BRAND : {data.product?.brandName}
                 </h2>
                 <h1 className="text-gray-900 text-3xl title-font font-medium mb-1 mt-3">
-                  {data?.title}
+                  {data.product?.title}
                 </h1>
                 <div className="flex mb-4">
                   <span className="flex py-2">
@@ -152,7 +174,7 @@ export default function ProductDetail() {
                     </a>
                   </span>
                 </div>
-                <p className="leading-relaxed">{data?.description}</p>
+                <p className="leading-relaxed">{data.product?.description}</p>
                 <div className="mt-6 pb-5 border-b-2 border-gray-200 mb-5"></div>
                 <div>
                   <div className="first-part">
@@ -162,7 +184,7 @@ export default function ProductDetail() {
                           <span className="title-font font-medium text-2xl text-gray-900">
                             Price :{" "}
                             <span className="text-4xl text-venetian-red">
-                              {formatNumberWithCommas(data?.price)}
+                              {formatNumberWithCommas(data.product?.price)}
                             </span>
                             <span className="text-venetian-red">₫</span>
                           </span>
@@ -190,14 +212,14 @@ export default function ProductDetail() {
                         </h2>
                         <ul className="max-w-md space-y-1 text-gray-500 list-disc list-inside dark:text-gray-400">
                           <li>
-                            Color : <span>{data?.color}</span>
+                            Color : <span>{data.product?.color}</span>
                           </li>
                           <li>
                             {" "}
                             Category :{" "}
                             <div className="inline-block">
                               <div className="flex">
-                                {data?.category.map((item, i) => (
+                                {data.product?.category.map((item, i) => (
                                   <p key={i} className="px-1">
                                     {item}
                                   </p>
@@ -210,46 +232,23 @@ export default function ProductDetail() {
                     </div>
                   </div>
                   <div className="second-part flex mt-6 md:items-center sm:flex-row flex-col">
-                    {localStorage.getItem("currentUser") ? (
-                      <React.Fragment>
-                        <div className="sm:mr-4 max-sm:w-full max-sm:mb-2">
-                          <Link
-                            to="/login"
-                            className="flex text-center ml-auto max-sm:w-full max-sm:block text-white bg-green-sheen hover:bg-emerald border-0 py-3 px-7 focus:outline-none rounded"
-                          >
-                            Add To Cart
-                          </Link>
-                        </div>
-                        <div className="max-sm:grow">
-                          <Link
-                            to="/login"
-                            className="flex text-center ml-auto w-full max-sm:block text-white bg-red-500 hover:bg-red-600 border-0 py-3 px-7 focus:outline-none rounded"
-                          >
-                            Buy Now
-                          </Link>
-                        </div>
-                      </React.Fragment>
-                    ) : (
-                      <React.Fragment>
-                        <button
-                          onClick={addToCart}
-                          className="block text-center max-sm:w-full max-sm:mb-2 max-sm:block text-white bg-green-sheen hover:bg-emerald border-0 py-3 px-7 focus:outline-none rounded"
-                        >
-                          Add To Cart
-                        </button>
-                        <ToastContainer />
+                    <button
+                      onClick={addToCart}
+                      className="block text-center max-sm:w-full max-sm:mb-2 max-sm:block text-white bg-green-sheen hover:bg-emerald border-0 py-3 px-7 focus:outline-none rounded"
+                    >
+                      Add To Cart
+                    </button>
+                    <ToastContainer />
 
-                        <div className="max-sm:grow">
-                          <Link
-                            to="/purchase"
-                            onClick={addToCart}
-                            className="block text-center sm:ml-3 w-full max-sm:block text-white bg-red-500 hover:bg-red-600 border-0 py-3 px-7 focus:outline-none rounded"
-                          >
-                            Buy Now
-                          </Link>
-                        </div>
-                      </React.Fragment>
-                    )}
+                    <div className="max-sm:grow">
+                      <Link
+                        to="/purchase"
+                        onClick={addToCart}
+                        className="block text-center sm:ml-3 w-full max-sm:block text-white bg-red-500 hover:bg-red-600 border-0 py-3 px-7 focus:outline-none rounded"
+                      >
+                        Buy Now
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </div>

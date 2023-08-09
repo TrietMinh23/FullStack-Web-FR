@@ -24,7 +24,10 @@ const userReviewSchema = new mongoose.Schema(
       refPath: "orderedProduct.orderBy",
     },
   },
-  {timestamps: true}
+  {
+    timestamps: true,
+    versionKey: false,
+  }
 );
 
 export const userReview = mongoose.model("UserReview", userReviewSchema);

@@ -1,12 +1,20 @@
 // generating JWT
 import jwt from "jsonwebtoken";
 
-
 const JWT_SECRET = process.env.JWT_SECRET || "secret";
 
-// expiresIn: "1d": hết hạn sau 1 ngày
-const generateToken = (id) => {
-  return jwt.sign({id}, JWT_SECRET, {expiresIn: "1d"});
+const generateToken = (id, dayLive) => {
+  return jwt.sign({ id }, JWT_SECRET, { expiresIn: dayLive });
 };
 
-export{ generateToken };
+const decodeToken = (accessToken) => {
+  return jwt.verify(accessToken, JWT_SECRET, (err, decoded) => {
+    if (err) {
+      return err;
+    } else {
+      return decoded;
+    }
+  });
+};
+
+export { generateToken, decodeToken };

@@ -75,9 +75,43 @@ export const productsSlice = createSlice({
       }
       state.total -= 1;
     },
+    UPDATEPRODUCT: (state, action) => {
+      const { listProduct } = action.payload;
+      for (let item of listProduct) {
+        const { title, price, image, _id, sellerId, nameSeller } = item;
+        const targetIndex = state.shoppingCart.findIndex(
+          (item) => item.name === nameSeller
+        );
+
+        if (targetIndex >= 0) {
+          state.shoppingCart[targetIndex].item.push({
+            name: title,
+            price,
+            image,
+            id: _id,
+            sellerId,
+          });
+        } else {
+          state.shoppingCart.push({
+            name: nameSeller,
+            item: [
+              {
+                name: title,
+                price,
+                image,
+                id: _id,
+                sellerId,
+              },
+            ],
+          });
+        }
+        state.total += 1;
+      }
+    },
   },
 });
 
-export const { ADDTOCART, REMOVEFROMCART, DELETE } = productsSlice.actions;
+export const { ADDTOCART, REMOVEFROMCART, DELETE, UPDATEPRODUCT } =
+  productsSlice.actions;
 
 export default productsSlice.reducer;

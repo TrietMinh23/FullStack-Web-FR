@@ -2,9 +2,23 @@ import { Menu, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 import PersonIcon from "@mui/icons-material/Person";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import deleteAllCookies from "../../../utils/deleteCookie";
 
 export default function Example() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const logOut = () => {
+    localStorage.clear();
+    deleteAllCookies();
+    if (location.pathname == "/") window.location.reload();
+    else {
+      navigate("/");
+      window.location.reload();
+    }
+  };
+
   return (
     <div className="text-right">
       <Menu as="div" className="relative inline-block text-left">
@@ -24,7 +38,7 @@ export default function Example() {
         >
           <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
             <div className="px-1 py-1 ">
-              <Menu.Item>
+              <Menu.Item onClick={logOut}>
                 {({ active }) => (
                   <button
                     className={`${

@@ -1,4 +1,4 @@
-export const rows = [
+export let rows = [
   {
     tradeCode: 99,
     itemName: "Vel cras auctor at tortor imperdiet amet id sed rhoncus",

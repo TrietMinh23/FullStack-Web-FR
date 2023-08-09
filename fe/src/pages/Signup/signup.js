@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom";
-import { useReducer, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useReducer, useState, useEffect } from "react";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
 import { ValidationEmail } from "../../utils/Validation";
@@ -7,6 +7,9 @@ import { useSelector } from "react-redux";
 import { signup } from "../../api/signup";
 import LoadingIcon from "../../components/ui/LoadingIcon";
 import ButtonReport from "../../components/ButtonReport";
+import axios from "axios";
+import setCookie from "../../utils/setCookie";
+import getCookie from "../../utils/getCookie";
 
 const initialStateDialog = {
   stateDialogEmail: true,
@@ -32,6 +35,18 @@ export default function Signup() {
     dialogReducer,
     initialStateDialog
   );
+
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (getCookie("refresh_token"))
+      if (getCookie("role") === "buyer") {
+        navigate("/");
+        window.location.reload();
+      } else {
+        navigate("/seller");
+        window.location.reload();
+      }
+  }, []);
 
   const [message, setMessage] = useState("");
   const role = useSelector((state) => state.auth.role);
@@ -89,7 +104,24 @@ export default function Signup() {
         role,
       })
         .then((res) => {
-          localStorage.setItem("currentUser", JSON.stringify(res.data.newUser));
+          setCookie("access_token", res.data.access_token, 1 * 24 * 60 * 60);
+          setCookie("refresh_token", res.data.refresh_token, 3 * 24 * 60 * 60);
+          axios
+            .get("http://localhost:5000/users/user_info", {
+              headers: {
+                Authorization: `${res.data.access_token}`,
+                Role: role,
+                "Content-Type": "application/x-www-form-urlencoded",
+              },
+            })
+            .then((res) => {
+              for (let i in res.data) {
+                localStorage.setItem(i, JSON.stringify(res.data[i]));
+              }
+              if (res.status === 200)
+                role === "buyer" ? navigate("/") : navigate("/seller");
+            })
+            .catch((err) => console.log(err));
         })
         .catch((err) => {
           console.log(err);
@@ -98,6 +130,8 @@ export default function Signup() {
       setLoading(false);
     }
   };
+
+  console.log(role);
 
   return (
     <div className="w-full min-h-screen bg-gray-50 flex flex-col sm:justify-center items-center pt-6 sm:pt-0">

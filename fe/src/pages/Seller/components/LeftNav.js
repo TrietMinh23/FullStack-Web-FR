@@ -1,5 +1,6 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import deleteAllCookies from "../../../utils/deleteCookie";
 
 const routerSeller = [
   {
@@ -24,12 +25,14 @@ const routerSeller = [
   {
     name: "Settings",
   },
-  {
-    name: "Log out",
-  },
 ];
 
 export default function LeftNav({ sideBarProp, setSideBarFunc, setCoverFunc }) {
+  const navigate = useNavigate();
+  const logOut = () => {
+    deleteAllCookies();
+    navigate("/");
+  };
   return (
     <div
       className={`sticky top-0 left-0 z-40 w-64 h-screen transition-transform ${
@@ -50,6 +53,18 @@ export default function LeftNav({ sideBarProp, setSideBarFunc, setCoverFunc }) {
             </li>
           </Link>
         ))}
+        <button
+          onClick={() => {
+            setSideBarFunc();
+            setCoverFunc();
+            logOut();
+          }}
+          className="block w-full"
+        >
+          <li className="flex items-center p-2 text-gray-900 hover:bg-dark-jungle-green hover:text-white group">
+            <span>Log out</span>
+          </li>
+        </button>
       </ul>
     </div>
   );

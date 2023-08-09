@@ -6,7 +6,7 @@ const userSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     email: { type: String, required: true },
-    mobile: { type: String, default: "" },
+    mobile: { type: String },
     password: { type: String, required: true },
     address: { type: String, default: "" },
     role: { type: String, default: "buyer" },
@@ -44,5 +44,9 @@ userSchema.methods.createPasswordResetToken = async function () {
   this.passwordResetExpires = Date.now() + 30 * 60 * 1000;
   return resetToken;
 };
+
+userSchema.method.isAdmin = async function () {
+  return this.role === "admin";
+}
 
 export const User = mongoose.model("User", userSchema);
