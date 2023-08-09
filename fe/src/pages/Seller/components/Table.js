@@ -1,12 +1,21 @@
 import React, { useState } from "react";
 import { FaTrashAlt, FaPen } from "react-icons/fa";
-import { rows } from "../data/dataTable";
+import PaginationComponent from "../../Home/components/Pagination";
+import { deleteProduct } from "../../../api/products";
 
-const Table = () => {
-  const [perPage, setPerPage] = useState(5); // Số hàng trên mỗi trang
+export default function Table({
+  rows,
+  nameTable,
+  onPageChange,
+  page,
+  onPerPageChange,
+  perPage,
+  onSelectEditRow,
+}) {
+  // const [perPage, setPerPage] = useState(5); // Số hàng trên mỗi trang
   const [currentPage] = useState(1); // Trang hiện tại
-  const [sortColumn, setSortColumn] = useState(""); // Cột hiện tại được sắp xếp
-  const [sortOrder, setSortOrder] = useState(""); // Thứ tự sắp xếp ('asc' hoặc 'desc')
+  const [sortColumn, setSortColumn] = useState("postDate"); // Cột hiện tại được sắp xếp
+  const [sortOrder, setSortOrder] = useState("desc"); // Thứ tự sắp xếp ('asc' hoặc 'desc')
   const [searchTerm, setSearchTerm] = useState(""); // Giá trị tìm kiếm
   const [selectedItems, setSelectedItems] = useState([]); // Các sản phẩm được chọn
   const [selectAll, setSelectAll] = useState(false); // Tất cả sản phẩm được chọn
@@ -52,10 +61,34 @@ const Table = () => {
     }
   };
 
-  const handleDelete = () => {
-    setSelectedItems([]);
+  const handleDelete = async () => {
+    try {
+      const productIdsToDelete = selectedItems.map((item) => item.tradeCode);
+      for (const productId of productIdsToDelete) {
+        await deleteProduct(productId);
+      }
+      setSelectedItems([]);
+    } catch (error) {
+      console.error(error.message);
+    }
   };
 
+  const handleDeleteRow = async (item) => {
+    try {
+      await deleteProduct(item.tradeCode);
+      setSelectedItems((prevSelectedItems) =>
+        prevSelectedItems.filter(
+          (selectedItem) => selectedItem.tradeCode !== item.tradeCode
+        )
+      );
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
+
+  const handleEditRow = (item) => {
+    onSelectEditRow(item.tradeCode); // Call the provided prop with the TradeCode
+  };
   const getCurrentPageData = () => {
     const startIndex = (currentPage - 1) * perPage;
     const endIndex = startIndex + perPage;
@@ -87,7 +120,7 @@ const Table = () => {
 
   return (
     <div className="p-5 h-full bg-gray-100 w-full rounded-md">
-      <h1 className="text-xl mb-2">Your orders</h1>
+      <h1 className="text-xl mb-2">{nameTable}</h1>
 
       <div className="flex items-center mb-4">
         <label htmlFor="search" className="mr-2">
@@ -100,7 +133,7 @@ const Table = () => {
           value={searchTerm}
           onChange={handleSearch}
         />
-        <button
+        <button id = "All"
           className="ml-2 p-4 bg-red-500 text-white rounded-md"
           onClick={handleDelete}
         >
@@ -166,7 +199,7 @@ const Table = () => {
                 className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
                 key={row.tradeCode}
               >
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                   <input
                     type="checkbox"
                     checked={selectedItems.some(
@@ -188,18 +221,18 @@ const Table = () => {
                   <span
                     className={
                       "block text-center p-2 rounded-md bg-opacity-50  " +
-                      (row.status === "Available"
+                      (row.status === "Available" || "0"
                         ? "text-green-800 bg-green-200"
                         : row.status === "Sold out"
                         ? "text-gray-800 bg-gray-200"
                         : row.status === "Shipping"
                         ? "text-yellow-800 bg-yellow-200"
-                        : row.status === "Refund"
+                        : row.status === "Refund" || "1"
                         ? "text-red-800 bg-red-200"
                         : "")
                     }
                   >
-                    {row.status}
+                    {row.status === "0" ? "Available" : "Sold"}
                   </span>
                 </td>
 
@@ -207,10 +240,10 @@ const Table = () => {
                   {row.postDate}
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                  <button className="text-blue-500 font-bold hover:underline">
+                  <button className="text-blue-500 font-bold hover:underline" onClick={() => handleEditRow(row)}>
                     <FaPen />
                   </button>
-                  <button className="text-red-500 font-bold hover:underline ml-2">
+                  <button className="text-red-500 font-bold hover:underline ml-2"  onClick={() => handleDeleteRow(row)}>
                     <FaTrashAlt />
                   </button>
                 </td>
@@ -232,35 +265,35 @@ const Table = () => {
                   href="/#"
                   className="text-blue-500 font-bold hover:underline"
                 >
-                  TradeCode {row.tradeCode}
+                  TradeCode {row.status === "0" ? "Available" : "Sold"}
                 </a>
               </div>
               <div className="text-gray-500">{row.postDate}</div>
               <div>
                 <span
                   className={`p-1.5 text-xs font-medium uppercase tracking-wider ${
-                    row.status === "Available"
+                    row.status === "Available" || "0"
                       ? "text-green-800 bg-green-200"
                       : row.status === "Sold out"
                       ? "text-gray-800 bg-gray-200"
                       : row.status === "Shipping"
                       ? "text-yellow-800 bg-yellow-200"
                       : row.status === "Refund"
-                      ? "text-red-800 bg-red-200"
+                      ? "text-red-800 bg-red-200" || "1"
                       : ""
                   } rounded-lg bg-opacity-50`}
                 >
-                  {row.status}
+                  {row.status === "0" ? "Available" : "Sold"}
                 </span>
               </div>
             </div>
             <div className="text-sm text-gray-700">{row.itemName}</div>
             <div className="text-sm font-medium text-black">${row.price}</div>
             <div className="flex justify-end">
-              <button className="text-blue-500 font-bold hover:underline">
+              <button className="text-blue-500 font-bold hover:underline" onClick={() => handleEditRow(row)}>
                 <FaPen />
               </button>
-              <button className="text-red-500 font-bold hover:underline ml-2">
+              <button className="text-red-500 font-bold hover:underline ml-2" onClick={handleDelete}>
                 <FaTrashAlt />
               </button>
             </div>
@@ -277,14 +310,14 @@ const Table = () => {
             id="rowsPerPage"
             className="border border-gray-300 rounded-md p-1"
             value={perPage}
-            onChange={(e) => setPerPage(Number(e.target.value))}
+            onChange={(e) => onPerPageChange(Number(e.target.value))}
           >
             <option value={5}>5</option>
             <option value={10}>10</option>
             <option value={15}>15</option>
           </select>
         </div>
-        <div className="flex">
+        {/* <div className="flex">
           <a
             href="/#"
             className="px-4 py-2 mx-1 text-gray-500 capitalize bg-white rounded-md cursor-not-allowed dark:bg-gray-800 dark:text-gray-600"
@@ -357,10 +390,9 @@ const Table = () => {
               </svg>
             </div>
           </a>
-        </div>
+        </div> */}
+        <PaginationComponent setPage={onPageChange} page={page} />
       </div>
     </div>
   );
-};
-
-export default Table;
+}
