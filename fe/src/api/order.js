@@ -1,14 +1,16 @@
 import { instance } from "./config";
 
-export const createPaymentUrl = async ({ order }) => {
+export const createPaymentUrl = async (order) => {
   try {
-    const { data } = await instance.post("/vnpay/create_payment_url", {
+    const data = await instance.post("/vnpay/create_payment_url", {
       order,
     });
 
-    if (data) {
-      if (data.code === "00") {
-        window.location.href = data.vnpUrl;
+    console.log("CHECK", data);
+
+    if (data.data) {
+      if (data.data.code === "00") {
+        window.location.href = data.data.paymentUrl;
       }
     }
   } catch (error) {

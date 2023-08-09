@@ -3,17 +3,11 @@ import Router from "./Router/router";
 import getCookie from "./utils/getCookie";
 import axios from "axios";
 import setCookie from "./utils/setCookie";
+import { useEffect } from "react";
 
 let tokenRefreshInterval;
 
-const refreshTokenHandle = async () => {
-  const refreshToken = getCookie("refresh_token").replace(/^"(.*)"$/, "$1");
-
-  if (!refreshToken) {
-    console.error("No refresh token available.");
-    return;
-  }
-
+const refreshTokenHandle = async (refreshToken) => {
   try {
     const response = await axios.get(
       "http://localhost:5000/users/refresh_token",
@@ -27,21 +21,26 @@ const refreshTokenHandle = async () => {
 
     const newAccessToken = response.data.access_token;
 
-    setCookie("access_token", newAccessToken, 10);
-
-    console.log("Token refreshed successfully.");
+    return newAccessToken;
   } catch (error) {
     console.error("Error refreshing token:", error);
+    throw error;
   }
 };
 
-const checkAndRefreshToken = () => {
-  const accessToken = getCookie("access_token");
-  const refreshToken = getCookie("refresh_token");
+const checkAndRefreshToken = async () => {
+  const accessToken = getCookie("access_token") || "";
+  const refreshToken =
+    getCookie("refresh_token")?.replace(/^"(.*)"$/, "$1") || "";
 
   if (!accessToken && refreshToken) {
-    console.log("Hello");
-    refreshTokenHandle();
+    try {
+      const newAccessToken = await refreshTokenHandle(refreshToken);
+      setCookie("access_token", newAccessToken, 10);
+      console.log("Token refreshed successfully.");
+    } catch (error) {
+      // Xử lý lỗi khi làm mới token
+    }
   } else {
     // Người dùng đã đăng xuất hoặc không có refresh token
     clearInterval(tokenRefreshInterval);
@@ -49,7 +48,30 @@ const checkAndRefreshToken = () => {
 };
 
 function App() {
-  tokenRefreshInterval = setInterval(checkAndRefreshToken, 5000);
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      const accessToken = getCookie("access_token");
+      if (!accessToken) {
+        // Thực hiện hành động khi access_token mất đi, ví dụ: đăng xuất hoặc làm mới token.
+        checkAndRefreshToken();
+        console.log("Access token is missing. Perform actions here.");
+      }
+    };
+
+    document.addEventListener("load", function () {
+      const accessToken = getCookie("access_token");
+      if (!accessToken) {
+        // Thực hiện hành động khi access_token mất đi, ví dụ: đăng xuất hoặc làm mới token.
+        checkAndRefreshToken();
+        console.log("Access token is missing. Perform actions here.");
+      }
+    });
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
   return (
     <div className="App bg-light-silver">
       <Router></Router>

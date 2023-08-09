@@ -10,8 +10,9 @@ import {
   deleteUser,
   getUserInformation,
   refreshTokenHandle,
-  updateUser,
+  updateUserWishList,
   deleteProductFromListUser,
+  updateInformation,
 } from "../controllers/userController.js";
 
 const router = express.Router();
@@ -27,7 +28,8 @@ router.put("/unblock/:id", unblockUser);
 router.delete("/delete/:id", authenticationUser, deleteUser);
 router.get("/user_info", getUserInformation);
 router.get("/refresh_token", refreshTokenHandle);
-router.post("/update", updateUser);
+router.post("/update", updateUserWishList);
 router.post("/list_remove", deleteProductFromListUser);
+router.post("/update_information", updateInformation);
 
 export default router;

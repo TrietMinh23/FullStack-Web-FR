@@ -9,6 +9,7 @@ import pCategoryRouter from "./routers/pCategoryRoute.js";
 import orderRouter from "./routers/orderRoute.js";
 import reportRoute from "./routers/reportRoute.js";
 import reviewRoute from "./routers/reviewRoute.js";
+import bodyParser from "body-parser";
 
 import mongoose from "mongoose";
 import { Product } from "./models/productModel.js";
@@ -24,6 +25,7 @@ const URI = process.env.DATABASE;
 app.use(express.json()); //yêu cầu đối tượng đầu vào là object json, xử lý POST PUT
 app.use(express.urlencoded({ extended: true, limit: "30mb" })); //yêu cầu đối tượng đầu vào là chuỗi hoặc mảng, xử lý POST PUT
 app.use(cors()); //tắt Same-Origin Policy và cho phép các máy chủ khác truy cập
+app.use(bodyParser.json());
 
 app.get("/", (req, res) => {
   res.send("SUCCESS. Hello world from NODE");

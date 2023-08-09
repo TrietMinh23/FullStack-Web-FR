@@ -1,5 +1,5 @@
 import { Route, Routes } from "react-router-dom";
-import React, { Suspense, lazy } from "react";
+import React, { Suspense, lazy, useState } from "react";
 import Loading from "../components/ui/Loading";
 import getCookie from "../utils/getCookie";
 const LoginAdmin = lazy(() => import("../pages/Admin/page/LoginAdmin/login"));
@@ -58,7 +58,7 @@ function Router() {
           <Route path="shoppingcart" element={<ShoppingCart />} />
         </Route>
         <Route path="/auth-admin" element={<LoginAdmin />}></Route>
-        {localStorage.getItem("role") === "seller" ? (
+        {JSON.parse(localStorage.getItem("role")) === "seller" ? (
           <Route path="/seller" element={<LayoutSeller />}>
             <Route path="/seller" element={<HomeSeller />} />
             <Route path="all-item" element={<AllItems />} />
@@ -66,7 +66,7 @@ function Router() {
             <Route path="review" element={<Review />} />
           </Route>
         ) : null}
-        {localStorage.getItem("role") === "buyer" ? (
+        {JSON.parse(localStorage.getItem("role")) === "buyer" ? (
           <Route path="/" element={<LayoutHomePage />}>
             <Route exact path="/" element={<Home />} />
             <Route path="products/:slug" element={<ShoppingItemDetail />} />
@@ -75,7 +75,7 @@ function Router() {
           </Route>
         ) : null}
         // //Admin page
-        {localStorage.getItem("role") === "admin" ? (
+        {JSON.parse(localStorage.getItem("role")) === "admin" ? (
           <Route path="/admin" element={<Admin />}>
             <Route
               exact

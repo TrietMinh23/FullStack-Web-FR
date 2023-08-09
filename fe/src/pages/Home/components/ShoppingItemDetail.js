@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 import CheapIcon from "../../../assets/CheapIcon";
 import CardSkeletonDetail from "../../../components/ui/CardSkeletonDetail";
 import StoreIcon from "@mui/icons-material/Store";
-import PopupSeller from "./PopupSeller"
+import PopupSeller from "./PopupSeller";
 export default function ProductDetail() {
   const params = useParams();
   const [data, setData] = useState(null);
@@ -124,19 +124,16 @@ export default function ProductDetail() {
                   </h2>
                   <a
                     className="uppercase inline-block hover:scale-110 hover:text-blue-600 font-bold hover:underline transition-all"
-                    onClick = {() => setWatchSeller(!isWatchSeller) }
+                    onClick={() => setWatchSeller(!isWatchSeller)}
                   >
                     {data?.shop} shop
                   </a>
-                  {isWatchSeller &&
+                  {isWatchSeller && (
                     <div className="flex lg:flex-row flex-col">
-                      <PopupSeller/>
-                      <div
-                        id="dimScreen"
-                        className={"block"}
-                        ></div>
+                      <PopupSeller />
+                      <div id="dimScreen" className={"block"}></div>
                     </div>
-                  }
+                  )}
                 </div>
                 <h2 className="text-sm] title-font uppercase text-gray-500 tracking-widest">
                   BRAND : {data.product?.brandName}

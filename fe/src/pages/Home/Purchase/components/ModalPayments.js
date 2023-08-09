@@ -2,6 +2,7 @@ import { useSelector, useDispatch } from "react-redux";
 import React, { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { createPaymentUrl } from "../../../../api/order";
+import getCookie from "../../../../utils/getCookie";
 
 // Component hiển thị thông tin chi tiết về thanh toán
 function PaymentDetailsRow({ label, amount }) {
@@ -42,6 +43,7 @@ export default function CheckoutModal() {
   const payments = useSelector((state) => state.purchase.payments);
   const shippingPrice = useSelector((state) => state.purchase.shipPrice);
   const productPrice = useSelector((state) => state.purchase.productPrice);
+  const products = useSelector((state) => state.product.shoppingCart);
 
   // Biến chứa nhãn phương thức thanh toán dựa vào dữ liệu từ Redux store
   let paymentMethodLabel = "";
@@ -58,65 +60,47 @@ export default function CheckoutModal() {
     constructor(user, shipping, orderItems, itemsPrice, payment = "VNPAY") {
       this.isPaid = false;
       this.isDelivered = false;
-      this.orderItems = orderItems;
-      this.user = user;
+      this.products = orderItems;
+      this.orderby = user;
       this.shipping = shipping;
-      this.itemsPrice = itemsPrice;
-      this.shippingPrice = 0;
-      this.totalPrice = this.shippingPrice + this.itemsPrice;
+      this.totalPrice = itemsPrice;
       this.payment = payment;
+      this.quantity = orderItems.length;
     }
   }
 
-  // Thông tin người dùng
-  const user = {
-    name: "John Doe",
-    email: "john.doe@example.com",
-  };
-
-  // Thông tin địa chỉ giao hàng
-  const shipping = {
-    address: "123 Main Street",
-    city: "New York",
-    country: "USA",
-  };
-
-  // Danh sách sản phẩm trong giỏ hàng
-  const cartItems = [
-    {
-      id: 1,
-      name: "Product 1",
-      price: 10,
-      checked: true,
-    },
-    {
-      id: 2,
-      name: "Product 2",
-      price: 20,
-      checked: false,
-    },
-  ];
-
-  // Chọn các sản phẩm đã được chọn trong giỏ hàng
-  const selectCartItems = cartItems.filter((item) => item.checked);
-
-  // Tổng giá trị đơn hàng
-  const total = 20000;
-
-  // Tạo đơn hàng mới
-  const order = new Order(user, shipping, selectCartItems, total);
-
+  let totalOrder = [];
   // Xử lý sự kiện khi người dùng click vào nút "Place Order"
-  const handlePlaceOrderClick = useCallback(async () => {
-    try {
-      // Gửi yêu cầu tạo URL thanh toán với thông tin đơn hàng
-      await createPaymentUrl({ order });
-    } catch (error) {
-      // Xử lý lỗi nếu có
-      console.error("Error creating payment URL:", error);
-    } finally {
+  const handlePlaceOrderClick = async () => {
+    // Tạo đơn hàng mới
+    for (let i of products) {
+      const orderById = localStorage.getItem("_id").replace(/^"(.*)"$/, "$1");
+      const shippingAddress = localStorage
+        .getItem("address")
+        .replace(/^"(.*)"$/, "$1");
+      const productList = i.item;
+      console.log(productList);
+      const totalBill =
+        productList.reduce(
+          (accumulator, product) => accumulator + product.price,
+          0
+        ) + shippingPrice;
+      const order = new Order(
+        orderById,
+        shippingAddress,
+        productList,
+        totalBill
+      );
+      totalOrder.push(order);
     }
-  }, [order]);
+
+    console.log(totalOrder);
+
+    // Gửi yêu cầu tạo URL thanh toán với thông tin đơn hàng
+    createPaymentUrl(JSON.stringify(totalOrder))
+      .then((res) => console.log(res))
+      .catch((err) => console.error("Error creating payment URL:", err));
+  };
 
   // Render giao diện của component
   return (

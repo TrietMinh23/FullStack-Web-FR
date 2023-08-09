@@ -86,7 +86,7 @@ export default function Login() {
       setLoading(true);
       await login(formData)
         .then((res) => {
-          setCookie("access_token", res.data.access_token, 1 * 24 * 60 * 60);
+          setCookie("access_token", res.data.access_token, 5);
           setCookie("refresh_token", res.data.refresh_token, 3 * 24 * 60 * 60);
           axios
             .get("http://localhost:5000/users/user_info", {

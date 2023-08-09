@@ -33,6 +33,7 @@ export const getUserInformation = async (req, res) => {
     User.find({ _id: decoded_token.id })
       .populate("wishlist")
       .then((user) => {
+        console.log(user);
         let arr = [];
         async function populateWishlist() {
           for (const item of user[0].wishlist) {
@@ -48,7 +49,6 @@ export const getUserInformation = async (req, res) => {
               sellerId: item.sellerId,
             };
             const sellerInfo = await item.populate("sellerId");
-            console.log(sellerInfo);
             temp.nameSeller = sellerInfo.sellerId.name;
             temp.email_seller = sellerInfo.sellerId.email;
             arr.push(temp);
@@ -89,8 +89,8 @@ export const deleteProductFromListUser = async (req, res) => {
   res.status(200).json({ message: "Remove the product successfully" });
 };
 
-export const updateUser = async (req, res) => {
-  const { id, userId, address, phone, name } = req.body;
+export const updateUserWishList = async (req, res) => {
+  const { id, userId } = req.body;
   try {
     // Kiểm tra xem người dùng muốn thêm cartItem vào listWish
     if (id !== undefined) {
@@ -113,15 +113,35 @@ export const updateUser = async (req, res) => {
         .catch((err) => console.log(err));
       return;
     }
-    if (address || phone || name) {
-      console.log("User want to update ");
-    } else {
-      res.status(400).json({ message: "Không có thông tin cần cập nhật." });
-      return;
-    }
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Có lỗi xảy ra." });
+  }
+};
+
+export const updateInformation = async (req, res) => {
+  const { userId, address, phone, name } = req.body;
+
+  console.log(phone);
+
+  try {
+    const user = await User.findOne({ _id: userId });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    user.mobile = phone;
+    user.address = address;
+    user.name = name; // Add this line if you want to update the user's name as well
+
+    await user.save();
+
+    return res
+      .status(200)
+      .json({ message: "User information updated successfully" });
+  } catch (error) {
+    return res.status(500).json({ error: "Internal server error" });
   }
 };
 
