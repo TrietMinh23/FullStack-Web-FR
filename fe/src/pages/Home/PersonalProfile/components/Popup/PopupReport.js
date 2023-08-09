@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import {rows} from "../../data/orderData";
-import { report } from "../../../../../api/report";
+import { postReport } from "../../../../../api/Report/postReport";
 
-export default function PopupReport ({ i, close, finish}) {
+export default function PopupReport ({ i, close}) {
     const [iscomfirm, setIsComfirm] = useState(false); 
     const [title, setTitle] = useState('');
     const [details, setDetails] = useState('');
     const comfirm = () => {
         setIsComfirm(true);
-        finish();
+        console.log(iscomfirm);
         const data = {
             title: title,
             details:details,
@@ -21,7 +21,7 @@ export default function PopupReport ({ i, close, finish}) {
     }
     const Report = async (data) => {
         console.log(data);
-        await report(data)
+        await postReport(data)
         .then((res) => {
           console.log(res.data);
         })

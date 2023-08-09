@@ -1,77 +1,19 @@
-export const rows = [
-    {
-      reporter: "Vanilla",
-      title: "This is a scam",
-      details: "Vel cras auctor at tortor imperdiet amet id sed rhoncus",
-      postDate: "2021-02-05 08:28:36",
-      reported: "Jackson",
-      status:"Done",
-    },
-    {
-      reporter: "Buck",
-      title: "Bad clothing quality",
-      details: "Quam aliquam odio ullamcorper ornare eleifend ipsum",
-      postDate: "2021-02-03 19:49:33",
-      reported: "Miami",
-      status:"Pending",
 
-    },
-    {
-      reporter: "Bil",
-      title: "Shipping wrong cloths",
-      details: "Mauris quam tristique et parturient sapien.",
-      postDate: "2021-02-02 19:17:15",
-      reported: "Tam",
-      status:"Pending",
+import React,{useState, useEffect} from 'react'
+import { getReport } from "../../../api/Report/getReport";
 
-    },
-    {
-      reporter: "Bao",
-      title: "Bad clothing quality",
-      details: "Fermentum porttitor amet, vulputate ornare tortor nisi",
-      postDate: "2021-02-02 09:46:33",
-      reported: "Linh",
-      status:"Pending",
-    },
-    {
-      reporter: "Mike",
-      title: "Bad clothing quality",
-      details: "Sed at ornare scelerisque in facilisis tincidunt",
-      postDate: "2021-02-02 07:57:01",
-      reported: "Tam",
-      status:"Done",
-    },
-    {
-      reporter: "Clothes",
-      title: "Return and Refund Request",
-      details: "Molestie est pharetra eu congue velit felis ipsum velit",
-      postDate: "2021-02-02 05:01:54",
-      reported: "Ebony",
-      status:"Done",
-    },
-    {
-      reporter: "Mike",
-      title: "Return and Refund Request",
-      details: "Et adipiscing vitae amet mauris eget vel.",
-      postDate: "2021-02-02 00:18:11",
-      reported: "Linh",
-      status:"Pending",
-    },
-    {
-      reporter: "Bil",
-      title: "Missing product delivery",
-      details: "Leo maecenas quis sapien morbi nunc, porta nibh.",
-      postDate: "2021-02-01 11:03:33",
-      reported: "Ebony",
-      status:"Pending",
-    },
-    {
-      reporter: "Mike",
-      title: "Missing product delivery",
-      details: "Nulla a aliquet donec curabitur risus blandit.",
-      postDate: "2021-01-31 03:42:50",
-      reported: "Tam",
-      status:"Pending",
-    },
-  ];
-  
+const fetchData = async () => {
+  try {
+    const response = await getReport();
+    console.log(response);
+    // console.log("this is");
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};
+
+// Exporting the data directly fetched from the API
+export const data = await fetchData();
+

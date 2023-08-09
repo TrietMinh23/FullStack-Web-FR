@@ -11,17 +11,17 @@ const userReportSchema = new mongoose.Schema(
     details:{type: String, required: true},
     id_reporter: {
       type: mongoose.Schema.Types.ObjectId, 
-      // ref: "User",
+      ref: "User",
       require: true,
     },
     id_reported: {
       type: mongoose.Schema.Types.ObjectId, 
-      // ref: "User",
+      ref: "User",
       require: true,
     },
     status: {type: String, required: true}
   },
-  {timestamp: true}
+  {timestamps: true}
 );
 
 export const userReport = mongoose.model("UserReport", userReportSchema);

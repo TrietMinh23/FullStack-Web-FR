@@ -16,13 +16,11 @@ const TableItem = ({rows}) => {
   const [isCancel, setIsCancel] = useState(false); 
   const [isReport, setIsReport] = useState(false); 
 
+  const [indexReview, setIndexReview] = useState(''); 
   const [indexReport, setIndexReport] = useState(''); 
   const [indexCancel, setIndexCancel] = useState(''); 
 
   const closeReview = () => {
-    setIsReview(false);
-  }
-  const finishReview = () => {
     setIsReview(false);
   }
   const closeCancel = () => {
@@ -35,9 +33,7 @@ const TableItem = ({rows}) => {
   const closeReport = () => {
     setIsReport(false);
   }
-  const finishReport = () => {
-    setIsReport(false);
-  }
+  
 
   const handleSort = (column) => {
     if (column === sortColumn) {
@@ -115,7 +111,7 @@ const TableItem = ({rows}) => {
 
   return (
     <div className="p-5 h-full bg-gray-100 w-full rounded-md">
-      <h1 className="text-xl mb-2">All Buyers</h1>
+      <h1 className="text-xl mb-2">All Order</h1>
 
       <div className="flex items-center mb-4">
         <label htmlFor="search" className="mr-2">
@@ -248,7 +244,10 @@ const TableItem = ({rows}) => {
                   {row.status === "Complete" &&
                     <div className ="grow flex">
                       <button
-                        onClick ={() => setIsReview(!isReview)}
+                        onClick ={() => {
+                          setIsReview(!isReview);
+                          setIndexReview(index);
+                        }}
                         className="mr-2 md:w-1/2 bg-green-sheen py-2 px-4 text-white font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-green-sheen hover:text-green-sheen"
                       >Review</button>
                       <button
@@ -512,7 +511,6 @@ const TableItem = ({rows}) => {
         <div className="flex lg:flex-row flex-col">
         <PopupReport
           close = {closeReport}
-          finish = {finishReport}
           i = {indexReport}
           />
         <div
@@ -537,7 +535,7 @@ const TableItem = ({rows}) => {
           <div className="flex lg:flex-row flex-col">
             <PopupReview
               close = {closeReview}
-              finish = {finishReview}
+              i = {indexReview}
             />
             <div
               id="dimScreen"

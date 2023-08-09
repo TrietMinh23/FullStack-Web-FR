@@ -8,6 +8,8 @@ import productRouter from "./routers/producRoute.js";
 import pCategoryRouter from "./routers/pCategoryRoute.js";
 import orderRouter from "./routers/orderRoute.js";
 import reportRoute from "./routers/reportRoute.js";
+import reviewRoute from "./routers/reviewRoute.js";
+
 import mongoose from "mongoose";
 import { Product } from "./models/productModel.js";
 import { data } from "./data.js";
@@ -36,6 +38,7 @@ app.use("/orders", orderRouter);
 app.use("/vnpay", vnpayRoute);
 app.use("/users", userRouter);
 app.use("/report", reportRoute);
+app.use("/review", reviewRoute);
 
 mongoose
   .connect(URI, { useNewUrlParser: true, useUnifiedTopology: true })
