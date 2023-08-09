@@ -9,5 +9,6 @@ router.get('/', getSellers);
 router.post('/register', createSeller);
 router.post('/login', loginSeller);
 router.delete('logout', logoutSeller);
+// router.get('/income/:id', getMonthlyIncomeABuyer);
 
 export default router;

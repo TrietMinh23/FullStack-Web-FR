@@ -90,3 +90,38 @@ export const getMonthlyIncome = async (req, res) => {
     res.status(400).json({error: err.message});
   }
 };
+
+export const getMonthlyIncomeBySeller = async (req, res) => {
+  const {sellerId} = req.params;
+
+  const currentDate = new Date();
+  const lastMonth = new Date(currentDate.getMonth() - 1);
+
+  try {
+    const income = await Order.aggregate([
+      {
+        $match: {
+          sellerId: mongoose.Type.Object(sellerId),
+          createAt: {$gte: lastMonth},
+          orderStatus: "Delivered",
+        },
+      },
+      {
+        $project: {
+          month: {$month: "$createdAt"},
+          sales: "$totalPrice",
+        },
+      },
+      {
+        $group: {
+          _id: "$month",
+          total: {$sum: "$sales"},
+        },
+      },
+    ]);
+
+    res.status(200).json(income);
+  } catch (err) {
+    console.log({error: err.message});
+  }
+};

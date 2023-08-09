@@ -1,11 +1,10 @@
 import AWS from "aws-sdk"
-import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3"
+import { S3Client, PutObjectCommand, GetObjectCommand,  ListObjectsV2Command, DeleteObjectCommand } from "@aws-sdk/client-s3"
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
 import crypto from 'crypto'
 import sharp from 'sharp'
 
 const BUCKET = process.env.BUCKET;
-const s3 = new AWS.S3();
 const region = process.env.REGION;
 const accessKeyId = process.env.ACCESS_KEY;
 const secretAccessKey = process.env.ACCESS_SECRET;
@@ -46,22 +45,20 @@ export const uploadFile = async (file) => {
   return objectUrl;
 }
 
-// export const upload = multer({
-//     storage: multerS3({
-//         s3: s3,
-//         acl: "public-read",
-//         bucket: BUCKET,
-//         key: function (req, file, cb) {
-//             console.log(file);
-//             cb(null, file.originalname)
-//         }
-//     })
-// })
-
 export const listS3 = async (req, res) => {
-  let r = await s3.listObjectsV2({ Bucket: BUCKET }).promise();
-  let x = r.Contents.map((item) => item.Key);
-  res.send(x);
+  try {
+    const listObjectsParams = {
+      Bucket: BUCKET,
+    };
+    
+    const response = await s3Client.send(new  ListObjectsV2Command(listObjectsParams));
+    const keys = response.Contents.map((item) => item.Key);
+    
+    res.send(keys);
+  } catch (err) {
+    console.error("Error while listing objects in S3: ", err);
+    res.status(500).send("Internal Server Error");
+  }
 };
 
 export const downloadS3 = async (req, res) => {
@@ -75,28 +72,13 @@ export const downloadS3 = async (req, res) => {
   }
 };
 
-export const deleteS3 = async (req, res) => {
-  const filename = req.params.filename;
+export const deleteS3 = async (filename) => {
   try {
-    await s3.deleteObject({ Bucket: BUCKET, Key: filename }).promise();
-    res.send("File Deleted Successfully");
+    await s3Client.send(new DeleteObjectCommand({ Bucket: BUCKET, Key: filename }));
+    return ("File Deleted Successfully");
   } catch (err) {
     console.error("Error while deleting file: ", err);
-    res.status(500).send("Internal Server Error");
-  }
-};
-
-export const listLinkS3 = async (req, res) => {
-  try {
-    let r = await s3.listObjectsV2({ Bucket: BUCKET }).promise();
-    let urls = r.Contents.map((item) => {
-      const params = { Bucket: BUCKET, Key: item.Key };
-      return s3.getSignedUrl("getObject", params);
-    });
-    res.json(urls);
-  } catch (err) {
-    console.error("Error while fetching URLs: ", err);
-    res.status(500).send("Internal Server Error");
+    return ("500 Internal Server Error");
   }
 };
 
@@ -112,3 +94,26 @@ export const getFileStream = async (key, res) => {
 
   res.send(imageUrl);
 }
+
+export const updateS3 = async (file, filename) => {
+  try {
+    const fileBuffer = await sharp(file.buffer)
+      .resize({ height: 1920, width: 1080, fit: "contain" })
+      .toBuffer();
+
+    const uploadParams = {
+      Bucket: BUCKET,
+      ACL: "public-read",
+      Body: fileBuffer,
+      Key: filename,
+      ContentType: file.mimetype,
+    };
+
+    await s3Client.send(new PutObjectCommand(uploadParams));
+    const objectUrl = `https://${BUCKET}.s3.amazonaws.com/${filename}`;
+    return objectUrl;
+  } catch (err) {
+    console.error("Error while updating file: ", err);
+    throw new Error("500 Internal Server Error");
+  }
+};

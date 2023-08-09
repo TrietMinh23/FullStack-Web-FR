@@ -3,6 +3,8 @@ import { FaTrashAlt, FaPen } from "react-icons/fa";
 import {PiMagnifyingGlass} from "react-icons/pi";
 import {AiOutlineCheckCircle} from "react-icons/ai";
 import PopupProcess from "../PopUp/PopupProcess";
+import { updateReport } from "../../../../api/Report/updateReport";
+
 const Table = ({rows}) => {
   const [perPage, setPerPage] = useState(5); // Số hàng trên mỗi trang
   const [currentPage] = useState(1); // Trang hiện tại
@@ -28,7 +30,19 @@ const Table = ({rows}) => {
   const finishProcess = () => {
     setIsProcess(false);
     rows[isHandle].status = "Done";
+    Update(rows[isHandle]._id);
   }
+
+  const Update = async (data) => {
+    await updateReport({ _id: data })
+    .then((res) => {
+      console.log(res.data);
+    })
+    .catch((err) => {
+        console.log(err.response.data.message);
+    });
+  };
+
 
   const closeProcess = () => {
     setIsProcess(false);
@@ -45,7 +59,7 @@ const Table = ({rows}) => {
     } else {
       setSelectedItems((prevSelectedItems) =>
         prevSelectedItems.filter(
-          (selectedItem) => selectedItem.reporter !== item.reporter
+          (selectedItem) => selectedItem.id_reporter.name !== item.id_reporter.name
         )
       );
     }
@@ -95,7 +109,11 @@ const Table = ({rows}) => {
 
     return sortedData.slice(startIndex, endIndex);
   };
-
+  const formatDate = (date) => {
+    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+    const parts = new Date(date).toLocaleDateString(undefined, options).split(' ');
+    return `${parts[1]} ${parts[0]}, ${parts[2]}`;
+  }
   return (
     <div className="p-5 h-full bg-gray-100 w-full rounded-md">
       <h1 className="text-xl mb-2">All reports</h1>
@@ -132,18 +150,18 @@ const Table = ({rows}) => {
               </th>
               <th
                 className="w-20 p-3 text-sm font-semibold tracking-wide text-left"
-                onClick={() => handleSort("reporter")}
+                onClick={() => handleSort("id_reporter.name")}
               >
                 Reporter{" "}
-                {sortColumn === "reporter" &&
+                {sortColumn === "id_reporter.name" &&
                   (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
                 className="w-24 p-3 text-sm font-semibold tracking-wide text-left"
-                onClick={() => handleSort("reported")}
+                onClick={() => handleSort("id_reported.name")}
               >
                 Reported{" "}
-                {sortColumn === "reported" && (sortOrder === "asc" ? "▲" : "▼")}
+                {sortColumn === "id_reported.name" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
                 className="p-3 text-sm font-semibold tracking-wide text-left"
@@ -154,10 +172,10 @@ const Table = ({rows}) => {
               </th>
               <th
                 className="w-24 p-3 text-sm font-semibold tracking-wide text-left"
-                onClick={() => handleSort("postDate")}
+                onClick={() => handleSort("createdAt")}
               >
                 Post date{" "}
-                {sortColumn === "postDate" && (sortOrder === "asc" ? "▲" : "▼")}
+                {sortColumn === "createdAt" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th className="w-32 p-3 text-sm font-semibold tracking-wide text-left">
                 Status
@@ -171,28 +189,28 @@ const Table = ({rows}) => {
             {getCurrentPageData().map((row, index) => (
               <tr
                 className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
-                key={row.reporter}
+                key={row.id_reporter.name}
               >
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                   <input
                     type="checkbox"
                     checked={selectedItems.some(
-                      (item) => item.reporter === row.reporter
+                      (item) => item.id_reporter.name === row.id_reporter.name
                     )}
                     onChange={(event) => handleCheckboxChange(event, row)}
                   />
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                  {row.reporter}
+                  {row.id_reporter.name}
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                  {row.reported}
+                  {row.id_reported.name}
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
                   {row.title}
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                  {row.postDate}
+                  {formatDate(row.createdAt)}
                 </td>
                 <td className="p-3 text-xs font-medium uppercase text-gray-700 whitespace-nowrap ">
                   <span
@@ -236,7 +254,7 @@ const Table = ({rows}) => {
         {getCurrentPageData().map((row, index) => (
           <div
             className="bg-white space-y-3 p-4 rounded-lg shadow"
-            key={row.reporter}
+            key={row.id_reporter.name}
           >
             <div className="flex items-center space-x-2 text-sm">
               <div>
@@ -244,10 +262,10 @@ const Table = ({rows}) => {
                   href="/#"
                   className="text-blue-500 font-bold hover:underline"
                 >
-                  reporter {row.reporter}
+                  id_reporter.name {row.id_reporter.name}
                 </a>
               </div>
-              <div className="text-gray-500">{row.postDate}</div>
+              <div className="text-gray-500">{row.createdAt}</div>
               <div>
                 <span
                   className={`p-1.5 text-xs font-medium uppercase tracking-wider ${
@@ -263,7 +281,7 @@ const Table = ({rows}) => {
               </div>
             </div>
             <div className="text-sm text-gray-700">{row.title}</div>
-            <div className="text-sm font-medium text-black ">Post Date: {row.postDate}</div>
+            <div className="text-sm font-medium text-black ">Post Date: {row.createdAt}</div>
             <div className="flex justify-end">
               {row.status === "Done" ?
                 <button className="text-blue-500 font-bold hover:underline">

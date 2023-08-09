@@ -7,6 +7,10 @@ const productSchema = new mongoose.Schema(
     description: { type: String, required: true, trim: true },
     price: { type: Number, required: true },
     brandName: { type: String },
+    title: { type: String, required: true, trim: true },
+    description: { type: String, required: true, trim: true },
+    price: { type: Number, required: true },
+    brandName: { type: String },
     category: [
       {
         type: String,
@@ -14,10 +18,11 @@ const productSchema = new mongoose.Schema(
         required: true,
       },
     ],
-    slug: { type: String, required: true, lowercase: true, default: "" },
-    sold: { type: Number, default: 0 },
-    image: { type: String },
-    color: { type: String },
+    slug: {type: String, required: true, lowercase: true, default: ""},
+    sold: {type: Number, default: 0},
+    image: {type: String},
+    color: {type: String},
+    condition: {type: Number, default: 100},
     sellerId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Seller",
@@ -40,21 +45,21 @@ productSchema.virtual("status", {
 // justOne true --> return one object instead of array of objects
 
 // delete product automatically after 24h the product has heen Delivered
-nodeCron.schedule("0 0 * * *", async () => {
-  try {
-    const products = await Product.find({ status: "Delivered" });
+// nodeCron.schedule("0 0 * * *", async () => {
+//   try {
+//     const products = await Product.find({status: "Delivered"});
 
-    for (var i of products) {
-      const day = (Date.now() - i.status.orderDate) / (3600 * 24);
-      if (day >= 1) {
-        await Product.findOneAndDelete(i);
-      } else {
-        console.log("Product is still available");
-      }
-    }
-  } catch (err) {
-    console.log(err.message);
-  }
-});
+//     for (var i of products) {
+//       const day = (Date.now() - i.status.orderDate) / (3600 * 24);
+//       if (day >= 1) {
+//         await Product.findOneAndDelete(i);
+//       } else {
+//         console.log("Product is still available");
+//       }
+//     }
+//   } catch (err) {
+//     console.log(err.message);
+//   }
+// });
 
 export const Product = mongoose.model("Product", productSchema);

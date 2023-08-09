@@ -3,6 +3,7 @@ import Table from "../components/Table";
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import ThumbDownAltIcon from "@mui/icons-material/ThumbDownAlt";
 import Card from "../../Home/PersonalProfile/components/card";
+import { rows } from "../data/dataTable";
 
 const staticTable = [
   {
@@ -42,7 +43,7 @@ export default function Review() {
         ))}
       </div>
       <div className="w-full">
-        <Table />
+        <Table rows={rows}/>
       </div>
     </div>
   );
