@@ -94,6 +94,7 @@ export const getProductsByCategory = async (req, res) => {
       res
         .status(400)
         .json({ error: "No products found for the specified category." });
+      return;
     }
 
     const totalProducts = await Product.find({
@@ -106,6 +107,7 @@ export const getProductsByCategory = async (req, res) => {
       totalPages,
       totalProducts,
     });
+    return;
   } catch (err) {
     res.status(400).json({ error: err.message });
   }

@@ -28,6 +28,7 @@ export const getUserInformation = async (req, res) => {
         expiredAt: decoded_token.exp,
       },
     });
+    return;
   } else {
     console.log("Access token is valid");
     User.find({ _id: decoded_token.id })
@@ -65,6 +66,7 @@ export const getUserInformation = async (req, res) => {
             _id: user[0]._id,
           };
           res.status(200).json(selectedData);
+          return;
         });
       });
   }
