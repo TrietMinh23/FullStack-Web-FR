@@ -7,10 +7,9 @@ import {
   createProduct,
   updateProduct,
   deleteProductById,
+  getProductBySellerId,
 } from "../controllers/productController.js";
 import multer from "multer";
-import fs from "fs"
-import util from "util"
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
@@ -22,7 +21,8 @@ router.get("/item/:slug", getProductBySlug);
 router.get("/list/search/:category", getProductsByCategory);
 router.get("/", getAllProducts);
 router.post("/", upload.single("image"), createProduct); 
-router.put("/:id", updateProduct);
+router.put("/:id", upload.single("image"), updateProduct);
 router.delete("/:id", deleteProductById);
+router.get("/sellerId/:id", getProductBySellerId);
 
 export default router;

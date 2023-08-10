@@ -1,5 +1,5 @@
 import { Route, Routes } from "react-router-dom";
-import React, { Suspense, lazy } from "react";
+import React, { Suspense, lazy, useState } from "react";
 import Loading from "../components/ui/Loading";
 import getCookie from "../utils/getCookie";
 const LoginAdmin = lazy(() => import("../pages/Admin/page/LoginAdmin/login"));
@@ -26,6 +26,7 @@ const HomeSeller = lazy(() => import("../pages/Seller/Home/home"));
 const AllItems = lazy(() => import("../pages/Seller/AllItems/allItem"));
 const NewItem = lazy(() => import("../pages/Seller/NewItem/newItem"));
 const Review = lazy(() => import("../pages/Seller/Review/review"));
+const AllOrders = lazy(() => import("../pages/Seller/AllOrders/AllOrders"));
 const LayoutSeller = lazy(() => import("../pages/Seller/Home/LayoutSeller"));
 const Home = lazy(() => import("../pages/Home/home"));
 const LayoutHomePage = lazy(() => import("../pages/Home/LayoutHomePage"));
@@ -62,6 +63,7 @@ function Router() {
           <Route path="/seller" element={<LayoutSeller />}>
             <Route path="/seller" element={<HomeSeller />} />
             <Route path="all-item" element={<AllItems />} />
+            <Route path="all-orders" element={<AllOrders />} />
             <Route path="add-new-item" element={<NewItem />} />
             <Route path="review" element={<Review />} />
           </Route>

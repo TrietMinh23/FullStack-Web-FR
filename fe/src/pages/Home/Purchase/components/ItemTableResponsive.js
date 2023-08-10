@@ -12,9 +12,10 @@ export default function ItemTableResponsive({ shop }) {
           <ArrowForwardIosIcon style={{ fontSize: "12px" }} />
         </div>
       </div>
-      {shop?.item.map((item) => (
+      {shop?.item.map((item, i) => (
         <ItemItemTableResponsive
           name={item.name}
+          key={i}
           price={item.price}
           quantity={item.quantity}
           image={item.image}

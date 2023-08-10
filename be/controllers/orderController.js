@@ -144,3 +144,23 @@ export const getMonthlyIncomeBySeller = async (req, res) => {
     console.log({error: err.message});
   }
 };
+
+export const getOrderBySellerId = async (req, res) => {
+  try {
+    const sellerId = req.params.sellerId;
+
+    const orders = await Order.find({"products.product.sellerId":sellerId}).populate({
+      path: "products.product",
+    })
+    .sort({createdAt: -1})
+    .exec();
+
+    if (orders.length === 0) {
+      return res.status(404).json({ error: "No orders found for this seller." });
+    }
+
+    res.status(200).json({ orders });
+  } catch (err) {
+    console.log({error: err.message});
+  }
+}

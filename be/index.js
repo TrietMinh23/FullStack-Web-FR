@@ -21,6 +21,7 @@ const URI = process.env.DATABASE;
 app.use(express.json()); //yêu cầu đối tượng đầu vào là object json, xử lý POST PUT
 app.use(express.urlencoded({ extended: true, limit: "30mb" })); //yêu cầu đối tượng đầu vào là chuỗi hoặc mảng, xử lý POST PUT
 app.use(cors()); //tắt Same-Origin Policy và cho phép các máy chủ khác truy cập
+app.use(bodyParser.json());
 
 app.get("/", (req, res) => {
   res.send("SUCCESS. Hello world from NODE");
@@ -35,6 +36,9 @@ app.use("/pcategories", pCategoryRouter);
 app.use("/orders", orderRouter);
 app.use("/carts", cartRouter);
 app.use("/vnpay", vnpayRoute);
+app.use("/users", userRouter);
+app.use("/report", reportRoute);
+app.use("/review", reviewRoute);
 app.use("/s3", s3Route);
 
 mongoose

@@ -11,9 +11,15 @@ const userReviewSchema = new mongoose.Schema(
       star: Number,
       comment: String,
     },
-    postedby: {
+    buyer: {
       type: mongoose.Schema.Types.ObjectId, 
       ref: "User",
+      require: true,
+      refPath: "orderedProduct.orderBy",
+    },
+    seller: {
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: "Seller",
       require: true,
       refPath: "orderedProduct.orderBy",
     },

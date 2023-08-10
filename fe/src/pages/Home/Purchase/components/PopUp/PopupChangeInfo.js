@@ -50,7 +50,7 @@ export default function PopupChangeInfo({ changeFunc, close, open }) {
   });
 
   return (
-    <div className="container absolute z-10 modal">
+    <div className="container absolute z-10 modal" style={{ top: "50%" }}>
       <div className="wrapper p-6">
         {" "}
         <div className="title">

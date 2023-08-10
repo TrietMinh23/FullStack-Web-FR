@@ -9,10 +9,11 @@ import { Link } from "react-router-dom";
 import CheapIcon from "../../../assets/CheapIcon";
 import CardSkeletonDetail from "../../../components/ui/CardSkeletonDetail";
 import StoreIcon from "@mui/icons-material/Store";
-
+import PopupSeller from "./PopupSeller";
 export default function ProductDetail() {
   const params = useParams();
   const [data, setData] = useState(null);
+  const [isWatchSeller, setWatchSeller] = useState(false);
   const dispatch = useDispatch();
   const currentShoppingCart = useSelector(
     (state) => state.product.shoppingCart
@@ -123,10 +124,16 @@ export default function ProductDetail() {
                   </h2>
                   <a
                     className="uppercase inline-block hover:scale-110 hover:text-blue-600 font-bold hover:underline transition-all"
-                    href="/#"
+                    onClick={() => setWatchSeller(!isWatchSeller)}
                   >
                     {data?.shop} shop
                   </a>
+                  {isWatchSeller && (
+                    <div className="flex lg:flex-row flex-col">
+                      <PopupSeller />
+                      <div id="dimScreen" className={"block"}></div>
+                    </div>
+                  )}
                 </div>
                 <h2 className="text-sm] title-font uppercase text-gray-500 tracking-widest">
                   BRAND : {data.product?.brandName}

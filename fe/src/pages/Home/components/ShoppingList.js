@@ -14,6 +14,7 @@ export default function ShoppingList({ page }) {
         setProducts(res.data.products);
       })
       .catch((err) => console.log(err));
+    console.log(productsList);
   }, [page]);
   return (
     <section
