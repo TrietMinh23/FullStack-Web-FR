@@ -6,14 +6,16 @@ import { ToastContainer, toast } from "react-toastify";
 import { ADDTOCART } from "../../../utils/redux/productsSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import Rating from '@mui/material/Rating';
+
 import CheapIcon from "../../../assets/CheapIcon";
 import CardSkeletonDetail from "../../../components/ui/CardSkeletonDetail";
 import StoreIcon from "@mui/icons-material/Store";
-import PopupSeller from "./PopupSeller"
+
 export default function ProductDetail() {
+  const [value, setValue] = useState(4);
   const params = useParams();
   const [data, setData] = useState(null);
-  const [isWatchSeller, setWatchSeller] = useState(false);
   const dispatch = useDispatch();
   const currentShoppingCart = useSelector(
     (state) => state.product.shoppingCart
@@ -37,8 +39,8 @@ export default function ProductDetail() {
     if (currentShoppingCart.length) {
       let index;
       for (const item of currentShoppingCart) {
-        if (item.name === data.shop) {
-          index = item.item.findIndex((item) => item.id === data.product._id);
+        if (item.name === data.product?.shop) {
+          index = item.item.findIndex((item) => item.id === data.product?._id);
           if (index >= 0) {
             notifyFail();
             return;
@@ -52,17 +54,17 @@ export default function ProductDetail() {
     // If the loop completes without finding a duplicate item, proceed to add to the cart
     dispatch(
       ADDTOCART({
-        id: data.product._id,
-        name: data.product.title,
-        image: data.product.image,
-        price: data.product.price,
-        shop: data.shop,
+        id: data.product?._id,
+        name: data.product?.title,
+        image: data.product?.image,
+        price: data.product?.price,
+        shop: data.product?.shop,
         quantity: 1,
       })
     );
 
     let listItem = JSON.parse(localStorage.getItem("list"));
-    listItem.push(data.product);
+    listItem.push(data);
     localStorage.setItem("list", JSON.stringify(listItem));
 
     notify();
@@ -74,7 +76,7 @@ export default function ProductDetail() {
   };
 
   function formatNumberWithCommas(number) {
-    const numberStr = number.toString();
+    const numberStr = number ? number.toString() : "";
 
     const [integerPart, decimalPart] = numberStr.split(".");
 
@@ -106,6 +108,8 @@ export default function ProductDetail() {
       .then((res) => setData(res.data));
   }, [params.slug]);
 
+  {console.log(data)}
+
   return (
     <section className="text-gray-700 body-font overflow-hidden bg-white">
       <div className="container px-5 py-24 mx-auto">
@@ -118,25 +122,34 @@ export default function ProductDetail() {
                 src={data.product?.image}
               />
               <div className="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
-                <div className="mb-4">
+                <div className="mb-4 flex">
                   <h2 className="title-font uppercasetracking-widest inline-block mr-3">
                     <StoreIcon className="mr-2"></StoreIcon>SHOP:
                   </h2>
-                  <a
-                    className="uppercase inline-block hover:scale-110 hover:text-blue-600 font-bold hover:underline transition-all"
-                    onClick = {() => setWatchSeller(!isWatchSeller) }
-                  >
-                    {data?.shop} shop
-                  </a>
-                  {isWatchSeller &&
-                    <div className="flex lg:flex-row flex-col">
-                      <PopupSeller/>
-                      <div
-                        id="dimScreen"
-                        className={"block"}
-                        ></div>
+                  <div className ="group relative">
+                    <a
+                      className="uppercase inline-block hover:scale-110 hover:text-blue-600 font-bold hover:underline transition-all"
+                    >
+                      {data?.shop} shop
+                    </a>
+                    <div className ="flex absolute w-96 top-7 invisible rounded border group-hover:visible bg-white rounded">
+                      <div>
+                        <h1 className ="text-2xl text-center">{value}</h1>
+                        <div>
+                          <Rating
+                            name="read-only"
+                            value={value}
+                          />
+                        </div>
+                      </div>
+                      <div>
+                      <button
+                        className="bg-white py-2 px-2 text-black font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-green-sheen hover:text-green-sheen"
+                      >All(11)</button>
+                      </div>
+            
                     </div>
-                  }
+                  </div>
                 </div>
                 <h2 className="text-sm] title-font uppercase text-gray-500 tracking-widest">
                   BRAND : {data.product?.brandName}
