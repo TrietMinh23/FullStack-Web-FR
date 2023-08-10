@@ -1,5 +1,5 @@
 import express from "express"; //pour utiliser la bibliothèque ExpressJS
-// import bodyParser from "body-parser";
+import bodyParser from "body-parser";
 import cors from "cors";
 import "dotenv/config";
 import userRouter from "./routers/userRoute.js";
@@ -13,6 +13,8 @@ import { data } from "./data.js";
 import slugify from "slugify";
 import vnpayRoute from "./routers/vnpayRoute.js";
 import s3Route from "./routers/s3Route.js";
+import reportRoute from "./routers/reportRoute.js";
+import reviewRoute from "./routers/reviewRoute.js";
 
 const app = express(process.env.DATABASE);
 const PORT = process.env.PORT || 5000;
