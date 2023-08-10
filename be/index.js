@@ -11,10 +11,10 @@ import cartRouter from "./routers/cartRoute.js";
 import mongoose from "mongoose";
 import { data } from "./data.js";
 import slugify from "slugify";
-import vnpayRoute from "./routers/vnpayRoute.js";
-import s3Route from "./routers/s3Route.js";
-import reportRoute from "./routers/reportRoute.js";
-import reviewRoute from "./routers/reviewRoute.js";
+import vnpayRouter from "./routers/vnpayRoute.js";
+import s3Router from "./routers/s3Route.js";
+import reportRouter from "./routers/reportRoute.js";
+import reviewRouter from "./routers/reviewRoute.js";
 
 const app = express(process.env.DATABASE);
 const PORT = process.env.PORT || 5000;
@@ -37,11 +37,11 @@ app.use("/products", productRouter);
 app.use("/pcategories", pCategoryRouter);
 app.use("/orders", orderRouter);
 app.use("/carts", cartRouter);
-app.use("/vnpay", vnpayRoute);
+app.use("/vnpay", vnpayRouter);
 app.use("/users", userRouter);
-app.use("/report", reportRoute);
-app.use("/review", reviewRoute);
-app.use("/s3", s3Route);
+app.use("/report", reportRouter);
+app.use("/review", reviewRouter);
+app.use("/s3", s3Router);
 
 mongoose
   .connect(URI, { useNewUrlParser: true, useUnifiedTopology: true })
