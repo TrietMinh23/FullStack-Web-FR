@@ -1,39 +1,39 @@
 import slugify from "slugify";
-import { Product } from "../models/productModel.js";
-import { User } from "../models/userModel.js";
-import { uploadFile } from "./s3Controller.js";
+import {Product} from "../models/productModel.js";
+import {User} from "../models/userModel.js";
+import {uploadFile} from "./s3Controller.js";
 import util from "util";
 import fs from "fs";
 
-
 export const getProductById = async (req, res) => {
   try {
-    const _id = req.params.id;
-    const product = await Product.find({ _id });
-    const shop = await User.find({ _id: product[0].sellerId });
+    const {id} = req.params;
+    const product = await Product.findOne({id});
 
-    if (product) {
-      res.status(200).json({ product: product[0], shop: shop[0].name });
+    if (!product) {
+      res.status(404).json({error: "Not found!"});
+      return;
     } else {
-      res.status(404).json({ message: "Not found!" });
+      res.status(200).json(product);
     }
   } catch (err) {
-    res.json({ message: err.message });
+    res.json({message: err.message});
   }
 };
 
 export const getProductBySlug = async (req, res) => {
   try {
     const slug = req.params.slug;
-    const product = await Product.find({ slug });
+    const product = await Product.find({slug});
 
-    if (product) {
-      res.status(200).json(product);
+    if (!product) {
+      res.status(404).json({error: "Not found!"});
+      return;
     } else {
-      res.status(404).json({ error: "Not found!" });
+      res.status(200).json(product);
     }
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(400).json({error: err.message});
   }
 };
 
@@ -41,9 +41,10 @@ export const getProductsByCategory = async (req, res) => {
   try {
     const categorySlug = req.params.category;
 
-    const category = await Product.findOne({ slug: categorySlug });
+    const category = await Product.findOne({slug: categorySlug});
     if (!category) {
-      res.status(404).json({ error: "Not found!" });
+      res.status(404).json({error: "Not found!"});
+      return;
     }
 
     // pagination
@@ -51,8 +52,8 @@ export const getProductsByCategory = async (req, res) => {
     var limit = parseInt(res.params.limit) || 20; //numbers of products per page
 
     const skip = (page - 1) * limit;
-    var products = await Product.find({ category: category })
-      .sort({ createdAt: -1 })
+    var products = await Product.find({category: category})
+      .sort({createdAt: -1})
       .skip(skip)
       .limit(limit)
       .exec();
@@ -60,7 +61,7 @@ export const getProductsByCategory = async (req, res) => {
     if (products.length === 0) {
       res
         .status(400)
-        .json({ error: "No products found for the specified category." });
+        .json({error: "No products found for the specified category."});
     }
 
     const totalProducts = await Product.find({
@@ -74,7 +75,7 @@ export const getProductsByCategory = async (req, res) => {
       totalProducts,
     });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(400).json({error: err.message});
   }
 };
 
@@ -86,13 +87,13 @@ export const getAllProducts = async (req, res) => {
 
     const skip = (page - 1) * limit;
     const products = await Product.find()
-      .sort({ createAt: -1 })
+      .sort({createAt: -1})
       .skip(skip)
       .limit(limit)
       .exec();
 
     if (products.length === 0) {
-      res.status(400).json({ error: "No products found." });
+      res.status(400).json({error: "No products found."});
     }
 
     const totalProducts = await Product.find().countDocuments();
@@ -105,28 +106,27 @@ export const getAllProducts = async (req, res) => {
       products: products,
     });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(400).json({error: err.message});
   }
 };
-
 
 const unlinkFile = util.promisify(fs.unlink);
 
 export const createProduct = async (req, res) => {
   try {
     if (req.body.role === "seller") {
-      res.status(400).json({ error: "You are not a seller." });
+      res.status(400).json({error: "You are not a seller."});
       return;
     }
 
     if (req.body.title) {
-      req.body.slug = slugify(req.body.title, { lower: true });
-     
+      req.body.slug = slugify(req.body.title, {lower: true});
+
       const file = req.file;
       const url_link = await uploadFile(file);
 
       req.body.image = url_link;
-  
+
       delete req.file;
 
       const newProduct = new Product(req.body);
@@ -136,24 +136,22 @@ export const createProduct = async (req, res) => {
 
     const file = req.file;
     console.log(file);
-    const title = req.body.title
+    const title = req.body.title;
     console.log(title);
-
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(400).json({error: err.message});
     console.log(err);
   }
 };
-
 
 export const updateProduct = async (req, res) => {
   try {
     if (req.body.role === "seller") {
       const id = req.params.id;
-      const product = await Product.findOneAndUpdate({ id });
+      const product = await Product.findOneAndUpdate({id});
 
       if (!product) {
-        res.status(404).json({ error: "Not found!" });
+        res.status(404).json({error: "Not found!"});
       }
 
       if (req.body.title) {
@@ -165,10 +163,10 @@ export const updateProduct = async (req, res) => {
       });
       res.status(200).json(productUpdated);
     } else {
-      res.status(400).json({ error: "You are not a seller." });
+      res.status(400).json({error: "You are not a seller."});
     }
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(400).json({error: err.message});
   }
 };
 
@@ -179,18 +177,18 @@ export const deleteProductById = async (req, res) => {
       const id = req.params.id;
 
       // if the product has been delivered, seller can't delete it
-      const status = await Product.findOne({ id }).populate("status");
+      const status = await Product.findOne({id}).populate("status");
       if (status === "Delivered") {
-        res.status(400).json({ error: "You can't delete this product." });
+        res.status(400).json({error: "You can't delete this product."});
       } else {
-        const deleteProduct = await Product.findOneAndDelete({ id });
+        const deleteProduct = await Product.findOneAndDelete({id});
         if (!deleteProduct) {
-          res.status(404).json({ error: "Not found!" });
+          res.status(404).json({error: "Not found!"});
         }
-        res.status(200).json({ message: "Product deleted." });
+        res.status(200).json({message: "Product deleted."});
       }
     }
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(400).json({error: err.message});
   }
 };

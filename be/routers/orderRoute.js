@@ -4,7 +4,7 @@ import {
   createOrder,
   updateOrder,
   deleteOrder,
-  getUserOrders,
+  getOrdersByUserId,
   getMonthlyIncome,
   getMonthlyIncomeBySeller,
 } from "../controllers/orderController.js";
@@ -17,10 +17,10 @@ import {
 
 const router = express.Router();
 router.get("/", verifyTokenAndAdmin, getAllOrders);
-router.get("/find/:userId", verifyTokenAndAuthorization, getUserOrders); 
-router.post("/",   verifyToken, createOrder);
-router.put("/:id", verifyTokenAndAdmin,updateOrder);
-router.delete("/:id", verifyTokenAndAdmin ,deleteOrder);
+router.get("/:userId", verifyTokenAndAuthorization, getOrdersByUserId);
+router.post("/", verifyToken, createOrder);
+router.put("/:id", verifyTokenAndAdmin, updateOrder);
+router.delete("/:id", deleteOrder);
 router.get("/income", verifyTokenAndAdmin, getMonthlyIncome);
 router.get("/income/:sellerId", verifyTokenAndSeller, getMonthlyIncomeBySeller);
 

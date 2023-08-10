@@ -18,8 +18,6 @@ const orderSchema = new mongoose.Schema(
         product: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "Product",
-          count: Number,
-          color: String,
         },
       },
     ],
@@ -55,7 +53,7 @@ const orderSchema = new mongoose.Schema(
     },
   },
   {
-    timestamps: true,
+    timestamps: true, 
     versionKey: false,
   }
 );
@@ -65,6 +63,10 @@ orderSchema.methods.calculateTotalPrice = async () => {
   for (var item of this.products) {
     this.totalPrice += item.product.price;
   }
+};
+
+orderSchema.methods.calculateQuantity = async () => {
+  this.quantity = this.products.length;
 };
 
 export const Payment = mongoose.model("Payment", paymentSchema);

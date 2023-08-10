@@ -7,8 +7,8 @@ import sellerRouter from "./routers/sellerRoute.js";
 import productRouter from "./routers/producRoute.js";
 import pCategoryRouter from "./routers/pCategoryRoute.js";
 import orderRouter from "./routers/orderRoute.js";
+import cartRouter from "./routers/cartRoute.js";
 import mongoose from "mongoose";
-import { Product } from "./models/productModel.js";
 import { data } from "./data.js";
 import slugify from "slugify";
 import vnpayRoute from "./routers/vnpayRoute.js";
@@ -33,6 +33,7 @@ app.use("/buyers", userRouter);
 app.use("/products", productRouter);
 app.use("/pcategories", pCategoryRouter);
 app.use("/orders", orderRouter);
+app.use("/carts", cartRouter);
 app.use("/vnpay", vnpayRoute);
 app.use("/s3", s3Route);
 

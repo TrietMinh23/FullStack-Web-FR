@@ -12,7 +12,13 @@ export const getAllOrders = async (req, res) => {
 export const createOrder = async (req, res) => {
   try {
     const newOrder = new Order(req.body);
+
+    // calculate total price and quantity
+    newOrder.calculateTotalPrice();
+    newOrder.calculateQuantity();
+
     await newOrder.save();
+
     res.status(202).json("Order has been created!", newOrder);
   } catch (err) {
     res.status(400).json({error: err.message});
@@ -21,12 +27,19 @@ export const createOrder = async (req, res) => {
 
 export const deleteOrder = async (req, res) => {
   try {
+    const id = res.params.id;
+    const order = await Order.findOneAndDelete({_id: id});
+
+    if (!order) {
+      res.status(404).json({message: "Order not found"});
+    } else {
+      res.status(200).json("Order deleted successfully");
+    }
   } catch (err) {
     res.status(400).json({error: err.message});
   }
 };
 
-// admin manage update order
 export const updateOrder = async (req, res) => {
   try {
     const {id} = req.params;
@@ -35,22 +48,28 @@ export const updateOrder = async (req, res) => {
       {$set: req.body},
       {new: true}
     );
+
+    // calculate total price and quantity
+    order.calculateTotalPrice();
+    order.calculateQuantity();
+
+    await order.save();
     res.status(200).json(order);
   } catch (err) {
     res.status(400).json({error: err.message});
   }
 };
 
-export const getUserOrders = async (req, res) => {
+export const getOrdersByUserId = async (req, res) => {
   try {
-    const {userId} = res.params;
+    const userId = res.params.userId;
 
-    const orders = await Order.find({userId})
+    const orders = await Order.find({userId: userId})
       .populate("products.product", "title price")
       .populate("orderby", "name")
       .populate("paymentMethod", "paymentMethod")
       .populate("shippingMethod", "address city ward")
-      .sort({createAt: -1}); //sorr by createAt desc
+      .sort({createAt: -1});
 
     res.status(200).json(orders);
   } catch (err) {

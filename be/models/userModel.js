@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema(
     address: { type: String, default: "" },
     role: { type: String, default: "buyer" },
     isBlocked: { type: Boolean, default: false },
-    wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
+    // wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
     passwordChangeAt: Date,
     passwordResetToken: String,
     passwordResetExpires: Date,
