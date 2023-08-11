@@ -10,11 +10,18 @@ export default function LayoutHomePage() {
   const product = useSelector((state) => state.product.shoppingCart);
   useEffect(() => {
     if (getCookie("refresh_token")) {
-      const listFromLocalStorage = JSON.parse(localStorage.getItem("list"));
+      const listFromLocalStorage = JSON.parse(localStorage.getItem("cart"));
+      if (listFromLocalStorage.first) {
+        dispatch(
+          UPDATEPRODUCT({
+            total: listFromLocalStorage.products.length,
+            flag: true,
+          })
+        );
+      }
       // Check if listFromLocalStorage is not null before accessing length
-      if (listFromLocalStorage && listFromLocalStorage.length) {
-        console.log(product);
-        dispatch(UPDATEPRODUCT({ listProduct: listFromLocalStorage }));
+      else if (listFromLocalStorage && listFromLocalStorage.products.length) {
+        dispatch(UPDATEPRODUCT({ listProduct: listFromLocalStorage.products }));
       }
     }
   }, []);

@@ -7,19 +7,19 @@ export default function ItemItemShoppingCart({ name, image, price, shop, id }) {
   const dispatch = useDispatch();
 
   const deleteItem = async () => {
-    const list = JSON.parse(localStorage.getItem("list"));
-    const index = list.findIndex((item) => item._id === id);
+    const list = JSON.parse(localStorage.getItem("cart"));
+    const index = list.products.findIndex((item) => item._id === id);
 
     await instance
       .post(`http://localhost:5000/users/list_remove`, {
         productId: id,
-        userId: JSON.parse(localStorage.getItem("_id")),
+        cartId: JSON.parse(localStorage.getItem("cart"))._id,
       })
       .then((response) => console.log(response.data.message))
       .catch((err) => console.log(err));
 
-    list.splice(index, 1);
-    localStorage.setItem("list", JSON.stringify(list));
+    list.products.splice(index, 1);
+    localStorage.setItem("cart", JSON.stringify(list));
 
     dispatch(
       DELETE({

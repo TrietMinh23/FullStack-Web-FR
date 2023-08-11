@@ -3,11 +3,11 @@ import { Link } from "react-router-dom";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { useSelector } from "react-redux";
 
-export default function Example() {
+export default function Example({ funcGetShoppingCart }) {
   const total = useSelector((state) => state.product.total);
-
+  console.log(total);
   return (
-    <div className="text-right">
+    <div className="text-right" onClick={funcGetShoppingCart}>
       <Menu as="div" className="relative inline-block text-left">
         <div className="absolute right-0 bg-red-500 px-[8px] py-[1px] text-white rounded-full text-[10px] font-bold">
           {" "}

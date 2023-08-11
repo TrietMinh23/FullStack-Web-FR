@@ -5,7 +5,7 @@ export default function CheapIcon() {
       width="33"
       height="16"
       viewBox="0 0 33 16"
-      class="-LmQBA"
+      className="-LmQBA"
       fill="none"
     >
       <path

@@ -6,12 +6,12 @@ const userSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     email: { type: String, required: true },
-    mobile: { type: String },
     password: { type: String, required: true },
     address: { type: String, default: "" },
+    mobile: { type: String, default: "" },
     role: { type: String, default: "buyer" },
     isBlocked: { type: Boolean, default: false },
-    wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
+    // wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
     passwordChangeAt: Date,
     passwordResetToken: String,
     passwordResetExpires: Date,
@@ -47,6 +47,6 @@ userSchema.methods.createPasswordResetToken = async function () {
 
 userSchema.method.isAdmin = async function () {
   return this.role === "admin";
-}
+};
 
 export const User = mongoose.model("User", userSchema);

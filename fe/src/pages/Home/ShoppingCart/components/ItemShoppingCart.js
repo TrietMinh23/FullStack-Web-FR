@@ -17,12 +17,12 @@ export default function ItemShoppingCart({ shop }) {
           </div>
         </th>
       </tr>
-      {shop.item.map((item) => (
+      {shop.item.map((item, i) => (
         <ItemItemShoppingCart
           name={item.name}
           price={item.price}
           image={item.image}
-          key={item.id}
+          key={i}
           shop={shop.name}
           id={item.id}
         />

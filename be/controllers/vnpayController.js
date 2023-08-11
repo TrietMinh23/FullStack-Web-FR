@@ -2,6 +2,7 @@ import moment from "moment";
 import qs from "qs";
 import crypto from "crypto";
 import config from "config";
+import { Payment } from "../models/orderModel.js";
 
 function sortObject(obj) {
   let sorted = {};
@@ -26,6 +27,7 @@ export const createPaymentUrl = async (req, res, next) => {
     const orderBody = JSON.parse(req.body.order)[0];
     // const order = new Order(orderBody);
     // const orderData = await order.save();
+    const payment = Payment;
     console.log(orderBody);
 
     // const ipAddr =

@@ -1,4 +1,5 @@
 import { Seller } from "../models/sellerModel.js";
+import { Cart } from "../models/cartModel.js";
 import bcrypt from "bcryptjs";
 import { generateToken } from "../config/jwtToken.js";
 

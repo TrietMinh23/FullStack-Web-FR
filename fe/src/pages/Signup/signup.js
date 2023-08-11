@@ -109,7 +109,6 @@ export default function Signup() {
             .get("http://localhost:5000/users/user_info", {
               headers: {
                 Authorization: `${res.data.access_token}`,
-                Role: role,
                 "Content-Type": "application/x-www-form-urlencoded",
               },
             })

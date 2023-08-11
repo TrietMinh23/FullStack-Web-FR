@@ -10,29 +10,30 @@ export const productsSlice = createSlice({
   initialState,
   reducers: {
     ADDTOCART: (state, action) => {
-      const { name, price, image, shop, quantity, id } = action.payload;
+      console.log(action.payload.data);
+      const { title, price, image, _id, sellerId } = action.payload.data;
       const targetIndex = state.shoppingCart.findIndex(
-        (item) => item.name === shop
+        (item) => item.name === sellerId.name
       );
 
       if (targetIndex >= 0) {
         state.shoppingCart[targetIndex].item.push({
-          name,
+          name: title,
           price,
           image,
-          quantity,
-          id,
+          quantity: 1,
+          id: _id,
         });
       } else {
         state.shoppingCart.push({
-          name: shop,
+          name: sellerId.name,
           item: [
             {
-              name,
+              name: title,
               price,
               image,
-              quantity,
-              id,
+              quantity: 1,
+              id: _id,
             },
           ],
         });
@@ -76,36 +77,81 @@ export const productsSlice = createSlice({
       state.total -= 1;
     },
     UPDATEPRODUCT: (state, action) => {
-      const { listProduct } = action.payload;
-      for (let item of listProduct) {
-        const { title, price, image, _id, sellerId, nameSeller } = item;
-        const targetIndex = state.shoppingCart.findIndex(
-          (item) => item.name === nameSeller
-        );
+      const { flag } = action.payload;
 
-        if (targetIndex >= 0) {
-          state.shoppingCart[targetIndex].item.push({
-            name: title,
-            price,
-            image,
-            id: _id,
-            sellerId,
-          });
+      if (flag !== undefined) {
+        if (flag) {
+          const { total } = action.payload;
+          console.log("CHECK", total);
+          state.total = total;
         } else {
-          state.shoppingCart.push({
-            name: nameSeller,
-            item: [
-              {
+          const { listProduct } = action.payload;
+          if (listProduct) {
+            for (let item of listProduct) {
+              const { title, price, image, _id, sellerId } = item;
+              const targetIndex = state.shoppingCart.findIndex(
+                (item) => item.name === sellerId.name
+              );
+
+              if (targetIndex >= 0) {
+                state.shoppingCart[targetIndex].item.push({
+                  name: title,
+                  price,
+                  image,
+                  id: _id,
+                  sellerId,
+                });
+              } else {
+                state.shoppingCart.push({
+                  name: sellerId.name,
+                  item: [
+                    {
+                      name: title,
+                      price,
+                      image,
+                      id: _id,
+                      sellerId,
+                    },
+                  ],
+                });
+              }
+            }
+          }
+        }
+      } else {
+        const { listProduct } = action.payload;
+        if (listProduct) {
+          for (let item of listProduct) {
+            const { title, price, image, _id, sellerId } = item;
+            const targetIndex = state.shoppingCart.findIndex(
+              (item) => item.name === sellerId.name
+            );
+
+            if (targetIndex >= 0) {
+              state.shoppingCart[targetIndex].item.push({
                 name: title,
                 price,
                 image,
                 id: _id,
                 sellerId,
-              },
-            ],
-          });
+              });
+            } else {
+              state.shoppingCart.push({
+                name: sellerId.name,
+                item: [
+                  {
+                    name: title,
+                    price,
+                    image,
+                    id: _id,
+                    sellerId,
+                  },
+                ],
+              });
+            }
+          }
         }
-        state.total += 1;
+        state.total = listProduct.length;
       }
     },
   },

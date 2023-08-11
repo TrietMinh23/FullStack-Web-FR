@@ -1,5 +1,5 @@
 import express from "express"; //pour utiliser la bibliothèque ExpressJS
-// import bodyParser from "body-parser";
+import bodyParser from "body-parser";
 import cors from "cors";
 import "dotenv/config";
 import userRouter from "./routers/userRoute.js";
@@ -7,16 +7,14 @@ import sellerRouter from "./routers/sellerRoute.js";
 import productRouter from "./routers/producRoute.js";
 import pCategoryRouter from "./routers/pCategoryRoute.js";
 import orderRouter from "./routers/orderRoute.js";
-import reportRoute from "./routers/reportRoute.js";
-import reviewRoute from "./routers/reviewRoute.js";
-import bodyParser from "body-parser";
-
+import cartRouter from "./routers/cartRoute.js";
 import mongoose from "mongoose";
-import { Product } from "./models/productModel.js";
 import { data } from "./data.js";
 import slugify from "slugify";
-import vnpayRoute from "./routers/vnpayRoute.js";
-import s3Route from "./routers/s3Route.js";
+import vnpayRouter from "./routers/vnpayRoute.js";
+import s3Router from "./routers/s3Route.js";
+import reportRouter from "./routers/reportRoute.js";
+import reviewRouter from "./routers/reviewRoute.js";
 
 const app = express(process.env.DATABASE);
 const PORT = process.env.PORT || 5000;
@@ -38,11 +36,12 @@ app.use("/buyers", userRouter);
 app.use("/products", productRouter);
 app.use("/pcategories", pCategoryRouter);
 app.use("/orders", orderRouter);
-app.use("/vnpay", vnpayRoute);
+app.use("/carts", cartRouter);
+app.use("/vnpay", vnpayRouter);
 app.use("/users", userRouter);
-app.use("/report", reportRoute);
-app.use("/review", reviewRoute);
-app.use("/s3", s3Route);
+app.use("/report", reportRouter);
+app.use("/review", reviewRouter);
+app.use("/s3", s3Router);
 
 mongoose
   .connect(URI, { useNewUrlParser: true, useUnifiedTopology: true })

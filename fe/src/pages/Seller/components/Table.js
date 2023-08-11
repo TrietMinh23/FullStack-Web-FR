@@ -221,18 +221,18 @@ export default function Table({
                   <span
                     className={
                       "block text-center p-2 rounded-md bg-opacity-50  " +
-                      (row.status === "Available" || "0"
+                      (row.status == "Available" || row.status == "0"
                         ? "text-green-800 bg-green-200"
-                        : row.status === "Sold out"
+                        : row.status == "Sold out"
                         ? "text-gray-800 bg-gray-200"
-                        : row.status === "Shipping"
+                        : row.status == "Shipping"
                         ? "text-yellow-800 bg-yellow-200"
-                        : row.status === "Refund" || "1"
+                        : row.status == "Refund" || row.status == "1"
                         ? "text-red-800 bg-red-200"
                         : "")
                     }
                   >
-                    {row.status === "0" ? "Available" : "Sold"}
+                    {row.status == "0" ? "Available" : "Sold"}
                   </span>
                 </td>
 
@@ -265,25 +265,25 @@ export default function Table({
                   href="/#"
                   className="text-blue-500 font-bold hover:underline"
                 >
-                  TradeCode {row.status === "0" ? "Available" : "Sold"}
+                  TradeCode {row.status == "0" ? "Available" : "Sold"}
                 </a>
               </div>
               <div className="text-gray-500">{row.postDate}</div>
               <div>
                 <span
                   className={`p-1.5 text-xs font-medium uppercase tracking-wider ${
-                    row.status === "Available" || "0"
+                    row.status == "Available" || row.status == "0"
                       ? "text-green-800 bg-green-200"
-                      : row.status === "Sold out"
+                      : row.status == "Sold out"
                       ? "text-gray-800 bg-gray-200"
-                      : row.status === "Shipping"
+                      : row.status == "Shipping"
                       ? "text-yellow-800 bg-yellow-200"
-                      : row.status === "Refund"
-                      ? "text-red-800 bg-red-200" || "1"
+                      : row.status == "Refund" || row.status == "1"
+                      ? "text-red-800 bg-red-200" 
                       : ""
                   } rounded-lg bg-opacity-50`}
                 >
-                  {row.status === "0" ? "Available" : "Sold"}
+                  {row.status == "0" ? "Available" : "Sold"}
                 </span>
               </div>
             </div>

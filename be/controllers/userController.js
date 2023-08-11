@@ -1,7 +1,10 @@
 import { User } from "../models/userModel.js";
+import { Cart } from "../models/cartModel.js";
 import { generateToken, decodeToken } from "../config/jwtToken.js";
 import bcrypt from "bcryptjs";
+import "dotenv/config";
 
+//Complete REFRESH TOKEN HANDLE
 export const refreshTokenHandle = async (req, res) => {
   const requestToken = req.headers.refresh_token;
   const decoded_token = decodeToken(requestToken);
@@ -14,61 +17,50 @@ export const refreshTokenHandle = async (req, res) => {
   });
 };
 
+//Complete Get User Information
 export const getUserInformation = async (req, res) => {
-  const decoded_token = decodeToken(req.headers.authorization);
+  const { authorization } = req.headers;
+  const decoded_token = decodeToken(authorization);
   const currentTimestamp = Math.floor(Date.now() / 1000);
-  if (currentTimestamp > decoded_token.exp) {
-    console.log("Access token has expired");
-    res.status(400).json({
-      error: "true",
-      message: "Unauthorized access",
-      err: {
-        name: "TokenExpiredError",
-        message: "jwt expired",
-        expiredAt: decoded_token.exp,
-      },
-    });
-    return;
-  } else {
-    console.log("Access token is valid");
-    User.find({ _id: decoded_token.id })
-      .populate("wishlist")
-      .then((user) => {
-        console.log(user);
-        let arr = [];
-        async function populateWishlist() {
-          for (const item of user[0].wishlist) {
-            let temp = {
-              _id: item._id,
-              title: item.title,
-              description: item.description,
-              price: item.price,
-              brandName: item.brandName,
-              category: item.category,
-              image: item.image,
-              color: item.color,
-              sellerId: item.sellerId,
-            };
-            const sellerInfo = await item.populate("sellerId");
-            temp.nameSeller = sellerInfo.sellerId.name;
-            temp.email_seller = sellerInfo.sellerId.email;
-            arr.push(temp);
-          }
-        }
-        populateWishlist().then(() => {
-          const selectedData = {
-            address: user[0].address,
-            email: user[0].email,
-            mobile: user[0].mobile,
-            name: user[0].name,
-            role: user[0].role,
-            list: arr,
-            _id: user[0]._id,
-          };
-          res.status(200).json(selectedData);
-          return;
-        });
+  try {
+    if (currentTimestamp > decoded_token.exp) {
+      console.log("Access token has expired");
+      res.status(400).json({
+        error: "true",
+        message: "Unauthorized access",
+        err: {
+          name: "TokenExpiredError",
+          message: "jwt expired",
+          expiredAt: decoded_token.exp,
+        },
       });
+      return;
+    } else {
+      console.log("Access token is valid");
+      User.findById(decoded_token.id).then(async (user) => {
+        const selectField = {
+          _id: user._id,
+          name: user.name,
+          address: user.address,
+          role: user.role,
+          mobile: user.mobile,
+          email: user.email,
+        };
+
+        if (user.role === "buyer") {
+          const cart = await Cart.find({ userId: user._id });
+          selectField["cart"] = {
+            products: cart[0].products,
+            total_price: cart[0].totalPrice,
+            _id: cart[0]._id,
+            first: true,
+          };
+        }
+        res.status(200).json(selectField);
+      });
+    }
+  } catch {
+    res.status(400).json({ message: "Invalid Access" });
   }
 };
 
@@ -81,53 +73,11 @@ export const getUsers = async (req, res) => {
   }
 };
 
-export const deleteProductFromListUser = async (req, res) => {
-  const { userId, productId } = req.body;
-  await User.findOneAndUpdate(
-    { _id: userId },
-    { $pull: { wishlist: productId } },
-    { new: true }
-  );
-  res.status(200).json({ message: "Remove the product successfully" });
-};
-
-export const updateUserWishList = async (req, res) => {
-  const { id, userId } = req.body;
-  try {
-    // Kiểm tra xem người dùng muốn thêm cartItem vào listWish
-    if (id !== undefined) {
-      console.log("User want to add new item to data");
-      const user = await User.findById(userId.replace(/^"(.*)"$/, "$1"));
-      user.wishlist.push(id);
-      await user.save(); // Lưu lại thông tin người dùng sau khi cập nhật
-      let arr = [];
-      user
-        .populate("wishlist")
-        .then((user) => {
-          for (let i of user.wishlist) {
-            arr.push(i);
-          }
-          res
-            .status(200)
-            .json({ status: "OK", message: "Cập nhật thành công.", list: arr });
-          return;
-        })
-        .catch((err) => console.log(err));
-      return;
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Có lỗi xảy ra." });
-  }
-};
-
 export const updateInformation = async (req, res) => {
   const { userId, address, phone, name } = req.body;
 
-  console.log(phone);
-
   try {
-    const user = await User.findOne({ _id: userId });
+    const user = await User.findById(userId);
 
     if (!user) {
       return res.status(404).json({ error: "User not found" });
@@ -147,21 +97,26 @@ export const updateInformation = async (req, res) => {
   }
 };
 
+//Complete Sign Up
 export const createUser = async (req, res) => {
   try {
     const email = req.body.email;
     const findUser = await User.findOne({ email });
 
     if (findUser) {
-      res.status(400).json({ message: "Buyer already exists" });
+      res.status(400).json({ message: "User already exists" });
       return;
     }
 
-    req.body["mobile"] = `__MOBILE_NULL_FOR_${req.body.email}_`;
     const newUser = new User(req.body);
+    if (newUser.role === "buyer") {
+      const newCart = new Cart({ userId: newUser._id });
+      await newCart.save();
+    }
 
     const accessToken = generateToken(newUser._id, "1d");
     const refreshtoken = generateToken(`${newUser._id}fr`, "3d");
+
     await newUser.save();
 
     return res.status(200).json({
@@ -174,54 +129,33 @@ export const createUser = async (req, res) => {
   }
 };
 
+//Complete Log In
 export const loginUser = async (req, res) => {
   try {
     const { email, password, role, otp } = req.body;
-    if (otp) {
-      const findUser = await User.findOne({ email });
-      if (findUser) {
-        const passwordMatch = await bcrypt.compare(password, findUser.password);
+    console.log(otp);
 
-        if (!passwordMatch) {
-          res.status(400).json({ message: "Password doesn't match" });
-          return;
-        }
+    if (!otp && role === "admin") {
+      res.status(403).json({ message: "Your account doesn't exist" });
+      return;
+    }
 
-        if (otp !== "123456") {
-          res.status(400).json({ message: "Wrong OTP" });
-          return;
-        }
+    if (
+      otp &&
+      otp !== process.env.KEYOTPADMIN &&
+      (role !== "admin" || role === "admin")
+    ) {
+      res.status(403).json({ message: "Your account doesn't exist" });
+      return;
+    }
 
-        const accessToken = generateToken(findUser._id, "1d");
-        const refreshtoken = generateToken(`${findUser._id}fr`, "3d");
+    const findUser = await User.findOne({ email });
 
-        // const updateUser = await User.findByIdAndUpdate(
-        //   findUser?._id,
-        //   { refreshToken: refreshToken },
-        //   { new: true }
-        // );
-        // res.cookie("refreshToken", refreshToken, {
-        //   httpOnly: true,
-        //   maxAge: 72 * 60 * 60 * 1000,
-        // });
+    if (findUser) {
+      const passwordMatch = await bcrypt.compare(password, findUser.password);
 
-        // return token
-
-        res.status(200).json({
-          status: "OK",
-          access_token: accessToken,
-          refresh_token: refreshtoken,
-        });
-        return;
-      } else {
-        res.status(404).json({ message: "Buyer doesn't exist" });
-      }
-    } else {
-      // check if user exists or not
-      const findUser = await User.findOne({ email });
-
-      if (findUser.role === "admin") {
-        res.status(403).json({ message: "Your account doesn't exist" });
+      if (!passwordMatch) {
+        res.status(400).json({ message: "Password doesn't match" });
         return;
       }
 
@@ -237,38 +171,17 @@ export const loginUser = async (req, res) => {
         }
       }
 
-      if (findUser) {
-        const passwordMatch = await bcrypt.compare(password, findUser.password);
+      const accessToken = generateToken(findUser._id, "1d");
+      const refreshtoken = generateToken(`${findUser._id}fr`, "3d");
 
-        if (!passwordMatch) {
-          res.status(400).json({ message: "Password doesn't match" });
-          return;
-        }
-
-        const accessToken = generateToken(findUser._id, "1d");
-        const refreshtoken = generateToken(`${findUser._id}fr`, "3d");
-
-        // const updateUser = await User.findByIdAndUpdate(
-        //   findUser?._id,
-        //   { refreshToken: refreshToken },
-        //   { new: true }
-        // );
-        // res.cookie("refreshToken", refreshToken, {
-        //   httpOnly: true,
-        //   maxAge: 72 * 60 * 60 * 1000,
-        // });
-
-        // return token
-
-        res.status(200).json({
-          status: "OK",
-          access_token: accessToken,
-          refresh_token: refreshtoken,
-        });
-        return;
-      } else {
-        res.status(404).json({ message: "Buyer doesn't exist" });
-      }
+      res.status(200).json({
+        status: "OK",
+        access_token: accessToken,
+        refresh_token: refreshtoken,
+      });
+      return;
+    } else {
+      res.status(404).json({ message: "Your account doesn't exist" });
     }
   } catch (err) {
     res.status(400).json({ message: err.message });
@@ -364,5 +277,53 @@ export const unblockUser = async (req, res) => {
     res.status(200).json({ message: "Unblock user successfully!", user });
   } catch (err) {
     res.status(400).json({ error: err.message });
+  }
+};
+
+export const updateUserCart = async (req, res) => {
+  const { cartId, productId } = req.body;
+  try {
+    console.log("User want to add new item to data");
+
+    const cartUser = await Cart.findById({ _id: cartId });
+
+    if (cartUser) {
+      const newProduct = {
+        product: productId,
+        quantity: 1,
+      };
+
+      cartUser.products.push(newProduct);
+
+      await cartUser.save();
+    }
+
+    res.status(200).json({ status: "OK", message: "Update successfully." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Sorry, there is something wrong." });
+  }
+};
+
+export const deleteProductFromListUser = async (req, res) => {
+  const { cartId, productId } = req.body;
+
+  try {
+    const updatedCart = await Cart.findOneAndUpdate(
+      { _id: cartId },
+      { $pull: { products: { product: productId } } },
+      { new: true }
+    );
+
+    if (!updatedCart) {
+      return res.status(404).json({ message: "Cart not found" });
+    }
+
+    res
+      .status(200)
+      .json({ message: "Removed the product successfully", updatedCart });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };

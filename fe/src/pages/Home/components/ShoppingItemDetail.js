@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import CheapIcon from "../../../assets/CheapIcon";
 import CardSkeletonDetail from "../../../components/ui/CardSkeletonDetail";
+import formatNumberWithCommas from "../../../utils/formatNumberWithCommas";
 import StoreIcon from "@mui/icons-material/Store";
 import PopupSeller from "./PopupSeller";
 export default function ProductDetail() {
@@ -37,8 +38,8 @@ export default function ProductDetail() {
     if (currentShoppingCart.length) {
       let index;
       for (const item of currentShoppingCart) {
-        if (item.name === data.shop) {
-          index = item.item.findIndex((item) => item.id === data.product._id);
+        if (item.name === data.sellerId.name) {
+          index = item.item.findIndex((item) => item.id === data._id);
           if (index >= 0) {
             notifyFail();
             return;
@@ -52,49 +53,24 @@ export default function ProductDetail() {
     // If the loop completes without finding a duplicate item, proceed to add to the cart
     dispatch(
       ADDTOCART({
-        id: data.product._id,
-        name: data.product.title,
-        image: data.product.image,
-        price: data.product.price,
-        shop: data.shop,
-        quantity: 1,
+        data,
       })
     );
 
-    let listItem = JSON.parse(localStorage.getItem("list"));
-    listItem.push(data.product);
-    localStorage.setItem("list", JSON.stringify(listItem));
+    let listItem = JSON.parse(localStorage.getItem("cart"));
+    listItem.products.push(data);
+    localStorage.setItem("cart", JSON.stringify(listItem));
 
     notify();
 
-    instance.post("/users/update", {
-      id: params.slug,
-      userId: JSON.parse(localStorage.getItem("_id")),
+    instance.post("/users/update_cart", {
+      productId: params.slug,
+      cartId: JSON.parse(localStorage.getItem("cart"))._id.replace(
+        /^"(.*)"$/,
+        "$1"
+      ),
     });
   };
-
-  function formatNumberWithCommas(number) {
-    const numberStr = number.toString();
-
-    const [integerPart, decimalPart] = numberStr.split(".");
-
-    const reversedInteger = integerPart.split("").reverse().join("");
-
-    const formattedInteger = reversedInteger
-      .match(/.{1,3}/g)
-      .join(",")
-      .split("")
-      .reverse()
-      .join("");
-
-    // Kết hợp phần nguyên và phần thập phân (nếu có)
-    let formattedNumber = formattedInteger;
-    if (decimalPart) {
-      formattedNumber += "." + decimalPart;
-    }
-
-    return formattedNumber;
-  }
 
   useEffect(() => {
     instance
@@ -106,6 +82,10 @@ export default function ProductDetail() {
       .then((res) => setData(res.data));
   }, [params.slug]);
 
+  {
+    console.log(data);
+  }
+
   return (
     <section className="text-gray-700 body-font overflow-hidden bg-white">
       <div className="container px-5 py-24 mx-auto">
@@ -115,7 +95,7 @@ export default function ProductDetail() {
               <img
                 alt="ecommerce"
                 className="lg:w-1/2 w-full object-cover object-center rounded border border-gray-200"
-                src={data.product?.image}
+                src={data?.image}
               />
               <div className="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
                 <div className="mb-4">
@@ -126,7 +106,7 @@ export default function ProductDetail() {
                     className="uppercase inline-block hover:scale-110 hover:text-blue-600 font-bold hover:underline transition-all"
                     onClick={() => setWatchSeller(!isWatchSeller)}
                   >
-                    {data?.shop} shop
+                    {data.sellerId?.name} shop
                   </a>
                   {isWatchSeller && (
                     <div className="flex lg:flex-row flex-col">
@@ -136,10 +116,10 @@ export default function ProductDetail() {
                   )}
                 </div>
                 <h2 className="text-sm] title-font uppercase text-gray-500 tracking-widest">
-                  BRAND : {data.product?.brandName}
+                  BRAND : {data?.brandName}
                 </h2>
                 <h1 className="text-gray-900 text-3xl title-font font-medium mb-1 mt-3">
-                  {data.product?.title}
+                  {data?.title}
                 </h1>
                 <div className="flex mb-4">
                   <span className="flex py-2">
@@ -181,7 +161,7 @@ export default function ProductDetail() {
                     </a>
                   </span>
                 </div>
-                <p className="leading-relaxed">{data.product?.description}</p>
+                <p className="leading-relaxed">{data?.description}</p>
                 <div className="mt-6 pb-5 border-b-2 border-gray-200 mb-5"></div>
                 <div>
                   <div className="first-part">
@@ -191,7 +171,7 @@ export default function ProductDetail() {
                           <span className="title-font font-medium text-2xl text-gray-900">
                             Price :{" "}
                             <span className="text-4xl text-venetian-red">
-                              {formatNumberWithCommas(data.product?.price)}
+                              {formatNumberWithCommas(data?.price)}
                             </span>
                             <span className="text-venetian-red">₫</span>
                           </span>
@@ -219,14 +199,14 @@ export default function ProductDetail() {
                         </h2>
                         <ul className="max-w-md space-y-1 text-gray-500 list-disc list-inside dark:text-gray-400">
                           <li>
-                            Color : <span>{data.product?.color}</span>
+                            Color : <span>{data?.color}</span>
                           </li>
                           <li>
                             {" "}
                             Category :{" "}
                             <div className="inline-block">
                               <div className="flex">
-                                {data.product?.category.map((item, i) => (
+                                {data?.category.map((item, i) => (
                                   <p key={i} className="px-1">
                                     {item}
                                   </p>

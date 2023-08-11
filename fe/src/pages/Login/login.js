@@ -89,10 +89,9 @@ export default function Login() {
           setCookie("access_token", res.data.access_token, 5);
           setCookie("refresh_token", res.data.refresh_token, 3 * 24 * 60 * 60);
           axios
-            .get("http://localhost:5000/users/user_info", {
+            .get(`http://localhost:5000/users/user_info`, {
               headers: {
-                Authorization: `${res.data.access_token}`,
-                "Content-Type": "application/x-www-form-urlencoded",
+                Authorization: res.data.access_token,
               },
             })
             .then((res) => {

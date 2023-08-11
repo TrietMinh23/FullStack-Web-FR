@@ -31,14 +31,14 @@ const NewProductForm = ({ tradeCode }) => {
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [imageFile, setImageFile] = useState(null);
   const [productData, setProductData] = useState(null);
-  const [category, setCategory] = useState(null);
+  const [category, setCategory] = useState([]);
 
   const handleChange = (selected) => {
     if (selected === null || selected === undefined) {
       return;
-    }  
+    }
     setSelectedOptions(selected);
-    const newCategory = selected.map(item => item.value);
+    const newCategory = selected.map((item) => item.value);
     setCategory(newCategory);
   };
 
@@ -50,11 +50,17 @@ const NewProductForm = ({ tradeCode }) => {
     formData.append("description", e.target.description.value);
     formData.append("price", e.target.price.value);
     formData.append("brandName", e.target.brand.value);
-    formData.append("image", imageFile); // Thêm hình ảnh vào formData
+    if (imageFile instanceof File) {
+      console.log(1);
+      formData.append("image", imageFile); // Thêm hình ảnh mới vào formData nếu có sự thay đổi
+    } else {
+      console.log(2);
+      formData.append("image", productData.image); // Sử dụng hình ảnh hiện tại nếu không có sự thay đổi
+    }
     formData.append("color", e.target.color.value);
     formData.append("condition", e.target.condition.value);
-    category.forEach(items => {
-      formData.append('category', items);
+    category.forEach((items) => {
+      formData.append("category", items);
     });
 
     // Get the sellerId value from local storage
@@ -100,20 +106,45 @@ const NewProductForm = ({ tradeCode }) => {
 
   useEffect(() => {
     if (productData) {
-      const selected = options.filter(option => productData.category.includes(option.value));
+      const selected = options.filter((option) =>
+        productData.category.includes(option.value)
+      );
       setSelectedOptions(selected);
     }
   }, [productData]);
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setImageFile(file);
+  };
+
+  useEffect(() => {
+    if (imageFile) {
+      const newSrc = URL.createObjectURL(imageFile);
+      const imageElement = document.getElementsByClassName("show-image")[0];
+      if (imageElement) {
+        imageElement.src = newSrc;
+      }
+    }
+  }, [imageFile]);
+
   return (
     <div class="container mx-auto flex flex-col justify-center items-center max-w-4xl">
       <h1 className="text-2xl font-bold mb-4 block w-full text-left">
-      {tradeCode ? "Update Product" : "New Product"}
+        {tradeCode ? "Update Product" : "New Product"}
       </h1>
       <div className="w-full">
         <form onSubmit={handleSubmit}>
-          <Form title="title" PH="Give the target a name" value={productData?.title}></Form>
-          <Form title="price" PH="Please enter your price" value={productData?.price}></Form>
+          <Form
+            title="title"
+            PH="Give the target a name"
+            value={productData?.title}
+          ></Form>
+          <Form
+            title="price"
+            PH="Please enter your price"
+            value={productData?.price}
+          ></Form>
           <div className="mb-4 flex flex-col">
             <label htmlFor="description" className="mb-2 self-start">
               Description :
@@ -122,11 +153,19 @@ const NewProductForm = ({ tradeCode }) => {
               id="description"
               className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Give us some descriptions about your product"
-              value={productData?.description}
+              defaultValue={productData?.description}
             ></textarea>
           </div>
-          <Form title="brand" PH="Please enter your brand name" value={productData?.brandName}></Form>
-          <Form title="color" PH="Please enter your color" value={productData?.color}></Form>
+          <Form
+            title="brand"
+            PH="Please enter your brand name"
+            value={productData?.brandName}
+          ></Form>
+          <Form
+            title="color"
+            PH="Please enter your color"
+            value={productData?.color}
+          ></Form>
           <div className="mb-4">
             <label htmlFor="type" className="mb-2 self-start">
               Category :
@@ -139,26 +178,34 @@ const NewProductForm = ({ tradeCode }) => {
               isMultiple={true}
             />
           </div>
-          <Form title="condition" PH="Guess how new your items are" value={productData?.condition}></Form>
+          <Form
+            title="condition"
+            PH="Guess how new your items are"
+            value={productData?.condition}
+          ></Form>
           <div className="mb-4">
             <label htmlFor="image" className="mb-2 self-start capitalize">
               Image :
             </label>
-            {productData?.image && (
-            <div className="mb-2">
-              <img
-                src={productData.image} // Assuming 'productData.image' contains the URL of the existing image
-                alt="Product"
-                className="max-h-40 mb-2"
-              />
-            </div>
-          )}
-          <input
-            type="file"
-            id="image"
-            className="py-2 px-3 border focus:outline-none focus:ring focus:ring-red-200 focus:ring-opacity-50 rounded-md shadow-sm disabled:bg-gray-100 mt-1 block w-full"
-            onChange={(e) => setImageFile(e.target.files[0])}
-          />
+            {(productData?.image || imageFile) && (
+              <div className="mb-2">
+                <img
+                  src={
+                    imageFile
+                      ? URL.createObjectURL(imageFile)
+                      : productData?.image
+                  } // Assuming 'productData.image' contains the URL of the existing image
+                  alt="Product"
+                  className="show-image max-h-40 mb-2"
+                />
+              </div>
+            )}
+            <input
+              type="file"
+              id="image"
+              className="py-2 px-3 border focus:outline-none focus:ring focus:ring-red-200 focus:ring-opacity-50 rounded-md shadow-sm disabled:bg-gray-100 mt-1 block w-full"
+              onChange={handleImageChange}
+            />
           </div>
 
           <button

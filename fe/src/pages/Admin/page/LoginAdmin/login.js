@@ -13,6 +13,7 @@ export default function LoginAdmin() {
     email: "",
     password: "",
     otp: "",
+    role: "admin",
   });
 
   const handleLoginInputChange = (e) => {
@@ -36,9 +37,10 @@ export default function LoginAdmin() {
             },
           })
           .then((res) => {
+            console.log(res);
             if (res.status === 200) {
               for (let i in res.data) {
-                localStorage(i, JSON.stringify(res.data[i]));
+                localStorage.setItem(i, JSON.stringify(res.data[i]));
               }
               navigate("/admin");
               window.location.reload();

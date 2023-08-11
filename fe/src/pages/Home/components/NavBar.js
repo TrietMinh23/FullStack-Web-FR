@@ -9,9 +9,31 @@ import { useState } from "react";
 import getCookie from "../../../utils/getCookie";
 import ButtonLogin from "./ButtonLogin";
 import ButtonSignUp from "./ButtonSignUp";
+import { getCart } from "../../../api/cart";
+import { UPDATEPRODUCT } from "../../../utils/redux/productsSlice";
+import { useDispatch } from "react-redux";
 
 const Navbar = () => {
+  const dispatch = useDispatch();
   const [isDropdownOpenMenu, setIsDropdownOpenMenu] = useState(false);
+  const getShoppingCart = () => {
+    if (JSON.parse(localStorage.getItem("cart")).first) {
+      getCart(JSON.parse(localStorage.getItem("_id")))
+        .then((res) => {
+          localStorage.setItem("cart", JSON.stringify(res.data));
+          const listFromLocalStorage = JSON.parse(localStorage.getItem("cart"));
+          if (listFromLocalStorage && listFromLocalStorage.products.length) {
+            dispatch(
+              UPDATEPRODUCT({
+                listProduct: listFromLocalStorage.products,
+                flag: false,
+              })
+            );
+          }
+        })
+        .catch((err) => console.log(err));
+    }
+  };
   return (
     <nav className="nav bg-dark-jungle-green">
       <div className="max-w-7xl mx-auto px-4 lg:pt-2 sm:px-6 lg:px-8">
@@ -70,7 +92,9 @@ const Navbar = () => {
               ) : (
                 <ButtonUser />
               )}
-              <ButtonShoppingCart />
+              <ButtonShoppingCart
+                funcGetShoppingCart={() => getShoppingCart()}
+              />
             </div>
           </div>
         </div>
