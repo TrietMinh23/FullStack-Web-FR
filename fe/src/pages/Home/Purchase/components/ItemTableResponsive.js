@@ -14,7 +14,7 @@ export default function ItemTableResponsive({ shop }) {
       </div>
       {shop?.item.map((item, i) => (
         <ItemItemTableResponsive
-          name={item.name}
+          name={item.title}
           key={i}
           price={item.price}
           quantity={item.quantity}
