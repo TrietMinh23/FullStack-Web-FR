@@ -65,6 +65,7 @@ export const ProductID = async (id) => {
 
 export const updateProduct = async (productId, productData) => {
   try {
+    
     const response = await instance.put(`/products/${productId}`, productData, {
       headers: { "Content-Type": "multipart/form-data" },
     });

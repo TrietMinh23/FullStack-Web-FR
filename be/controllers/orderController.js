@@ -1,11 +1,11 @@
-import {Order} from "../models/orderModel.js";
+import { Order } from "../models/orderModel.js";
 
 export const getAllOrders = async (req, res) => {
   try {
     const orders = await Order.find();
     res.status(200).json(orders);
   } catch (err) {
-    res.status(400).json({error: err.message});
+    res.status(400).json({ error: err.message });
   }
 };
 
@@ -21,32 +21,32 @@ export const createOrder = async (req, res) => {
 
     res.status(202).json("Order has been created!", newOrder);
   } catch (err) {
-    res.status(400).json({error: err.message});
+    res.status(400).json({ error: err.message });
   }
 };
 
 export const deleteOrder = async (req, res) => {
   try {
     const id = res.params.id;
-    const order = await Order.findOneAndDelete({_id: id});
+    const order = await Order.findOneAndDelete({ _id: id });
 
     if (!order) {
-      res.status(404).json({message: "Order not found"});
+      res.status(404).json({ message: "Order not found" });
     } else {
       res.status(200).json("Order deleted successfully");
     }
   } catch (err) {
-    res.status(400).json({error: err.message});
+    res.status(400).json({ error: err.message });
   }
 };
 
 export const updateOrder = async (req, res) => {
   try {
-    const {id} = req.params;
+    const { id } = req.params;
     const order = await Order.findOneAndUpdate(
-      {id},
-      {$set: req.body},
-      {new: true}
+      { id },
+      { $set: req.body },
+      { new: true }
     );
 
     // calculate total price and quantity
@@ -56,7 +56,7 @@ export const updateOrder = async (req, res) => {
     await order.save();
     res.status(200).json(order);
   } catch (err) {
-    res.status(400).json({error: err.message});
+    res.status(400).json({ error: err.message });
   }
 };
 
@@ -64,16 +64,16 @@ export const getOrdersByUserId = async (req, res) => {
   try {
     const userId = res.params.userId;
 
-    const orders = await Order.find({userId: userId})
+    const orders = await Order.find({ userId: userId })
       .populate("products.product", "title price")
       .populate("orderby", "name")
       .populate("paymentMethod", "paymentMethod")
       .populate("shippingMethod", "address city ward")
-      .sort({createAt: -1});
+      .sort({ createAt: -1 });
 
     res.status(200).json(orders);
   } catch (err) {
-    res.status(400).json({error: err.message});
+    res.status(400).json({ error: err.message });
   }
 };
 
@@ -86,32 +86,32 @@ export const getMonthlyIncome = async (req, res) => {
     const income = await Order.aggregate([
       {
         $match: {
-          createdAt: {$gte: lastMonth},
+          createdAt: { $gte: lastMonth },
           orderStatus: "Delivered",
         },
       },
       {
         $project: {
-          month: {$month: "$createdAt"},
+          month: { $month: "$createdAt" },
           sales: "$totalPrice",
         },
       },
       {
         $group: {
           _id: "$month",
-          total: {$sum: "$sales"},
+          total: { $sum: "$sales" },
         },
       },
     ]);
 
     res.status(200).json(income);
   } catch (err) {
-    res.status(400).json({error: err.message});
+    res.status(400).json({ error: err.message });
   }
 };
 
 export const getMonthlyIncomeBySeller = async (req, res) => {
-  const {sellerId} = req.params;
+  const { sellerId } = req.params;
 
   const currentDate = new Date();
   const lastMonth = new Date(currentDate.getMonth() - 1);
@@ -121,46 +121,43 @@ export const getMonthlyIncomeBySeller = async (req, res) => {
       {
         $match: {
           sellerId: mongoose.Type.Object(sellerId),
-          createAt: {$gte: lastMonth},
+          createAt: { $gte: lastMonth },
           orderStatus: "Delivered",
         },
       },
       {
         $project: {
-          month: {$month: "$createdAt"},
+          month: { $month: "$createdAt" },
           sales: "$totalPrice",
         },
       },
       {
         $group: {
           _id: "$month",
-          total: {$sum: "$sales"},
+          total: { $sum: "$sales" },
         },
       },
     ]);
 
     res.status(200).json(income);
   } catch (err) {
-    console.log({error: err.message});
+    console.log({ error: err.message });
   }
 };
 
 export const getOrderBySellerId = async (req, res) => {
   try {
-    const sellerId = req.params.sellerId;
 
-    const orders = await Order.find({"products.product.sellerId":sellerId}).populate({
-      path: "products.product",
-    })
-    .sort({createdAt: -1})
-    .exec();
+    const orders = await Order.find().populate("products.product", "title price");
 
     if (orders.length === 0) {
-      return res.status(404).json({ error: "No orders found for this seller." });
+      return res
+        .status(404)
+        .json({ error: "No orders found for this seller." });
     }
 
-    res.status(200).json({ orders });
+    res.status(200).json(orders);
   } catch (err) {
-    console.log({error: err.message});
+    console.log({ error: err.message });
   }
-}
+};

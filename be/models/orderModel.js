@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const paymentSchema = {
   paymentMethod: { type: String, required: true },
-  //paymentDetail: { type: Object },
+  paymentDetail: { type: Object },
 };
 
 const shippingSchema = {
@@ -44,11 +44,11 @@ const orderSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
-    paymentMethod: {
+    payment: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Payment",
     },
-    shippingMethod: {
+    shipping: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Shipping",
     },

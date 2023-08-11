@@ -185,11 +185,6 @@ export const createProduct = async (req, res) => {
       await newProduct.save();
       res.status(201).json(newProduct);
     }
-
-    const file = req.file;
-    console.log(file);
-    const title = req.body.title;
-    console.log(title);
   } catch (err) {
     res.status(400).json({ error: err.message });
     console.log(err);
@@ -201,6 +196,8 @@ export const updateProduct = async (req, res) => {
     if (req.body.role === "seller" || true) {
       const id = req.params.id;
       const product = await Product.findOneAndUpdate({ id });
+
+      console.log(product);
 
       if (!product) {
         res.status(404).json({ error: "Not found!" });

@@ -93,7 +93,7 @@ const NewProductForm = ({ tradeCode }) => {
       const fetchProductDetails = async () => {
         try {
           const response = await ProductID(tradeCode);
-          const product = response.data[0];
+          const product = response.data;
           setProductData(product);
         } catch (error) {
           console.error("Error fetching product details:", error.message);
