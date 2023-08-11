@@ -13,14 +13,22 @@ import CardSkeletonDetail from "../../../components/ui/CardSkeletonDetail";
 import StoreIcon from "@mui/icons-material/Store";
 
 export default function ProductDetail() {
-  const [value, setValue] = useState(4);
+  const [seeStar, setSeeStar] = useState(0);
   const params = useParams();
   const [data, setData] = useState(null);
+  const [review, setReview] = useState([]);
+  const [review1, setReview1] = useState([]);
+  const [review2, setReview2] = useState([]);
+  const [review3, setReview3] = useState([]);
+  const [review4, setReview4] = useState([]);
+  const [review5, setReview5] = useState([]);
+  const num = (1 * review1.length + 2* review2.length + 3 * review3.length + 4*review4.length + 5*review5.length)/review.length;
+  const a = parseFloat(num.toFixed(1));
   const dispatch = useDispatch();
   const currentShoppingCart = useSelector(
     (state) => state.product.shoppingCart
   );
-
+ 
   const notify = () =>
     toast.success("Add to cart successfully 🛒", {
       autoClose: 2000,
@@ -105,10 +113,36 @@ export default function ProductDetail() {
           id: params.slug,
         },
       })
-      .then((res) => setData(res.data));
+      .then((res) => {
+        setData(res.data);
+        fetchReview(res.data);
+      });
   }, [params.slug]);
 
-  {console.log(data)}
+  const fetchReview = (productData) =>{
+    const path = productData.product?.sellerId;
+      instance
+        .get(`review/${path}`, null, {
+          params: {
+            id: path,
+          },
+        })
+        .then((res) => {
+          setReview(res.data.review);
+          });
+    }
+    useEffect(() => {
+      const filteredReviews5 = review.filter((re) => re.rating.star === 5 );
+      setReview5(filteredReviews5);
+      const filteredReviews4 = review.filter((re) => re.rating.star === 4 );
+      setReview4(filteredReviews4);
+      const filteredReviews3 = review.filter((re) => re.rating.star === 3 );
+      setReview3(filteredReviews3);
+      const filteredReviews2 = review.filter((re) => re.rating.star === 2 );
+      setReview2(filteredReviews2);
+      const filteredReviews1 = review.filter((re) => re.rating.star === 1 );
+      setReview1(filteredReviews1);
+    }, [review]);
 
   return (
     <section className="text-gray-700 body-font overflow-hidden bg-white">
@@ -126,28 +160,202 @@ export default function ProductDetail() {
                   <h2 className="title-font uppercasetracking-widest inline-block mr-3">
                     <StoreIcon className="mr-2"></StoreIcon>SHOP:
                   </h2>
-                  <div className ="group relative">
-                    <a
+                  <div className ="group relative ">
+                    <button
                       className="uppercase inline-block hover:scale-110 hover:text-blue-600 font-bold hover:underline transition-all"
                     >
                       {data?.shop} shop
-                    </a>
-                    <div className ="flex absolute w-96 top-7 invisible rounded border group-hover:visible bg-white rounded">
-                      <div>
-                        <h1 className ="text-2xl text-center">{value}</h1>
-                        <div>
+                    </button>
+                    <div className ="grid h-[304px] absolute left-[-100px] top-7 visible rounded border group-hover:visible bg-white rounded">
+                        <div className ="col-span-2 py-1 h-[40px] border auto-rows-max text-center">
+                          <span className ="text-2xl text-center pr-2">{a}/5.0</span>
                           <Rating
                             name="read-only"
-                            value={value}
+                            readOnly
+                            value={4}
                           />
                         </div>
-                      </div>
-                      <div>
-                      <button
-                        className="bg-white py-2 px-2 text-black font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-green-sheen hover:text-green-sheen"
-                      >All(11)</button>
-                      </div>
-            
+                        <div className="w-[100px] text-center">
+                          <div 
+                              className={`custom-button ${seeStar === 0 ? 'active' : ''}`}
+                              onClick = {() => setSeeStar(0)}
+                              >
+                           All({review.length})
+                          </div>
+                          <div
+                           className={`custom-button ${seeStar === 5 ? 'active' : ''}`}
+                           onClick = {() => setSeeStar(5)}
+
+                          >
+                            5 stars({review5.length})
+                          </div>
+                          <div
+                            className={`custom-button ${seeStar === 4 ? 'active' : ''}`}
+                            onClick = {() => setSeeStar(4)}
+                           >
+                            4 stars({review4.length})
+                          </div>
+                          <div
+                            className={`custom-button ${seeStar === 3 ? 'active' : ''}`}
+                            onClick = {() => setSeeStar(3)}
+                            >
+                            3 star({review3.length})
+                          </div>
+                          <div
+                            className={`custom-button ${seeStar === 2 ? 'active' : ''}`}
+                            onClick = {() => setSeeStar(2)}
+                            >
+                            2 stars({review2.length})
+                          </div>
+                          <div
+                            className={`custom-button ${seeStar === 1 ? 'active' : ''}`}
+                            onClick = {() => setSeeStar(1)}
+                            >
+                            1 star ({review1.length})
+                          </div>
+                        </div>            
+                        <div className =" border w-40 lg:w-72 overflow-y-scroll ">
+                          { seeStar === 0 &&
+                            <>
+                              <div>
+                               {review.map((item,index)=>{
+                                return (
+                                  <div key={index} className="border p-2">
+                                    <div>{item.buyer.name}</div>
+                                    <div>
+                                      <Rating
+                                        name="read-only"
+                                        readOnly
+                                        value={item.rating.star}
+                                      />
+                                    </div>
+                                    <div>
+                                      {item.rating.comment}
+                                    </div>
+                                  </div>
+                                );
+                               })}
+                              </div>
+                            </>
+                          }
+                          { seeStar === 5 &&
+                            <>
+                              <div>
+                               {review5.map((item,index)=>{
+                                return (
+                                  <div key={index} className="border p-2">
+                                    <div>{item.buyer.name}</div>
+                                    <div>
+                                      <Rating
+                                        name="read-only"
+                                        readOnly
+                                        value={item.rating.star}
+                                      />
+                                    </div>
+                                    <div>
+                                      {item.rating.comment}
+                                    </div>
+                                  </div>
+                                );
+                               })}
+                              </div>
+                            </>
+                          }
+                          { seeStar === 4 &&
+                            <>
+                              <div>
+                                {review4.map((item,index)=>{
+                                return (
+                                  <div key={index} className="border p-2">
+                                    <div>{item.buyer.name}</div>
+                                    <div>
+                                      <Rating
+                                        name="read-only"
+                                        readOnly
+                                        value={item.rating.star}
+                                      />
+                                    </div>
+                                    <div>
+                                      {item.rating.comment}
+                                    </div>
+                                  </div>
+                                );
+                               })}
+                              </div>
+                            </>
+                          }
+                          { seeStar === 3 &&
+                            <>
+                              <div>
+                               {review3.map((item,index)=>{
+                                return (
+                                  <div key={index} className="border p-2">
+                                    <div>{item.buyer.name}</div>
+                                    <div>
+                                      <Rating
+                                        name="read-only"
+                                        readOnly
+                                        value={item.rating.star}
+                                      />
+                                    </div>
+                                    <div>
+                                      {item.rating.comment}
+                                    </div>
+                                  </div>
+                                );
+                               })}
+                              </div>
+                            </>
+                          }
+                          { seeStar === 2 &&
+                            <>
+                               <div>
+                               {review2.map((item,index)=>{
+                                return (
+                                  <div key={index} className="border p-2">
+                                    <div>{item.buyer.name}</div>
+                                    <div>
+                                      <Rating
+                                        name="read-only"
+                                        readOnly
+                                        value={item.rating.star}
+                                      />
+                                    </div>
+                                    <div>
+                                      {item.rating.comment}
+                                    </div>
+                                  </div>
+                                );
+                               })}
+                              </div>
+                            </>
+                          }
+                          { seeStar === 1 &&
+                            <>
+                              <div>
+                                {review1.map((item,index)=>{
+                                return (
+                                  <div key={index} className="border p-2">
+                                    <div>{item.buyer.name}</div>
+                                    <div>
+                                      <Rating
+                                        name="read-only"
+                                        readOnly
+                                        value={item.rating.star}
+                                      />
+                                    </div>
+                                    <div>
+                                      {item.rating.comment}
+                                    </div>
+                                  </div>
+                                );
+                               })}
+                              </div>
+                            </>
+                          }
+                        </div>
+
+                      
                     </div>
                   </div>
                 </div>

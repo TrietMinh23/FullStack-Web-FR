@@ -24,4 +24,4 @@ router.delete("/:id", verifyTokenAndAdmin ,deleteOrder);
 router.get("/income", verifyTokenAndAdmin, getMonthlyIncome);
 router.get("/income/:sellerId", verifyTokenAndSeller, getMonthlyIncomeBySeller);
 
-export default router;
+export default router; 

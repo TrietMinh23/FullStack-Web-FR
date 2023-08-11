@@ -15,13 +15,11 @@ const userReviewSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId, 
       ref: "User",
       require: true,
-      refPath: "orderedProduct.orderBy",
     },
     seller: {
       type: mongoose.Schema.Types.ObjectId, 
-      ref: "Seller",
+      ref: "User",
       require: true,
-      refPath: "orderedProduct.orderBy",
     },
   },
   {

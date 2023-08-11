@@ -73,3 +73,22 @@ input[type="number"]::-webkit-outer-spin-button {
   border-radius: 10px;
   background-color: #838294;
 }
+/* In your CSS or Tailwind configuration */
+.custom-button {
+  padding: 0.5rem 0.5rem;
+  font-weight: 600;
+  transition: background-color 0.3s, border 0.3s, color 0.3s;
+  border: 2px solid transparent;
+  cursor: pointer;
+}
+
+.custom-button:hover {
+  background-color: white;
+  border-color: #48bb78;
+  color: #48bb78;
+}
+
+.custom-button.active {
+  background-color: #48bb78;
+  color: white;
+}
