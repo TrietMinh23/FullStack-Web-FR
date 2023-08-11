@@ -14,7 +14,7 @@ export default function ItemTS({ shop }) {
       </div>
       {shop.item.map((item) => (
         <ItemItemTS
-          name={item.name}
+          name={item.title}
           price={item.price}
           image={item.image}
           key={item.id}

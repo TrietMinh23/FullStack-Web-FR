@@ -59,31 +59,47 @@ export default function CheckoutModal() {
 
   // Lớp đại diện cho đơn hàng
   class Order {
-    constructor(user, shipping, orderItems, itemsPrice, payment = "VNPAY") {
-      this.isPaid = false;
-      this.isDelivered = false;
+    constructor(
+      user,
+      shipping,
+      orderItems,
+      itemsPrice,
+      status,
+      payment = "VNPAY"
+    ) {
+      this.orderStatus = status;
       this.products = orderItems;
       this.orderby = user;
       this.shipping = shipping;
       this.totalPrice = itemsPrice;
-      this.payment = payment;
+      this.paymentMethod = payment;
       this.quantity = orderItems.length;
     }
+  }
+
+  if (getCookie("vnp_params")) {
+    console.log(JSON.parse(decodeURIComponent(getCookie("vnp_params"))));
   }
 
   let totalOrder = [];
   // Xử lý sự kiện khi người dùng click vào nút "Place Order"
   const handlePlaceOrderClick = async () => {
     // Tạo đơn hàng mới
+    const arrAddress = localStorage
+      .getItem("address")
+      .replace(/^"(.*)"$/, "$1")
+      .split(",");
     for (let i of products) {
       const orderById = localStorage.getItem("_id").replace(/^"(.*)"$/, "$1");
-      const shippingAddress = localStorage
-        .getItem("address")
-        .replace(/^"(.*)"$/, "$1");
-      const productList = i.item;
-      console.log(productList);
+      const shippingAddress = {
+        address: arrAddress[0],
+        ward: arrAddress[1],
+        district: arrAddress[2],
+        city: arrAddress[3],
+      };
+      const productList = i.item.map((item) => item._id);
       const totalBill =
-        productList.reduce(
+        i.item.reduce(
           (accumulator, product) => accumulator + product.price,
           0
         ) + shippingPrice;
@@ -91,12 +107,11 @@ export default function CheckoutModal() {
         orderById,
         shippingAddress,
         productList,
-        totalBill
+        totalBill,
+        "Processing"
       );
       totalOrder.push(order);
     }
-
-    console.log(totalOrder);
 
     // Gửi yêu cầu tạo URL thanh toán với thông tin đơn hàng
     createPaymentUrl(JSON.stringify(totalOrder))

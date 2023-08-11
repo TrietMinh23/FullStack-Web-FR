@@ -182,7 +182,7 @@ export default function Purchase() {
                   open={() => finishUpdateInfomation()}
                 />
               )}
-              <div className="flex gap-x-3 ml-2">
+              <div className="flex lg:flex-row flex-col gap-x-3 ml-2">
                 <div className="name font-bold">
                   <p>{information.name ? information.name : "No name"}</p>
                 </div>
