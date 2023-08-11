@@ -10,32 +10,17 @@ export const productsSlice = createSlice({
   initialState,
   reducers: {
     ADDTOCART: (state, action) => {
-      console.log(action.payload.data);
-      const { title, price, image, _id, sellerId } = action.payload.data;
+      const { sellerId } = action.payload.data;
       const targetIndex = state.shoppingCart.findIndex(
         (item) => item.name === sellerId.name
       );
 
       if (targetIndex >= 0) {
-        state.shoppingCart[targetIndex].item.push({
-          name: title,
-          price,
-          image,
-          quantity: 1,
-          id: _id,
-        });
+        state.shoppingCart[targetIndex].item.push(action.payload.data);
       } else {
         state.shoppingCart.push({
           name: sellerId.name,
-          item: [
-            {
-              name: title,
-              price,
-              image,
-              quantity: 1,
-              id: _id,
-            },
-          ],
+          item: [action.payload.data],
         });
       }
       state.total += 1;
@@ -88,31 +73,17 @@ export const productsSlice = createSlice({
           const { listProduct } = action.payload;
           if (listProduct) {
             for (let item of listProduct) {
-              const { title, price, image, _id, sellerId } = item;
+              const { sellerId } = item;
               const targetIndex = state.shoppingCart.findIndex(
                 (item) => item.name === sellerId.name
               );
 
               if (targetIndex >= 0) {
-                state.shoppingCart[targetIndex].item.push({
-                  name: title,
-                  price,
-                  image,
-                  id: _id,
-                  sellerId,
-                });
+                state.shoppingCart[targetIndex].item.push(item);
               } else {
                 state.shoppingCart.push({
                   name: sellerId.name,
-                  item: [
-                    {
-                      name: title,
-                      price,
-                      image,
-                      id: _id,
-                      sellerId,
-                    },
-                  ],
+                  item: [item],
                 });
               }
             }
@@ -128,25 +99,11 @@ export const productsSlice = createSlice({
             );
 
             if (targetIndex >= 0) {
-              state.shoppingCart[targetIndex].item.push({
-                name: title,
-                price,
-                image,
-                id: _id,
-                sellerId,
-              });
+              state.shoppingCart[targetIndex].item.push(item);
             } else {
               state.shoppingCart.push({
                 name: sellerId.name,
-                item: [
-                  {
-                    name: title,
-                    price,
-                    image,
-                    id: _id,
-                    sellerId,
-                  },
-                ],
+                item: [item],
               });
             }
           }

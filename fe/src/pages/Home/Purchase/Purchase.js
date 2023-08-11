@@ -97,6 +97,7 @@ export default function Purchase() {
       address: "",
     });
   };
+
   const handleCashPayment = () => {
     setCashPayment(true);
     setVNPAYPayment(false);

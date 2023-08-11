@@ -45,6 +45,8 @@ export default function CheckoutModal() {
   const productPrice = useSelector((state) => state.purchase.productPrice);
   const products = useSelector((state) => state.product.shoppingCart);
 
+  console.log("CHECK", products);
+
   // Biến chứa nhãn phương thức thanh toán dựa vào dữ liệu từ Redux store
   let paymentMethodLabel = "";
   if (payments === "Cash") {

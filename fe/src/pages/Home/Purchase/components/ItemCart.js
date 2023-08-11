@@ -19,7 +19,7 @@ export default function ItemCart({ shop }) {
       </tr>
       {shop?.item.map((item, i) => (
         <ItemItemCart
-          name={item.name}
+          name={item.title}
           price={item.price}
           image={item.image}
           key={i}

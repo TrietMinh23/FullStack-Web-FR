@@ -59,6 +59,7 @@ export default function ProductDetail() {
 
     let listItem = JSON.parse(localStorage.getItem("cart"));
     listItem.products.push(data);
+    console.log(listItem.products);
     localStorage.setItem("cart", JSON.stringify(listItem));
 
     notify();
@@ -81,10 +82,6 @@ export default function ProductDetail() {
       })
       .then((res) => setData(res.data));
   }, [params.slug]);
-
-  {
-    console.log(data);
-  }
 
   return (
     <section className="text-gray-700 body-font overflow-hidden bg-white">
