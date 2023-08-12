@@ -121,12 +121,13 @@ export default function ProductDetail() {
       })
       .then((res) => {
         setData(res.data);
+        console.log(res.data);
         fetchReview(res.data);
       });
   }, [params.slug]);
 
   const fetchReview = (productData) =>{
-    const path = productData.product?.sellerId;
+    const path = productData.sellerId?._id;
       instance
         .get(`review/${path}`, null, {
           params: {
@@ -134,6 +135,7 @@ export default function ProductDetail() {
           },
         })
         .then((res) => {
+          console.log("data",res.data.review);
           setReview(res.data.review);
           });
     }
@@ -170,7 +172,7 @@ export default function ProductDetail() {
                     <button
                       className="uppercase inline-block hover:scale-110 hover:text-blue-600 font-bold hover:underline transition-all"
                     >
-                      {data?.shop} shop
+                      {data.sellerId?.name} shop
                     </button>
                     <div className ="grid h-[304px] absolute left-[-100px] top-7 invisible rounded border group-hover:visible bg-white rounded">
                         <div className ="col-span-2 py-1 h-[40px] border auto-rows-max text-center">
@@ -178,7 +180,7 @@ export default function ProductDetail() {
                           <Rating
                             name="read-only"
                             readOnly
-                            value={4}
+                            value={a}
                           />
                         </div>
                         <div className="w-[100px] text-center">
@@ -366,7 +368,7 @@ export default function ProductDetail() {
                   </div>
                 </div>
                 <h2 className="text-sm] title-font uppercase text-gray-500 tracking-widest">
-                  BRAND : {data.product?.brandName}
+                  BRAND : {data?.brandName}
                 </h2>
                 <h1 className="text-gray-900 text-3xl title-font font-medium mb-1 mt-3">
                   {data?.title}
