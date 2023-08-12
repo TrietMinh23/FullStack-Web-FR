@@ -13,7 +13,7 @@ export default function PopupReview ({close, finish, i}) {
         return `${parts[1]} ${parts[0]}, ${parts[2]}`;
       }
     return (
-        <div className ="container modal">
+        <div className ="container popUpBigModal ">
             <div className ="model-wrapper p-10">
                 {complete &&
                     <div className="mb-16 rounded-md ">

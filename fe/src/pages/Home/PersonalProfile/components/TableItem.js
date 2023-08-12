@@ -15,6 +15,7 @@ const TableItem = ({rows}) => {
   const [isReview, setIsReview] = useState(false); 
   const [isCancel, setIsCancel] = useState(false); 
   const [isReport, setIsReport] = useState(false); 
+  const [isAlReview, setIsAlReview] = useState(false); 
 
   const [indexReview, setIndexReview] = useState(''); 
   const [indexReport, setIndexReport] = useState(''); 
@@ -22,6 +23,10 @@ const TableItem = ({rows}) => {
 
   const closeReview = () => {
     setIsReview(false);
+  }
+  const finishReview = () => {
+    setIsReview(false);
+    setIsAlReview(true);
   }
   const closeCancel = () => {
     setIsCancel(false);
@@ -248,8 +253,10 @@ const TableItem = ({rows}) => {
                           setIsReview(!isReview);
                           setIndexReview(index);
                         }}
-                        className="mr-2 md:w-1/2 bg-green-sheen py-2 px-4 text-white font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-green-sheen hover:text-green-sheen"
-                      >Review</button>
+                        className={`mr-2 md:w-1/2 bg-green-sheen text-white font-semibold rounded-md border-2 border-transparent 
+                        ${!isAlReview ? "hover:border-2 hover:border-green-sheen hover:text-green-sheen hover:bg-white": ""}
+                        `}
+                      >{!isAlReview ? "Review" : "Done Review"}</button>
                       <button
                         onClick ={() =>{
                             setIsReport(!isReport);
@@ -353,7 +360,10 @@ const TableItem = ({rows}) => {
               {row.status === "Complete" &&
                 <div className ="grow flex">
                   <button
-                    onClick ={() => setIsReview(!isReview)}
+                    onClick ={() => {
+                      setIsReview(!isReview);
+                      setIndexReview(index);
+                    }}
                     className="mr-2 md:w-1/2 bg-green-sheen py-2 px-4 text-white font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-green-sheen hover:text-green-sheen"
                   >Review</button>
                   <button
@@ -534,6 +544,7 @@ const TableItem = ({rows}) => {
        {isReview && (
           <div className="flex lg:flex-row flex-col">
             <PopupReview
+              finish = {finishReview}
               close = {closeReview}
               i = {indexReview}
             />
