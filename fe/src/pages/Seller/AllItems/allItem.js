@@ -45,6 +45,7 @@ export default function AllItems() {
           itemName: product.title,
           price: product.price,
           status: product.sold,
+          image: product.image,
           postDate: product.createdAt.split("T")[0],
         }));
         setProducts(data); // Assuming the response contains the actual data
