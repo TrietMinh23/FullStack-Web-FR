@@ -115,14 +115,15 @@ export const getMonthlyIncomeBySeller = async (req, res) => {
   const { sellerId } = req.params;
 
   const currentDate = new Date();
-  const lastMonth = new Date(currentDate.getMonth() - 1);
+  const lastMonth = new Date(currentDate);
+  lastMonth.setMonth(currentDate.getMonth() - 1);
 
   try {
     const income = await Order.aggregate([
       {
         $match: {
-          sellerId: mongoose.Type.Object(sellerId),
-          createAt: { $gte: lastMonth },
+          sellerId: new mongoose.Types.ObjectId(sellerId), // Correct usage
+          createdAt: { $gte: lastMonth },
           orderStatus: "Delivered",
         },
       },
@@ -142,7 +143,8 @@ export const getMonthlyIncomeBySeller = async (req, res) => {
 
     res.status(200).json(income);
   } catch (err) {
-    console.log({ error: err.message });
+    console.error({ error: err.message });
+    res.status(500).json({ error: "An error occurred while fetching monthly income." });
   }
 };
 
@@ -235,6 +237,51 @@ export const getOrderBySellerId = async (req, res) => {
     res
       .status(200)
       .json({ filteredOrders, orderStatusCounts, orderStatusTotalAmounts });
+  } catch (err) {
+    console.log({ error: err.message });
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+const DELIVERY_TIMEOUT = 60000; // 60 seconds in milliseconds
+
+export const updateOrderStatusToDispatched = async (req, res) => {
+  try {
+    const orderId = req.params.orderId; // Get the order ID from the request parameters
+
+    // Find the order by its ID and update the status to "Dispatched"
+    const updatedOrder = await Order.findByIdAndUpdate(
+      orderId,
+      { orderStatus: "Dispatched" },
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedOrder) {
+      return res.status(404).json({ error: "Order not found." });
+    }
+
+    // Set a timeout to change the order status to "Delivered" after 60 seconds
+    setTimeout(async () => {
+      try {
+        const deliveredOrder = await Order.findByIdAndUpdate(
+          orderId,
+          { orderStatus: "Delivered" },
+          { new: true }
+        );
+        if (deliveredOrder) {
+          console.log("Order status updated to Delivered.");
+        }
+      } catch (err) {
+        console.error("Error updating order status to Delivered:", err);
+      }
+    }, DELIVERY_TIMEOUT);
+
+    res
+      .status(200)
+      .json({
+        message: "Order status updated to Dispatched.",
+        order: updatedOrder,
+      });
   } catch (err) {
     console.log({ error: err.message });
     res.status(500).json({ error: "Internal server error" });

@@ -29,3 +29,14 @@ export const getOrdersBySellerId = async (id) => {
     );
   }
 };
+
+export const updateOrderStatusToDispatched = async (orderId) => {
+  try {
+    const response = await instance.put(`/orders/update/${orderId}`);
+    return response;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.error || 'Error updating order status to Dispatched.'
+    );
+  }
+};

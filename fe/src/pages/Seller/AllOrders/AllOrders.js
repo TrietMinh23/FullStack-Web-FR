@@ -7,7 +7,6 @@ import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
 import CancelIcon from "@mui/icons-material/Cancel";
 import AutorenewIcon from '@mui/icons-material/Autorenew';
 import Card from "../../Home/PersonalProfile/components/card";
-import NewProductForm from "../NewItem/NewForm";
 import { getOrdersBySellerId } from "../../../api/order";
 
 
@@ -16,7 +15,6 @@ export default function AllOrders() {
   const [orderStatus, setOrderStatus] = useState([]);
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(5);
-  const [selectedTradeCode, setSelectedTradeCode] = useState(false);
   const [orderStatusTotalAmounts, setOrderStatusTotalAmounts] = useState([]);
   
   const staticTable = [
@@ -114,13 +112,8 @@ export default function AllOrders() {
     fetchOrders();
   }, [page, perPage]);
 
-  const handleSelectEditRow = (tradeCode) => {
-    setSelectedTradeCode(tradeCode); // Set the selected TradeCode in state
-  };
-
   return (
     <div>
-      {!selectedTradeCode && (
         <div className="mb-12 grid gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-4">
           {staticTable.map((item) => (
             <Card
@@ -134,8 +127,6 @@ export default function AllOrders() {
             />
           ))}
         </div>
-      )}
-      {!selectedTradeCode && (
         <div className="w-full">
           <TableOrders
             rows={orders}
@@ -144,14 +135,8 @@ export default function AllOrders() {
             page={page}
             onPerPageChange={handlePerPageChange}
             perPage={perPage}
-            onSelectEditRow={handleSelectEditRow}
           />
         </div>
-      )}
-
-      {selectedTradeCode && (
-        <NewProductForm tradeCode={selectedTradeCode} /> // Pass the selected TradeCode as a prop
-      )}
     </div>
   );
 }

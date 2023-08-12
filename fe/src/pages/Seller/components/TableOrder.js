@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { FaTrashAlt, FaPen } from "react-icons/fa";
 import PaginationComponent from "../../Home/components/Pagination";
-import { deleteProduct } from "../../../api/products";
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { updateOrderStatusToDispatched } from "../../../api/order";
 
 export default function TableOrders({
   rows,
@@ -10,7 +10,6 @@ export default function TableOrders({
   page,
   onPerPageChange,
   perPage,
-  onSelectEditRow,
 }) {
   // const [perPage, setPerPage] = useState(5); // Số hàng trên mỗi trang
   const [currentPage] = useState(1); // Trang hiện tại
@@ -19,6 +18,7 @@ export default function TableOrders({
   const [searchTerm, setSearchTerm] = useState(""); // Giá trị tìm kiếm
   const [selectedItems, setSelectedItems] = useState([]); // Các sản phẩm được chọn
   const [selectAll, setSelectAll] = useState(false); // Tất cả sản phẩm được chọn
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const handleSort = (column) => {
     if (column === sortColumn) {
@@ -61,33 +61,36 @@ export default function TableOrders({
     }
   };
 
-  const handleDelete = async () => {
+  const handleUpdateStatus = async () => {
     try {
-      const productIdsToDelete = selectedItems.map((item) => item.tradeCode);
-      for (const productId of productIdsToDelete) {
-        await deleteProduct(productId);
+      const orderIdsUpdate = selectedItems.map((item) => item.tradeCode);
+      for (const orderId of orderIdsUpdate) {
+        await updateOrderStatusToDispatched(orderId);
       }
       setSelectedItems([]);
+      window.location.reload()
     } catch (error) {
       console.error(error.message);
     }
   };
 
-  const handleDeleteRow = async (item) => {
+  const handleUpdateStatusRow = async (item) => {
     try {
-      await deleteProduct(item.tradeCode);
+      setIsUpdating(true);
+      await updateOrderStatusToDispatched(item.tradeCode);
+      // Handle success or update your local data accordingly
       setSelectedItems((prevSelectedItems) =>
         prevSelectedItems.filter(
           (selectedItem) => selectedItem.tradeCode !== item.tradeCode
         )
       );
+      window.location.reload()
     } catch (error) {
-      console.error(error.message);
+      console.error('Error updating order status:', error.message);
+      // Handle error or display an error message
+    } finally {
+      setIsUpdating(false);
     }
-  };
-
-  const handleEditRow = (item) => {
-    onSelectEditRow(item.tradeCode); // Call the provided prop with the TradeCode
   };
 
   const getCurrentPageData = () => {
@@ -158,10 +161,10 @@ export default function TableOrders({
         />
         <button
           id="All"
-          className="ml-2 p-4 bg-red-500 text-white rounded-md"
-          onClick={handleDelete}
+          className="ml-2 p-2 bg-green-500 text-white rounded-md"
+          onClick={handleUpdateStatus}
         >
-          <FaTrashAlt />
+          <CheckCircleIcon />
         </button>
       </div>
 
@@ -203,10 +206,10 @@ export default function TableOrders({
               </th>
               <th
                 className="p-3 text-sm font-semibold tracking-wide text-left"
-                onClick={() => handleSort("price")}
+                onClick={() => handleSort("payment")}
               >
                 Payment{" "}
-                {sortColumn === "price" && (sortOrder === "asc" ? "▲" : "▼")}
+                {sortColumn === "payment" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
                 className="w-24 p-3 text-sm font-semibold tracking-wide text-left"
@@ -217,24 +220,24 @@ export default function TableOrders({
               </th>
               <th
                 className="p-3 text-sm font-semibold tracking-wide text-left"
-                onClick={() => handleSort("itemName")}
+                onClick={() => handleSort("order")}
               >
                 Order{" "}
-                {sortColumn === "itemName" && (sortOrder === "asc" ? "▲" : "▼")}
+                {sortColumn === "order" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
                 className="p-3 text-sm font-semibold tracking-wide text-left"
-                onClick={() => handleSort("itemName")}
+                onClick={() => handleSort("phone")}
               >
                 Phone{" "}
-                {sortColumn === "itemName" && (sortOrder === "asc" ? "▲" : "▼")}
+                {sortColumn === "phone" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
                 className="p-3 text-sm font-semibold tracking-wide text-left"
-                onClick={() => handleSort("itemName")}
+                onClick={() => handleSort("address")}
               >
                 Address{" "}
-                {sortColumn === "itemName" && (sortOrder === "asc" ? "▲" : "▼")}
+                {sortColumn === "address" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
                 className="w-24 p-3 text-sm font-semibold tracking-wide text-left"
@@ -330,16 +333,10 @@ export default function TableOrders({
                   </td>
                   <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
                     <button
-                      className="text-blue-500 font-bold hover:underline"
-                      onClick={() => handleEditRow(row)}
+                      className="text-green-500 font-bold hover:underline ml-2"
+                      onClick={() => handleUpdateStatusRow(row)}
                     >
-                      <FaPen />
-                    </button>
-                    <button
-                      className="text-red-500 font-bold hover:underline ml-2"
-                      onClick={() => handleDeleteRow(row)}
-                    >
-                      <FaTrashAlt />
+                      <CheckCircleIcon />
                     </button>
                   </td>
                 </tr>
@@ -392,16 +389,10 @@ export default function TableOrders({
             <div className="text-sm font-medium text-black">${row.price}</div>
             <div className="flex justify-end">
               <button
-                className="text-blue-500 font-bold hover:underline"
-                onClick={() => handleEditRow(row)}
-              >
-                <FaPen />
-              </button>
-              <button
                 className="text-red-500 font-bold hover:underline ml-2"
-                onClick={handleDelete}
+                onClick={() => handleUpdateStatusRow(row)}
               >
-                <FaTrashAlt />
+                <CheckCircleIcon />
               </button>
             </div>
           </div>

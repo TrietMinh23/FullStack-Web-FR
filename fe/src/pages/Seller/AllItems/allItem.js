@@ -15,6 +15,8 @@ export default function AllItems() {
   const [selectedTradeCode, setSelectedTradeCode] = useState(false);
   const [totalSold, setTotalSold] = useState(0);
   const [totalAvaiable, setTotalAvaiable] = useState(0);
+  const [totalPriceSold0, setTotalPriceSold0] = useState(0);
+  const [totalPriceSold1, setTotalPriceSold1] = useState(0);
 
   const handleChange = (newPage) => {
     setPage(newPage);
@@ -40,6 +42,8 @@ export default function AllItems() {
         const dataProducts = response.data.products;
         setTotalSold(response.data.totalSold0);
         setTotalAvaiable(response.data.totalSold1);
+        setTotalPriceSold0(response.data.totalPriceSold0);
+        setTotalPriceSold1(response.data.totalPriceSold1);
         const data = dataProducts.map((product) => ({
           tradeCode: product._id,
           itemName: product.title,
@@ -67,18 +71,18 @@ export default function AllItems() {
       id: 1,
       text: "Total Money",
       number: totalSold,
-      money: "$53",
+      money: totalPriceSold0,
       color: "rgb(74, 222, 128)",
-      title: "SOLD",
+      title: "AVAIABLE",
     },
     {
       icon: <ClearIcon fontSize="large" />,
       id: 2,
       text: "Total Money",
       number: totalAvaiable,
-      money: "$53",
+      money: totalPriceSold1,
       color: "rgb(248, 113, 113)",
-      title: "AVAIABLE",
+      title: "SOLD",
     },
   ];
 

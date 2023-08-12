@@ -68,7 +68,7 @@ export default function Table({
         await deleteProduct(productId);
       }
       setSelectedItems([]);
-      window.location.reload()
+      window.location.reload();
     } catch (error) {
       console.error(error.message);
     }
@@ -82,7 +82,7 @@ export default function Table({
           (selectedItem) => selectedItem.tradeCode !== item.tradeCode
         )
       );
-      window.location.reload()
+      window.location.reload();
     } catch (error) {
       console.error(error.message);
     }
@@ -218,11 +218,13 @@ export default function Table({
                   {row.tradeCode}
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                  <img
-                    src={row.image}
-                    alt={row.tradeCode}
-                    className="w-1/6 h-auto"
-                  />
+                  <div className="w-12 h-12 overflow-hidden m-1 rounded-lg">
+                    <img
+                      src={row.image}
+                      alt={row.tradeCode}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
                   {row.itemName}

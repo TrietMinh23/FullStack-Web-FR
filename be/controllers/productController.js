@@ -28,35 +28,33 @@ export const getProductBySellerId = async (req, res) => {
   try {
     const _id = req.params.id;
 
-    // pagination
+    // Pagination
     var page = parseInt(req.query.page) || 1;
     var limit = parseInt(req.query.limit) || 20;
-
     const skip = (page - 1) * limit;
 
     const products = await Product.find({ sellerId: _id })
-    .sort({ createdAt: -1 })
-    .skip(skip)
-    .limit(limit)
-    .exec();
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .exec();
+    
     if (products.length === 0) {
-      res.status(400).json({ error: "No products found by seller id." });
+      return res.status(400).json({ error: "No products found by seller id." });
     }
 
-    const totalProducts = await Product.find({
-      sellerId: _id,
-    }).countDocuments();
+    const totalProducts = await Product.countDocuments({ sellerId: _id });
 
-    // Counting products with sold status 0 and 1
-    const totalSold0 = await Product.find({
-      sellerId: _id,
-      sold: 0,
-    }).countDocuments();
+    const totalSold0 = await Product.countDocuments({ sellerId: _id, sold: 0 });
+    const totalSold1 = await Product.countDocuments({ sellerId: _id, sold: 1 });
 
-    const totalSold1 = await Product.find({
-      sellerId: _id,
-      sold: 1,
-    }).countDocuments();
+    // Calculate total price of sold products (sold 1)
+    const sold1Products = await Product.find({ sellerId: _id, sold: 1 });
+    const totalPriceSold1 = sold1Products.reduce((total, product) => total + product.price, 0);
+
+    // Calculate total price of unsold products (sold 0)
+    const sold0Products = await Product.find({ sellerId: _id, sold: 0 });
+    const totalPriceSold0 = sold0Products.reduce((total, product) => total + product.price, 0);
 
     const totalPages = Math.ceil(totalProducts / limit);
 
@@ -65,11 +63,13 @@ export const getProductBySellerId = async (req, res) => {
       totalProducts,
       totalSold0,
       totalSold1,
+      totalPriceSold0,
+      totalPriceSold1,
       totalPages,
-      products: products,
+      products,
     });
   } catch (err) {
-    res.json({ message: err.message });
+    res.status(500).json({ message: err.message });
   }
 };
 
