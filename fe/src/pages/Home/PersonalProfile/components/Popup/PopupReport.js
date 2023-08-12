@@ -30,9 +30,9 @@ export default function PopupReport ({ i, close}) {
         });
       };
     return (
-        <div className ="container absolute z-10 modal p-10 h-auto ">
+        <div className ="container absolute p-10 z-10 popUpmodal h-auto ">
             {!iscomfirm ?
-                <>
+                <div>
                     <h1 className = "flex justify-center text-2xl	">Report Seller</h1>
                     <p className = "flex justify-center mt-4">Please provide details about the issue you encountered with the seller</p>
                     <div className ="mt-10 flex flex-col gap-y-5 ">
@@ -69,7 +69,7 @@ export default function PopupReport ({ i, close}) {
                             >Send</button>
                         </div>
                     </div>
-                </>
+                </div>
                 :
                 <>
                     <h1 className = "flex justify-center text-2xl	">Report Sent Successfully</h1>
