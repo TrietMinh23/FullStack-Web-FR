@@ -53,10 +53,11 @@ export default function ProductDetail() {
   const addToCart = () => {
     // Check if product has been available in shopping cart
     if (currentShoppingCart.length) {
+      console.log(currentShoppingCart);
       let index;
       for (const item of currentShoppingCart) {
         if (item.name === data.sellerId.name) {
-          index = item.item.findIndex((item) => item.id === data._id);
+          index = item.item.findIndex((item) => item._id === data._id);
           if (index >= 0) {
             notifyFail();
             return;
@@ -70,14 +71,10 @@ export default function ProductDetail() {
     // If the loop completes without finding a duplicate item, proceed to add to the cart
     dispatch(
       ADDTOCART({
-        id: data.product?._id,
-        name: data.product?.title,
-        image: data.product?.image,
-        price: data.product?.price,
-        shop: data.product?.shop,
-        quantity: 1,
+        data,
       })
     );
+
     let listItem = JSON.parse(localStorage.getItem("cart"));
     listItem.products.push(data);
     console.log(listItem.products);

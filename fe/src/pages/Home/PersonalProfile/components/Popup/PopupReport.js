@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { rows } from "../../data/orderData";
 import { postReport } from "../../../../../api/Report/postReport";
 
-export default function PopupReport({ i, close }) {
+export default function PopupReport({ i, close, at }) {
   const [iscomfirm, setIsComfirm] = useState(false);
   const [title, setTitle] = useState("");
   const [details, setDetails] = useState("");
@@ -30,7 +30,10 @@ export default function PopupReport({ i, close }) {
       });
   };
   return (
-    <div className="container absolute p-10 z-10 popUpmodal h-auto ">
+    <div
+      className="container p-10 modal"
+      style={{ top: `calc(50% + ${at}px)` }}
+    >
       {!iscomfirm ? (
         <div>
           <h1 className="flex justify-center text-2xl	">Report Seller</h1>

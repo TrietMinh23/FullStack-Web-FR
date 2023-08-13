@@ -10,7 +10,6 @@ export const productsSlice = createSlice({
   initialState,
   reducers: {
     UPDATETOTAL: (state, action) => {
-      console.log("BBBBBBB", action.payload);
       state.total = action.payload;
     },
     ADDTOCART: (state, action) => {

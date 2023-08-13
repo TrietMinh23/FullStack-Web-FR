@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
 
-export default function PopupCancel({ close, finish }) {
+export default function PopupCancel({ close, finish, at }) {
   return (
-    <div className=" container absolute z-10  popUpSmallModal p-10 h-auto ">
+    <div
+      className=" container modal p-7"
+      style={{ top: `calc(50% + ${at}px)` }}
+    >
       <div>
         <h1 className="text-center text-2xl	">
           Are you sure to cancel the order?

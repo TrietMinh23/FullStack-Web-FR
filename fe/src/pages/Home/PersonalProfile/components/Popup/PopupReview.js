@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Rating from "@mui/material/Rating";
 import { rows } from "../../../PersonalProfile/data/orderData";
 
-export default function PopupReview({ finish, close, i }) {
+export default function PopupReview({ finish, close, i, at }) {
   const [value, setValue] = useState(5);
   const [iscomfirm, setIsComfirm] = useState(false);
   const [iscomment, setIsComment] = useState(false);
@@ -37,7 +37,7 @@ export default function PopupReview({ finish, close, i }) {
   };
 
   return (
-    <div className="container z-10 popUpmodal p-10 h-auto">
+    <div className="modal p-7" style={{ top: `calc(50% + ${at}px)` }}>
       {!iscomfirm ? (
         <div>
           <h1 className="flex justify-center text-2xl">
