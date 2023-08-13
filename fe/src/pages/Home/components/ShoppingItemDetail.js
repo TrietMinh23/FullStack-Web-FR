@@ -131,7 +131,31 @@ export default function ProductDetail() {
       });
   }, [params.slug]);
 
-  console.log(data);
+  const fetchReview = (productData) => {
+    const path = productData.sellerId?._id;
+    instance
+      .get(`review/${path}`, null, {
+        params: {
+          id: path,
+        },
+      })
+      .then((res) => {
+        console.log("data", res.data.review);
+        setReview(res.data.review);
+      });
+  };
+  useEffect(() => {
+    const filteredReviews5 = review.filter((re) => re.rating.star === 5);
+    setReview5(filteredReviews5);
+    const filteredReviews4 = review.filter((re) => re.rating.star === 4);
+    setReview4(filteredReviews4);
+    const filteredReviews3 = review.filter((re) => re.rating.star === 3);
+    setReview3(filteredReviews3);
+    const filteredReviews2 = review.filter((re) => re.rating.star === 2);
+    setReview2(filteredReviews2);
+    const filteredReviews1 = review.filter((re) => re.rating.star === 1);
+    setReview1(filteredReviews1);
+  }, [review]);
 
   return (
     <section className="text-gray-700 body-font overflow-hidden bg-white">

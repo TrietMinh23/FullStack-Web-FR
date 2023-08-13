@@ -18,6 +18,7 @@ const TableItem = () => {
   const [isCancel, setIsCancel] = useState(false);
   const [isReport, setIsReport] = useState(false);
   const [isAlReview, setIsAlReview] = useState(false);
+  const [orders, setOrders] = useState(null);
 
   const [indexReview, setIndexReview] = useState("");
   const [indexReport, setIndexReport] = useState("");

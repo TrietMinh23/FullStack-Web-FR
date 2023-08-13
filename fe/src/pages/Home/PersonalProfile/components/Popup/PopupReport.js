@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { rows } from "../../data/orderData";
 import { postReport } from "../../../../../api/Report/postReport";
 
-export default function PopupReport({ i, close, at }) {
+export default function PopupReport({ i, close }) {
   const [iscomfirm, setIsComfirm] = useState(false);
   const [title, setTitle] = useState("");
   const [details, setDetails] = useState("");
@@ -30,12 +30,9 @@ export default function PopupReport({ i, close, at }) {
       });
   };
   return (
-    <div
-      className={`container p-7 modal`}
-      style={{ top: `calc(50% + ${at}px)` }}
-    >
+    <div className="container absolute p-10 z-10 popUpmodal h-auto ">
       {!iscomfirm ? (
-        <>
+        <div>
           <h1 className="flex justify-center text-2xl	">Report Seller</h1>
           <p className="flex justify-center mt-4">
             Please provide details about the issue you encountered with the
@@ -77,7 +74,7 @@ export default function PopupReport({ i, close, at }) {
               </button>
             </div>
           </div>
-        </>
+        </div>
       ) : (
         <>
           <h1 className="flex justify-center text-2xl	">
