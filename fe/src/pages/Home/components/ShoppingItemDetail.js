@@ -153,7 +153,7 @@ export default function ProductDetail() {
                     <button className="uppercase inline-block hover:scale-110 hover:text-blue-600 font-bold hover:underline transition-all">
                       {data.sellerId?.name} shop
                     </button>
-                    <div className="grid h-[304px] absolute left-[-100px] top-7 invisible rounded border group-hover:visible bg-white rounded">
+                    <div className="grid h-[304px] absolute left-[-100px] top-7 invisible border group-hover:visible bg-white rounded">
                       <div className="col-span-2 py-1 h-[40px] border auto-rows-max text-center">
                         <span className="text-2xl text-center pr-2">
                           {a}/5.0

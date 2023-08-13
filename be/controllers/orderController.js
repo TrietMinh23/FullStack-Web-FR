@@ -1,4 +1,5 @@
-import {Order} from "../models/orderModel.js";
+import { Order } from "../models/orderModel.js";
+import mongoose from "mongoose";
 
 export const getAllOrders = async (req, res) => {
   try {
@@ -64,12 +65,12 @@ export const getOrdersByUserId = async (req, res) => {
   try {
     const userId = req.params.userId;
 
-    const orders = await Order.find({userId: userId})
+    const orders = await Order.find({ userId: userId })
       .populate("products.product", "title price")
       .populate("orderby", "name")
       .populate("paymentMethod", "paymentMethod")
       .populate("shippingMethod", "address city ward")
-      .sort({createAt: -1});
+      .sort({ createAt: -1 });
 
     res.status(200).json(orders);
   } catch (err) {
@@ -121,8 +122,8 @@ export const getMonthlyIncomeBySeller = async (req, res) => {
     const income = await Order.aggregate([
       {
         $match: {
-          sellerId: mongoose.Type.Object(sellerId),
-          createAt: {$gte: lastMonth},
+          sellerId: new mongoose.Types.ObjectId(sellerId), // Correct usage
+          createdAt: { $gte: lastMonth },
           orderStatus: "Delivered",
         },
       },
@@ -142,7 +143,10 @@ export const getMonthlyIncomeBySeller = async (req, res) => {
 
     res.status(200).json(income);
   } catch (err) {
-    console.log({error: err.message});
+    console.error({ error: err.message });
+    res
+      .status(500)
+      .json({ error: "An error occurred while fetching monthly income." });
   }
 };
 
@@ -189,20 +193,97 @@ export const getOrderBySellerId = async (req, res) => {
 
         orderStatusTotalAmounts[order.orderStatus] += orderTotalAmount;
 
-    const orders = await Order.find({"products.product.sellerId":sellerId}).populate({
-      path: "products.product",
-    })
-    .sort({createdAt: -1})
-    .exec();
+        return {
+          _id: order._id,
+          products: order.products
+            .filter((product) => product.sellerId.toString() === sellerId)
+            .map((product) => ({
+              _id: product._id,
+              title: product.title,
+              description: product.description,
+              price: product.price,
+              brandName: product.brandName,
+              category: product.category,
+              slug: product.slug,
+              sold: product.sold,
+              image: product.image,
+              color: product.color,
+              sellerId: product.sellerId,
+              createdAt: product.createdAt,
+              condition: product.condition,
+            })),
+          orderStatus: order.orderStatus,
+          orderby: {
+            mobile: order.orderby.mobile,
+            name: order.orderby.name,
+          },
+          payment: {
+            paymentMethod: order.payment.paymentMethod,
+          },
+          shipping: {
+            address: order.shipping.address,
+            city: order.shipping.city,
+            district: order.shipping.district,
+            ward: order.shipping.ward,
+          },
+          orderDate: order.orderDate,
+        };
+      });
 
-    if (orders.length === 0) {
-      return res.status(404).json({ error: "No orders found for this seller." });
+    if (filteredOrders.length === 0) {
+      return res
+        .status(404)
+        .json({ error: "No orders found for this seller." });
     }
 
     res
       .status(200)
       .json({ filteredOrders, orderStatusCounts, orderStatusTotalAmounts });
   } catch (err) {
-    console.log({error: err.message});
+    console.log({ error: err.message });
+    res.status(500).json({ error: "Internal server error" });
   }
-}
+};
+
+const DELIVERY_TIMEOUT = 60000; // 60 seconds in milliseconds
+
+export const updateOrderStatusToDispatched = async (req, res) => {
+  try {
+    const orderId = req.params.orderId; // Get the order ID from the request parameters
+
+    // Find the order by its ID and update the status to "Dispatched"
+    const updatedOrder = await Order.findByIdAndUpdate(
+      orderId,
+      { orderStatus: "Dispatched" },
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedOrder) {
+      return res.status(404).json({ error: "Order not found." });
+    }
+
+    // Set a timeout to change the order status to "Delivered" after 60 seconds
+    setTimeout(async () => {
+      try {
+        const deliveredOrder = await Order.findByIdAndUpdate(
+          orderId,
+          { orderStatus: "Delivered" },
+          { new: true }
+        );
+        if (deliveredOrder) {
+          console.log("Order status updated to Delivered.");
+        }
+      } catch (err) {
+        console.error("Error updating order status to Delivered:", err);
+      }
+    }, DELIVERY_TIMEOUT);
+
+    res.status(200).json({
+      message: "Order status updated to Dispatched.",
+      order: updatedOrder,
+    });
+  } catch (err) {
+    console.log({ error: err.message });
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
