@@ -112,31 +112,43 @@ export const getMonthlyIncome = async (req, res) => {
 };
 
 export const getMonthlyIncomeBySeller = async (req, res) => {
-  const { sellerId } = req.params;
-
-  const currentDate = new Date();
-  const lastMonth = new Date(currentDate);
-  lastMonth.setMonth(currentDate.getMonth() - 1);
-
   try {
+    const { sellerId } = req.params;
+
+    const currentDate = new Date();
+    const lastMonth = new Date(currentDate);
+    lastMonth.setMonth(currentDate.getMonth() - 1);
+
     const income = await Order.aggregate([
       {
         $match: {
-          sellerId: new mongoose.Types.ObjectId(sellerId), // Correct usage
-          createdAt: { $gte: lastMonth },
-          orderStatus: "Delivered",
+          "products.sellerId": new mongoose.Types.ObjectId(sellerId),
+          "createdAt": { $gte: lastMonth },
+          "orderStatus": "Delivered",
+        },
+      },
+      {
+        $lookup: {
+          from: "products", // Tên của bảng chứa thông tin sản phẩm
+          localField: "products",
+          foreignField: "_id",
+          as: "productInfo",
+        },
+      },
+      {
+        $unwind: "$productInfo",
+      },
+      {
+        $group: {
+          _id: { month: { $month: "$createdAt" } },
+          totalSales: { $sum: "$productInfo.price" },
         },
       },
       {
         $project: {
-          month: { $month: "$createdAt" },
-          sales: "$totalPrice",
-        },
-      },
-      {
-        $group: {
-          _id: "$month",
-          total: { $sum: "$sales" },
+          _id: 0,
+          month: "$_id.month",
+          totalSales: 1,
         },
       },
     ]);
@@ -147,7 +159,6 @@ export const getMonthlyIncomeBySeller = async (req, res) => {
     res.status(500).json({ error: "An error occurred while fetching monthly income." });
   }
 };
-
 export const getOrderBySellerId = async (req, res) => {
   try {
     const sellerId = req.params.id; // Convert the sellerId to ObjectId type

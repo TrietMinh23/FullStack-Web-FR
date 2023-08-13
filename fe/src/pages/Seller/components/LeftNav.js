@@ -25,6 +25,7 @@ const routerSeller = [
   },
   {
     name: "Profile",
+    url: "profile"
   },
   {
     name: "Settings",

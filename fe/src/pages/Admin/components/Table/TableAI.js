@@ -1,10 +1,20 @@
 import React, { useState } from "react";
 import { FaTrashAlt, FaPen } from "react-icons/fa";
-const Table = ({rows}) => {
-  const [perPage, setPerPage] = useState(5); // Số hàng trên mỗi trang
+import { deleteProduct } from "../../../../api/products";
+import PaginationComponent from "../../../Home/components/Pagination";
+
+const Table = ({
+  rows,
+  nameTable,
+  onPageChange,
+  page,
+  onPerPageChange,
+  perPage,
+  onSelectEditRow,
+}) => {
   const [currentPage] = useState(1); // Trang hiện tại
-  const [sortColumn, setSortColumn] = useState(""); // Cột hiện tại được sắp xếp
-  const [sortOrder, setSortOrder] = useState(""); // Thứ tự sắp xếp ('asc' hoặc 'desc')
+  const [sortColumn, setSortColumn] = useState("postDate"); // Cột hiện tại được sắp xếp
+  const [sortOrder, setSortOrder] = useState("desc"); // Thứ tự sắp xếp ('asc' hoặc 'desc')
   const [searchTerm, setSearchTerm] = useState(""); // Giá trị tìm kiếm
   const [selectedItems, setSelectedItems] = useState([]); // Các sản phẩm được chọn
   const [selectAll, setSelectAll] = useState(false); // Tất cả sản phẩm được chọn
@@ -54,6 +64,24 @@ const Table = ({rows}) => {
     setSelectedItems([]);
   };
 
+  const handleDeleteRow = async (item) => {
+    try {
+      await deleteProduct(item.tradeCode);
+      setSelectedItems((prevSelectedItems) =>
+        prevSelectedItems.filter(
+          (selectedItem) => selectedItem.tradeCode !== item.tradeCode
+        )
+      );
+      window.location.reload();
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
+
+  const handleEditRow = (item) => {
+    onSelectEditRow(item.tradeCode); // Call the provided prop with the TradeCode
+  };
+
   const getCurrentPageData = () => {
     const startIndex = (currentPage - 1) * perPage;
     const endIndex = startIndex + perPage;
@@ -85,7 +113,7 @@ const Table = ({rows}) => {
 
   return (
     <div className="p-5 h-full bg-gray-100 w-full rounded-md">
-      <h1 className="text-xl mb-2">All Items</h1>
+      <h1 className="text-xl mb-2">{nameTable}</h1>
 
       <div className="flex items-center mb-4">
         <label htmlFor="search" className="mr-2">
@@ -99,6 +127,7 @@ const Table = ({rows}) => {
           onChange={handleSearch}
         />
         <button
+          id="All"
           className="ml-2 p-4 bg-red-500 text-white rounded-md"
           onClick={handleDelete}
         >
@@ -119,18 +148,21 @@ const Table = ({rows}) => {
               </th>
               <th
                 className="w-20 p-3 text-sm font-semibold tracking-wide text-left"
-                onClick={() => handleSort("itemName")}
+                onClick={() => handleSort("tradeCode")}
               >
-                Item name{" "}
-                {sortColumn === "itemName" &&
+                TradeCode{" "}
+                {sortColumn === "tradeCode" &&
                   (sortOrder === "asc" ? "▲" : "▼")}
+              </th>
+              <th className="p-3 text-sm font-semibold tracking-wide text-left">
+                Image
               </th>
               <th
                 className="p-3 text-sm font-semibold tracking-wide text-left"
-                onClick={() => handleSort("information")}
+                onClick={() => handleSort("itemName")}
               >
-                information{" "}
-                {sortColumn === "information" && (sortOrder === "asc" ? "▲" : "▼")}
+                Item name{" "}
+                {sortColumn === "itemName" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
                 className="p-3 text-sm font-semibold tracking-wide text-left"
@@ -153,13 +185,6 @@ const Table = ({rows}) => {
                 Post date{" "}
                 {sortColumn === "postDate" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
-              <th
-                className="w-24 p-3 text-sm font-semibold tracking-wide text-left"
-                onClick={() => handleSort("seller")}
-              >
-                Seller{" "}
-                {sortColumn === "seller" && (sortOrder === "asc" ? "▲" : "▼")}
-              </th>
               <th className="w-32 p-3 text-sm font-semibold tracking-wide text-left">
                 Action
               </th>
@@ -169,22 +194,31 @@ const Table = ({rows}) => {
             {getCurrentPageData().map((row, index) => (
               <tr
                 className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
-                key={row.itemName}
+                key={row.tradeCode}
               >
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                   <input
                     type="checkbox"
                     checked={selectedItems.some(
-                      (item) => item.itemName === row.itemName
+                      (item) => item.tradeCode === row.tradeCode
                     )}
                     onChange={(event) => handleCheckboxChange(event, row)}
                   />
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                  {row.itemName}
+                  {row.tradeCode}
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                  {row.information}
+                  <div className="w-12 h-12 overflow-hidden m-1 rounded-lg">
+                    <img
+                      src={row.image}
+                      alt={row.tradeCode}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                </td>
+                <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                  {row.itemName}
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
                   {row.price}
@@ -193,18 +227,18 @@ const Table = ({rows}) => {
                   <span
                     className={
                       "block text-center p-2 rounded-md bg-opacity-50  " +
-                      (row.status === "Available"
+                      (row.status == "Available" || row.status == "0"
                         ? "text-green-800 bg-green-200"
-                        : row.status === "Sold out"
+                        : row.status == "Sold out"
                         ? "text-gray-800 bg-gray-200"
-                        : row.status === "Shipping"
+                        : row.status == "Shipping"
                         ? "text-yellow-800 bg-yellow-200"
-                        : row.status === "Refund"
+                        : row.status == "Refund" || row.status == "1"
                         ? "text-red-800 bg-red-200"
                         : "")
                     }
                   >
-                    {row.status}
+                    {row.status == "0" ? "Available" : "Sold"}
                   </span>
                 </td>
 
@@ -212,13 +246,16 @@ const Table = ({rows}) => {
                   {row.postDate}
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                  {row.seller}
-                </td>
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                  <button className="text-blue-500 font-bold hover:underline">
+                  <button
+                    className="text-blue-500 font-bold hover:underline"
+                    onClick={() => handleEditRow(row)}
+                  >
                     <FaPen />
                   </button>
-                  <button className="text-red-500 font-bold hover:underline ml-2">
+                  <button
+                    className="text-red-500 font-bold hover:underline ml-2"
+                    onClick={() => handleDeleteRow(row)}
+                  >
                     <FaTrashAlt />
                   </button>
                 </td>
@@ -232,7 +269,7 @@ const Table = ({rows}) => {
         {getCurrentPageData().map((row) => (
           <div
             className="bg-white space-y-3 p-4 rounded-lg shadow"
-            key={row.itemName}
+            key={row.tradeCode}
           >
             <div className="flex items-center space-x-2 text-sm">
               <div>
@@ -240,35 +277,41 @@ const Table = ({rows}) => {
                   href="/#"
                   className="text-blue-500 font-bold hover:underline"
                 >
-                  Itemname: {row.itemName}
+                  TradeCode {row.status == "0" ? "Available" : "Sold"}
                 </a>
               </div>
               <div className="text-gray-500">{row.postDate}</div>
               <div>
                 <span
                   className={`p-1.5 text-xs font-medium uppercase tracking-wider ${
-                    row.status === "Available"
+                    row.status == "Available" || row.status == "0"
                       ? "text-green-800 bg-green-200"
-                      : row.status === "Sold out"
+                      : row.status == "Sold out"
                       ? "text-gray-800 bg-gray-200"
-                      : row.status === "Shipping"
+                      : row.status == "Shipping"
                       ? "text-yellow-800 bg-yellow-200"
-                      : row.status === "Refund"
+                      : row.status == "Refund" || row.status == "1"
                       ? "text-red-800 bg-red-200"
                       : ""
                   } rounded-lg bg-opacity-50`}
                 >
-                  {row.status}
+                  {row.status == "0" ? "Available" : "Sold"}
                 </span>
               </div>
             </div>
-            <div className="text-sm text-gray-700">{row.information}</div>
+            <div className="text-sm text-gray-700">{row.itemName}</div>
             <div className="text-sm font-medium text-black">${row.price}</div>
             <div className="flex justify-end">
-              <button className="text-blue-500 font-bold hover:underline">
+              <button
+                className="text-blue-500 font-bold hover:underline"
+                onClick={() => handleEditRow(row)}
+              >
                 <FaPen />
               </button>
-              <button className="text-red-500 font-bold hover:underline ml-2">
+              <button
+                className="text-red-500 font-bold hover:underline ml-2"
+                onClick={handleDelete}
+              >
                 <FaTrashAlt />
               </button>
             </div>
@@ -285,87 +328,14 @@ const Table = ({rows}) => {
             id="rowsPerPage"
             className="border border-gray-300 rounded-md p-1"
             value={perPage}
-            onChange={(e) => setPerPage(Number(e.target.value))}
+            onChange={(e) => onPerPageChange(Number(e.target.value))}
           >
             <option value={5}>5</option>
             <option value={10}>10</option>
             <option value={15}>15</option>
           </select>
         </div>
-        <div className="flex">
-          <a
-            href="/#"
-            className="px-4 py-2 mx-1 text-gray-500 capitalize bg-white rounded-md cursor-not-allowed dark:bg-gray-800 dark:text-gray-600"
-          >
-            <div className="flex items-center -mx-1">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-6 h-6 mx-1 rtl:-scale-x-100"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M7 16l-4-4m0 0l4-4m-4 4h18"
-                />
-              </svg>
-            </div>
-          </a>
-          <a
-            href="/#"
-            className="px-4 py-2 mx-1 text-gray-700 transition-colors duration-300 transform bg-white rounded-md sm:inline dark:bg-gray-800 dark:text-gray-200 hover:bg-blue-500 dark:hover:bg-blue-500 hover:text-white dark:hover:text-gray-200"
-          >
-            1
-          </a>
-          <a
-            href="/#"
-            className="px-4 py-2 mx-1 text-gray-700 transition-colors duration-300 transform bg-white rounded-md sm:inline dark:bg-gray-800 dark:text-gray-200 hover:bg-blue-500 dark:hover:bg-blue-500 hover:text-white dark:hover:text-gray-200"
-          >
-            2
-          </a>
-          <a
-            href="/#"
-            className="hidden px-4 py-2 mx-1 text-gray-700 transition-colors duration-300 transform bg-white rounded-md sm:inline dark:bg-gray-800 dark:text-gray-200 hover:bg-blue-500 dark:hover:bg-blue-500 hover:text-white dark:hover:text-gray-200"
-          >
-            3
-          </a>
-          <a
-            href="/#"
-            className="hidden px-4 py-2 mx-1 text-gray-700 transition-colors duration-300 transform bg-white rounded-md sm:inline dark:bg-gray-800 dark:text-gray-200 hover:bg-blue-500 dark:hover:bg-blue-500 hover:text-white dark:hover:text-gray-200"
-          >
-            4
-          </a>
-          <a
-            href="/#"
-            className="hidden px-4 py-2 mx-1 text-gray-700 transition-colors duration-300 transform bg-white rounded-md sm:inline dark:bg-gray-800 dark:text-gray-200 hover:bg-blue-500 dark:hover:bg-blue-500 hover:text-white dark:hover:text-gray-200"
-          >
-            5
-          </a>
-          <a
-            href="/#"
-            className="px-4 py-2 mx-1 text-gray-700 transition-colors duration-300 transform bg-white rounded-md dark:bg-gray-800 dark:text-gray-200 hover:bg-blue-500 dark:hover:bg-blue-500 hover:text-white dark:hover:text-gray-200"
-          >
-            <div className="flex items-center -mx-1">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-6 h-6 mx-1 rtl:-scale-x-100"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M17 8l4 4m0 0l-4 4m4-4H3"
-                />
-              </svg>
-            </div>
-          </a>
-        </div>
+        <PaginationComponent setPage={onPageChange} page={page} />
       </div>
     </div>
   );
