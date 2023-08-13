@@ -130,8 +130,8 @@ export const getMonthlyIncomeBySeller = async (req, res) => {
       {
         $match: {
           "products.sellerId": new mongoose.Types.ObjectId(sellerId),
-          "createdAt": { $gte: lastMonth },
-          "orderStatus": "Delivered",
+          createdAt: { $gte: lastMonth },
+          orderStatus: "Delivered",
         },
       },
       {
