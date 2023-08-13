@@ -65,11 +65,18 @@ export const getOrdersByUserId = async (req, res) => {
   try {
     const userId = req.params.userId;
 
-    const orders = await Order.find({ userId: userId })
-      .populate("products.product", "title price")
+    const orders = await Order.find({ orderby: userId })
+      .populate({
+        path: "products",
+        populate: {
+          path: "sellerId",
+          model: "User",
+          select: "name",
+        },
+      })
       .populate("orderby", "name")
-      .populate("paymentMethod", "paymentMethod")
-      .populate("shippingMethod", "address city ward")
+      .populate("payment", "paymentMethod")
+      .populate("shipping", "address city ward")
       .sort({ createAt: -1 });
 
     res.status(200).json(orders);
