@@ -14,17 +14,10 @@ const TableItem = () => {
   const [searchTerm, setSearchTerm] = useState(""); // Giá trị tìm kiếm
   const [selectedItems, setSelectedItems] = useState([]); // Các sản phẩm được chọn
   const [selectAll, setSelectAll] = useState(false); // Tất cả sản phẩm được chọn
-<<<<<<< HEAD
   const [isReview, setIsReview] = useState(false);
   const [isCancel, setIsCancel] = useState(false);
   const [isReport, setIsReport] = useState(false);
-  const [orders, setOrders] = useState(null);
-=======
-  const [isReview, setIsReview] = useState(false); 
-  const [isCancel, setIsCancel] = useState(false); 
-  const [isReport, setIsReport] = useState(false); 
-  const [isAlReview, setIsAlReview] = useState(false); 
->>>>>>> 777c6df0632f372ca52369252a5cdeb21a6d4673
+  const [isAlReview, setIsAlReview] = useState(false);
 
   const [indexReview, setIndexReview] = useState("");
   const [indexReport, setIndexReport] = useState("");
@@ -32,15 +25,11 @@ const TableItem = () => {
 
   const closeReview = () => {
     setIsReview(false);
-<<<<<<< HEAD
   };
-=======
-  }
   const finishReview = () => {
     setIsReview(false);
     setIsAlReview(true);
-  }
->>>>>>> 777c6df0632f372ca52369252a5cdeb21a6d4673
+  };
   const closeCancel = () => {
     setIsCancel(false);
   };
@@ -267,9 +256,15 @@ const TableItem = () => {
                           setIsReview(!isReview);
                           setIndexReview(index);
                         }}
-                        className="mr-2 md:w-1/2 bg-green-sheen py-2 px-4 text-white font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-green-sheen hover:text-green-sheen"
+                        className={`mr-2 md:w-1/2 bg-green-sheen text-white font-semibold rounded-md border-2 border-transparent 
+                        ${
+                          !isAlReview
+                            ? "hover:border-2 hover:border-green-sheen hover:text-green-sheen hover:bg-white"
+                            : ""
+                        }
+                        `}
                       >
-                        Review
+                        {!isAlReview ? "Review" : "Done Review"}
                       </button>
                       <button
                         onClick={() => {
@@ -379,7 +374,7 @@ const TableItem = () => {
               {row.status === "Complete" && (
                 <div className="grow flex">
                   <button
-                    onClick ={() => {
+                    onClick={() => {
                       setIsReview(!isReview);
                       setIndexReview(index);
                     }}
@@ -559,7 +554,6 @@ const TableItem = () => {
       {isCancel && (
         <div className="flex lg:flex-row flex-col">
           <PopupCancel
-<<<<<<< HEAD
             close={closeCancel}
             finish={finishCancel}
             at={document.documentElement.scrollTop}
@@ -577,30 +571,6 @@ const TableItem = () => {
           <div id="dimScreen" className={"block "}></div>
         </div>
       )}
-=======
-            close = {closeCancel}
-            finish = {finishCancel}
-            />
-          <div
-            id="dimScreen"
-            className={"block "}
-            ></div>
-            </div>
-       )}
-       {isReview && (
-          <div className="flex lg:flex-row flex-col">
-            <PopupReview
-              finish = {finishReview}
-              close = {closeReview}
-              i = {indexReview}
-            />
-            <div
-              id="dimScreen"
-              className={"block "}
-              ></div>
-          </div>
-          )}
->>>>>>> 777c6df0632f372ca52369252a5cdeb21a6d4673
     </div>
   );
 };
