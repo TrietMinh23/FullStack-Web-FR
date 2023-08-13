@@ -18,7 +18,7 @@ import {
 
 const router = express.Router();
 router.get("/", verifyTokenAndAdmin, getAllOrders);
-router.get("/:userId", verifyTokenAndAuthorization, getOrdersByUserId);
+router.get("/:userId", getOrdersByUserId);
 router.post("/", verifyToken, createOrder);
 router.put("/:id", verifyTokenAndAdmin, updateOrder);
 router.delete("/:id", deleteOrder);

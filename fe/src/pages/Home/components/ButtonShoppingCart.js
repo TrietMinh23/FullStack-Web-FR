@@ -5,7 +5,6 @@ import { useSelector } from "react-redux";
 
 export default function Example({ funcGetShoppingCart }) {
   const total = useSelector((state) => state.product.total);
-  console.log(total);
   return (
     <div className="text-right" onClick={funcGetShoppingCart}>
       <Menu as="div" className="relative inline-block text-left">

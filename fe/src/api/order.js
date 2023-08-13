@@ -1,5 +1,14 @@
 import { instance } from "./config";
 
+export const getOrdersByUserId = async (id) => {
+  try {
+    const response = await instance.get(`/orders/${id}`);
+    return response;
+  } catch (err) {
+    return err;
+  }
+};
+
 export const createPaymentUrl = async (order) => {
   try {
     const data = await instance.post("/vnpay/create_payment_url", {

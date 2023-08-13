@@ -16,9 +16,10 @@ import {
 } from "../../../utils/redux/purchaseSlice";
 import getCookie from "../../../utils/getCookie";
 import { instance } from "../../../api/config";
+import setCookie from "../../../utils/setCookie";
+import { UPDATETOTAL } from "../../../utils/redux/productsSlice";
 
 export default function Purchase() {
-  const [VNpaySuccessful, setVNPaySucessful] = useState(false);
   const [statePayment, setStatePayment] = useState(false);
 
   const [modalIsOpen, setModalOpen] = useState(false);
@@ -147,7 +148,19 @@ export default function Purchase() {
     setStatePayment(
       JSON.parse(decodeURIComponent(getCookie("vnp_params")))?.vnp_ResponseCode
     );
-  }, []);
+    if (statePayment === "00") {
+      console.log("BANANA");
+      const cart = JSON.parse(localStorage.getItem("cart"));
+      cart.products = [];
+      localStorage.setItem("cart", JSON.stringify(cart));
+      instance
+        .post(`/carts/clear_all_cart/${cart._id}`)
+        .then((res) => console.log(res))
+        .catch((err) => console.log(err));
+      dispatch(UPDATETOTAL(0));
+      setCookie("vnp_params", null, 1);
+    }
+  }, [statePayment]);
 
   return (
     <React.Fragment>

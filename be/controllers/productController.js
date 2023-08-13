@@ -139,8 +139,8 @@ export const getAllProducts = async (req, res) => {
     var limit = parseInt(req.query.limit) || 20;
 
     const skip = (page - 1) * limit;
-    const products = await Product.find()
-      .sort({ createAt: -1 })
+    const products = await Product.find({ sold: 0 })
+      .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .exec();
@@ -149,7 +149,7 @@ export const getAllProducts = async (req, res) => {
       res.status(400).json({ error: "No products found." });
     }
 
-    const totalProducts = await Product.find().countDocuments();
+    const totalProducts = await Product.find({ sold: 0 }).countDocuments();
     const totalPages = Math.ceil(totalProducts / limit);
 
     res.status(200).json({
