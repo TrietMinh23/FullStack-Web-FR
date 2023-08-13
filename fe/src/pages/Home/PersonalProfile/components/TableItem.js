@@ -1,10 +1,12 @@
-import React, { useState, } from "react";
-import { FaTrashAlt, } from "react-icons/fa";
+import React, { useEffect, useState } from "react";
+import { FaTrashAlt } from "react-icons/fa";
 import PopupReview from "./Popup/PopupReview";
 import PopupCancel from "./Popup/PopupCancel";
+import moment from "moment";
 import PopupReport from "./Popup/PopupReport";
+import { getOrdersByUserId } from "../../../../api/order";
 
-const TableItem = ({rows}) => {
+const TableItem = () => {
   const [perPage, setPerPage] = useState(5); // Số hàng trên mỗi trang
   const [currentPage] = useState(1); // Trang hiện tại
   const [sortColumn, setSortColumn] = useState(""); // Cột hiện tại được sắp xếp
@@ -12,33 +14,32 @@ const TableItem = ({rows}) => {
   const [searchTerm, setSearchTerm] = useState(""); // Giá trị tìm kiếm
   const [selectedItems, setSelectedItems] = useState([]); // Các sản phẩm được chọn
   const [selectAll, setSelectAll] = useState(false); // Tất cả sản phẩm được chọn
-  const [isReview, setIsReview] = useState(false); 
-  const [isCancel, setIsCancel] = useState(false); 
-  const [isReport, setIsReport] = useState(false); 
-  const [isAlReview, setIsAlReview] = useState(false); 
+  const [isReview, setIsReview] = useState(false);
+  const [isCancel, setIsCancel] = useState(false);
+  const [isReport, setIsReport] = useState(false);
+  const [isAlReview, setIsAlReview] = useState(false);
+  const [orders, setOrders] = useState(null);
 
-  const [indexReview, setIndexReview] = useState(''); 
-  const [indexReport, setIndexReport] = useState(''); 
-  const [indexCancel, setIndexCancel] = useState(''); 
+  const [indexReview, setIndexReview] = useState("");
+  const [indexReport, setIndexReport] = useState("");
+  const [indexCancel, setIndexCancel] = useState("");
 
   const closeReview = () => {
     setIsReview(false);
-  }
+  };
   const finishReview = () => {
     setIsReview(false);
     setIsAlReview(true);
-  }
+  };
   const closeCancel = () => {
     setIsCancel(false);
-  }
+  };
   const finishCancel = () => {
-    rows[indexCancel].status = "Cancel";
     setIsCancel(false);
-  }
+  };
   const closeReport = () => {
     setIsReport(false);
-  }
-  
+  };
 
   const handleSort = (column) => {
     if (column === sortColumn) {
@@ -74,7 +75,6 @@ const TableItem = ({rows}) => {
 
     if (checked) {
       setSelectAll(true);
-      setSelectedItems(rows);
     } else {
       setSelectAll(false);
       setSelectedItems([]);
@@ -85,34 +85,44 @@ const TableItem = ({rows}) => {
     setSelectedItems([]);
   };
 
-  const getCurrentPageData = () => {
-    const startIndex = (currentPage - 1) * perPage;
-    const endIndex = startIndex + perPage;
+  // const getCurrentPageData = () => {
+  //   const startIndex = (currentPage - 1) * perPage;
+  //   const endIndex = startIndex + perPage;
 
-    let filteredData = rows;
+  //   let filteredData = orders;
 
-    if (searchTerm) {
-      filteredData = rows.filter((row) => {
-        return Object.values(row).some((value) =>
-          value.toString().toLowerCase().includes(searchTerm.toLowerCase())
-        );
-      });
-    }
+  //   if (searchTerm) {
+  //     filteredData = orders.filter((row) => {
+  //       return Object.values(row).some((value) =>
+  //         value.toString().toLowerCase().includes(searchTerm.toLowerCase())
+  //       );
+  //     });
+  //   }
 
-    let sortedData = filteredData;
+  //   let sortedData = filteredData;
 
-    if (sortColumn) {
-      sortedData = filteredData.sort((a, b) => {
-        if (sortOrder === "asc") {
-          return a[sortColumn] > b[sortColumn] ? 1 : -1;
-        } else {
-          return a[sortColumn] < b[sortColumn] ? 1 : -1;
-        }
-      });
-    }
+  //   if (sortColumn) {
+  //     sortedData = filteredData.sort((a, b) => {
+  //       if (sortOrder === "asc") {
+  //         return a[sortColumn] > b[sortColumn] ? 1 : -1;
+  //       } else {
+  //         return a[sortColumn] < b[sortColumn] ? 1 : -1;
+  //       }
+  //     });
+  //   }
 
-    return sortedData.slice(startIndex, endIndex);
-  };
+  //   return sortedData.slice(startIndex, endIndex);
+  // };
+
+  useEffect(() => {
+    getOrdersByUserId(JSON.parse(localStorage.getItem("_id")))
+      .then((res) => setOrders(res.data))
+      .catch((err) => console.log(err));
+  }, []);
+
+  {
+    console.log(orders);
+  }
 
   return (
     <div className="p-5 h-full bg-gray-100 w-full rounded-md">
@@ -153,8 +163,7 @@ const TableItem = ({rows}) => {
                 onClick={() => handleSort("shopName")}
               >
                 Shop Name{" "}
-                {sortColumn === "shopName" &&
-                  (sortOrder === "asc" ? "▲" : "▼")}
+                {sortColumn === "shopName" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
                 className="p-3 text-sm font-semibold tracking-wide text-left"
@@ -182,14 +191,8 @@ const TableItem = ({rows}) => {
                 onClick={() => handleSort("orderDate")}
               >
                 order Date{" "}
-                {sortColumn === "orderDate" && (sortOrder === "asc" ? "▲" : "▼")}
-              </th>
-              <th
-                className="w-24 p-3 text-sm font-semibold tracking-wide text-left"
-                onClick={() => handleSort("receiveDate")}
-              >
-                receive Date{" "}
-                {sortColumn === "receiveDate" && (sortOrder === "asc" ? "▲" : "▼")}
+                {sortColumn === "orderDate" &&
+                  (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th className="w-32 p-3 text-sm font-semibold tracking-wide text-left">
                 Action
@@ -197,10 +200,10 @@ const TableItem = ({rows}) => {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
-            {getCurrentPageData().map((row, index) => (
+            {orders?.map((row, index) => (
               <tr
                 className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
-                key={row.shopName}
+                key={index}
               >
                 <td className="p-3 text-sm text-center text-gray-700 whitespace-nowrap">
                   <input
@@ -212,107 +215,120 @@ const TableItem = ({rows}) => {
                   />
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                  {row.shopName}
+                  {row.products[0].sellerId.name}
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                  {row.product}
+                  {row.products.map((item) => (
+                    <p>{item.title}</p>
+                  ))}
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                  {row.price}
+                  {row.products.map((item) => (
+                    <p>{item.price}</p>
+                  ))}
                 </td>
                 <td className="p-3 text-xs font-medium uppercase text-gray-700 whitespace-nowrap ">
                   <span
                     className={
                       "block text-center p-2 rounded-md bg-opacity-50  " +
-                      (row.status === "Complete"
+                      (row.orderStatus === "Complete"
                         ? "text-green-800 bg-green-200"
-                        : row.status === "Expense"
+                        : row.orderStatus === "Processing"
                         ? "text-gray-800 bg-yellow-200"
-                        : row.status === "Shipping"
+                        : row.orderStatus === "Shipping"
                         ? "text-gray-800 bg-blue-200"
-                        : row.status === "Cancel"
+                        : row.orderStatus === "Cancel"
                         ? "text-red-800 bg-red-200"
                         : "")
                     }
                   >
-                    {row.status}
+                    {row.orderStatus}
                   </span>
                 </td>
 
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                  {row.orderDate}
+                  {moment(row.orderDate).format("DD/MM/YYYY")}
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                  {row.receiveDate}
-                </td>
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                  {row.status === "Complete" &&
-                    <div className ="grow flex">
+                  {row.orderStatus === "Complete" && (
+                    <div className="grow flex">
                       <button
-                        onClick ={() => {
+                        onClick={() => {
                           setIsReview(!isReview);
                           setIndexReview(index);
                         }}
                         className={`mr-2 md:w-1/2 bg-green-sheen text-white font-semibold rounded-md border-2 border-transparent 
-                        ${!isAlReview ? "hover:border-2 hover:border-green-sheen hover:text-green-sheen hover:bg-white": ""}
-                        `}
-                      >{!isAlReview ? "Review" : "Done Review"}</button>
-                      <button
-                        onClick ={() =>{
-                            setIsReport(!isReport);
-                            setIndexReport(index);
-                          }
+                        ${
+                          !isAlReview
+                            ? "hover:border-2 hover:border-green-sheen hover:text-green-sheen hover:bg-white"
+                            : ""
                         }
+                        `}
+                      >
+                        {!isAlReview ? "Review" : "Done Review"}
+                      </button>
+                      <button
+                        onClick={() => {
+                          setIsReport(!isReport);
+                          setIndexReport(index);
+                        }}
                         className=" md:w-1/2 bg-orange-500 py-2 px-4 text-white font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-orange-500 hover:text-orange-500"
-                      >Report</button>
+                      >
+                        Report
+                      </button>
                     </div>
-                  }
-                    {row.status === "Shipping" &&
-                      <div className ="grow flex">
-                        <button
-                          onClick ={() => {
-                            setIsCancel(!isCancel);
-                            setIndexCancel(index);
-                          }}
-                          className="mr-2 md:w-1/2 bg-red-500 py-2 px-4 text-white font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-red-500 hover:text-red-500"
-                          >Cancel</button>
-                        <button
-                          onClick ={() =>{
-                              setIsReport(!isReport);
-                              setIndexReport(index);
-                            }
-                          }
-                          className=" md:w-1/2 bg-orange-500 py-2 px-4 text-white font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-orange-500 hover:text-orange-500"
-                        >Report</button>
-                      </div>
-                    }
-                    {row.status === "Expense" &&
-                      <div className ="grow flex">
-                        <button
-                          className="mr-2 md:w-1/2 bg-yellow-500 py-2 px-4 text-white font-semibold rounded-md border-2 border-transparent "
-                          >Waiting</button>
-                        <button
-                          onClick ={() =>{
-                              setIsReport(!isReport);
-                              setIndexReport(index);
-                            }
-                          }
-                          className=" md:w-1/2 bg-orange-500 py-2 px-4 text-white font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-orange-500 hover:text-orange-500"
-                        >Report</button>
-                      </div>
-                    }
-                    {row.status === "Cancel" &&
-                      <div className ="grow flex">
-                        <button
-                          onClick ={() =>{
-                              setIsReport(!isReport);
-                              setIndexReport(index);
-                            }
-                          }
-                          className="md:w-full bg-orange-500 py-2 px-16 text-white font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-orange-500 hover:text-orange-500"
-                        >Report</button>
-                      </div>
-                    }
+                  )}
+                  {row.orderStatus === "Shipping" && (
+                    <div className="grow flex">
+                      <button
+                        onClick={() => {
+                          setIsCancel(!isCancel);
+                          setIndexCancel(index);
+                        }}
+                        className="mr-2 md:w-1/2 bg-red-500 py-2 px-4 text-white font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-red-500 hover:text-red-500"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={() => {
+                          setIsReport(!isReport);
+                          setIndexReport(index);
+                        }}
+                        className=" md:w-1/2 bg-orange-500 py-2 px-4 text-white font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-orange-500 hover:text-orange-500"
+                      >
+                        Report
+                      </button>
+                    </div>
+                  )}
+                  {row.orderStatus === "Processing" && (
+                    <div className="grow flex">
+                      <button className="mr-2 md:w-1/2 bg-yellow-500 py-2 px-4 text-white font-semibold rounded-md border-2 border-transparent ">
+                        Waiting
+                      </button>
+                      <button
+                        onClick={() => {
+                          setIsReport(!isReport);
+                          setIndexReport(index);
+                        }}
+                        className=" md:w-1/2 bg-orange-500 py-2 px-4 text-white font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-orange-500 hover:text-orange-500"
+                      >
+                        Report
+                      </button>
+                    </div>
+                  )}
+                  {row.orderStatus === "Cancel" && (
+                    <div className="grow flex">
+                      <button
+                        onClick={() => {
+                          setIsReport(!isReport);
+                          setIndexReport(index);
+                        }}
+                        className="md:w-full bg-orange-500 py-2 px-16 text-white font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-orange-500 hover:text-orange-500"
+                      >
+                        Report
+                      </button>
+                    </div>
+                  )}
                 </td>
               </tr>
             ))}
@@ -321,106 +337,114 @@ const TableItem = ({rows}) => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 xl:hidden">
-        {getCurrentPageData().map((row,index) => (
-          <div
-            className="bg-white space-y-3 p-4 rounded-lg shadow"
-            key={row.shopName}
-          >
+        {orders?.map((row, index) => (
+          <div className="bg-white space-y-3 p-4 rounded-lg shadow" key={index}>
             <div className="flex items-center space-x-2 text-sm">
               <div>
                 <a
                   href="/#"
                   className="text-blue-500 font-bold hover:underline"
                 >
-                  shopName {row.shopName}
+                  shopName {row.products[0].sellerId.name}
                 </a>
               </div>
               <div className="text-gray-500">{row.orderDate}</div>
               <div>
                 <span
                   className={`p-1.5 text-xs font-medium uppercase tracking-wider ${
-                    (row.status === "Complete"
-                        ? "text-green-800 bg-green-200"
-                        : row.status === "Expense"
-                        ? "text-gray-800 bg-yellow-200"
-                        : row.status === "Shipping"
-                        ? "text-gray-800 bg-blue-200"
-                        : row.status === "Cancel"
-                        ? "text-red-800 bg-red-200"
-                        : "")
+                    row.orderStatus === "Complete"
+                      ? "text-green-800 bg-green-200"
+                      : row.status === "Expense"
+                      ? "text-gray-800 bg-yellow-200"
+                      : row.status === "Shipping"
+                      ? "text-gray-800 bg-blue-200"
+                      : row.status === "Cancel"
+                      ? "text-red-800 bg-red-200"
+                      : ""
                   } rounded-lg bg-opacity-50`}
                 >
                   {row.status}
                 </span>
               </div>
             </div>
-            <div className="text-sm text-gray-700">product order: {row.product}</div>
+            <div className="text-sm text-gray-700">
+              product order: {row.product}
+            </div>
             <div className="text-sm font-medium text-black">${row.price}</div>
             <div className="flex justify-end">
-              {row.status === "Complete" &&
-                <div className ="grow flex">
+              {row.status === "Complete" && (
+                <div className="grow flex">
                   <button
-                    onClick ={() => {
+                    onClick={() => {
                       setIsReview(!isReview);
                       setIndexReview(index);
                     }}
                     className="mr-2 md:w-1/2 bg-green-sheen py-2 px-4 text-white font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-green-sheen hover:text-green-sheen"
-                  >Review</button>
+                  >
+                    Review
+                  </button>
                   <button
-                    onClick ={() =>{
-                        setIsReport(!isReport);
-                        setIndexReport(index);
-                      }
-                    }
+                    onClick={() => {
+                      setIsReport(!isReport);
+                      setIndexReport(index);
+                    }}
                     className=" md:w-1/2 bg-orange-500 py-2 px-4 text-white font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-orange-500 hover:text-orange-500"
-                    >Report</button>
-                    </div>
-                  }
-              {row.status === "Shipping" &&
-                  <div className ="grow flex">
-                    <button
-                      onClick ={() => {
-                        setIsCancel(!isCancel);
-                        setIndexCancel(index);
-                      }}
-                      className="mr-2 md:w-1/2 bg-red-500 py-2 px-4 text-white font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-red-500 hover:text-red-500"
-                      >Cancel</button>
-                     <button
-                      onClick ={() =>{
-                          setIsReport(!isReport);
-                          setIndexReport(index);
-                        }
-                      }
-                      className=" md:w-1/2 bg-orange-500 py-2 px-4 text-white font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-orange-500 hover:text-orange-500"
-                      >Report</button>
-                  </div>
-                }
-                {row.status === "Expense" &&
-                  <div className ="grow flex">
-                    <button
-                      className="mr-2 md:w-1/2 bg-yellow-500 py-2 px-4 text-white font-semibold rounded-md border-2 border-transparent "
-                      >Waiting</button>
-                    <button
-                      onClick ={() =>{
-                          setIsReport(!isReport);
-                          setIndexReport(index);
-                        }}
-                      className=" md:w-1/2 bg-orange-500 py-2 px-4 text-white font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-orange-500 hover:text-orange-500"
-                      >Report</button>
-                  </div>
-                  }
-                  {row.status === "Cancel" &&
-                    <div className ="grow flex">
-                        <button
-                          onClick ={() =>{
-                              setIsReport(!isReport);
-                              setIndexReport(index);
-                            }
-                          }
-                          className="md:w-full bg-orange-500 py-2 px-16 text-white font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-orange-500 hover:text-orange-500"
-                        >Report</button>
-                    </div>
-                  }
+                  >
+                    Report
+                  </button>
+                </div>
+              )}
+              {row.status === "Shipping" && (
+                <div className="grow flex">
+                  <button
+                    onClick={() => {
+                      setIsCancel(!isCancel);
+                      setIndexCancel(index);
+                    }}
+                    className="mr-2 md:w-1/2 bg-red-500 py-2 px-4 text-white font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-red-500 hover:text-red-500"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => {
+                      setIsReport(!isReport);
+                      setIndexReport(index);
+                    }}
+                    className=" md:w-1/2 bg-orange-500 py-2 px-4 text-white font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-orange-500 hover:text-orange-500"
+                  >
+                    Report
+                  </button>
+                </div>
+              )}
+              {row.status === "Expense" && (
+                <div className="grow flex">
+                  <button className="mr-2 md:w-1/2 bg-yellow-500 py-2 px-4 text-white font-semibold rounded-md border-2 border-transparent ">
+                    Waiting
+                  </button>
+                  <button
+                    onClick={() => {
+                      setIsReport(!isReport);
+                      setIndexReport(index);
+                    }}
+                    className=" md:w-1/2 bg-orange-500 py-2 px-4 text-white font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-orange-500 hover:text-orange-500"
+                  >
+                    Report
+                  </button>
+                </div>
+              )}
+              {row.status === "Cancel" && (
+                <div className="grow flex">
+                  <button
+                    onClick={() => {
+                      setIsReport(!isReport);
+                      setIndexReport(index);
+                    }}
+                    className="md:w-full bg-orange-500 py-2 px-16 text-white font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-orange-500 hover:text-orange-500"
+                  >
+                    Report
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         ))}
@@ -517,43 +541,37 @@ const TableItem = ({rows}) => {
           </a>
         </div>
       </div>
+
       {isReport && (
         <div className="flex lg:flex-row flex-col">
-        <PopupReport
-          close = {closeReport}
-          i = {indexReport}
+          <PopupReport
+            close={closeReport}
+            i={indexReport}
+            at={document.documentElement.scrollTop}
           />
-        <div
-          id="dimScreen"
-          className={"block "}
-          ></div>
-          </div>
-          )}
+          <div id="dimScreen" className={"block "}></div>
+        </div>
+      )}
       {isCancel && (
         <div className="flex lg:flex-row flex-col">
           <PopupCancel
-            close = {closeCancel}
-            finish = {finishCancel}
-            />
-          <div
-            id="dimScreen"
-            className={"block "}
-            ></div>
-            </div>
-       )}
-       {isReview && (
-          <div className="flex lg:flex-row flex-col">
-            <PopupReview
-              finish = {finishReview}
-              close = {closeReview}
-              i = {indexReview}
-            />
-            <div
-              id="dimScreen"
-              className={"block "}
-              ></div>
-          </div>
-          )}
+            close={closeCancel}
+            finish={finishCancel}
+            at={document.documentElement.scrollTop}
+          />
+          <div id="dimScreen" className={"block "}></div>
+        </div>
+      )}
+      {isReview && (
+        <div className="flex lg:flex-row flex-col">
+          <PopupReview
+            close={closeReview}
+            i={indexReview}
+            at={document.documentElement.scrollTop}
+          />
+          <div id="dimScreen" className={"block "}></div>
+        </div>
+      )}
     </div>
   );
 };

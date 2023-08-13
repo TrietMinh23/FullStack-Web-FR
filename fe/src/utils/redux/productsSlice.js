@@ -9,6 +9,10 @@ export const productsSlice = createSlice({
   name: "products",
   initialState,
   reducers: {
+    UPDATETOTAL: (state, action) => {
+      console.log("BBBBBBB", action.payload);
+      state.total = action.payload;
+    },
     ADDTOCART: (state, action) => {
       const { sellerId } = action.payload.data;
       const targetIndex = state.shoppingCart.findIndex(
@@ -114,7 +118,7 @@ export const productsSlice = createSlice({
   },
 });
 
-export const { ADDTOCART, REMOVEFROMCART, DELETE, UPDATEPRODUCT } =
+export const { ADDTOCART, REMOVEFROMCART, DELETE, UPDATEPRODUCT, UPDATETOTAL } =
   productsSlice.actions;
 
 export default productsSlice.reducer;

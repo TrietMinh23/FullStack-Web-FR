@@ -5,6 +5,7 @@ import {
   createCart,
   updateCart,
   deleteCart,
+  clearAllUserCart,
 } from "../controllers/cartController.js";
 import {
   verifyTokenAndAuthorization,
@@ -19,5 +20,6 @@ router.post("/", verifyTokenAndAuthorization, createCart);
 router.put("/:id", verifyTokenAndAuthorization, updateCart);
 router.delete("/:id", verifyTokenAndAuthorization, deleteCart);
 router.get("/", verifyTokenAndAdmin, getAllCarts);
+router.post("/clear_all_cart/:idCart", clearAllUserCart);
 
 export default router;

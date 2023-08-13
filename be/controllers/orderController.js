@@ -63,13 +63,20 @@ export const updateOrder = async (req, res) => {
 
 export const getOrdersByUserId = async (req, res) => {
   try {
-    const userId = res.params.userId;
+    const userId = req.params.userId;
 
-    const orders = await Order.find({ userId: userId })
-      .populate("products.product", "title price")
+    const orders = await Order.find({ orderby: userId })
+      .populate({
+        path: "products",
+        populate: {
+          path: "sellerId",
+          model: "User",
+          select: "name",
+        },
+      })
       .populate("orderby", "name")
-      .populate("paymentMethod", "paymentMethod")
-      .populate("shippingMethod", "address city ward")
+      .populate("payment", "paymentMethod")
+      .populate("shipping", "address city ward")
       .sort({ createAt: -1 });
 
     res.status(200).json(orders);
@@ -156,7 +163,9 @@ export const getMonthlyIncomeBySeller = async (req, res) => {
     res.status(200).json(income);
   } catch (err) {
     console.error({ error: err.message });
-    res.status(500).json({ error: "An error occurred while fetching monthly income." });
+    res
+      .status(500)
+      .json({ error: "An error occurred while fetching monthly income." });
   }
 };
 export const getOrderBySellerId = async (req, res) => {
@@ -287,12 +296,10 @@ export const updateOrderStatusToDispatched = async (req, res) => {
       }
     }, DELIVERY_TIMEOUT);
 
-    res
-      .status(200)
-      .json({
-        message: "Order status updated to Dispatched.",
-        order: updatedOrder,
-      });
+    res.status(200).json({
+      message: "Order status updated to Dispatched.",
+      order: updatedOrder,
+    });
   } catch (err) {
     console.log({ error: err.message });
     res.status(500).json({ error: "Internal server error" });

@@ -112,7 +112,6 @@ export default function CheckoutModal() {
       );
       totalOrder.push(order);
     }
-
     // Gửi yêu cầu tạo URL thanh toán với thông tin đơn hàng
     createPaymentUrl(JSON.stringify(totalOrder))
       .then((res) => console.log(res))

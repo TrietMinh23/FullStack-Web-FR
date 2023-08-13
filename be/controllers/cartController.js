@@ -87,6 +87,13 @@ export const deleteCart = async (req, res) => {
   }
 };
 
+export const clearAllUserCart = async (req, res) => {
+  const idCart = req.params.idCart;
+  Cart.updateOne({ _id: idCart }, { $set: { products: [] } })
+    .then((res) => console.log(res))
+    .catch((err) => console.log(err));
+};
+
 export const getAllCarts = async (req, res) => {
   try {
     const carts = await Cart.find();

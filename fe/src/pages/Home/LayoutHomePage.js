@@ -9,7 +9,10 @@ export default function LayoutHomePage() {
   const dispatch = useDispatch();
   const product = useSelector((state) => state.product.shoppingCart);
   useEffect(() => {
-    if (getCookie("refresh_token")) {
+    if (
+      getCookie("refresh_token") &&
+      localStorage.getItem("role") === "buyer"
+    ) {
       const listFromLocalStorage = JSON.parse(localStorage.getItem("cart"));
       if (listFromLocalStorage.first) {
         dispatch(

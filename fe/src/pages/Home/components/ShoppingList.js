@@ -7,15 +7,20 @@ import CardSkeleton from "../../../components/ui/CardSkeleton";
 export default function ShoppingList({ page }) {
   const [productsList, setProducts] = useState(null);
   useEffect(() => {
-    setProducts(null);
-    window.scrollTo(0, 0);
-    products(page)
-      .then((res) => {
-        setProducts(res.data.products);
-      })
-      .catch((err) => console.log(err));
-    console.log(productsList);
+    async function getProduct() {
+      setProducts(null);
+      window.scrollTo(0, 0);
+      await products(page)
+        .then((res) => {
+          setProducts(res.data.products);
+          sessionStorage.setItem("totalPage", res.data.totalPages);
+        })
+        .catch((err) => console.log(err));
+    }
+
+    getProduct();
   }, [page]);
+
   return (
     <section
       id="Projects"
