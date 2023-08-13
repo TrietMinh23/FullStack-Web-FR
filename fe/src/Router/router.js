@@ -27,6 +27,7 @@ const AllItems = lazy(() => import("../pages/Seller/AllItems/allItem"));
 const NewItem = lazy(() => import("../pages/Seller/NewItem/newItem"));
 const Review = lazy(() => import("../pages/Seller/Review/review"));
 const AllOrders = lazy(() => import("../pages/Seller/AllOrders/AllOrders"));
+const ProfileSeller = lazy(() => import("../pages/Seller/Profile/Profile"));
 const LayoutSeller = lazy(() => import("../pages/Seller/Home/LayoutSeller"));
 const Home = lazy(() => import("../pages/Home/home"));
 const LayoutHomePage = lazy(() => import("../pages/Home/LayoutHomePage"));
@@ -65,6 +66,7 @@ function Router() {
             <Route path="all-item" element={<AllItems />} />
             <Route path="all-orders" element={<AllOrders />} />
             <Route path="add-new-item" element={<NewItem />} />
+            <Route path='profile' element={<ProfileSeller />}/>
             <Route path="review" element={<Review />} />
           </Route>
         ) : null}
