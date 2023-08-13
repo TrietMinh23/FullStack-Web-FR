@@ -34,6 +34,35 @@ input[type="number"]::-webkit-outer-spin-button {
   transform: translate(-50%, -50%);
   width: 600px;
 }
+.popUpmodal {
+  box-shadow: 0 3px 10px 0 rgba(0, 0, 0, 0.14);
+  position: fixed;
+  background: white;
+  z-index: 20;
+  left: 50%;
+  transform: translate(-50%, -200%);
+  width: 600px;
+}
+.popUpBigModal{
+  box-shadow: 0 3px 10px 0 rgba(0, 0, 0, 0.14);
+  position: fixed;
+  background: white;
+  z-index: 20;
+  left: 50%;
+  transform: translate(-50%, -160%);
+  width: 600px;
+}
+
+.popUpSmallModal {
+  box-shadow: 0 3px 10px 0 rgba(0, 0, 0, 0.14);
+  position: fixed;
+  background: white;
+  z-index: 20;
+  left: 50%;
+  transform: translate(-50%, -280%);
+  width: 600px;
+}
+
 
 #dimScreen {
   position: fixed;
@@ -56,8 +85,68 @@ input[type="number"]::-webkit-outer-spin-button {
     transform: none;
     width: 100%;
     height: 100%;
+    z-index: 50;
+  }
+
+}
+
+@media only screen and (max-width: 1279px) {
+  .popUpmodal {
+    position: fixed;
+    padding: 0;
+    margin: 0;
+    top: 0;
+    left: 0;
+    transform: none;
+    width: 100%;
+    height: 100%;
+  }
+  .popUpmodal > div {
+    /* Adjust the width of the content container as needed */
+    width: 80%;
+    transform: translate(10%, 20%);
+  
+    /* Optional: Add margin or padding to the content container */
+  }
+
+  .popUpSmallModal {
+    position: fixed;
+    padding: 0;
+    margin: 0;
+    top: 0;
+    left: 0;
+    transform: none;
+    width: 100%;
+    height: 100%;
+  }
+  .popUpSmallModal > div {
+    /* Adjust the width of the content container as needed */
+    width: 80%;
+    transform: translate(10%, 20%);
+  
+    /* Optional: Add margin or padding to the content container */
+  }
+
+  .popUpBigModal {
+    position: fixed;
+    padding: 0;
+    margin: 0;
+    top: 0;
+    left: 0;
+    transform: none;
+    width: 100%;
+    height: 100%;
+  }
+  .popUpBigModal > div {
+    /* Adjust the width of the content container as needed */
+    width: 80%;
+    padding: 0% 0%;
+    transform: translate(10%, 20%);
+  
+    /* Optional: Add margin or padding to the content container */
   }
 }
+
 
 .box-notification::-webkit-scrollbar {
   width: 10px;
@@ -72,4 +161,23 @@ input[type="number"]::-webkit-outer-spin-button {
 .box-notification::-webkit-scrollbar-thumb {
   border-radius: 10px;
   background-color: #838294;
+}
+/* In your CSS or Tailwind configuration */
+.custom-button {
+  padding: 0.5rem 0.5rem;
+  font-weight: 600;
+  transition: background-color 0.3s, border 0.3s, color 0.3s;
+  border: 2px solid transparent;
+  cursor: pointer;
+}
+
+.custom-button:hover {
+  background-color: white;
+  border-color: #48bb78;
+  color: #48bb78;
+}
+
+.custom-button.active {
+  background-color: #48bb78;
+  color: white;
 }

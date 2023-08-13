@@ -49,12 +49,21 @@ export const getUserInformation = async (req, res) => {
 
         if (user.role === "buyer") {
           const cart = await Cart.find({ userId: user._id });
-          selectField["cart"] = {
-            products: cart[0].products,
-            total_price: cart[0].totalPrice,
-            _id: cart[0]._id,
-            first: true,
-          };
+          if (cart[0]) {
+            selectField["cart"] = {
+              products: cart[0].products,
+              total_price: cart[0].totalPrice,
+              _id: cart[0]._id,
+              first: true,
+            };
+          } else {
+            selectField["cart"] = {
+              products: [],
+              total_price: 0,
+              _id: null,
+              first: true,
+            };
+          }
         }
         res.status(200).json(selectField);
       });

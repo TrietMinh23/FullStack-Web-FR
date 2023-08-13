@@ -1,4 +1,4 @@
-import { Order } from "../models/orderModel.js";
+import {Order} from "../models/orderModel.js";
 
 export const getAllOrders = async (req, res) => {
   try {
@@ -64,19 +64,12 @@ export const getOrdersByUserId = async (req, res) => {
   try {
     const userId = req.params.userId;
 
-    const orders = await Order.find({ orderby: userId })
-      .populate({
-        path: "products",
-        populate: {
-          path: "sellerId",
-          model: "User",
-          select: "name",
-        },
-      })
+    const orders = await Order.find({userId: userId})
+      .populate("products.product", "title price")
       .populate("orderby", "name")
-      .populate("payment", "paymentMethod")
-      .populate("shipping")
-      .sort({ createAt: -1 });
+      .populate("paymentMethod", "paymentMethod")
+      .populate("shippingMethod", "address city ward")
+      .sort({createAt: -1});
 
     res.status(200).json(orders);
   } catch (err) {
@@ -121,14 +114,15 @@ export const getMonthlyIncomeBySeller = async (req, res) => {
   const { sellerId } = req.params;
 
   const currentDate = new Date();
-  const lastMonth = new Date(currentDate.getMonth() - 1);
+  const lastMonth = new Date(currentDate);
+  lastMonth.setMonth(currentDate.getMonth() - 1);
 
   try {
     const income = await Order.aggregate([
       {
         $match: {
           sellerId: mongoose.Type.Object(sellerId),
-          createAt: { $gte: lastMonth },
+          createAt: {$gte: lastMonth},
           orderStatus: "Delivered",
         },
       },
@@ -148,29 +142,67 @@ export const getMonthlyIncomeBySeller = async (req, res) => {
 
     res.status(200).json(income);
   } catch (err) {
-    console.log({ error: err.message });
+    console.log({error: err.message});
   }
 };
 
 export const getOrderBySellerId = async (req, res) => {
   try {
-    const sellerId = req.params.sellerId;
+    const sellerId = req.params.id; // Convert the sellerId to ObjectId type
 
-    const orders = await Order.find({ "products.product.sellerId": sellerId })
-      .populate({
-        path: "products.product",
-      })
-      .sort({ createdAt: -1 })
-      .exec();
+    const orders = await Order.find()
+      .populate("products")
+      .populate("shipping")
+      .populate("payment")
+      .populate("orderby");
+
+    const orderStatusCounts = {
+      "Not Processed": 0,
+      "Cash on Delivery": 0,
+      Processing: 0,
+      Dispatched: 0,
+      Cancelled: 0,
+      Delivered: 0,
+    };
+
+    const orderStatusTotalAmounts = {
+      "Not Processed": 0,
+      "Cash on Delivery": 0,
+      Processing: 0,
+      Dispatched: 0,
+      Cancelled: 0,
+      Delivered: 0,
+    };
+
+    const filteredOrders = orders
+      .filter((order) =>
+        order.products.some(
+          (product) => product.sellerId.toString() === sellerId
+        )
+      )
+      .map((order) => {
+        orderStatusCounts[order.orderStatus]++;
+
+        const orderTotalAmount = order.products
+          .filter((product) => product.sellerId.toString() === sellerId)
+          .reduce((total, product) => total + product.price, 0);
+
+        orderStatusTotalAmounts[order.orderStatus] += orderTotalAmount;
+
+    const orders = await Order.find({"products.product.sellerId":sellerId}).populate({
+      path: "products.product",
+    })
+    .sort({createdAt: -1})
+    .exec();
 
     if (orders.length === 0) {
-      return res
-        .status(404)
-        .json({ error: "No orders found for this seller." });
+      return res.status(404).json({ error: "No orders found for this seller." });
     }
 
-    res.status(200).json({ orders });
+    res
+      .status(200)
+      .json({ filteredOrders, orderStatusCounts, orderStatusTotalAmounts });
   } catch (err) {
-    console.log({ error: err.message });
+    console.log({error: err.message});
   }
-};
+}

@@ -1,7 +1,7 @@
 import slugify from "slugify";
 import { Product } from "../models/productModel.js";
 import { User } from "../models/userModel.js";
-import { uploadFile } from "./s3Controller.js";
+import { uploadFile, deleteS3 } from "./s3Controller.js";
 import util from "util";
 import fs from "fs";
 
@@ -28,35 +28,39 @@ export const getProductBySellerId = async (req, res) => {
   try {
     const _id = req.params.id;
 
-    // pagination
+    // Pagination
     var page = parseInt(req.query.page) || 1;
     var limit = parseInt(req.query.limit) || 20;
-
     const skip = (page - 1) * limit;
 
     const products = await Product.find({ sellerId: _id })
-      .sort({ createAt: -1 })
+      .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .exec();
+
     if (products.length === 0) {
-      res.status(400).json({ error: "No products found by seller id." });
+      return res.status(400).json({ error: "No products found by seller id." });
     }
 
-    const totalProducts = await Product.find({
-      sellerId: _id,
-    }).countDocuments();
+    const totalProducts = await Product.countDocuments({ sellerId: _id });
 
-    // Counting products with sold status 0 and 1
-    const totalSold0 = await Product.find({
-      sellerId: _id,
-      sold: 0,
-    }).countDocuments();
+    const totalSold0 = await Product.countDocuments({ sellerId: _id, sold: 0 });
+    const totalSold1 = await Product.countDocuments({ sellerId: _id, sold: 1 });
 
-    const totalSold1 = await Product.find({
-      sellerId: _id,
-      sold: 1,
-    }).countDocuments();
+    // Calculate total price of sold products (sold 1)
+    const sold1Products = await Product.find({ sellerId: _id, sold: 1 });
+    const totalPriceSold1 = sold1Products.reduce(
+      (total, product) => total + product.price,
+      0
+    );
+
+    // Calculate total price of unsold products (sold 0)
+    const sold0Products = await Product.find({ sellerId: _id, sold: 0 });
+    const totalPriceSold0 = sold0Products.reduce(
+      (total, product) => total + product.price,
+      0
+    );
 
     const totalPages = Math.ceil(totalProducts / limit);
 
@@ -65,11 +69,13 @@ export const getProductBySellerId = async (req, res) => {
       totalProducts,
       totalSold0,
       totalSold1,
+      totalPriceSold0,
+      totalPriceSold1,
       totalPages,
-      products: products,
+      products,
     });
   } catch (err) {
-    res.json({ message: err.message });
+    res.status(500).json({ message: err.message });
   }
 };
 
@@ -139,8 +145,8 @@ export const getAllProducts = async (req, res) => {
     var limit = parseInt(req.query.limit) || 20;
 
     const skip = (page - 1) * limit;
-    const products = await Product.find({ sold: 0 })
-      .sort({ createdAt: -1 })
+    const products = await Product.find()
+      .sort({ createAt: -1 })
       .skip(skip)
       .limit(limit)
       .exec();
@@ -185,11 +191,6 @@ export const createProduct = async (req, res) => {
       await newProduct.save();
       res.status(201).json(newProduct);
     }
-
-    const file = req.file;
-    console.log(file);
-    const title = req.body.title;
-    console.log(title);
   } catch (err) {
     res.status(400).json({ error: err.message });
     console.log(err);
@@ -200,7 +201,7 @@ export const updateProduct = async (req, res) => {
   try {
     if (req.body.role === "seller" || true) {
       const id = req.params.id;
-      const product = await Product.findOneAndUpdate({ id });
+      const product = await Product.findOne({ _id: id });
 
       if (!product) {
         res.status(404).json({ error: "Not found!" });
@@ -239,26 +240,35 @@ export const updateProduct = async (req, res) => {
   }
 };
 
-// delete product by seller
 export const deleteProductById = async (req, res) => {
   try {
     if (req.params.role === "seller" || true) {
       const id = req.params.id;
 
-      // if the product has been delivered, seller can't delete it
-      const status = await Product.findOne({ id }).populate("status");
-      if (status === "Delivered") {
-        res.status(400).json({ error: "You can't delete this product." });
-      } else {
-        const deleteProduct = await Product.findOneAndDelete({ id });
-        if (!deleteProduct) {
-          res.status(404).json({ error: "Not found!" });
-        }
-        res.status(200).json({ message: "Product deleted." });
+      //if the product has been delivered, seller can't delete it
+      //const status = await Product.findOne({ id }).populate("status");
+      // if (status === "Delivered") {
+      //  res.status(400).json({ error: "You can't delete this product." });
+      // } else {
+
+      const deleteProduct = await Product.findOneAndDelete({ _id: id });
+      const key = deleteProduct.image.slice(
+        deleteProduct.image.lastIndexOf("/") + 1
+      );
+
+      if (!deleteProduct) {
+        res.status(404).json({ error: "Not found!" });
+      }
+
+      // Delete associated image from S3
+      if (key) {
+        // Assuming you store S3 object key in 'imageKey' field
+        await deleteS3(key);
       }
       res.status(200).json({ message: "Product deleted." });
     }
   } catch (err) {
+    console.log(5);
     res.status(400).json({ error: err.message });
   }
 };
