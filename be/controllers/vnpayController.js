@@ -72,6 +72,8 @@ export const createPaymentUrl = async (req, res, next) => {
     const orders = JSON.parse(req.body.order);
     const totalPriceOrders = orders.reduce((a, b) => a + b.totalPrice, 0);
 
+    console.log(totalPriceOrders);
+
     async function processOrders(orders) {
       const listOrderId = [];
 

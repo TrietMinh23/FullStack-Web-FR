@@ -148,6 +148,7 @@ export default function Purchase() {
     setStatePayment(
       JSON.parse(decodeURIComponent(getCookie("vnp_params")))?.vnp_ResponseCode
     );
+    console.log(statePayment);
     if (statePayment === "00") {
       console.log("BANANA");
       const cart = JSON.parse(localStorage.getItem("cart"));

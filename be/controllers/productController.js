@@ -145,7 +145,7 @@ export const getAllProducts = async (req, res) => {
     var limit = parseInt(req.query.limit) || 20;
 
     const skip = (page - 1) * limit;
-    const products = await Product.find()
+    const products = await Product.find({ sold: 0 })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)

@@ -24,7 +24,7 @@ export default function ItemShoppingCart({ shop }) {
           image={item.image}
           key={i}
           shop={shop.name}
-          id={item.id}
+          id={item._id}
         />
       ))}
     </React.Fragment>

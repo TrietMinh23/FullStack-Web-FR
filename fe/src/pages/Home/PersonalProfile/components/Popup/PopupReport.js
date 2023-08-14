@@ -1,32 +1,30 @@
 import React, { useState } from "react";
-import { rows } from "../../data/orderData";
 import { postReport } from "../../../../../api/Report/postReport";
 
-export default function PopupReport({ i, close, at }) {
+export default function PopupReport({ i, close, at, data }) {
   const [iscomfirm, setIsComfirm] = useState(false);
   const [title, setTitle] = useState("");
   const [details, setDetails] = useState("");
   const comfirm = () => {
     setIsComfirm(true);
     console.log(iscomfirm);
-    const data = {
+    const dataSend = {
       title: title,
       details: details,
-      postDate: "2021-02-05 08:28:36",
-      id_reporter: rows[i].idBuyer,
-      id_reported: rows[i].idSeller,
+      id_reporter: data[i].orderby._id,
+      id_reported: data[i].products[0].sellerId._id,
       status: "Pending",
     };
-    Report(data);
+    Report(dataSend);
   };
-  const Report = async (data) => {
-    console.log(data);
-    await postReport(data)
+  const Report = async (dataSend) => {
+    console.log("hi" ,dataSend);
+    await postReport(dataSend)
       .then((res) => {
         console.log(res.data);
       })
       .catch((err) => {
-        console.log(err.response.data.message);
+        console.log(err);
       });
   };
   return (
