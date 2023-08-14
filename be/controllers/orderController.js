@@ -1,4 +1,4 @@
-import { Order } from "../models/orderModel.js";
+import {Order} from "../models/orderModel.js";
 import mongoose from "mongoose";
 
 export const getAllOrders = async (req, res) => {
@@ -6,7 +6,7 @@ export const getAllOrders = async (req, res) => {
     const orders = await Order.find();
     res.status(200).json(orders);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(400).json({error: err.message});
   }
 };
 
@@ -22,32 +22,32 @@ export const createOrder = async (req, res) => {
 
     res.status(202).json("Order has been created!", newOrder);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(400).json({error: err.message});
   }
 };
 
 export const deleteOrder = async (req, res) => {
   try {
     const id = res.params.id;
-    const order = await Order.findOneAndDelete({ _id: id });
+    const order = await Order.findOneAndDelete({_id: id});
 
     if (!order) {
-      res.status(404).json({ message: "Order not found" });
+      res.status(404).json({message: "Order not found"});
     } else {
       res.status(200).json("Order deleted successfully");
     }
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(400).json({error: err.message});
   }
 };
 
 export const updateOrder = async (req, res) => {
   try {
-    const { id } = req.params;
+    const {id} = req.params;
     const order = await Order.findOneAndUpdate(
-      { id },
-      { $set: req.body },
-      { new: true }
+      {id},
+      {$set: req.body},
+      {new: true}
     );
 
     // calculate total price and quantity
@@ -57,7 +57,7 @@ export const updateOrder = async (req, res) => {
     await order.save();
     res.status(200).json(order);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(400).json({error: err.message});
   }
 };
 
@@ -70,7 +70,7 @@ export const getOrdersByUserId = async (req, res) => {
     var limit = parseInt(req.query.limit) || 20;
     const skip = (page - 1) * limit;
 
-    const orders = await Order.find({ orderby: userId })
+    const orders = await Order.find({orderby: userId})
       .populate({
         path: "products",
         populate: {
@@ -82,7 +82,7 @@ export const getOrdersByUserId = async (req, res) => {
       .populate("orderby", "name")
       .populate("payment", "paymentMethod")
       .populate("shipping", "address city ward")
-      .sort({ createAt: -1 })
+      .sort({createAt: -1})
       .skip(skip)
       .limit(limit)
       .exec();
@@ -97,7 +97,7 @@ export const getOrdersByUserId = async (req, res) => {
       });
     }
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(400).json({error: err.message});
   }
 };
 
@@ -110,34 +110,34 @@ export const getMonthlyIncome = async (req, res) => {
     const income = await Order.aggregate([
       {
         $match: {
-          createdAt: { $gte: lastMonth },
+          createdAt: {$gte: lastMonth},
           orderStatus: "Delivered",
         },
       },
       {
         $project: {
-          month: { $month: "$createdAt" },
+          month: {$month: "$createdAt"},
           sales: "$totalPrice",
         },
       },
       {
         $group: {
           _id: "$month",
-          total: { $sum: "$sales" },
+          total: {$sum: "$sales"},
         },
       },
     ]);
 
     res.status(200).json(income);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(400).json({error: err.message});
   }
 };
 
 // get Income By Seller Id For All Months
 export const getIncomeBySellerIdForAllMonths = async (req, res) => {
   try {
-    const { sellerId } = req.params;
+    const {sellerId} = req.params;
 
     const income = await Order.aggregate([
       {
@@ -167,10 +167,10 @@ export const getIncomeBySellerIdForAllMonths = async (req, res) => {
       {
         $group: {
           _id: {
-            year: { $year: "$createdAt" },
-            month: { $month: "$createdAt" },
+            year: {$year: "$createdAt"},
+            month: {$month: "$createdAt"},
           },
-          totalIncome: { $sum: "$productData.price" },
+          totalIncome: {$sum: "$productData.price"},
         },
       },
       {
@@ -182,23 +182,23 @@ export const getIncomeBySellerIdForAllMonths = async (req, res) => {
     ]);
 
     if (income.length > 0) {
-      return res.status(200).json({ income });
+      return res.status(200).json({income});
     } else {
       return res
         .status(404)
-        .json({ message: "Seller not found or no income for any month." });
+        .json({message: "Seller not found or no income for any month."});
     }
   } catch (error) {
     console.error("Error calculating income:", error);
     return res
       .status(500)
-      .json({ message: "An error occurred while calculating income." });
+      .json({message: "An error occurred while calculating income."});
   }
 };
 
 export const getRefundBySellerIdForAllMonths = async (req, res) => {
   try {
-    const { sellerId } = req.params;
+    const {sellerId} = req.params;
 
     const refund = await Order.aggregate([
       {
@@ -228,10 +228,10 @@ export const getRefundBySellerIdForAllMonths = async (req, res) => {
       {
         $group: {
           _id: {
-            year: { $year: "$createdAt" },
-            month: { $month: "$createdAt" },
+            year: {$year: "$createdAt"},
+            month: {$month: "$createdAt"},
           },
-          totalRefund: { $sum: "$productData.price" },
+          totalRefund: {$sum: "$productData.price"},
         },
       },
       {
@@ -243,23 +243,23 @@ export const getRefundBySellerIdForAllMonths = async (req, res) => {
     ]);
 
     if (refund.length > 0) {
-      return res.status(200).json({ refund });
+      return res.status(200).json({refund});
     } else {
       return res
         .status(404)
-        .json({ message: "Seller not found or no refund for any month." });
+        .json({message: "Seller not found or no refund for any month."});
     }
   } catch (error) {
     console.error("Error calculating refund:", error);
     return res
       .status(500)
-      .json({ message: "An error occurred while calculating refund." });
+      .json({message: "An error occurred while calculating refund."});
   }
 };
 
 export const getMonthlyIncomeBySeller = async (req, res) => {
   try {
-    const { sellerId } = req.params;
+    const {sellerId} = req.params;
 
     const currentDate = new Date();
     const lastMonth = new Date(currentDate);
@@ -268,7 +268,7 @@ export const getMonthlyIncomeBySeller = async (req, res) => {
     const income = await Order.aggregate([
       {
         $match: {
-          createdAt: { $gte: lastMonth },
+          createdAt: {$gte: lastMonth},
           orderStatus: "Delivered",
         },
       },
@@ -294,29 +294,29 @@ export const getMonthlyIncomeBySeller = async (req, res) => {
       {
         $group: {
           _id: null,
-          totalIncome: { $sum: "$productData.price" }, // Adjust this based on your product schema
+          totalIncome: {$sum: "$productData.price"}, // Adjust this based on your product schema
         },
       },
     ]);
 
     if (income.length > 0) {
-      return res.status(200).json({ income: income[0].totalIncome });
+      return res.status(200).json({income: income[0].totalIncome});
     } else {
       return res
         .status(404)
-        .json({ message: "Seller not found or no income for the last month." });
+        .json({message: "Seller not found or no income for the last month."});
     }
   } catch (error) {
     console.error("Error calculating income:", error);
     return res
       .status(500)
-      .json({ message: "An error occurred while calculating income." });
+      .json({message: "An error occurred while calculating income."});
   }
 };
 
 export const getDailyIncomeBySeller = async (req, res) => {
   try {
-    const { sellerId } = req.params;
+    const {sellerId} = req.params;
 
     const currentDate = new Date();
     const lastDay = new Date(currentDate);
@@ -325,7 +325,7 @@ export const getDailyIncomeBySeller = async (req, res) => {
     const income = await Order.aggregate([
       {
         $match: {
-          createdAt: { $gte: lastDay },
+          createdAt: {$gte: lastDay},
           orderStatus: "Delivered",
         },
       },
@@ -351,27 +351,29 @@ export const getDailyIncomeBySeller = async (req, res) => {
       {
         $group: {
           _id: null,
-          totalIncome: { $sum: "$productData.price" }, // Adjust this based on your product schema
+          totalIncome: {$sum: "$productData.price"}, // Adjust this based on your product schema
         },
       },
     ]);
 
     if (income.length > 0) {
-      return res.status(200).json({ income: income[0].totalIncome });
+      return res.status(200).json({income: income[0].totalIncome});
     } else {
-      return res.status(200).json({ income: 0 });
+      return res
+        .status(200)
+        .json({ income: 0 });
     }
   } catch (error) {
     console.error("Error calculating income:", error);
     return res
       .status(500)
-      .json({ message: "An error occurred while calculating income." });
+      .json({message: "An error occurred while calculating income."});
   }
 };
 
 export const getDailyRefundBySeller = async (req, res) => {
   try {
-    const { sellerId } = req.params;
+    const {sellerId} = req.params;
 
     const currentDate = new Date();
     const lastDay = new Date(currentDate);
@@ -380,7 +382,7 @@ export const getDailyRefundBySeller = async (req, res) => {
     const refund = await Order.aggregate([
       {
         $match: {
-          createdAt: { $gte: lastDay },
+          createdAt: {$gte: lastDay},
           orderStatus: "Cancelled",
         },
       },
@@ -406,21 +408,23 @@ export const getDailyRefundBySeller = async (req, res) => {
       {
         $group: {
           _id: null,
-          totalRefund: { $sum: "$productData.price" }, // Adjust this based on your product schema
+          totalRefund: {$sum: "$productData.price"}, // Adjust this based on your product schema
         },
       },
     ]);
 
     if (refund.length > 0) {
-      return res.status(200).json({ refund: refund[0].totalRefund });
+      return res.status(200).json({refund: refund[0].totalRefund});
     } else {
-      return res.status(200).json({ refund: 0 });
+      return res
+        .status(200)
+        .json({ refund: 0 });
     }
   } catch (error) {
     console.error("Error calculating refund:", error);
     return res
       .status(500)
-      .json({ message: "An error occurred while calculating refund." });
+      .json({message: "An error occurred while calculating refund."});
   }
 };
 
@@ -512,9 +516,7 @@ export const getOrderBySellerId = async (req, res) => {
       .slice(skip, skip + limit);
 
     if (filteredOrders.length === 0) {
-      return res
-        .status(404)
-        .json({ error: "No orders found for this seller." });
+      return res.status(404).json({error: "No orders found for this seller."});
     }
 
     res
@@ -527,8 +529,8 @@ export const getOrderBySellerId = async (req, res) => {
         totalPages: Math.ceil(filteredOrders.length / limit),
       });
   } catch (err) {
-    console.log({ error: err.message });
-    res.status(500).json({ error: "Internal server error" });
+    console.log({error: err.message});
+    res.status(500).json({error: "Internal server error"});
   }
 };
 
@@ -541,12 +543,12 @@ export const updateOrderStatusToDispatched = async (req, res) => {
     // Find the order by its ID and update the status to "Dispatched"
     const updatedOrder = await Order.findByIdAndUpdate(
       orderId,
-      { orderStatus: "Dispatched" },
-      { new: true } // Return the updated document
+      {orderStatus: "Dispatched"},
+      {new: true} // Return the updated document
     );
 
     if (!updatedOrder) {
-      return res.status(404).json({ error: "Order not found." });
+      return res.status(404).json({error: "Order not found."});
     }
 
     // Set a timeout to change the order status to "Delivered" after 60 seconds
@@ -554,8 +556,8 @@ export const updateOrderStatusToDispatched = async (req, res) => {
       try {
         const deliveredOrder = await Order.findByIdAndUpdate(
           orderId,
-          { orderStatus: "Delivered" },
-          { new: true }
+          {orderStatus: "Delivered"},
+          {new: true}
         );
         if (deliveredOrder) {
           console.log("Order status updated to Delivered.");
@@ -570,7 +572,7 @@ export const updateOrderStatusToDispatched = async (req, res) => {
       order: updatedOrder,
     });
   } catch (err) {
-    console.log({ error: err.message });
-    res.status(500).json({ error: "Internal server error" });
+    console.log({error: err.message});
+    res.status(500).json({error: "Internal server error"});
   }
 };

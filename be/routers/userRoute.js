@@ -11,8 +11,8 @@ import {
   getUserInformation,
   refreshTokenHandle,
   updateInformation,
-  updateUserCart,
-  deleteProductFromListUser,
+  getUserById,
+  updateUserById
 } from "../controllers/userController.js";
 
 const router = express.Router();
@@ -29,7 +29,9 @@ router.delete("/delete/:id", authenticationUser, deleteUser);
 router.get("/user_info", getUserInformation);
 router.get("/refresh_token", refreshTokenHandle);
 router.post("/update_information", updateInformation);
-router.post("/update_cart", updateUserCart);
-router.post("/list_remove", deleteProductFromListUser);
+// router.post("/update_cart", updateUserCart);
+// router.post("/list_remove", deleteProductFromListUser);
+router.get("/:id", getUserById);
+router.put("/:id", updateUserById)
 
 export default router;

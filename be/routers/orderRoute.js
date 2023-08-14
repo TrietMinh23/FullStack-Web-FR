@@ -28,14 +28,12 @@ router.get("/income/allmonth/:sellerId", getIncomeBySellerIdForAllMonths);
 router.get("/refund/daily/:sellerId", getDailyRefundBySeller);
 router.get("/refund/allmonth/:sellerId", getRefundBySellerIdForAllMonths);
 router.get("/", verifyTokenAndAdmin, getAllOrders);
-router.get("/:userId", getOrdersByUserId);
+router.get("/income", verifyTokenAndAdmin, getMonthlyIncome);
+router.get("/:userId", verifyTokenAndAuthorization, getOrdersByUserId);
 router.post("/", verifyToken, createOrder);
 router.put("/:id", verifyTokenAndAdmin, updateOrder);
 router.delete("/:id", deleteOrder);
-// router.get("/income", verifyTokenAndAdmin, getMonthlyIncome);
-// router.get("/income/:sellerId", verifyTokenAndSeller, getMonthlyIncomeBySeller);
-
-router.get("/sellerId/:id", getOrderBySellerId);
+router.get("/:userId", getOrdersByUserId);
 router.put("/update/:orderId", updateOrderStatusToDispatched);
 
 export default router;

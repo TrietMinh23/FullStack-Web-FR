@@ -71,21 +71,21 @@ export const updateCart = async (req, res) => {
   }
 };
 
-export const deleteCart = async (req, res) => {
-  try {
-    const id = req.params.id;
-    const cart = await Cart.findOneAndDelete({ _id: id });
+// export const deleteCart = async (req, res) => {
+//   try {
+//     const id = req.params.id;
+//     const cart = await Cart.findOneAndDelete({ _id: id });
 
-    if (!cart) {
-      res.status(404).json({ message: "Cart not found" });
-      return;
-    } else {
-      res.status(200).json("Cart deleted successfully");
-    }
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-};
+//     if (!cart) {
+//       res.status(404).json({ message: "Cart not found" });
+//       return;
+//     } else {
+//       res.status(200).json("Cart deleted successfully");
+//     }
+//   } catch (err) {
+//     res.status(400).json({ error: err.message });
+//   }
+// };
 
 export const clearAllUserCart = async (req, res) => {
   const idCart = req.params.idCart;

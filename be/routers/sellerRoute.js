@@ -4,6 +4,8 @@ import {
   createSeller,
   loginSeller,
   logoutSeller,
+  getSellerById,
+  updateSellerById,
 } from "../controllers/sellerController.js";
 
 const router = express.Router();
@@ -14,5 +16,7 @@ router.get("/", getSellers);
 router.post("/register", createSeller);
 router.post("/login", loginSeller);
 router.delete("logout", logoutSeller);
+router.get("/:id", getSellerById);
+router.put("/:id", updateSellerById);
 
 export default router;
