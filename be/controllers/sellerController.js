@@ -129,7 +129,6 @@ export const getSellerById = async (req, res) => {
 export const updateSellerById = async (req, res) => {
   try {
     const id = req.params.id;
-
     const updateSeller = await Seller.findByIdAndUpdate(id, req.body, {
       new: true,
     }).exec();
