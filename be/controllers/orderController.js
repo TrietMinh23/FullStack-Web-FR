@@ -118,6 +118,130 @@ export const getMonthlyIncome = async (req, res) => {
   }
 };
 
+// get Income By Seller Id For All Months
+export const getIncomeBySellerIdForAllMonths = async (req, res) => {
+  try {
+    const { sellerId } = req.params;
+
+    const income = await Order.aggregate([
+      {
+        $match: {
+          orderStatus: "Delivered",
+        },
+      },
+      {
+        $unwind: "$products",
+      },
+      {
+        $lookup: {
+          from: "products",
+          localField: "products",
+          foreignField: "_id",
+          as: "productData",
+        },
+      },
+      {
+        $unwind: "$productData",
+      },
+      {
+        $match: {
+          "productData.sellerId": new mongoose.Types.ObjectId(sellerId),
+        },
+      },
+      {
+        $group: {
+          _id: {
+            year: { $year: "$createdAt" },
+            month: { $month: "$createdAt" },
+          },
+          totalIncome: { $sum: "$productData.price" },
+        },
+      },
+      {
+        $sort: {
+          "_id.year": 1,
+          "_id.month": 1,
+        },
+      },
+    ]);
+
+    if (income.length > 0) {
+      return res.status(200).json({ income });
+    } else {
+      return res
+        .status(404)
+        .json({ message: "Seller not found or no income for any month." });
+    }
+  } catch (error) {
+    console.error("Error calculating income:", error);
+    return res
+      .status(500)
+      .json({ message: "An error occurred while calculating income." });
+  }
+};
+
+export const getRefundBySellerIdForAllMonths = async (req, res) => {
+  try {
+    const { sellerId } = req.params;
+
+    const refund = await Order.aggregate([
+      {
+        $match: {
+          orderStatus: "Cancelled",
+        },
+      },
+      {
+        $unwind: "$products",
+      },
+      {
+        $lookup: {
+          from: "products",
+          localField: "products",
+          foreignField: "_id",
+          as: "productData",
+        },
+      },
+      {
+        $unwind: "$productData",
+      },
+      {
+        $match: {
+          "productData.sellerId": new mongoose.Types.ObjectId(sellerId),
+        },
+      },
+      {
+        $group: {
+          _id: {
+            year: { $year: "$createdAt" },
+            month: { $month: "$createdAt" },
+          },
+          totalRefund: { $sum: "$productData.price" },
+        },
+      },
+      {
+        $sort: {
+          "_id.year": 1,
+          "_id.month": 1,
+        },
+      },
+    ]);
+
+    if (refund.length > 0) {
+      return res.status(200).json({ refund });
+    } else {
+      return res
+        .status(404)
+        .json({ message: "Seller not found or no refund for any month." });
+    }
+  } catch (error) {
+    console.error("Error calculating refund:", error);
+    return res
+      .status(500)
+      .json({ message: "An error occurred while calculating refund." });
+  }
+};
+
+
 export const getMonthlyIncomeBySeller = async (req, res) => {
   try {
     const { sellerId } = req.params;
@@ -129,45 +253,166 @@ export const getMonthlyIncomeBySeller = async (req, res) => {
     const income = await Order.aggregate([
       {
         $match: {
-          "products.sellerId": new mongoose.Types.ObjectId(sellerId),
-          "createdAt": { $gte: lastMonth },
-          "orderStatus": "Delivered",
+          createdAt: { $gte: lastMonth },
+          orderStatus: "Delivered",
         },
+      },
+      {
+        $unwind: "$products", // Unwind the products array
       },
       {
         $lookup: {
-          from: "products", // Tên của bảng chứa thông tin sản phẩm
+          from: "products", // The collection name for products
           localField: "products",
           foreignField: "_id",
-          as: "productInfo",
+          as: "productData",
         },
       },
       {
-        $unwind: "$productInfo",
+        $unwind: "$productData", // Unwind the productData array
+      },
+      {
+        $match: {
+          "productData.sellerId": new mongoose.Types.ObjectId(sellerId),
+        },
       },
       {
         $group: {
-          _id: { month: { $month: "$createdAt" } },
-          totalSales: { $sum: "$productInfo.price" },
-        },
-      },
-      {
-        $project: {
-          _id: 0,
-          month: "$_id.month",
-          totalSales: 1,
+          _id: null,
+          totalIncome: { $sum: "$productData.price" }, // Adjust this based on your product schema
         },
       },
     ]);
 
-    res.status(200).json(income);
-  } catch (err) {
-    console.error({ error: err.message });
-    res
+    if (income.length > 0) {
+      return res.status(200).json({ income: income[0].totalIncome });
+    } else {
+      return res
+        .status(404)
+        .json({ message: "Seller not found or no income for the last month." });
+    }
+  } catch (error) {
+    console.error("Error calculating income:", error);
+    return res
       .status(500)
-      .json({ error: "An error occurred while fetching monthly income." });
+      .json({ message: "An error occurred while calculating income." });
   }
 };
+
+export const getDailyIncomeBySeller = async (req, res) => {
+  try {
+    const { sellerId } = req.params;
+
+    const currentDate = new Date();
+    const lastDay = new Date(currentDate);
+    lastDay.setDate(currentDate.getDate() - 1);
+
+    const income = await Order.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: lastDay },
+          orderStatus: "Delivered",
+        },
+      },
+      {
+        $unwind: "$products", // Unwind the products array
+      },
+      {
+        $lookup: {
+          from: "products", // The collection name for products
+          localField: "products",
+          foreignField: "_id",
+          as: "productData",
+        },
+      },
+      {
+        $unwind: "$productData", // Unwind the productData array
+      },
+      {
+        $match: {
+          "productData.sellerId": new mongoose.Types.ObjectId(sellerId),
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalIncome: { $sum: "$productData.price" }, // Adjust this based on your product schema
+        },
+      },
+    ]);
+
+    if (income.length > 0) {
+      return res.status(200).json({ income: income[0].totalIncome });
+    } else {
+      return res
+        .status(200)
+        .json({ income: 0 });
+    }
+  } catch (error) {
+    console.error("Error calculating income:", error);
+    return res
+      .status(500)
+      .json({ message: "An error occurred while calculating income." });
+  }
+};
+
+export const getDailyRefundBySeller = async (req, res) => {
+  try {
+    const { sellerId } = req.params;
+
+    const currentDate = new Date();
+    const lastDay = new Date(currentDate);
+    lastDay.setDate(currentDate.getDate() - 1);
+
+    const refund = await Order.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: lastDay },
+          orderStatus: "Cancelled",
+        },
+      },
+      {
+        $unwind: "$products", // Unwind the products array
+      },
+      {
+        $lookup: {
+          from: "products", // The collection name for products
+          localField: "products",
+          foreignField: "_id",
+          as: "productData",
+        },
+      },
+      {
+        $unwind: "$productData", // Unwind the productData array
+      },
+      {
+        $match: {
+          "productData.sellerId": new mongoose.Types.ObjectId(sellerId),
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalRefund: { $sum: "$productData.price" }, // Adjust this based on your product schema
+        },
+      },
+    ]);
+
+    if (refund.length > 0) {
+      return res.status(200).json({ refund: refund[0].totalRefund });
+    } else {
+      return res
+        .status(200)
+        .json({ refund: 0 });
+    }
+  } catch (error) {
+    console.error("Error calculating refund:", error);
+    return res
+      .status(500)
+      .json({ message: "An error occurred while calculating refund." });
+  }
+}
+
 export const getOrderBySellerId = async (req, res) => {
   try {
     const sellerId = req.params.id; // Convert the sellerId to ObjectId type

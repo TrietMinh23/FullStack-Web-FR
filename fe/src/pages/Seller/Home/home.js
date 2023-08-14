@@ -4,17 +4,21 @@ import { useEffect } from "react";
 import ChartOne from "../components/ChartOne";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import Card from "../../Home/PersonalProfile/components/card";
-import { getOrdersBySellerId } from "../../../api/order";
+import { getOrdersBySellerId, getDailyIncomeBySeller, getDailyRefundBySeller, getIncomeBySellerIdForAllMonths, getRefundBySellerIdForAllMonths } from "../../../api/order";
 
 export default function Review() {
   const [orderStatus, setOrderStatus] = useState([]);
   const [orderStatusTotalAmounts, setOrderStatusTotalAmounts] = useState([]);
+  const [dailyIncome, setDailyIncome] = useState([]);
+  const [dailyRefund, setDailyRefund] = useState([]);
+  const [monthlyIncome, setMonthlyIncome] = useState([]);
+  const [monthlyRefund, setMonthlyRefund] = useState([]);
 
   const staticTable = [
     {
       icon: <MonetizationOnIcon fontSize="large" />,
       id: 1,
-      text: "Daily Sales $53",
+      text: `Daily Sales ${dailyIncome}`,
       number: orderStatusTotalAmounts["Delivered"],
       interaction: "53",
       color: "blue",
@@ -23,7 +27,7 @@ export default function Review() {
     {
       icon: <MonetizationOnIcon fontSize="large" />,
       id: 2,
-      text: "Daily Refund $53",
+      text: `Daily Refund ${dailyRefund}`,
       number: orderStatusTotalAmounts["Cancelled"],
       interaction: "53",
       color: "orange",
@@ -41,6 +45,37 @@ export default function Review() {
 
         setOrderStatus(response.data.orderStatusCounts);
         setOrderStatusTotalAmounts(response.data.orderStatusTotalAmounts);
+
+        const responeDailyIncome = await getDailyIncomeBySeller(cleanedSellerId);
+        setDailyIncome(responeDailyIncome.data['income']);
+
+        const responeDailyRefund = await getDailyRefundBySeller(cleanedSellerId);
+        setDailyRefund(responeDailyRefund.data['refund']);
+
+        const responeMonthlyIncome = await getIncomeBySellerIdForAllMonths(cleanedSellerId);
+
+        const responeMonthlyRefund = await getRefundBySellerIdForAllMonths(cleanedSellerId);
+        
+        // Map the API data to the customSeries format
+        const mappedCustomSeries = [
+          {
+            name: "Total Sales",
+            data: Array(12).fill(0).map((_, index) => {
+              const matchingMonth = responeMonthlyIncome.data['income'].find(item => item._id.month === index + 1);
+              return matchingMonth ? matchingMonth.totalIncome : 0;
+            }),
+          },
+          {
+            name: "Total Refund",
+            data: Array(12).fill(0).map((_, index) => {
+              const matchingMonth = responeMonthlyRefund.data['refund'].find(item => item._id.month === index + 1);
+              return matchingMonth ? matchingMonth.totalRefund : 0;
+            }),
+          },
+        ];
+
+        // Set the mapped customSeries to state
+        setMonthlyIncome(mappedCustomSeries);
       } catch (error) {
         console.error(error.message);
       }
@@ -65,7 +100,7 @@ export default function Review() {
         ))}
       </div>
       <div className="w-full">
-        <ChartOne />
+        <ChartOne series={monthlyIncome} />
       </div>
     </div>
   );

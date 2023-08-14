@@ -50,3 +50,47 @@ export const updateOrderStatusToDispatched = async (orderId) => {
     );
   }
 };
+
+export const getDailyIncomeBySeller = async (sellerId) => {
+  try {
+    const response = await instance.get(`/orders/income/daily/${sellerId}`);
+    return response;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.error || "Error getting daily income by seller."
+    );
+  }
+}
+
+export const getDailyRefundBySeller = async (sellerId) => {
+  try {
+    const response = await instance.get(`/orders/refund/daily/${sellerId}`);
+    return response;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.error || "Error getting daily refund by seller."
+    );
+  }
+}
+
+export const getIncomeBySellerIdForAllMonths = async (sellerId) => {
+  try {
+    const response = await instance.get(`/orders/income/allmonth/${sellerId}`);
+    return response;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.error || "Error getting income by seller."
+    );
+  }
+}
+
+export const getRefundBySellerIdForAllMonths = async (sellerId) => {
+  try {
+    const response = await instance.get(`/orders/refund/allmonth/${sellerId}`);
+    return response;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.error || "Error getting refund by seller."
+    );
+  }
+}
