@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { FaTrashAlt, FaPen } from "react-icons/fa";
-import { deleteProduct } from "../../../../api/products";
 import PaginationComponent from "../../../Home/components/Pagination";
+import { deleteProduct } from "../../../../api/products";
 
-const Table = ({
+export default function TableAl({
   rows,
   nameTable,
   onPageChange,
@@ -11,7 +11,8 @@ const Table = ({
   onPerPageChange,
   perPage,
   onSelectEditRow,
-}) => {
+}) {
+  // const [perPage, setPerPage] = useState(5); // Số hàng trên mỗi trang
   const [currentPage] = useState(1); // Trang hiện tại
   const [sortColumn, setSortColumn] = useState("postDate"); // Cột hiện tại được sắp xếp
   const [sortOrder, setSortOrder] = useState("desc"); // Thứ tự sắp xếp ('asc' hoặc 'desc')
@@ -42,7 +43,7 @@ const Table = ({
     } else {
       setSelectedItems((prevSelectedItems) =>
         prevSelectedItems.filter(
-          (selectedItem) => selectedItem.itemName !== item.itemName
+          (selectedItem) => selectedItem.tradeCode !== item.tradeCode
         )
       );
     }
@@ -60,8 +61,17 @@ const Table = ({
     }
   };
 
-  const handleDelete = () => {
-    setSelectedItems([]);
+  const handleDelete = async () => {
+    try {
+      const productIdsToDelete = selectedItems.map((item) => item.tradeCode);
+      for (const productId of productIdsToDelete) {
+        await deleteProduct(productId);
+      }
+      setSelectedItems([]);
+      window.location.reload();
+    } catch (error) {
+      console.error(error.message);
+    }
   };
 
   const handleDeleteRow = async (item) => {
@@ -81,7 +91,6 @@ const Table = ({
   const handleEditRow = (item) => {
     onSelectEditRow(item.tradeCode); // Call the provided prop with the TradeCode
   };
-
   const getCurrentPageData = () => {
     const startIndex = (currentPage - 1) * perPage;
     const endIndex = startIndex + perPage;
@@ -116,7 +125,7 @@ const Table = ({
       <h1 className="text-xl mb-2">{nameTable}</h1>
 
       <div className="flex items-center mb-4">
-        <label htmlFor="search" className="mr-2">
+        <label htmlFor="search" className="mr-2 hidden lg:block">
           Search:
         </label>
         <input
@@ -128,7 +137,7 @@ const Table = ({
         />
         <button
           id="All"
-          className="ml-2 p-4 bg-red-500 text-white rounded-md"
+          className="ml-2 p-2 bg-red-500 text-white rounded-md lg:p-4"
           onClick={handleDelete}
         >
           <FaTrashAlt />
@@ -273,12 +282,9 @@ const Table = ({
           >
             <div className="flex items-center space-x-2 text-sm">
               <div>
-                <a
-                  href="/#"
-                  className="text-blue-500 font-bold hover:underline"
-                >
-                  TradeCode {row.status == "0" ? "Available" : "Sold"}
-                </a>
+                <span className="text-blue-500 font-bold">
+                  TradeCode: ..{row.tradeCode.slice(-2)}
+                </span>
               </div>
               <div className="text-gray-500">{row.postDate}</div>
               <div>
@@ -320,7 +326,7 @@ const Table = ({
       </div>
 
       <div className="flex justify-between items-center mt-4 flex-col lg:flex-row">
-        <div className="flex items-center w-full mb-10">
+        <div className="flex items-center w-full">
           <label htmlFor="rowsPerPage" className="mr-2">
             Rows per page:
           </label>
@@ -335,10 +341,10 @@ const Table = ({
             <option value={15}>15</option>
           </select>
         </div>
-        <PaginationComponent setPage={onPageChange} page={page} />
+        <div className="flex w-full justify-end">
+          <PaginationComponent setPage={onPageChange} page={page} />
+        </div>
       </div>
     </div>
   );
-};
-
-export default Table;
+}

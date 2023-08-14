@@ -76,3 +76,20 @@ export const updateProduct = async (productId, productData) => {
     );
   }
 };
+
+// admin
+export const getAllProducts = async (page, limit) => {
+  try {
+    const respone = await instance.get(`/products`, {
+      params: {
+        page: page,
+        limit: limit,
+      },
+    });
+    return respone;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.error || "Error get all products."
+    );
+  }
+}

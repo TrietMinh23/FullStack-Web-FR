@@ -4,6 +4,17 @@ import AnalyticEcommerce from "../components/AnalyticEcommerce";
 
 import { Stack, Grid } from "@mui/material";
 
+const defaultMonthlyIncome = [
+  {
+    name: "Product One",
+    data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30, 45],
+  },
+  {
+    name: "Product Two",
+    data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39, 51],
+  },
+];
+
 export default function FinancialManagement() {
   return (
     <div>
@@ -58,7 +69,7 @@ export default function FinancialManagement() {
         </Grid>
       </Grid>
       <div className="mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5 w-full">
-        <ChartOne />
+        <ChartOne series={defaultMonthlyIncome} />
       </div>
     </div>
   );

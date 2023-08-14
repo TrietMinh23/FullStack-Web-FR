@@ -1,64 +1,12 @@
 import React from "react";
-import Tracker from "../components/Tracker";
 import TableAI from "../components/Table/TableAI";
-import BlockIcon from "@mui/icons-material/Block";
-import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
-import ThumbDownAltIcon from "@mui/icons-material/ThumbDownAlt";
-import PhonelinkIcon from "@mui/icons-material/Phonelink";
-import PhonelinkOffIcon from "@mui/icons-material/PhonelinkOff";
 import { useState } from "react";
 import { useEffect } from "react";
-import { sellerProduct } from "../../../api/products";
+import { getAllProducts} from "../../../api/products";
 import NewProductForm from "../../Seller/NewItem/NewForm";
-
-
-const staticTable = [
-  {
-    icon: <PhonelinkIcon />,
-    id: 1,
-    title: "ONL",
-    text: "online < 15 day",
-    today: "10",
-    all: "53",
-    color: "green",
-  },
-  {
-    icon: <PhonelinkOffIcon />,
-    id: 2,
-    title: "OFF > 15",
-    text: "offline > 15 day",
-    today: "10",
-    all: "53",
-    color: "gray",
-  },
-  {
-    icon: <BlockIcon />,
-    id: 3,
-    title: "OFF",
-    text: "offline > 30 day",
-    today: "10",
-    all: "53",
-    color: "red",
-  },
-  {
-    icon: <ThumbUpAltIcon />,
-    id: 4,
-    title: "Positive",
-    text: "positive review",
-    today: "10",
-    all: "53",
-    color: "blue",
-  },
-  {
-    icon: <ThumbDownAltIcon />,
-    id: 5,
-    title: "Negative",
-    text: "negative review",
-    today: "10",
-    all: "53",
-    color: "orange",
-  },
-];
+import ClearIcon from "@mui/icons-material/Clear";
+import DoneOutlineIcon from "@mui/icons-material/DoneOutline";
+import Card from "../../Home/PersonalProfile/components/card";
 
 export default function Allitems() {
   const [products, setProducts] = useState([]);
@@ -80,9 +28,6 @@ export default function Allitems() {
   };
 
   useEffect(() => {
-    let sellerId = localStorage.getItem("_id");
-    let cleanedSellerId = sellerId.replace(/"/g, "");
-    cleanedSellerId = "64ce8ef9567a2050d86bce9a";
 
     const fetchProducts = async () => {
       sessionStorage.setItem("pageTableProducts", page.toString());
@@ -91,7 +36,7 @@ export default function Allitems() {
 
       try {
         // window.scrollTo(0, 0);
-        const response = await sellerProduct(cleanedSellerId, page, perPage);
+        const response = await getAllProducts(page, perPage);
         const dataProducts = response.data.products;
         setTotalSold(response.data.totalSold0);
         setTotalAvaiable(response.data.totalSold1);
@@ -103,7 +48,7 @@ export default function Allitems() {
           price: product.price,
           status: product.sold,
           image: product.image,
-          postDate: product.createdAt.split("T")[0],
+          postDate: product.createdAt?.split("T")[0] || "N/A",
         }));
         setProducts(data); // Assuming the response contains the actual data
       } catch (error) {
@@ -112,43 +57,72 @@ export default function Allitems() {
     };
 
     fetchProducts();
+    console.log(totalPriceSold0);
   }, [page, perPage]);
 
   const handleSelectEditRow = (tradeCode) => {
     setSelectedTradeCode(tradeCode); // Set the selected TradeCode in state
   };
 
+  const staticTable = [
+    {
+      icon: <DoneOutlineIcon fontSize="large" />,
+      id: 1,
+      text: "Total Money",
+      number: totalSold  || 0,
+      money: totalPriceSold0 || 0,
+      color: "rgb(74, 222, 128)",
+      title: "AVAIABLE",
+    },
+    {
+      icon: <ClearIcon fontSize="large" />,
+      id: 2,
+      text: "Total Money",
+      number: totalAvaiable || 0,
+      money: totalPriceSold1 || 0,
+      color: "rgb(248, 113, 113)",
+      title: "SOLD",
+    },
+  ];
   return (
     <React.Fragment>
       <div>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-4 md:gap-6 xl:grid-cols-5 2xl:gap-7.5">
-          {staticTable.map((item) => (
-            <Tracker
-              icon={item.icon}
-              text={item.text}
-              today={item.today}
-              all={item.all}
-              color={item.color}
-              title={item.title}
-              key={item.id}
+        {!selectedTradeCode && (
+          <div className="mb-12 grid gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-4">
+            {staticTable.map((item) => (
+              <Card
+                icon={item.icon}
+                text={item.text}
+                number={item.number}
+                money={item.money}
+                color={item.color}
+                title={item.title}
+                key={item.id}
+              />
+            ))}
+          </div>
+        )}
+        {!selectedTradeCode && (
+          <div className="mt-8 w-full">
+            <TableAI
+              rows={products}
+              nameTable={"All Items"}
+              onPageChange={handleChange}
+              page={page}
+              onPerPageChange={handlePerPageChange}
+              perPage={perPage}
+              onSelectEditRow={handleSelectEditRow}
             />
-          ))}
-        </div>
-        <div className="mt-8 w-full">
-          <TableAI
-            rows={products}
-            nameTable={"All Items"}
-            onPageChange={handleChange}
-            page={page}
-            onPerPageChange={handlePerPageChange}
-            perPage={perPage}
-            onSelectEditRow={handleSelectEditRow}
-          />
-        </div>
+          </div>
+        )}
+  
         {selectedTradeCode && (
-          <NewProductForm tradeCode={selectedTradeCode} /> // Pass the selected TradeCode as a prop
+          <div>
+            <NewProductForm tradeCode={selectedTradeCode} role={"admin"} /> {/* Pass the selected TradeCode as a prop */}
+          </div>
         )}
       </div>
     </React.Fragment>
   );
 }
+  

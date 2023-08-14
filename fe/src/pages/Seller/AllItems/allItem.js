@@ -125,7 +125,7 @@ export default function AllItems() {
       )}
 
       {selectedTradeCode && (
-        <NewProductForm tradeCode={selectedTradeCode} /> // Pass the selected TradeCode as a prop
+        <NewProductForm tradeCode={selectedTradeCode} role={"seller"}/> // Pass the selected TradeCode as a prop
       )}
     </div>
   );

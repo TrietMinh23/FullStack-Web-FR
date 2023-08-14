@@ -143,8 +143,8 @@ export const getAllProducts = async (req, res) => {
     // pagination
     var page = parseInt(req.query.page) || 1;
     var limit = parseInt(req.query.limit) || 20;
-
     const skip = (page - 1) * limit;
+
     const products = await Product.find({ sold: 0 })
       .sort({ createdAt: -1 })
       .skip(skip)
@@ -158,11 +158,32 @@ export const getAllProducts = async (req, res) => {
     const totalProducts = await Product.find({ sold: 0 }).countDocuments();
     const totalPages = Math.ceil(totalProducts / limit);
 
+    const totalSold0 = await Product.countDocuments({ sold: 0 });
+    const totalSold1 = await Product.countDocuments({ sold: 1 });
+
+    // Calculate total price of sold products (sold 1)
+    const sold1Products = await Product.find({ sold: 1 });
+    const totalPriceSold1 = sold1Products.reduce(
+      (total, product) => total + product.price,
+      0
+    );
+
+    // Calculate total price of unsold products (sold 0)  
+    const sold0Products = await Product.find({ sold: 0 });
+    const totalPriceSold0 = sold0Products.reduce(
+      (total, product) => total + product.price,
+      0
+    );
+
     res.status(200).json({
       currentPage: page,
       totalProducts,
       totalPages,
       products: products,
+      totalSold0,
+      totalSold1,
+      totalPriceSold0,
+      totalPriceSold1,
     });
   } catch (err) {
     res.status(400).json({ error: err.message });

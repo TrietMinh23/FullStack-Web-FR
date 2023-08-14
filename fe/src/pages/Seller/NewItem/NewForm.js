@@ -27,11 +27,12 @@ const Form = ({ title, PH, value }) => (
   </div>
 );
 
-const NewProductForm = ({ tradeCode }) => {
+const NewProductForm = ({ tradeCode, role }) => {
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [imageFile, setImageFile] = useState(null);
   const [productData, setProductData] = useState(null);
   const [category, setCategory] = useState([]);
+  const [roleUser, setRoleUser] = useState(role);
 
   const handleChange = (selected) => {
     if (selected === null || selected === undefined) {
@@ -81,7 +82,11 @@ const NewProductForm = ({ tradeCode }) => {
         const response = await createProduct(formData);
         console.log("Product created:", response);
       }
-      window.location.href = "http://localhost:3000/seller/all-item";
+      if (roleUser === "seller") {
+        window.location.href = "http://localhost:3000/seller/all-item";
+      } else {
+        window.location.href = "http://localhost:3000/admin/usemanagement/allitems";
+      }
     } catch (error) {
       console.error("Error creating product:", error.message);
     }
