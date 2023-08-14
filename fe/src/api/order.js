@@ -28,9 +28,14 @@ export const createPaymentUrl = async (order) => {
   }
 };
 
-export const getOrdersBySellerId = async (id) => {
+export const getOrdersBySellerId = async (id, page, limit) => {
   try {
-    const respone = await instance.get(`/orders/sellerId/${id}`);
+    const respone = await instance.get(`/orders/sellerId/${id}`, {
+      params: {
+        page: page,
+        limit: limit,
+      },
+    });
     return respone;
   } catch (error) {
     throw new Error(
@@ -60,7 +65,7 @@ export const getDailyIncomeBySeller = async (sellerId) => {
       error.response?.data?.error || "Error getting daily income by seller."
     );
   }
-}
+};
 
 export const getDailyRefundBySeller = async (sellerId) => {
   try {
@@ -71,7 +76,7 @@ export const getDailyRefundBySeller = async (sellerId) => {
       error.response?.data?.error || "Error getting daily refund by seller."
     );
   }
-}
+};
 
 export const getIncomeBySellerIdForAllMonths = async (sellerId) => {
   try {
@@ -82,7 +87,7 @@ export const getIncomeBySellerIdForAllMonths = async (sellerId) => {
       error.response?.data?.error || "Error getting income by seller."
     );
   }
-}
+};
 
 export const getRefundBySellerIdForAllMonths = async (sellerId) => {
   try {
@@ -93,4 +98,4 @@ export const getRefundBySellerIdForAllMonths = async (sellerId) => {
       error.response?.data?.error || "Error getting refund by seller."
     );
   }
-}
+};
