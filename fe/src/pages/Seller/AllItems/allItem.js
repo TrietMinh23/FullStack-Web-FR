@@ -12,6 +12,7 @@ export default function AllItems() {
   const [products, setProducts] = useState([]);
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(5);
+  const [totalPages, setTotalPages] = useState(0); // Total number of pages returned by the API
   const [selectedTradeCode, setSelectedTradeCode] = useState(false);
   const [totalSold, setTotalSold] = useState(0);
   const [totalAvaiable, setTotalAvaiable] = useState(0);
@@ -31,11 +32,10 @@ export default function AllItems() {
     let sellerId = localStorage.getItem("_id");
     let cleanedSellerId = sellerId.replace(/"/g, "");
 
+    sessionStorage.setItem("pageTableProductsPerPage", perPage.toString());
+    sessionStorage.setItem("pageTableProducts", page.toString());
+
     const fetchProducts = async () => {
-      sessionStorage.setItem("pageTableProducts", page.toString());
-
-      sessionStorage.setItem("pageTableProductsPerPage", perPage.toString());
-
       try {
         // window.scrollTo(0, 0);
         const response = await sellerProduct(cleanedSellerId, page, perPage);
@@ -44,6 +44,12 @@ export default function AllItems() {
         setTotalAvaiable(response.data.totalSold1);
         setTotalPriceSold0(response.data.totalPriceSold0);
         setTotalPriceSold1(response.data.totalPriceSold1);
+        setTotalPages(response.data.totalPages);
+        sessionStorage.setItem(
+          "totalPage",
+          response.data.totalPages.toString()
+        );
+        console.log("totalPage: ", totalPages);
         const data = dataProducts.map((product) => ({
           tradeCode: product._id,
           itemName: product.title,
@@ -52,6 +58,7 @@ export default function AllItems() {
           image: product.image,
           postDate: product.createdAt.split("T")[0],
         }));
+
         setProducts(data); // Assuming the response contains the actual data
       } catch (error) {
         console.error(error.message);
@@ -70,8 +77,8 @@ export default function AllItems() {
       icon: <DoneOutlineIcon fontSize="large" />,
       id: 1,
       text: "Total Money",
-      number: totalSold,
-      money: totalPriceSold0,
+      number: totalSold  || 0,
+      money: totalPriceSold0 || 0,
       color: "rgb(74, 222, 128)",
       title: "AVAIABLE",
     },
@@ -79,8 +86,8 @@ export default function AllItems() {
       icon: <ClearIcon fontSize="large" />,
       id: 2,
       text: "Total Money",
-      number: totalAvaiable,
-      money: totalPriceSold1,
+      number: totalAvaiable || 0,
+      money: totalPriceSold1 || 0,
       color: "rgb(248, 113, 113)",
       title: "SOLD",
     },

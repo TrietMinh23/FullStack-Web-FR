@@ -524,7 +524,7 @@ export const getOrderBySellerId = async (req, res) => {
         orderStatusCounts,
         orderStatusTotalAmounts,
         currentPage: page,
-        totalPages: Math.ceil(orders.length / limit),
+        totalPages: Math.ceil(filteredOrders.length / limit),
       });
   } catch (err) {
     console.log({ error: err.message });

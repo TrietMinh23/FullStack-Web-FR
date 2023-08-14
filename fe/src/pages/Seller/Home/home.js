@@ -6,20 +6,29 @@ import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import Card from "../../Home/PersonalProfile/components/card";
 import { getOrdersBySellerId, getDailyIncomeBySeller, getDailyRefundBySeller, getIncomeBySellerIdForAllMonths, getRefundBySellerIdForAllMonths } from "../../../api/order";
 
+const defaultMonthlyIncome = [
+  {
+    name: "Product One",
+    data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30, 45],
+  },
+  {
+    name: "Product Two",
+    data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39, 51],
+  },
+];
+
 export default function Review() {
-  const [orderStatus, setOrderStatus] = useState([]);
   const [orderStatusTotalAmounts, setOrderStatusTotalAmounts] = useState([]);
   const [dailyIncome, setDailyIncome] = useState([]);
   const [dailyRefund, setDailyRefund] = useState([]);
-  const [monthlyIncome, setMonthlyIncome] = useState([]);
-  const [monthlyRefund, setMonthlyRefund] = useState([]);
+  const [monthlyIncome, setMonthlyIncome] = useState(defaultMonthlyIncome);
 
   const staticTable = [
     {
       icon: <MonetizationOnIcon fontSize="large" />,
       id: 1,
       text: `Daily Sales ${dailyIncome}`,
-      number: orderStatusTotalAmounts["Delivered"],
+      number: orderStatusTotalAmounts["Delivered"] || 0,
       interaction: "53",
       color: "blue",
       title: "Total Sales",
@@ -28,7 +37,7 @@ export default function Review() {
       icon: <MonetizationOnIcon fontSize="large" />,
       id: 2,
       text: `Daily Refund ${dailyRefund}`,
-      number: orderStatusTotalAmounts["Cancelled"],
+      number: orderStatusTotalAmounts["Cancelled"] || 0,
       interaction: "53",
       color: "orange",
       title: "Refund",
@@ -43,7 +52,6 @@ export default function Review() {
       try {
         const response = await getOrdersBySellerId(cleanedSellerId);
 
-        setOrderStatus(response.data.orderStatusCounts);
         setOrderStatusTotalAmounts(response.data.orderStatusTotalAmounts);
 
         const responeDailyIncome = await getDailyIncomeBySeller(cleanedSellerId);
@@ -73,6 +81,7 @@ export default function Review() {
             }),
           },
         ];
+        console.log(mappedCustomSeries);
 
         // Set the mapped customSeries to state
         setMonthlyIncome(mappedCustomSeries);

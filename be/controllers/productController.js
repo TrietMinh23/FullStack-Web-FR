@@ -30,7 +30,7 @@ export const getProductBySellerId = async (req, res) => {
 
     // Pagination
     var page = parseInt(req.query.page) || 1;
-    var limit = parseInt(req.query.limit) || 20;
+    var limit = parseInt(req.query.limit) || 15;
     const skip = (page - 1) * limit;
 
     const products = await Product.find({ sellerId: _id })

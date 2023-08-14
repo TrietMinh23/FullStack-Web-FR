@@ -27,9 +27,6 @@ const routerSeller = [
     name: "Profile",
     url: "profile"
   },
-  {
-    name: "Settings",
-  },
 ];
 
 export default function LeftNav({ sideBarProp, setSideBarFunc, setCoverFunc }) {

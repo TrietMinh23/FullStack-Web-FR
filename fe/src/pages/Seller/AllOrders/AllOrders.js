@@ -15,6 +15,7 @@ export default function AllOrders() {
   const [orderStatus, setOrderStatus] = useState([]);
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(5);
+  const [totalPages, setTotalPages] = useState(0); // Total number of pages returned by the API 
   const [orderStatusTotalAmounts, setOrderStatusTotalAmounts] = useState([]);
   
   const staticTable = [
@@ -22,8 +23,8 @@ export default function AllOrders() {
       icon: <AutorenewIcon fontSize="large" />,
       id: 1,
       text: "Total Money",
-      number: orderStatus["Processing"] === "" ? 0 : orderStatus["Processing"],
-      money: orderStatusTotalAmounts["Processing"],
+      number: orderStatus["Processing"] || 0,
+      money: orderStatusTotalAmounts["Processing"] || 0,
       color: "orange",
       title: "Processing",
     },
@@ -31,8 +32,8 @@ export default function AllOrders() {
       icon: <LocalShippingIcon fontSize="large" />,
       id: 2,
       text: "Total Money",
-      number: orderStatus["Dispatched"] === "" ? 0 : orderStatus["Dispatched"],
-      money: orderStatusTotalAmounts["Dispatched"],
+      number: orderStatus["Dispatched"] || 0,
+      money: orderStatusTotalAmounts["Dispatched"] || 0,
       color: "blue",
       title: "Dispatched",
     },
@@ -40,8 +41,8 @@ export default function AllOrders() {
       icon: <AssignmentTurnedInIcon fontSize="large" />,
       id: 3,
       text: "Total Money",
-      number: orderStatus["Delivered"] === "" ? 0 : orderStatus["Delivered"],
-      money: orderStatusTotalAmounts["Delivered"],
+      number: orderStatus["Delivered"] || 0,
+      money: orderStatusTotalAmounts["Delivered"] || 0,
       color: "green",
       title: "Delivered",
     },
@@ -49,8 +50,8 @@ export default function AllOrders() {
       icon: <CancelIcon fontSize="large" />,
       id: 4,
       text: "Total Money",
-      number: orderStatus["Cancelled"] === "" ? 0 : orderStatus["Cancelled"],
-      money: orderStatusTotalAmounts["Cancelled"],
+      number: orderStatus["Cancelled"] || 0,
+      money: orderStatusTotalAmounts["Cancelled"] || 0,
       color: "tomato",
       title: "Cancelled",
     },
@@ -82,7 +83,9 @@ export default function AllOrders() {
         const dataOrders = response.data.filteredOrders;
         setOrderStatus(response.data.orderStatusCounts)
         setOrderStatusTotalAmounts(response.data.orderStatusTotalAmounts)
-        console.log(dataOrders);
+        setTotalPages(response.data.totalPages);
+        sessionStorage.setItem("totalPage", response.data.totalPages.toString());
+        console.log(response.data.totalPages);
 
         const data = dataOrders.flatMap((order) => {
           const orderInfo = {

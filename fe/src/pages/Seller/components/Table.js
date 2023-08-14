@@ -125,7 +125,7 @@ export default function Table({
       <h1 className="text-xl mb-2">{nameTable}</h1>
 
       <div className="flex items-center mb-4">
-        <label htmlFor="search" className="mr-2">
+        <label htmlFor="search" className="mr-2 hidden lg:block">
           Search:
         </label>
         <input
@@ -137,7 +137,7 @@ export default function Table({
         />
         <button
           id="All"
-          className="ml-2 p-4 bg-red-500 text-white rounded-md"
+          className="ml-2 p-2 bg-red-500 text-white rounded-md lg:p-4"
           onClick={handleDelete}
         >
           <FaTrashAlt />
@@ -282,12 +282,9 @@ export default function Table({
           >
             <div className="flex items-center space-x-2 text-sm">
               <div>
-                <a
-                  href="/#"
-                  className="text-blue-500 font-bold hover:underline"
-                >
-                  TradeCode {row.status == "0" ? "Available" : "Sold"}
-                </a>
+                <span className="text-blue-500 font-bold">
+                  TradeCode: ..{row.tradeCode.slice(-2)}
+                </span>
               </div>
               <div className="text-gray-500">{row.postDate}</div>
               <div>
@@ -329,7 +326,7 @@ export default function Table({
       </div>
 
       <div className="flex justify-between items-center mt-4 flex-col lg:flex-row">
-        <div className="flex items-center w-full mb-10">
+        <div className="flex items-center w-full">
           <label htmlFor="rowsPerPage" className="mr-2">
             Rows per page:
           </label>
@@ -344,7 +341,9 @@ export default function Table({
             <option value={15}>15</option>
           </select>
         </div>
-        <PaginationComponent setPage={onPageChange} page={page} />
+        <div className="flex w-full justify-end">
+          <PaginationComponent setPage={onPageChange} page={page} />
+        </div>
       </div>
     </div>
   );

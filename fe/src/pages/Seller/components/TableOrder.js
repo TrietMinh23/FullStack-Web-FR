@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import PaginationComponent from "../../Home/components/Pagination";
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { updateOrderStatusToDispatched } from "../../../api/order";
 
 export default function TableOrders({
@@ -68,7 +68,7 @@ export default function TableOrders({
         await updateOrderStatusToDispatched(orderId);
       }
       setSelectedItems([]);
-      window.location.reload()
+      window.location.reload();
     } catch (error) {
       console.error(error.message);
     }
@@ -84,9 +84,9 @@ export default function TableOrders({
           (selectedItem) => selectedItem.tradeCode !== item.tradeCode
         )
       );
-      window.location.reload()
+      window.location.reload();
     } catch (error) {
-      console.error('Error updating order status:', error.message);
+      console.error("Error updating order status:", error.message);
       // Handle error or display an error message
     } finally {
       setIsUpdating(false);
@@ -149,7 +149,7 @@ export default function TableOrders({
       <h1 className="text-xl mb-2">{nameTable}</h1>
 
       <div className="flex items-center mb-4">
-        <label htmlFor="search" className="mr-2">
+        <label htmlFor="search" className="mr-2 hidden lg:block">
           Search:
         </label>
         <input
@@ -222,7 +222,7 @@ export default function TableOrders({
                 className="p-3 text-sm font-semibold tracking-wide text-left"
                 onClick={() => handleSort("order")}
               >
-                Order{" "}
+                Buyer{" "}
                 {sortColumn === "order" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
@@ -290,10 +290,9 @@ export default function TableOrders({
                   </td>
                   <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
                     {row.itemName.split(", ").map((name, nameIndex) => (
-                        <div className="py-4">
+                      <div className="py-4">
                         <div key={nameIndex}>{name} </div>
-                        </div>
-                      
+                      </div>
                     ))}
                   </td>
                   <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
@@ -303,21 +302,21 @@ export default function TableOrders({
                     {row.payment}
                   </td>
                   <td className="p-3 text-xs font-medium uppercase text-gray-700 whitespace-nowrap">
-                  <span
-                  className={`p-1.5 text-xs font-medium uppercase tracking-wider ${
-                    row.status == "Delivered"
-                      ? "text-green-800 bg-green-200"
-                      : row.status == "Dispatched"
-                      ? "text-blue-800 bg-gray-200"
-                      : row.status == "Processing"
-                      ? "text-yellow-800 bg-yellow-200"
-                      : row.status == "Cancelled"
-                      ? "text-red-800 bg-red-200"
-                      : ""
-                  } rounded-lg bg-opacity-50`}
-                >
-                  {row.status}
-                </span>
+                    <span
+                      className={`p-1.5 text-xs font-medium uppercase tracking-wider ${
+                        row.status == "Delivered"
+                          ? "text-green-800 bg-green-200"
+                          : row.status == "Dispatched"
+                          ? "text-blue-800 bg-gray-200"
+                          : row.status == "Processing"
+                          ? "text-yellow-800 bg-yellow-200"
+                          : row.status == "Cancelled"
+                          ? "text-red-800 bg-red-200"
+                          : ""
+                      } rounded-lg bg-opacity-50`}
+                    >
+                      {row.status}
+                    </span>
                   </td>
                   <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
                     {row.orderBy}
@@ -359,14 +358,11 @@ export default function TableOrders({
           >
             <div className="flex items-center space-x-2 text-sm">
               <div>
-                <a
-                  href="/#"
-                  className="text-blue-500 font-bold hover:underline"
-                >
-                  TradeCode {row.status == "0" ? "Available" : "Sold"}
-                </a>
+                <span className="text-blue-500 font-bold">
+                  TradeCode: ..{row.tradeCode.slice(-2)}
+                </span>
               </div>
-              <div className="text-gray-500">{row.postDate}</div>
+              <div className="text-gray-500">{row.orderDate}</div>
               <div>
                 <span
                   className={`p-1.5 text-xs font-medium uppercase tracking-wider ${
@@ -389,7 +385,7 @@ export default function TableOrders({
             <div className="text-sm font-medium text-black">${row.price}</div>
             <div className="flex justify-end">
               <button
-                className="text-red-500 font-bold hover:underline ml-2"
+                className="text-green-500 font-bold hover:underline ml-2"
                 onClick={() => handleUpdateStatusRow(row)}
               >
                 <CheckCircleIcon />
