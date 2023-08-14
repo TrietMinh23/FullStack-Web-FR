@@ -548,6 +548,7 @@ const TableItem = () => {
             close={closeReport}
             i={indexReport}
             at={document.documentElement.scrollTop}
+            data ={orders}
           />
           <div id="dimScreen" className={"block "}></div>
         </div>
