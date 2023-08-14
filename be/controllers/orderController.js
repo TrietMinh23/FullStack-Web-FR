@@ -65,6 +65,11 @@ export const getOrdersByUserId = async (req, res) => {
   try {
     const userId = req.params.userId;
 
+    // Pagination
+    var page = parseInt(req.query.page) || 1;
+    var limit = parseInt(req.query.limit) || 20;
+    const skip = (page - 1) * limit;
+
     const orders = await Order.find({ orderby: userId })
       .populate({
         path: "products",
@@ -77,9 +82,20 @@ export const getOrdersByUserId = async (req, res) => {
       .populate("orderby", "name")
       .populate("payment", "paymentMethod")
       .populate("shipping", "address city ward")
-      .sort({ createAt: -1 });
+      .sort({ createAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .exec();
 
-    res.status(200).json(orders);
+    if (orders.length === 0) {
+      return res.status(404).json({ message: "No orders found." });
+    } else {
+      return res.status(200).json({
+        currentPage: page,
+        totalPages: Math.ceil(orders.length / limit),
+        orders,
+      });
+    }
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
@@ -241,7 +257,6 @@ export const getRefundBySellerIdForAllMonths = async (req, res) => {
   }
 };
 
-
 export const getMonthlyIncomeBySeller = async (req, res) => {
   try {
     const { sellerId } = req.params;
@@ -344,9 +359,7 @@ export const getDailyIncomeBySeller = async (req, res) => {
     if (income.length > 0) {
       return res.status(200).json({ income: income[0].totalIncome });
     } else {
-      return res
-        .status(200)
-        .json({ income: 0 });
+      return res.status(200).json({ income: 0 });
     }
   } catch (error) {
     console.error("Error calculating income:", error);
@@ -401,9 +414,7 @@ export const getDailyRefundBySeller = async (req, res) => {
     if (refund.length > 0) {
       return res.status(200).json({ refund: refund[0].totalRefund });
     } else {
-      return res
-        .status(200)
-        .json({ refund: 0 });
+      return res.status(200).json({ refund: 0 });
     }
   } catch (error) {
     console.error("Error calculating refund:", error);
@@ -411,17 +422,23 @@ export const getDailyRefundBySeller = async (req, res) => {
       .status(500)
       .json({ message: "An error occurred while calculating refund." });
   }
-}
+};
 
 export const getOrderBySellerId = async (req, res) => {
   try {
     const sellerId = req.params.id; // Convert the sellerId to ObjectId type
 
+    // Pagination
+    var page = parseInt(req.query.page) || 1;
+    var limit = parseInt(req.query.limit) || 15;
+    const skip = (page - 1) * limit;
+
     const orders = await Order.find()
       .populate("products")
       .populate("shipping")
       .populate("payment")
-      .populate("orderby");
+      .populate("orderby")
+      .sort({ createdAt: -1 });
 
     const orderStatusCounts = {
       "Not Processed": 0,
@@ -491,7 +508,8 @@ export const getOrderBySellerId = async (req, res) => {
           },
           orderDate: order.orderDate,
         };
-      });
+      })
+      .slice(skip, skip + limit);
 
     if (filteredOrders.length === 0) {
       return res
@@ -501,7 +519,13 @@ export const getOrderBySellerId = async (req, res) => {
 
     res
       .status(200)
-      .json({ filteredOrders, orderStatusCounts, orderStatusTotalAmounts });
+      .json({
+        filteredOrders,
+        orderStatusCounts,
+        orderStatusTotalAmounts,
+        currentPage: page,
+        totalPages: Math.ceil(orders.length / limit),
+      });
   } catch (err) {
     console.log({ error: err.message });
     res.status(500).json({ error: "Internal server error" });

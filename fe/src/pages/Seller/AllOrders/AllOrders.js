@@ -71,13 +71,13 @@ export default function AllOrders() {
     let cleanedSellerId = sellerId.replace(/"/g, "");
 
     const fetchOrders = async () => {
-      sessionStorage.setItem("pageTableProducts", page.toString());
+      sessionStorage.setItem("pageTableOrders", page.toString());
 
-      sessionStorage.setItem("pageTableProductsPerPage", perPage.toString());
+      sessionStorage.setItem("pageTableOrdersPerPage", perPage.toString());
 
       try {
         // window.scrollTo(0, 0);
-        const response = await getOrdersBySellerId(cleanedSellerId);
+        const response = await getOrdersBySellerId(cleanedSellerId, page, perPage);
         
         const dataOrders = response.data.filteredOrders;
         setOrderStatus(response.data.orderStatusCounts)
