@@ -38,7 +38,7 @@ export const getProductBySellerId = async (req, res) => {
       .skip(skip)
       .limit(limit)
       .exec();
-    
+
     if (products.length === 0) {
       return res.status(400).json({ error: "No products found by seller id." });
     }
@@ -50,11 +50,17 @@ export const getProductBySellerId = async (req, res) => {
 
     // Calculate total price of sold products (sold 1)
     const sold1Products = await Product.find({ sellerId: _id, sold: 1 });
-    const totalPriceSold1 = sold1Products.reduce((total, product) => total + product.price, 0);
+    const totalPriceSold1 = sold1Products.reduce(
+      (total, product) => total + product.price,
+      0
+    );
 
     // Calculate total price of unsold products (sold 0)
     const sold0Products = await Product.find({ sellerId: _id, sold: 0 });
-    const totalPriceSold0 = sold0Products.reduce((total, product) => total + product.price, 0);
+    const totalPriceSold0 = sold0Products.reduce(
+      (total, product) => total + product.price,
+      0
+    );
 
     const totalPages = Math.ceil(totalProducts / limit);
 
@@ -139,7 +145,7 @@ export const getAllProducts = async (req, res) => {
     var limit = parseInt(req.query.limit) || 20;
 
     const skip = (page - 1) * limit;
-    const products = await Product.find()
+    const products = await Product.find({ sold: 0 })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
@@ -149,7 +155,7 @@ export const getAllProducts = async (req, res) => {
       res.status(400).json({ error: "No products found." });
     }
 
-    const totalProducts = await Product.find().countDocuments();
+    const totalProducts = await Product.find({ sold: 0 }).countDocuments();
     const totalPages = Math.ceil(totalProducts / limit);
 
     res.status(200).json({
@@ -207,9 +213,9 @@ export const updateProduct = async (req, res) => {
         req.body.image = url_link;
         delete req.file;
 
-        try {        
-          const filename = product.image.split('/').pop();
-          console.log(product.image)
+        try {
+          const filename = product.image.split("/").pop();
+          console.log(product.image);
           const respont = await deleteS3(filename);
           console.log(respont);
         } catch (deleteError) {

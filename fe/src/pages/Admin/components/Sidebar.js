@@ -10,6 +10,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
   const navigate = useNavigate();
 
   const logOut = () => {
+    localStorage.clear();
     deleteAllCookies();
     navigate("/auth-admin");
   };

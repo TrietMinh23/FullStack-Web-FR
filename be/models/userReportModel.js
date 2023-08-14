@@ -5,21 +5,20 @@ const userReportSchema = new mongoose.Schema(
     orderedProduct: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Order",
-      require: true,
     },
     title:{type: String, required: true},
     details:{type: String, required: true},
     id_reporter: {
       type: mongoose.Schema.Types.ObjectId, 
       ref: "User",
-      require: true,
+      required: true,
     },
     id_reported: {
       type: mongoose.Schema.Types.ObjectId, 
       ref: "User",
-      require: true,
+      required: true,
     },
-    status: {type: String, required: true}
+    status: {type: String, required: true},
   },
   {timestamps: true}
 );

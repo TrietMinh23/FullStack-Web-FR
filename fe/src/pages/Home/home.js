@@ -9,9 +9,8 @@ export default function Home() {
   };
 
   React.useEffect(() => {
-    if (!sessionStorage.getItem("page"))
-      sessionStorage.setItem("page", page, 1);
-    else sessionStorage.setItem("page", page, 1);
+    if (!sessionStorage.getItem("page")) sessionStorage.setItem("page", page);
+    else sessionStorage.setItem("page", page);
   }, [page]);
 
   return (

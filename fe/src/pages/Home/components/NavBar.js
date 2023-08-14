@@ -32,6 +32,10 @@ const Navbar = () => {
           }
         })
         .catch((err) => console.log(err));
+    } else {
+      UPDATEPRODUCT({
+        listProduct: JSON.parse(localStorage.getItem("cart")).products,
+      });
     }
   };
   return (

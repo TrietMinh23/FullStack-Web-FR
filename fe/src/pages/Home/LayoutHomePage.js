@@ -7,9 +7,11 @@ import getCookie from "../../utils/getCookie";
 
 export default function LayoutHomePage() {
   const dispatch = useDispatch();
-  const product = useSelector((state) => state.product.shoppingCart);
   useEffect(() => {
-    if (getCookie("refresh_token")) {
+    if (
+      getCookie("refresh_token") &&
+      localStorage.getItem("role").replace(/^"(.*)"$/, "$1") === "buyer"
+    ) {
       const listFromLocalStorage = JSON.parse(localStorage.getItem("cart"));
       if (listFromLocalStorage.first) {
         dispatch(
@@ -21,6 +23,7 @@ export default function LayoutHomePage() {
       }
       // Check if listFromLocalStorage is not null before accessing length
       else if (listFromLocalStorage && listFromLocalStorage.products.length) {
+        console.log("CHECKKKKK");
         dispatch(UPDATEPRODUCT({ listProduct: listFromLocalStorage.products }));
       }
     }

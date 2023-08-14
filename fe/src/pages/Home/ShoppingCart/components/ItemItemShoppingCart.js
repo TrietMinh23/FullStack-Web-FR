@@ -15,7 +15,7 @@ export default function ItemItemShoppingCart({ name, image, price, shop, id }) {
         productId: id,
         cartId: JSON.parse(localStorage.getItem("cart"))._id,
       })
-      .then((response) => console.log(response.data.message))
+      .then((response) => console.log("BÂNNÂN", response))
       .catch((err) => console.log(err));
 
     list.products.splice(index, 1);

@@ -25,6 +25,7 @@ const routerSeller = [
   },
   {
     name: "Profile",
+    url: "profile"
   },
   {
     name: "Settings",
@@ -34,6 +35,7 @@ const routerSeller = [
 export default function LeftNav({ sideBarProp, setSideBarFunc, setCoverFunc }) {
   const navigate = useNavigate();
   const logOut = () => {
+    localStorage.clear();
     deleteAllCookies();
     navigate("/");
   };

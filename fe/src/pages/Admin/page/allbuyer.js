@@ -1,16 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import Tracker from "../components/Tracker";
 import TableAB from "../components/Table/TableAB";
 import CancelIcon from "@mui/icons-material/Cancel";
-import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
-import PhonelinkIcon from '@mui/icons-material/Phonelink';
-import PhonelinkOffIcon from '@mui/icons-material/PhonelinkOff';
-import BlockIcon from '@mui/icons-material/Block';
+import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
+import PhonelinkIcon from "@mui/icons-material/Phonelink";
+import PhonelinkOffIcon from "@mui/icons-material/PhonelinkOff";
+import BlockIcon from "@mui/icons-material/Block";
+import { instance } from "../../../api/config";
 import { rows } from "../data/dataAllBuyers";
 
 const staticTable = [
   {
-    icon: <PhonelinkIcon/>,
+    icon: <PhonelinkIcon />,
     id: 1,
     title: "ONL",
     text: "online < 15 day",
@@ -19,7 +20,7 @@ const staticTable = [
     color: "green",
   },
   {
-    icon: <PhonelinkOffIcon/>,
+    icon: <PhonelinkOffIcon />,
     id: 2,
     title: "OFF > 15",
     text: "offline > 15 day",
@@ -28,7 +29,7 @@ const staticTable = [
     color: "gray",
   },
   {
-    icon: <BlockIcon/>,
+    icon: <BlockIcon />,
     id: 3,
     title: "OFF",
     text: "offline > 30 day",
@@ -37,7 +38,7 @@ const staticTable = [
     color: "red",
   },
   {
-    icon: <ReceiptLongIcon/>,
+    icon: <ReceiptLongIcon />,
     id: 4,
     title: "Purchase",
     text: "purchase orders",
@@ -46,7 +47,7 @@ const staticTable = [
     color: "blue",
   },
   {
-    icon: <CancelIcon/>,
+    icon: <CancelIcon />,
     id: 5,
     title: "Canceled",
     text: "canceled orders",
@@ -57,6 +58,15 @@ const staticTable = [
 ];
 
 export default function Allbuyer() {
+  const [buyers, setBuyers] = useState(null);
+
+  useState(() => {
+    instance
+      .get("/users")
+      .then((res) => console.log(res))
+      .catch((err) => console.log(err));
+  }, []);
+
   return (
     <React.Fragment>
       <div>
@@ -74,8 +84,7 @@ export default function Allbuyer() {
           ))}
         </div>
         <div className="mt-8 w-full">
-          <TableAB rows = {rows}
-          />
+          <TableAB rows={rows} />
         </div>
       </div>
     </React.Fragment>
