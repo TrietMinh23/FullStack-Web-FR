@@ -1,4 +1,4 @@
-import { Order } from "../models/orderModel.js";
+import {Order} from "../models/orderModel.js";
 import mongoose from "mongoose";
 
 export const getAllOrders = async (req, res) => {
@@ -6,7 +6,7 @@ export const getAllOrders = async (req, res) => {
     const orders = await Order.find();
     res.status(200).json(orders);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(400).json({error: err.message});
   }
 };
 
@@ -22,32 +22,32 @@ export const createOrder = async (req, res) => {
 
     res.status(202).json("Order has been created!", newOrder);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(400).json({error: err.message});
   }
 };
 
 export const deleteOrder = async (req, res) => {
   try {
     const id = res.params.id;
-    const order = await Order.findOneAndDelete({ _id: id });
+    const order = await Order.findOneAndDelete({_id: id});
 
     if (!order) {
-      res.status(404).json({ message: "Order not found" });
+      res.status(404).json({message: "Order not found"});
     } else {
       res.status(200).json("Order deleted successfully");
     }
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(400).json({error: err.message});
   }
 };
 
 export const updateOrder = async (req, res) => {
   try {
-    const { id } = req.params;
+    const {id} = req.params;
     const order = await Order.findOneAndUpdate(
-      { id },
-      { $set: req.body },
-      { new: true }
+      {id},
+      {$set: req.body},
+      {new: true}
     );
 
     // calculate total price and quantity
@@ -57,7 +57,7 @@ export const updateOrder = async (req, res) => {
     await order.save();
     res.status(200).json(order);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(400).json({error: err.message});
   }
 };
 
@@ -65,16 +65,16 @@ export const getOrdersByUserId = async (req, res) => {
   try {
     const userId = res.params.userId;
 
-    const orders = await Order.find({ userId: userId })
+    const orders = await Order.find({userId: userId})
       .populate("products.product", "title price")
       .populate("orderby", "name")
       .populate("paymentMethod", "paymentMethod")
       .populate("shippingMethod", "address city ward")
-      .sort({ createAt: -1 });
+      .sort({createAt: -1});
 
     res.status(200).json(orders);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(400).json({error: err.message});
   }
 };
 
@@ -87,32 +87,35 @@ export const getMonthlyIncome = async (req, res) => {
     const income = await Order.aggregate([
       {
         $match: {
-          createdAt: { $gte: lastMonth },
+          createdAt: {$gte: lastMonth},
           orderStatus: "Delivered",
         },
       },
       {
         $project: {
-          month: { $month: "$createdAt" },
+          month: {$month: "$createdAt"},
           sales: "$totalPrice",
         },
       },
       {
         $group: {
           _id: "$month",
-          total: { $sum: "$sales" },
+          total: {$sum: "$sales"},
         },
       },
     ]);
 
     res.status(200).json(income);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    console.error({error: err.message});
+    res
+      .status(500)
+      .json({error: "An error occurred while fetching monthly income."});
   }
 };
 
 export const getMonthlyIncomeBySeller = async (req, res) => {
-  const { sellerId } = req.params;
+  const {sellerId} = req.params;
 
   const currentDate = new Date();
   const lastMonth = new Date(currentDate);
@@ -123,28 +126,30 @@ export const getMonthlyIncomeBySeller = async (req, res) => {
       {
         $match: {
           sellerId: new mongoose.Types.ObjectId(sellerId), // Correct usage
-          createdAt: { $gte: lastMonth },
+          createdAt: {$gte: lastMonth},
           orderStatus: "Delivered",
         },
       },
       {
         $project: {
-          month: { $month: "$createdAt" },
+          month: {$month: "$createdAt"},
           sales: "$totalPrice",
         },
       },
       {
         $group: {
           _id: "$month",
-          total: { $sum: "$sales" },
+          total: {$sum: "$sales"},
         },
       },
     ]);
 
     res.status(200).json(income);
   } catch (err) {
-    console.error({ error: err.message });
-    res.status(500).json({ error: "An error occurred while fetching monthly income." });
+    console.error({error: err.message});
+    res
+      .status(500)
+      .json({error: "An error occurred while fetching monthly income."});
   }
 };
 
@@ -229,17 +234,15 @@ export const getOrderBySellerId = async (req, res) => {
       });
 
     if (filteredOrders.length === 0) {
-      return res
-        .status(404)
-        .json({ error: "No orders found for this seller." });
+      return res.status(404).json({error: "No orders found for this seller."});
     }
 
     res
       .status(200)
-      .json({ filteredOrders, orderStatusCounts, orderStatusTotalAmounts });
+      .json({filteredOrders, orderStatusCounts, orderStatusTotalAmounts});
   } catch (err) {
-    console.log({ error: err.message });
-    res.status(500).json({ error: "Internal server error" });
+    console.log({error: err.message});
+    res.status(500).json({error: "Internal server error"});
   }
 };
 
@@ -252,12 +255,12 @@ export const updateOrderStatusToDispatched = async (req, res) => {
     // Find the order by its ID and update the status to "Dispatched"
     const updatedOrder = await Order.findByIdAndUpdate(
       orderId,
-      { orderStatus: "Dispatched" },
-      { new: true } // Return the updated document
+      {orderStatus: "Dispatched"},
+      {new: true} // Return the updated document
     );
 
     if (!updatedOrder) {
-      return res.status(404).json({ error: "Order not found." });
+      return res.status(404).json({error: "Order not found."});
     }
 
     // Set a timeout to change the order status to "Delivered" after 60 seconds
@@ -265,8 +268,8 @@ export const updateOrderStatusToDispatched = async (req, res) => {
       try {
         const deliveredOrder = await Order.findByIdAndUpdate(
           orderId,
-          { orderStatus: "Delivered" },
-          { new: true }
+          {orderStatus: "Delivered"},
+          {new: true}
         );
         if (deliveredOrder) {
           console.log("Order status updated to Delivered.");
@@ -276,14 +279,12 @@ export const updateOrderStatusToDispatched = async (req, res) => {
       }
     }, DELIVERY_TIMEOUT);
 
-    res
-      .status(200)
-      .json({
-        message: "Order status updated to Dispatched.",
-        order: updatedOrder,
-      });
+    res.status(200).json({
+      message: "Order status updated to Dispatched.",
+      order: updatedOrder,
+    });
   } catch (err) {
-    console.log({ error: err.message });
-    res.status(500).json({ error: "Internal server error" });
+    console.log({error: err.message});
+    res.status(500).json({error: "Internal server error"});
   }
 };
