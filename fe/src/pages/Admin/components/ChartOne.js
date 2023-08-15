@@ -2,8 +2,6 @@
 import React from "react";
 import ReactApexChart from "react-apexcharts";
 
-
-
 export default function ChartOne({ series }) {
    // Calculate the maximum value from all data points
    const maxDataValue = series.reduce((max, dataSeries) => {

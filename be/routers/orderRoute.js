@@ -5,7 +5,7 @@ import {
   updateOrder,
   deleteOrder,
   getOrdersByUserId,
-  getMonthlyIncome,
+  getCurrentMonthIncome,
   getMonthlyIncomeBySeller,
   getOrderBySellerId,
   updateOrderStatusToDispatched,
@@ -13,6 +13,9 @@ import {
   getDailyRefundBySeller,
   getIncomeBySellerIdForAllMonths,
   getRefundBySellerIdForAllMonths,
+  getIncomeForAllMonths,
+  getRefundForALlMonths,
+  getIncomeForAllDeliveredOrders,
 } from "../controllers/orderController.js";
 import {
   verifyToken,
@@ -22,13 +25,22 @@ import {
 } from "../middlewares/verifyToken.js";
 
 const router = express.Router();
+// seller
 router.get("/income/:sellerId", getMonthlyIncomeBySeller);
 router.get("/income/daily/:sellerId", getDailyIncomeBySeller);
 router.get("/income/allmonth/:sellerId", getIncomeBySellerIdForAllMonths);
 router.get("/refund/daily/:sellerId", getDailyRefundBySeller);
 router.get("/refund/allmonth/:sellerId", getRefundBySellerIdForAllMonths);
+
 router.get("/", verifyTokenAndAdmin, getAllOrders);
-router.get("/income", verifyTokenAndAdmin, getMonthlyIncome);
+// router.get("/income", verifyTokenAndAdmin, getMonthlyIncome);
+
+// admin
+router.get("/admin/income/current", getCurrentMonthIncome);
+router.get("/admin/income/allmonth", getIncomeForAllMonths);
+router.get("/admin/refund/allmonth", getRefundForALlMonths);
+router.get("/admin/income", getIncomeForAllDeliveredOrders);
+
 router.get("/:userId", verifyTokenAndAuthorization, getOrdersByUserId);
 router.post("/", verifyToken, createOrder);
 router.put("/:id", verifyTokenAndAdmin, updateOrder);

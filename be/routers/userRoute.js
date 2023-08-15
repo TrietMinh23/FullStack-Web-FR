@@ -12,7 +12,8 @@ import {
   refreshTokenHandle,
   updateInformation,
   getUserById,
-  updateUserById
+  updateUserById,
+  countBuyer
 } from "../controllers/userController.js";
 
 const router = express.Router();
@@ -34,4 +35,5 @@ router.post("/update_information", updateInformation);
 router.get("/:id", getUserById);
 router.put("/:id", updateUserById)
 
+router.get('/buyers/count', countBuyer);
 export default router;

@@ -99,3 +99,47 @@ export const getRefundBySellerIdForAllMonths = async (sellerId) => {
     );
   }
 };
+
+export const getIncomeForAllMonths = async () => {
+  try {
+    const response = await instance.get("/orders/admin/income/allmonth");
+    return response;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.error || "Error getting income for all months."
+    );
+  }
+};
+
+export const getRefundForAllMonths = async () => {
+  try {
+    const response = await instance.get("/orders/admin/refund/allmonth");
+    return response;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.error || "Error getting refund for all months."
+    );
+  }
+}
+
+export const getIncomeForAllDeliveredOrders = async () => {
+  try {
+    const response = await instance.get("/orders/admin/income");
+    return response;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.error || "Error getting income for all delivered orders."
+    );
+  }
+}
+
+export const getCurrentMonthIncome = async () => {
+  try {
+    const response = await instance.get("/orders/admin/income/current");
+    return response;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.error || "Error getting current month income."
+    );
+  }
+}

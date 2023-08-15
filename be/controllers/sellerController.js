@@ -11,6 +11,16 @@ export const getSellers = async (req, res) => {
   }
 };
 
+export const countSellers = async (req, res) => {
+  try {
+    const sellerCount = await Seller.countDocuments({ role: "seller" });
+    res.status(200).json({ count: sellerCount });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+
 export const createSeller = async (req, res) => {
   try {
     const email = req.body.email;

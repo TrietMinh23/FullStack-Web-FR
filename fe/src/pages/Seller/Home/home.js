@@ -81,7 +81,6 @@ export default function Review() {
             }),
           },
         ];
-        console.log(mappedCustomSeries);
 
         // Set the mapped customSeries to state
         setMonthlyIncome(mappedCustomSeries);

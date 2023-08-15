@@ -370,3 +370,12 @@ export const updateUserById = async (req, res) => {
     res.status(400).json({error: err.message});
   }
 };
+
+export const countBuyer = async (req, res) => {
+  try {
+    const sellerCount = await User.countDocuments({ role: "buyer" });
+    res.status(200).json({ count: sellerCount });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};

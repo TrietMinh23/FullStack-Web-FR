@@ -1,8 +1,13 @@
 import React from "react";
+import { useState } from "react";
+import { useEffect } from "react";
 import ChartOne from "../components/ChartOne";
 import AnalyticEcommerce from "../components/AnalyticEcommerce";
 
 import { Stack, Grid } from "@mui/material";
+import { getIncomeForAllMonths, getRefundForAllMonths,getIncomeForAllDeliveredOrders, getCurrentMonthIncome } from "../../../api/order";
+import { countSellers } from "../../../api/seller";
+import { countBuyer } from "../../../api/buyer";
 
 const defaultMonthlyIncome = [
   {
@@ -16,24 +21,79 @@ const defaultMonthlyIncome = [
 ];
 
 export default function FinancialManagement() {
+  const [monthlyIncome, setMonthlyIncome] = useState(defaultMonthlyIncome); // income for the month [1, 12
+  const [incomeForAllDeliveredOrders, setIncomeForAllDeliveredOrders] = useState(0);
+  const [incomeCurrentMonth, setIncomeCurrentMonth] = useState(0); // income for the current month
+  const [sellerCount, setSellerCount] = useState(0);  // count sellers
+  const [buyerCount, setBuyerCount] = useState(0);  // count buyers
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const responeMonthlyIncome = await getIncomeForAllMonths();
+        const responeMonthlyRefund = await getRefundForAllMonths();
+        const responeIncomeForAllDeliveredOrders = await getIncomeForAllDeliveredOrders();
+        const responeIncomeCurrentMonth = await getCurrentMonthIncome();  
+        const responeCountSellers = await countSellers();
+        const responeCountBuyers = await countBuyer();
+
+        const mappedCustomSeries = [
+          {
+            name: "Total Sales",
+            data: Array(12)
+              .fill(0)
+              .map((_, index) => {
+                const matchingMonth = responeMonthlyIncome.data["income"].find(
+                  (item) => item._id.month === index + 1
+                );
+                return matchingMonth ? matchingMonth.totalIncome : 0;
+              }),
+          },
+          {
+            name: "Total Refund",
+            data: Array(12)
+              .fill(0)
+              .map((_, index) => {
+                const matchingMonth = responeMonthlyRefund.data["refund"].find(
+                  (item) => item._id.month === index + 1
+                );
+                return matchingMonth ? matchingMonth.totalRefund : 0;
+              }),
+          },
+        ];
+
+        // Set the mappedCustomSeries to the state
+        setIncomeForAllDeliveredOrders(responeIncomeForAllDeliveredOrders.data["totalIncome"]);
+        setMonthlyIncome(mappedCustomSeries);
+        setIncomeCurrentMonth(responeIncomeCurrentMonth.data["income"]);
+        setSellerCount(responeCountSellers.data["count"]);
+        setBuyerCount(responeCountBuyers.data["count"]);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchOrders();
+  }, []);
+
   return (
     <div>
       <Grid container rowSpacing={2.5} columnSpacing={2.75}>
         <Grid item xs={12} sm={6} md={4} lg={3}>
           <AnalyticEcommerce
             title="Total Seller"
-            count="300"
-            percentage={20}
-            extra="35,000"
+            count={`${sellerCount}`}
+            percentage={(sellerCount - 1) / 1 * 100}
+            extra={`${sellerCount}`}
             liltitle="you have an extra"
           />
         </Grid>
         <Grid item xs={12} sm={6} md={4} lg={3}>
           <AnalyticEcommerce
             title="Total Buyer"
-            count="400"
-            percentage={27.3}
-            extra="8,900"
+            count={`${buyerCount}`}
+            percentage={(buyerCount - 1) / 1 * 100}
+            extra={`${buyerCount}`}
             liltitle="you have an extra"
           />
         </Grid>
@@ -49,9 +109,9 @@ export default function FinancialManagement() {
         <Grid item xs={12} sm={6} md={4} lg={3}>
           <AnalyticEcommerce
             title="Total Sales"
-            count="78,250"
+            count={incomeForAllDeliveredOrders}
             percentage={27.3}
-            extra="8,900"
+            extra={incomeCurrentMonth}
             liltitle="you made an extra"
           />
         </Grid>
@@ -69,7 +129,7 @@ export default function FinancialManagement() {
         </Grid>
       </Grid>
       <div className="mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5 w-full">
-        <ChartOne series={defaultMonthlyIncome} />
+        <ChartOne series={monthlyIncome} />
       </div>
     </div>
   );

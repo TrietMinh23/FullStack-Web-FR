@@ -101,38 +101,209 @@ export const getOrdersByUserId = async (req, res) => {
   }
 };
 
-// get monthly income floor
-export const getMonthlyIncome = async (req, res) => {
-  const currentDate = new Date();
-  const lastMonth = new Date(currentDate.getMonth() - 1);
-
+export const getCurrentMonthIncome = async (req, res) => {
   try {
     const income = await Order.aggregate([
       {
         $match: {
-          createdAt: {$gte: lastMonth},
           orderStatus: "Delivered",
+          createdAt: {
+            $gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+          },
         },
       },
       {
-        $project: {
-          month: {$month: "$createdAt"},
-          sales: "$totalPrice",
+        $unwind: "$products",
+      },
+      {
+        $lookup: {
+          from: "products",
+          localField: "products",
+          foreignField: "_id",
+          as: "productData",
         },
+      },
+      {
+        $unwind: "$productData",
       },
       {
         $group: {
-          _id: "$month",
-          total: {$sum: "$sales"},
+          _id: null,
+          totalIncome: { $sum: "$productData.price" },
         },
       },
     ]);
 
-    res.status(200).json(income);
-  } catch (err) {
-    res.status(400).json({error: err.message});
+    if (income.length > 0) {
+      return res.status(200).json({ income: income[0].totalIncome });
+    } else {
+      return res
+        .status(404)
+        .json({ message: "No income available for current month." });
+    }
+  } catch (error) {
+    console.error("Error calculating income:", error);
+    return res
+      .status(500)
+      .json({ message: "An error occurred while calculating income." });
   }
 };
+
+
+export const getIncomeForAllMonths = async (req, res) => {
+  try {
+    const income = await Order.aggregate([
+      {
+        $match: {
+          orderStatus: "Delivered",
+        },
+      },
+      {
+        $unwind: "$products",
+      },
+      {
+        $lookup: {
+          from: "products",
+          localField: "products",
+          foreignField: "_id",
+          as: "productData",
+        },
+      },
+      {
+        $unwind: "$productData",
+      },
+      {
+        $group: {
+          _id: {
+            year: { $year: "$createdAt" },
+            month: { $month: "$createdAt" },
+          },
+          totalIncome: { $sum: "$productData.price" },
+        },
+      },
+      {
+        $sort: {
+          "_id.year": 1,
+          "_id.month": 1,
+        },
+      },
+    ]);
+
+    if (income.length > 0) {
+      return res.status(200).json({ income });
+    } else {
+      return res
+        .status(404)
+        .json({ message: "No income available for any month." });
+    }
+  } catch (error) {
+    console.error("Error calculating income:", error);
+    return res
+      .status(500)
+      .json({ message: "An error occurred while calculating income." });
+  }
+};
+
+export const getRefundForALlMonths = async (req, res) => {
+  try {
+    const refund = await Order.aggregate([
+      {
+        $match: {
+          orderStatus: "Cancelled",
+        },
+      },
+      {
+        $unwind: "$products",
+      },
+      {
+        $lookup: {
+          from: "products",
+          localField: "products",
+          foreignField: "_id",
+          as: "productData",
+        },
+      },
+      {
+        $unwind: "$productData",
+      },
+      {
+        $group: {
+          _id: {
+            year: { $year: "$createdAt" },
+            month: { $month: "$createdAt" },
+          },
+          totalRefund: { $sum: "$productData.price" },
+        },
+      },
+      {
+        $sort: {
+          "_id.year": 1,
+          "_id.month": 1,
+        },
+      },
+    ]);
+
+    if (refund.length > 0) {
+      return res.status(200).json({ refund });
+    } else {
+      return res
+        .status(404)
+        .json({ message: "No refund available for any month." });
+    }
+  } catch (error) {
+    console.error("Error calculating refund:", error);
+    return res
+      .status(500)
+      .json({ message: "An error occurred while calculating refund." });
+  }
+};
+
+export const getIncomeForAllDeliveredOrders = async (req, res) => {
+  try {
+    const totalIncome = await Order.aggregate([
+      {
+        $match: {
+          orderStatus: "Delivered",
+        },
+      },
+      {
+        $unwind: "$products",
+      },
+      {
+        $lookup: {
+          from: "products",
+          localField: "products",
+          foreignField: "_id",
+          as: "productData",
+        },
+      },
+      {
+        $unwind: "$productData",
+      },
+      {
+        $group: {
+          _id: null,
+          totalIncome: { $sum: "$productData.price" },
+        },
+      },
+    ]);
+
+    if (totalIncome.length > 0) {
+      return res.status(200).json({ totalIncome: totalIncome[0].totalIncome });
+    } else {
+      return res
+        .status(404)
+        .json({ message: "No income available for delivered orders." });
+    }
+  } catch (error) {
+    console.error("Error calculating income:", error);
+    return res
+      .status(500)
+      .json({ message: "An error occurred while calculating income." });
+  }
+};
+
+
 
 // get Income By Seller Id For All Months
 export const getIncomeBySellerIdForAllMonths = async (req, res) => {

@@ -19,3 +19,12 @@ export const updateSellerById = async (id, data) => {
     );
   }
 };
+
+export const countSellers = async () => {
+  try {
+    const respone = await instance.get("/sellers/count");
+    return respone;
+  } catch (error) {
+    throw new Error(error.response?.data?.error || "Error count sellers.");
+  }
+};
