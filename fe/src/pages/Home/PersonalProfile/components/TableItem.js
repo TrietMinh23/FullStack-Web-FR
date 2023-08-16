@@ -116,7 +116,7 @@ const TableItem = () => {
 
   useEffect(() => {
     getOrdersByUserId(JSON.parse(localStorage.getItem("_id")))
-      .then((res) => setOrders(res.data))
+      .then((res) => setOrders(res.data.orders))
       .catch((err) => console.log(err));
   }, []);
 
@@ -548,7 +548,7 @@ const TableItem = () => {
             close={closeReport}
             i={indexReport}
             at={document.documentElement.scrollTop}
-            data ={orders}
+            data={orders}
           />
           <div id="dimScreen" className={"block "}></div>
         </div>

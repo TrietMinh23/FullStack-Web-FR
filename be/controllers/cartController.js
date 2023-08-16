@@ -71,21 +71,69 @@ export const updateCart = async (req, res) => {
   }
 };
 
-// export const deleteCart = async (req, res) => {
-//   try {
-//     const id = req.params.id;
-//     const cart = await Cart.findOneAndDelete({ _id: id });
+export const deleteCart = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const cart = await Cart.findOneAndDelete({ _id: id });
 
-//     if (!cart) {
-//       res.status(404).json({ message: "Cart not found" });
-//       return;
-//     } else {
-//       res.status(200).json("Cart deleted successfully");
-//     }
-//   } catch (err) {
-//     res.status(400).json({ error: err.message });
-//   }
-// };
+    if (!cart) {
+      res.status(404).json({ message: "Cart not found" });
+      return;
+    } else {
+      res.status(200).json("Cart deleted successfully");
+    }
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+export const updateUserCart = async (req, res) => {
+  const { cartId, productId } = req.body;
+  try {
+    console.log("User want to add new item to data");
+
+    const cartUser = await Cart.findById({ _id: cartId });
+
+    if (cartUser) {
+      const newProduct = {
+        product: productId,
+        quantity: 1,
+      };
+
+      cartUser.products.push(newProduct);
+
+      await cartUser.save();
+    }
+
+    res.status(200).json({ status: "OK", message: "Update successfully." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Sorry, there is something wrong." });
+  }
+};
+
+export const deleteProductFromListUser = async (req, res) => {
+  const { cartId, productId } = req.body;
+
+  try {
+    const updatedCart = await Cart.findOneAndUpdate(
+      { _id: cartId },
+      { $pull: { products: { product: productId } } },
+      { new: true }
+    );
+
+    if (!updatedCart) {
+      return res.status(404).json({ message: "Cart not found" });
+    }
+
+    res
+      .status(200)
+      .json({ message: "Removed the product successfully", updatedCart });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 
 export const clearAllUserCart = async (req, res) => {
   const idCart = req.params.idCart;

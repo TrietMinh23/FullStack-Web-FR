@@ -25,7 +25,9 @@ export default function Box() {
             to="/purchase"
             onClick={() => {
               setCookie("vnp_params", "", 1);
-              window.location.reload();
+              setTimeout(() => {
+                window.location.reload();
+              }, 1000);
             }}
           >
             <div className="absolute top-0 left-0 transform -translate-y-1 -translate-x-1 w-full h-full transition duration-300">

@@ -82,7 +82,7 @@ export default function ProductDetail() {
 
     notify();
 
-    instance.post("/users/update_cart", {
+    instance.post("/carts/update_cart", {
       productId: params.slug,
       cartId: JSON.parse(localStorage.getItem("cart"))._id.replace(
         /^"(.*)"$/,

@@ -41,7 +41,7 @@ router.get("/admin/income/allmonth", getIncomeForAllMonths);
 router.get("/admin/refund/allmonth", getRefundForALlMonths);
 router.get("/admin/income", getIncomeForAllDeliveredOrders);
 
-router.get("/:userId", verifyTokenAndAuthorization, getOrdersByUserId);
+router.get("/:userId", getOrdersByUserId);
 router.post("/", verifyToken, createOrder);
 router.put("/:id", verifyTokenAndAdmin, updateOrder);
 router.delete("/:id", deleteOrder);
