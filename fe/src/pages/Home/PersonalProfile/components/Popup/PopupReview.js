@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import Rating from "@mui/material/Rating";
-import { rows } from "../../../PersonalProfile/data/orderData";
+import { postReview } from "../../../../../api/Review/postReview";
 
-export default function PopupReview({ finish, close, i, at }) {
+export default function PopupReview({ finish, close, i, at, data }) {
   const [value, setValue] = useState(5);
   const [iscomfirm, setIsComfirm] = useState(false);
   const [iscomment, setIsComment] = useState(false);
@@ -11,29 +11,28 @@ export default function PopupReview({ finish, close, i, at }) {
   const confirm = () => {
     if (iscomment) {
       const rate = { star: value, comment: iscomment };
-      const data = {
+      const thisData = {
         rating: rate,
-        buyer: rows[i].idBuyer,
-        seller: rows[i].idSeller,
+        buyer: data[i].orderby._id,
+        seller: data[i].products[0].sellerId._id,
+        orderedProduct:data[i]._id,
       };
-      Review(data);
+      Review(thisData);
       setIsComfirm(true);
-      console.log("Alo.bug goi ba");
     } else {
-      setIsEmty(true);
-      console.log("Alo.checksum");
+      // setIsEmty(true);
     }
   };
 
-  const Review = async (data) => {
-    console.log(data);
-    // await postReview(data)
-    // .then((res) => {
-    //   console.log(res.data);
-    // })
-    // .catch((err) => {
-    //   console.log(err.response.data.message);
-    // });
+  const Review = async (thisData) => {
+    console.log(thisData);
+    await postReview(thisData)
+    .then((res) => {
+      console.log(res.data);
+    })
+    .catch((err) => {
+      console.log(err.response.data.message);
+    });
   };
 
   return (

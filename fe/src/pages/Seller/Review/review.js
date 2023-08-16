@@ -1,5 +1,5 @@
 import React from "react";
-import Table from "../components/Table";
+import TableReview from "../components/TableReview";
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import ThumbDownAltIcon from "@mui/icons-material/ThumbDownAlt";
 import Card from "../../Home/PersonalProfile/components/card";
@@ -43,7 +43,7 @@ export default function Review() {
         ))}
       </div>
       <div className="w-full">
-        <Table rows={rows}/>
+        <TableReview rows={rows}/>
       </div>
     </div>
   );

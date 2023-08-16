@@ -4,6 +4,7 @@ const userReportSchema = new mongoose.Schema(
   { 
     orderedProduct: {
       type: mongoose.Schema.Types.ObjectId,
+      required: true,
       ref: "Order",
     },
     title:{type: String, required: true},

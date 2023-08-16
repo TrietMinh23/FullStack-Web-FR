@@ -13,6 +13,7 @@ export default function PopupReport({ i, close, at, data }) {
       details: details,
       id_reporter: data[i].orderby._id,
       id_reported: data[i].products[0].sellerId._id,
+      orderedProduct:data[i]._id,
       status: "Pending",
     };
     Report(dataSend);

@@ -6,7 +6,7 @@ const fetchData = async () => {
   try {
     const response = await getReport();
     console.log(response);
-    // console.log("this is");
+    console.log("this is");
     return response.data;
   } catch (error) {
     console.error(error);

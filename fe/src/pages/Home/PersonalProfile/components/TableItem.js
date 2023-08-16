@@ -17,7 +17,7 @@ const TableItem = () => {
   const [isReview, setIsReview] = useState(false);
   const [isCancel, setIsCancel] = useState(false);
   const [isReport, setIsReport] = useState(false);
-  const [isAlReview, setIsAlReview] = useState(false);
+  // const [isAlReview, setIsAlReview] = useState(false);
   const [orders, setOrders] = useState(null);
 
   const [indexReview, setIndexReview] = useState("");
@@ -29,7 +29,7 @@ const TableItem = () => {
   };
   const finishReview = () => {
     setIsReview(false);
-    setIsAlReview(true);
+    // setIsAlReview(true);
   };
   const closeCancel = () => {
     setIsCancel(false);
@@ -231,15 +231,17 @@ const TableItem = () => {
                   <span
                     className={
                       "block text-center p-2 rounded-md bg-opacity-50  " +
-                      (row.orderStatus === "Complete"
-                        ? "text-green-800 bg-green-200"
-                        : row.orderStatus === "Processing"
-                        ? "text-gray-800 bg-yellow-200"
-                        : row.orderStatus === "Shipping"
-                        ? "text-gray-800 bg-blue-200"
-                        : row.orderStatus === "Cancel"
-                        ? "text-red-800 bg-red-200"
-                        : "")
+                      (row.orderStatus === "Delivered"
+                      ? "text-green-800 bg-green-200"
+                      : row.orderStatus === "Processing"
+                      ? "text-gray-800 bg-yellow-200"
+                      : row.orderStatus === "Dispatched"
+                      ? "text-gray-800 bg-blue-200"
+                      : row.orderStatus === "Not Processed"
+                      ? "text-gray-800 bg-orange-200"
+                      : row.orderStatus === "Cancelled"
+                      ? "text-red-800 bg-red-200"
+                      : "")
                     }
                   >
                     {row.orderStatus}
@@ -250,22 +252,18 @@ const TableItem = () => {
                   {moment(row.orderDate).format("DD/MM/YYYY")}
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                  {row.orderStatus === "Complete" && (
+                  {row.orderStatus === "Delivered" && (
                     <div className="grow flex">
                       <button
                         onClick={() => {
                           setIsReview(!isReview);
                           setIndexReview(index);
                         }}
-                        className={`mr-2 md:w-1/2 bg-green-sheen text-white font-semibold rounded-md border-2 border-transparent 
-                        ${
-                          !isAlReview
-                            ? "hover:border-2 hover:border-green-sheen hover:text-green-sheen hover:bg-white"
-                            : ""
-                        }
+                        className={`mr-2 md:w-1/2 bg-green-sheen text-white font-semibold rounded-md border-2 border-transparent hover:border-2 hover:border-green-sheen hover:text-green-sheen hover:bg-white
                         `}
                       >
-                        {!isAlReview ? "Review" : "Done Review"}
+                        {/* {(isAlReview && (indexReview === index))  ? "Done Review": "Review"} */}
+                        Review
                       </button>
                       <button
                         onClick={() => {
@@ -278,7 +276,7 @@ const TableItem = () => {
                       </button>
                     </div>
                   )}
-                  {row.orderStatus === "Shipping" && (
+                  {row.orderStatus === "Dispatched" && (
                     <div className="grow flex">
                       <button
                         onClick={() => {
@@ -300,7 +298,7 @@ const TableItem = () => {
                       </button>
                     </div>
                   )}
-                  {row.orderStatus === "Processing" && (
+                  {(row.orderStatus === "Processing" ||  row.orderStatus === "Not Processed") && (
                     <div className="grow flex">
                       <button className="mr-2 md:w-1/2 bg-yellow-500 py-2 px-4 text-white font-semibold rounded-md border-2 border-transparent ">
                         Waiting
@@ -316,7 +314,7 @@ const TableItem = () => {
                       </button>
                     </div>
                   )}
-                  {row.orderStatus === "Cancel" && (
+                  {row.orderStatus === "Cancelled" && (
                     <div className="grow flex">
                       <button
                         onClick={() => {
@@ -352,13 +350,15 @@ const TableItem = () => {
               <div>
                 <span
                   className={`p-1.5 text-xs font-medium uppercase tracking-wider ${
-                    row.orderStatus === "Complete"
+                    row.orderStatus === "Delivered"
                       ? "text-green-800 bg-green-200"
-                      : row.status === "Expense"
+                      : row.orderStatus === "Processing"
                       ? "text-gray-800 bg-yellow-200"
-                      : row.status === "Shipping"
+                      : row.status === "Dispatched"
                       ? "text-gray-800 bg-blue-200"
-                      : row.status === "Cancel"
+                      : row.orderStatus === "Not Processed"
+                      ? "text-gray-800 bg-orange-200"
+                      : row.status === "Cancelled"
                       ? "text-red-800 bg-red-200"
                       : ""
                   } rounded-lg bg-opacity-50`}
@@ -372,7 +372,7 @@ const TableItem = () => {
             </div>
             <div className="text-sm font-medium text-black">${row.price}</div>
             <div className="flex justify-end">
-              {row.status === "Complete" && (
+              {row.orderStatus === "Delivered" && (
                 <div className="grow flex">
                   <button
                     onClick={() => {
@@ -394,7 +394,7 @@ const TableItem = () => {
                   </button>
                 </div>
               )}
-              {row.status === "Shipping" && (
+              {row.orderStatus === "Dispatched" && (
                 <div className="grow flex">
                   <button
                     onClick={() => {
@@ -416,7 +416,7 @@ const TableItem = () => {
                   </button>
                 </div>
               )}
-              {row.status === "Expense" && (
+              {(row.orderStatus === "Processing"||row.orderStatus === "Not Processed" ) && (
                 <div className="grow flex">
                   <button className="mr-2 md:w-1/2 bg-yellow-500 py-2 px-4 text-white font-semibold rounded-md border-2 border-transparent ">
                     Waiting
@@ -432,7 +432,7 @@ const TableItem = () => {
                   </button>
                 </div>
               )}
-              {row.status === "Cancel" && (
+              {row.orderStatus === "Cancelled" && (
                 <div className="grow flex">
                   <button
                     onClick={() => {
@@ -569,6 +569,8 @@ const TableItem = () => {
             close={closeReview}
             i={indexReview}
             at={document.documentElement.scrollTop}
+            finish = {finishReview}
+            data ={orders}
           />
           <div id="dimScreen" className={"block "}></div>
         </div>
