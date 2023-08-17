@@ -28,3 +28,14 @@ export const countSellers = async () => {
     throw new Error(error.response?.data?.error || "Error count sellers.");
   }
 };
+
+export const getSellerPerformanceStats = async () => {
+  try {
+    const respone = await instance.get("/sellers/admin");
+    return respone;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.error || "Error get seller performance stats."
+    );
+  }
+}

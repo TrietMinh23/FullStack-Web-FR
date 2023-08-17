@@ -1,62 +1,51 @@
 import React from "react";
+import { useEffect, useState } from "react";
 import Tracker from "../components/Tracker";
 import TableAS from "../components/Table/TableAS";
-import BlockIcon from '@mui/icons-material/Block';
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import ThumbDownAltIcon from "@mui/icons-material/ThumbDownAlt";
-import PhonelinkIcon from '@mui/icons-material/Phonelink';
-import PhonelinkOffIcon from '@mui/icons-material/PhonelinkOff';
-import { rows } from "../data/dataAllSellers";
-
-const staticTable = [
-  {
-    icon: <PhonelinkIcon/>,
-    id: 1,
-    title: "ONL",
-    text: "online < 15 day",
-    today: "10",
-    all: "53",
-    color: "green",
-  },
-  {
-    icon: <PhonelinkOffIcon/>,
-    id: 2,
-    title: "OFF > 15",
-    text: "offline > 15 day",
-    today: "10",
-    all: "53",
-    color: "gray",
-  },
-  {
-    icon: <BlockIcon />,
-    id: 3,
-    title: "OFF",
-    text: "offline > 30 day",
-    today: "10",
-    all: "53",
-    color: "red",
-  },
-  {
-    icon: <ThumbUpAltIcon/>,
-    id: 4,
-    title: "Positive",
-    text: "positive review",
-    today: "10",
-    all: "53",
-    color: "blue",
-  },
-  {
-    icon: <ThumbDownAltIcon/>,
-    id: 5,
-    title: "Negative",
-    text: "negative review",
-    today: "10",
-    all: "53",
-    color: "orange",
-  },
-];
+import { getSellerPerformanceStats } from "../../../api/seller";
 
 export default function Allsellers() {
+  const [sellerData, setSellerData] = useState([]);
+  const [totalPositive, setTotalPositive] = useState(0);
+  const [totalNegative, setTotalNegative] = useState(0);
+
+  const staticTable = [
+    {
+      icon: <ThumbUpAltIcon />,
+      id: 1,
+      title: "Positive",
+      text: "positive review",
+      today: "10",
+      all: totalPositive,
+      color: "blue",
+    },
+    {
+      icon: <ThumbDownAltIcon />,
+      id: 2,
+      title: "Negative",
+      text: "negative review",
+      today: "10",
+      all: totalNegative,
+      color: "orange",
+    },
+  ];
+
+  useEffect(() => {
+    const fetchSellers = async () => {
+      try {
+        const response = await getSellerPerformanceStats();
+        setSellerData(response.data.Sellers);
+        setTotalPositive(response.data.totalPositive);
+        setTotalNegative(response.data.totalNegative);
+      } catch (error) {
+        console.error(error.message);
+      }
+    };
+    fetchSellers();
+  }, []);
+
   return (
     <React.Fragment>
       <div>
@@ -74,8 +63,7 @@ export default function Allsellers() {
           ))}
         </div>
         <div className="mt-8 w-full">
-          <TableAS rows = {rows}
-          />
+          <TableAS rows={sellerData} />
         </div>
       </div>
     </React.Fragment>

@@ -129,10 +129,10 @@ const Table = ({rows}) => {
               </th>
               <th
                 className="p-3 text-sm font-semibold tracking-wide text-left"
-                onClick={() => handleSort("purchase")}
+                onClick={() => handleSort("processing")}
               >
-                Purchase orders{" "}
-                {sortColumn === "purchase" && (sortOrder === "asc" ? "▲" : "▼")}
+                Processing orders{" "}
+                {sortColumn === "processing" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
                 className="p-3 text-sm font-semibold tracking-wide text-left"
@@ -171,7 +171,7 @@ const Table = ({rows}) => {
             {getCurrentPageData().map((row, index) => (
               <tr
                 className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
-                key={row.userName}
+                key={row._id}
               >
                 <td className="p-3 text-sm text-center text-gray-700 whitespace-nowrap">
                   <input
@@ -183,22 +183,22 @@ const Table = ({rows}) => {
                   />
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                  {row.userName}
+                  {row.name}
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                  {row.purchase}
+                  {row.sumPurchasedPrice}
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                  {row.canceled}
+                  {row.sumCancelledPrice}
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                  {row.totalIncome}
+                  {row.sumDeliveredPrice}
                 </td>
                 <td className="p-3 text-xs font-medium uppercase text-gray-700 whitespace-nowrap ">
                   <span
                     className={
                       "block text-center p-2 rounded-md bg-opacity-50  " +
-                      (row.status === "ONL"
+                      ( true
                         ? "text-green-800 bg-green-200"
                         : row.status === "OFF > 15 day"
                         ? "text-gray-800 bg-gray-200"
@@ -207,12 +207,12 @@ const Table = ({rows}) => {
                         : "")
                     }
                   >
-                    {row.status}
+                    Active
                   </span>
                 </td>
 
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                  {row.signUpDate}
+                  {row.createdAt}
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
                   <button className="text-blue-500 font-bold hover:underline">
@@ -232,7 +232,7 @@ const Table = ({rows}) => {
         {getCurrentPageData().map((row) => (
           <div
             className="bg-white space-y-3 p-4 rounded-lg shadow"
-            key={row.userName}
+            key={row._id}
           >
             <div className="flex items-center space-x-2 text-sm">
               <div>
@@ -240,14 +240,14 @@ const Table = ({rows}) => {
                   href="/#"
                   className="text-blue-500 font-bold hover:underline"
                 >
-                  userName {row.userName}
+                  userName {row.name}
                 </a>
               </div>
-              <div className="text-gray-500">{row.signUpDate}</div>
+              <div className="text-gray-500">{row.createdAt}</div>
               <div>
                 <span
                   className={`p-1.5 text-xs font-medium uppercase tracking-wider ${
-                    row.status === "ONL"
+                    true
                       ? "text-green-800 bg-green-200"
                       : row.status === "OFF > 15 day"
                       ? "text-gray-800 bg-gray-200"
@@ -256,12 +256,12 @@ const Table = ({rows}) => {
                       : ""
                   } rounded-lg bg-opacity-50`}
                 >
-                  {row.status}
+                  ACTIVE
                 </span>
               </div>
             </div>
-            <div className="text-sm text-gray-700">Purchase order: {row.purchase}</div>
-            <div className="text-sm font-medium text-black">${row.totalIncome}</div>
+            <div className="text-sm text-gray-700">Processing order: {row.sumPurchasedPrice}</div>
+            <div className="text-sm font-medium text-black">${row.sumDeliveredPrice}</div>
             <div className="flex justify-end">
               <button className="text-blue-500 font-bold hover:underline">
                 <FaPen />

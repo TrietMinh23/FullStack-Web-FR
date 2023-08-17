@@ -1,5 +1,6 @@
 import { User } from "../models/userModel.js";
 import { Cart } from "../models/cartModel.js";
+import { Order } from "../models/orderModel.js";
 import { generateToken, decodeToken } from "../config/jwtToken.js";
 import bcrypt from "bcryptjs";
 import "dotenv/config";
@@ -331,3 +332,89 @@ export const countBuyer = async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 };
+
+export const get_buyer_performance_stats = async (req, res) => {
+  try {
+    const buyers = await User.find({ role: "buyer" });
+    const buyerIds = buyers.map((buyer) => buyer._id);
+
+    const incomePipeline = [
+      {
+        $match: {
+          orderStatus: { $in: ["Delivered", "Cancelled", "Processing"] },
+          orderby: { $in: buyerIds },
+        },
+      },
+      { $unwind: "$products" },
+      {
+        $lookup: {
+          from: "products",
+          localField: "products",
+          foreignField: "_id",
+          as: "productData",
+        },
+      },
+      { $unwind: "$productData" },
+      {
+        $group: {
+          _id: "$orderby",
+          sumDeliveredPrice: {
+            $sum: {
+              $cond: [{ $eq: ["$orderStatus", "Delivered"] }, "$productData.price", 0],
+            },
+          },
+          sumCancelledPrice: {
+            $sum: {
+              $cond: [{ $eq: ["$orderStatus", "Cancelled"] }, "$productData.price", 0],
+            },
+          },
+          sumPurchasedPrice: {
+            $sum: {
+              $cond: [{ $eq: ["$orderStatus", "Purchased"] }, "$productData.price", 0],
+            },
+          },
+        },
+      },
+    ];
+
+    // Execute the aggregation pipeline to calculate totalSalesData
+    const totalSalesData = await Order.aggregate(incomePipeline);
+
+    const buyerStats = buyers.map((buyer) => {
+      const {
+        password,
+        role,
+        __t,
+        updatedAt,
+        passwordChangeAt,
+        passwordResetExpires,
+        passwordResetToken,
+        ...buyerData
+      } = buyer.toObject();
+
+      const totalSalesInfo = totalSalesData.find(
+        (item) => item._id.toString() === buyer._id.toString()
+      ) || {
+        totalSales: 0,
+        sumDeliveredPrice: 0,
+        sumCancelledPrice: 0,
+        sumPurchasedPrice: 0,
+      };
+
+      return {
+        ...buyerData,
+        totalSales: totalSalesInfo.totalSales,
+        sumDeliveredPrice: totalSalesInfo.sumDeliveredPrice,
+        sumCancelledPrice: totalSalesInfo.sumCancelledPrice,
+        sumPurchasedPrice: totalSalesInfo.sumPurchasedPrice,
+      };
+    });
+
+    res.status(200).json({
+      Buyers: buyerStats,
+    });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
