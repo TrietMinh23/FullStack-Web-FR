@@ -3,6 +3,7 @@ import {
     getUserReview,
     createReview,
     getReviewBySellerId,
+    getAllReviewsBySellerId,
   } from "../controllers/userReviewController.js";
 
 const router = express.Router();
@@ -11,5 +12,6 @@ const router = express.Router();
 
 router.get("/", getUserReview);
 router.get("/:id", getReviewBySellerId);
+router.get("/all/:id", getAllReviewsBySellerId);
 router.post("/send", createReview);
 export default router;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PaginationComponent from "../../Home/components/Pagination";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { updateOrderStatusToDispatched } from "../../../api/order";
@@ -143,7 +143,6 @@ export default function TableOrders({
 
     return consolidatedData.slice(startIndex, endIndex);
   };
-
   return (
     <div className="p-5 h-full bg-gray-100 w-full rounded-md">
       <h1 className="text-xl mb-2">{nameTable}</h1>

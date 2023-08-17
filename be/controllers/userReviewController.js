@@ -21,11 +21,40 @@ export const createReview = async (req, res) => {
   };
   export const getReviewBySellerId = async (req, res) => {
     try {
+      var page = parseInt(req.query.page) || 1;
+      var limit = parseInt(req.query.limit) || 20;
+      const skip = (page - 1) * limit;
+
       const _id = req.params.id;
+
       const review = await userReview.find({seller: _id })
-      .populate("buyer", "name");
+      .populate("buyer", "name")
+      .skip(skip)
+      .limit(limit)
+      .exec();
+
+      const totalReview = await userReview.find({ seller: _id}).countDocuments();
+      const totalPages = Math.ceil(totalReview / limit);
+
+      const totalStar1 = await userReview.countDocuments({ seller: _id, 'rating.star': 1 });
+      const totalStar2 = await userReview.countDocuments({ seller: _id, 'rating.star': 2 });
+      const totalStar3 = await userReview.countDocuments({ seller: _id, 'rating.star': 3 });
+      const totalStar4 = await userReview.countDocuments({ seller: _id, 'rating.star': 4 });
+      const totalStar5 = await userReview.countDocuments({ seller: _id, 'rating.star': 5 });
+      const AvgStar = (totalStar5 * 5 + totalStar4 * 4 + totalStar3 *3 + totalStar2 * 2 + totalStar1 )/ totalReview
       if (review) {
-        res.status(200).json({ review});
+        res.status(200).json({ 
+          review,
+          currentPage: page,
+          totalReview,
+          totalPages,
+          totalStar1,
+          totalStar2,
+          totalStar3,
+          totalStar4,
+          totalStar5,
+          AvgStar
+        });
       } else {
         res.status(404).json({ message: "Not found!" });
       }
@@ -34,3 +63,34 @@ export const createReview = async (req, res) => {
     }
   };
   
+  export const getAllReviewsBySellerId = async (req, res) => {
+    try {
+      const _id = req.params.id;
+      const review = await userReview.find({seller: _id })
+      .populate("buyer", "name")
+      const totalReview = await userReview.find({ seller: _id}).countDocuments();
+      
+      const totalStar1 = await userReview.countDocuments({ seller: _id, 'rating.star': 1 });
+      const totalStar2 = await userReview.countDocuments({ seller: _id, 'rating.star': 2 });
+      const totalStar3 = await userReview.countDocuments({ seller: _id, 'rating.star': 3 });
+      const totalStar4 = await userReview.countDocuments({ seller: _id, 'rating.star': 4 });
+      const totalStar5 = await userReview.countDocuments({ seller: _id, 'rating.star': 5 });
+      const AvgStar = (totalStar5 * 5 + totalStar4 * 4 + totalStar3 *3 + totalStar2 * 2 + totalStar1 )/ totalReview
+      if (review) {
+        res.status(200).json({ 
+          review,
+          totalReview,
+          totalStar1,
+          totalStar2,
+          totalStar3,
+          totalStar4,
+          totalStar5,
+          AvgStar
+        });
+      } else {
+        res.status(404).json({ message: "Not found!" });
+      }
+    } catch (err) {
+      res.json({ message: "noooooo"});
+    }
+  };

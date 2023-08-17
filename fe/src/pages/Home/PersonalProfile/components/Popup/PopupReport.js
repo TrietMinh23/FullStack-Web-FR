@@ -7,7 +7,6 @@ export default function PopupReport({ i, close, at, data }) {
   const [details, setDetails] = useState("");
   const comfirm = () => {
     setIsComfirm(true);
-    console.log(iscomfirm);
     const dataSend = {
       title: title,
       details: details,

@@ -1,31 +1,32 @@
-import React, { useState } from "react";
-import { FaTrashAlt, FaPen } from "react-icons/fa";
+import React, { useState,useEffect } from "react";
+import { FaTrashAlt} from "react-icons/fa";
+import { AiFillEye} from "react-icons/ai";
+import PopupReview from "./Popup/PopupReview";
 import PaginationComponent from "../../Home/components/Pagination";
-import { deleteProduct } from "../../../api/products";
 
-export default function TableReview({
+export default function TableReview ({
   rows,
-  nameTable,
   onPageChange,
   page,
   onPerPageChange,
   perPage,
-  onSelectEditRow,
-}) {
-  // const [perPage, setPerPage] = useState(5); // Số hàng trên mỗi trang
-  const [currentPage] = useState(1); // Trang hiện tại
-  const [sortColumn, setSortColumn] = useState("postDate"); // Cột hiện tại được sắp xếp
-  const [sortOrder, setSortOrder] = useState("desc"); // Thứ tự sắp xếp ('asc' hoặc 'desc')
-  const [searchTerm, setSearchTerm] = useState(""); // Giá trị tìm kiếm
-  const [selectedItems, setSelectedItems] = useState([]); // Các sản phẩm được chọn
-  const [selectAll, setSelectAll] = useState(false); // Tất cả sản phẩm được chọn
+  }){
+  const [currentPage] = useState(1);
+  const [sortColumn, setSortColumn] = useState("");
+  const [sortOrder, setSortOrder] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedItems, setSelectedItems] = useState([]);
+  const [selectAll, setSelectAll] = useState(false);
+  const [indexReview, setIndexReview] = useState(false);
+  const [detailReview, setDetailReview] = useState(false);
 
+  const closeSee = () => {
+    setDetailReview(false);
+  }
   const handleSort = (column) => {
     if (column === sortColumn) {
-      // Đang sắp xếp theo cột đã chọn, thay đổi thứ tự sắp xếp
       setSortOrder(sortOrder === "asc" ? "desc" : "asc");
     } else {
-      // Đang sắp xếp theo một cột khác, đặt cột và thứ tự sắp xếp mới
       setSortColumn(column);
       setSortOrder("asc");
     }
@@ -42,9 +43,7 @@ export default function TableReview({
       setSelectedItems((prevSelectedItems) => [...prevSelectedItems, item]);
     } else {
       setSelectedItems((prevSelectedItems) =>
-        prevSelectedItems.filter(
-          (selectedItem) => selectedItem.tradeCode !== item.tradeCode
-        )
+        prevSelectedItems.filter((selectedItem) => selectedItem._id !== item._id)
       );
     }
   };
@@ -61,36 +60,10 @@ export default function TableReview({
     }
   };
 
-  const handleDelete = async () => {
-    try {
-      const productIdsToDelete = selectedItems.map((item) => item.tradeCode);
-      for (const productId of productIdsToDelete) {
-        await deleteProduct(productId);
-      }
-      setSelectedItems([]);
-      window.location.reload();
-    } catch (error) {
-      console.error(error.message);
-    }
+  const handleDelete = () => {
+    setSelectedItems([]);
   };
 
-  const handleDeleteRow = async (item) => {
-    try {
-      await deleteProduct(item.tradeCode);
-      setSelectedItems((prevSelectedItems) =>
-        prevSelectedItems.filter(
-          (selectedItem) => selectedItem.tradeCode !== item.tradeCode
-        )
-      );
-      window.location.reload();
-    } catch (error) {
-      console.error(error.message);
-    }
-  };
-
-  const handleEditRow = (item) => {
-    onSelectEditRow(item.tradeCode); // Call the provided prop with the TradeCode
-  };
   const getCurrentPageData = () => {
     const startIndex = (currentPage - 1) * perPage;
     const endIndex = startIndex + perPage;
@@ -98,11 +71,11 @@ export default function TableReview({
     let filteredData = rows;
 
     if (searchTerm) {
-      filteredData = rows.filter((row) => {
-        return Object.values(row).some((value) =>
+      filteredData = rows.filter((row) =>
+        Object.values(row).some((value) =>
           value.toString().toLowerCase().includes(searchTerm.toLowerCase())
-        );
-      });
+        )
+      );
     }
 
     let sortedData = filteredData;
@@ -119,11 +92,19 @@ export default function TableReview({
 
     return sortedData.slice(startIndex, endIndex);
   };
-
+  useEffect(() => {
+    console.log(rows);
+  },[rows]);
+  const formatDate = (date) => {
+    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+    const parts = new Date(date).toLocaleDateString(undefined, options).split(' ');
+    return `${parts[1]} ${parts[0]}, ${parts[2]}`;
+  }
   return (
     <div className="p-5 h-full bg-gray-100 w-full rounded-md">
-      <h1 className="text-xl mb-2">{nameTable}</h1>
+      <h1 className="text-xl mb-2">All reviews</h1>
 
+      {/* Search and Delete */}
       <div className="flex items-center mb-4">
         <label htmlFor="search" className="mr-2">
           Search:
@@ -136,15 +117,15 @@ export default function TableReview({
           onChange={handleSearch}
         />
         <button
-          id="All"
-          className="ml-2 p-4 bg-red-500 text-white rounded-md"
+          className="ml-2 p-2 hover:bg-red-600 bg-red-500 text-white rounded-md"
           onClick={handleDelete}
         >
           <FaTrashAlt />
         </button>
       </div>
 
-      <div className="overflow-auto rounded-lg shadow hidden lg:block">
+      {/* Desktop Table */}
+      <div className="overflow-auto rounded-lg shadow hidden xl:block">
         <table className="w-full">
           <thead className="bg-gray-50 border-b-2 border-gray-200">
             <tr>
@@ -157,42 +138,39 @@ export default function TableReview({
               </th>
               <th
                 className="w-20 p-3 text-sm font-semibold tracking-wide text-left"
-                onClick={() => handleSort("tradeCode")}
+                onClick={() => handleSort("_id")}
               >
-                TradeCode{" "}
-                {sortColumn === "tradeCode" &&
+                ID {sortColumn === "_id" && (sortOrder === "asc" ? "▲" : "▼")}
+              </th>
+              <th
+                className="p-3 text-sm font-semibold tracking-wide text-left"
+                onClick={() => handleSort("buyer")}
+              >
+                Buyer{" "}
+                {sortColumn === "buyer" &&
                   (sortOrder === "asc" ? "▲" : "▼")}
               </th>
-              <th className="p-3 text-sm font-semibold tracking-wide text-left">
-                Image
+              <th
+                className="p-3 text-sm font-semibold tracking-wide text-left"
+                onClick={() => handleSort("star")}
+              >
+                Star{" "}
+                {sortColumn === "star" &&
+                  (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
                 className="p-3 text-sm font-semibold tracking-wide text-left"
-                onClick={() => handleSort("itemName")}
+                onClick={() => handleSort("comment")}
               >
-                Item name{" "}
-                {sortColumn === "itemName" && (sortOrder === "asc" ? "▲" : "▼")}
-              </th>
-              <th
-                className="p-3 text-sm font-semibold tracking-wide text-left"
-                onClick={() => handleSort("price")}
-              >
-                Price{" "}
-                {sortColumn === "price" && (sortOrder === "asc" ? "▲" : "▼")}
+                Comment{" "}
+                {sortColumn === "comment" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
                 className="w-24 p-3 text-sm font-semibold tracking-wide text-left"
-                onClick={() => handleSort("status")}
-              >
-                Status{" "}
-                {sortColumn === "status" && (sortOrder === "asc" ? "▲" : "▼")}
-              </th>
-              <th
-                className="w-24 p-3 text-sm font-semibold tracking-wide text-left"
-                onClick={() => handleSort("postDate")}
+                onClick={() => handleSort("createdAt")}
               >
                 Post date{" "}
-                {sortColumn === "postDate" && (sortOrder === "asc" ? "▲" : "▼")}
+                {sortColumn === "createdAt" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th className="w-32 p-3 text-sm font-semibold tracking-wide text-left">
                 Action
@@ -203,69 +181,41 @@ export default function TableReview({
             {getCurrentPageData().map((row, index) => (
               <tr
                 className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
-                key={row.tradeCode}
+                key={row._id}
               >
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
+                <td className="p-3 text-sm text-center text-gray-700 whitespace-nowrap">
                   <input
                     type="checkbox"
                     checked={selectedItems.some(
-                      (item) => item.tradeCode === row.tradeCode
+                      (item) => item._id === row._id
                     )}
                     onChange={(event) => handleCheckboxChange(event, row)}
                   />
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                  {row.tradeCode}
+                  {row._id}
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                  <div className="w-12 h-12 overflow-hidden m-1 rounded-lg">
-                    <img
-                      src={row.image}
-                      alt={row.tradeCode}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
+                  {row.buyer.name}
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                  {row.itemName}
+                  {row.rating.star}
+                </td>
+                <td className="p-3 text-sm text-gray-700 whitespace-nowrap ">
+                  {row.rating.comment}
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                  {row.price}
+                  {formatDate(row.createdAt)}
                 </td>
-                <td className="p-3 text-xs font-medium uppercase text-gray-700 whitespace-nowrap ">
-                  <span
-                    className={
-                      "block text-center p-2 rounded-md bg-opacity-50  " +
-                      (row.status == "Available" || row.status == "0"
-                        ? "text-green-800 bg-green-200"
-                        : row.status == "Sold out"
-                        ? "text-gray-800 bg-gray-200"
-                        : row.status == "Shipping"
-                        ? "text-yellow-800 bg-yellow-200"
-                        : row.status == "Refund" || row.status == "1"
-                        ? "text-red-800 bg-red-200"
-                        : "")
-                    }
-                  >
-                    {row.status == "0" ? "Available" : "Sold"}
-                  </span>
-                </td>
-
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                  {row.postDate}
-                </td>
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                  <button
-                    className="text-blue-500 font-bold hover:underline"
-                    onClick={() => handleEditRow(row)}
-                  >
-                    <FaPen />
-                  </button>
-                  <button
-                    className="text-red-500 font-bold hover:underline ml-2"
-                    onClick={() => handleDeleteRow(row)}
-                  >
-                    <FaTrashAlt />
+                <td className="p-3 text-sm text-gray-700 whitespace-nowrap flex justify-center">
+                  <button 
+                    className="text-blue-500 font-bold "
+                    onClick ={()=>{
+                      setIndexReview(index);
+                      setDetailReview(true);
+                    }}
+                    >
+                    <AiFillEye/>
                   </button>
                 </td>
               </tr>
@@ -274,11 +224,12 @@ export default function TableReview({
         </table>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:hidden">
+      {/* Mobile/Tablet Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 xl:hidden">
         {getCurrentPageData().map((row) => (
           <div
             className="bg-white space-y-3 p-4 rounded-lg shadow"
-            key={row.tradeCode}
+            key={row._id}
           >
             <div className="flex items-center space-x-2 text-sm">
               <div>
@@ -286,48 +237,26 @@ export default function TableReview({
                   href="/#"
                   className="text-blue-500 font-bold hover:underline"
                 >
-                  TradeCode {row.status == "0" ? "Available" : "Sold"}
+                  {row._id}
                 </a>
               </div>
-              <div className="text-gray-500">{row.postDate}</div>
-              <div>
-                <span
-                  className={`p-1.5 text-xs font-medium uppercase tracking-wider ${
-                    row.status == "Available" || row.status == "0"
-                      ? "text-green-800 bg-green-200"
-                      : row.status == "Sold out"
-                      ? "text-gray-800 bg-gray-200"
-                      : row.status == "Shipping"
-                      ? "text-yellow-800 bg-yellow-200"
-                      : row.status == "Refund" || row.status == "1"
-                      ? "text-red-800 bg-red-200"
-                      : ""
-                  } rounded-lg bg-opacity-50`}
-                >
-                  {row.status == "0" ? "Available" : "Sold"}
-                </span>
-              </div>
+              <div className="text-gray-500">{formatDate(row.createdAt)}</div>
             </div>
-            <div className="text-sm text-gray-700">{row.itemName}</div>
-            <div className="text-sm font-medium text-black">${row.price}</div>
+            <div className="text-sm text-gray-700">
+              Buyer <span className="text-sky-500">{row.buyer.name}</span>, negative reviews: <span className="text-red-400">{row.rating.star}</span>
+            </div>
+            <div className="text-sm font-medium text-black">{row.rating.star}</div>
+            <div className="text-sm font-medium text-black">{row.rating.comment}</div>
             <div className="flex justify-end">
-              <button
-                className="text-blue-500 font-bold hover:underline"
-                onClick={() => handleEditRow(row)}
-              >
-                <FaPen />
-              </button>
-              <button
-                className="text-red-500 font-bold hover:underline ml-2"
-                onClick={handleDelete}
-              >
-                <FaTrashAlt />
+              <button className="text-blue-500 font-bold hover:underline">
+                <AiFillEye/>
               </button>
             </div>
           </div>
         ))}
       </div>
 
+      {/* Pagination */}
       <div className="flex justify-between items-center mt-4 flex-col lg:flex-row">
         <div className="flex items-center w-full mb-10">
           <label htmlFor="rowsPerPage" className="mr-2">
@@ -346,6 +275,21 @@ export default function TableReview({
         </div>
         <PaginationComponent setPage={onPageChange} page={page} />
       </div>
+      {detailReview && 
+         <div className="flex lg:flex-row flex-col">
+         <PopupReview
+           close = {closeSee}
+           i = {indexReview}
+           data = {rows}
+           at={document.documentElement.scrollTop}
+           />
+         <div
+           id="dimScreen"
+           className={"block"}
+           ></div>
+       </div>
+      }
     </div>
   );
-}
+};
+

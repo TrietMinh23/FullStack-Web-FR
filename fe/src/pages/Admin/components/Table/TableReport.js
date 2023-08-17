@@ -137,7 +137,7 @@ const Table = ({rows}) => {
         </button>
       </div>
 
-      {/* <div className="overflow-auto rounded-lg shadow hidden lg:block">
+      <div className="overflow-auto rounded-lg shadow hidden lg:block">
         <table className="w-full">
           <thead className="bg-gray-50 border-b-2 border-gray-200">
             <tr>
@@ -248,9 +248,9 @@ const Table = ({rows}) => {
             ))}
           </tbody>
         </table>
-      </div> */}
+      </div> 
 
-      {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:hidden">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:hidden">
         {getCurrentPageData().map((row, index) => (
           <div
             className="bg-white space-y-3 p-4 rounded-lg shadow"
@@ -394,8 +394,8 @@ const Table = ({rows}) => {
             </div>
           </a>
         </div>
-      </div> */}
-      {/* {isProcess && (
+      </div> 
+       {isProcess && (
         <div className="flex lg:flex-row flex-col">
           <PopupProcess
             close = {closeProcess}
@@ -408,7 +408,7 @@ const Table = ({rows}) => {
             ></div>
         </div>
         )
-      } */}
+      } 
     </div>
   );
 };
