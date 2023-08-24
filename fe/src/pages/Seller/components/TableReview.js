@@ -18,7 +18,7 @@ export default function TableReview ({
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedItems, setSelectedItems] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
-  const [indexReview, setIndexReview] = useState(false);
+  const [indexReview, setIndexReview] = useState(0);
   const [detailReview, setDetailReview] = useState(false);
 
   const closeSee = () => {
