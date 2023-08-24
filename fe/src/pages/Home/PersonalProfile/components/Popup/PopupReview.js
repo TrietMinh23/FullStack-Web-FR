@@ -20,7 +20,7 @@ export default function PopupReview({ finish, close, i, at, data }) {
       Review(thisData);
       setIsComfirm(true);
     } else {
-      // setIsEmty(true);
+      setIsEmty(true);
     }
   };
 

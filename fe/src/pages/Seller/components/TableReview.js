@@ -3,6 +3,7 @@ import { FaTrashAlt} from "react-icons/fa";
 import { AiFillEye} from "react-icons/ai";
 import PopupReview from "./Popup/PopupReview";
 import PaginationComponent from "../../Home/components/Pagination";
+import Rating from "@mui/material/Rating";
 
 export default function TableReview ({
   rows,
@@ -243,10 +244,12 @@ export default function TableReview ({
               <div className="text-gray-500">{formatDate(row.createdAt)}</div>
             </div>
             <div className="text-sm text-gray-700">
-              Buyer <span className="text-sky-500">{row.buyer.name}</span>, negative reviews: <span className="text-red-400">{row.rating.star}</span>
+              Buyer <span className="text-sky-500">{row.buyer.name}</span>
             </div>
-            <div className="text-sm font-medium text-black">{row.rating.star}</div>
-            <div className="text-sm font-medium text-black">{row.rating.comment}</div>
+            <div className="text-sm font-medium text-black">
+              <Rating name="read-only" readOnly value={row.rating.star} />
+              </div>
+            <div className="text-sm font-medium text-black truncate">Rating comment: {row.rating.comment}</div>
             <div className="flex justify-end">
               <button className="text-blue-500 font-bold hover:underline">
                 <AiFillEye/>

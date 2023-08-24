@@ -58,13 +58,22 @@ export default function Review() {
       color: "green",
       title: "5 Star",
     },
+    {
+      icon: <StarBorderIcon />,
+      id: 5,
+      text: "",
+      number: allData.AvgStar,
+      interaction: "53",
+      color: "pink",
+      title: "Avg Star",
+    },
   ];
   const handleChange = (newPage) => {
     setPage(newPage);
   };
   const handlePerPageChange = (newPerPage) => {
     setPerPage(newPerPage);
-    setPage(1); // Reset to first page when changing items per page
+    setPage(1); 
   };
   useEffect(() => {
 
@@ -93,7 +102,7 @@ export default function Review() {
 
   return (
     <div>
-      <div className="mb-12 grid gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-5">
+      <div className="mb-12 grid gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-3">
         {staticTable.map((item) => (
           <Card
             icon={item.icon}

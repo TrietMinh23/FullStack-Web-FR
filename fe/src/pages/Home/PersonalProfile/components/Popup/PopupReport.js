@@ -5,17 +5,28 @@ export default function PopupReport({ i, close, at, data }) {
   const [iscomfirm, setIsComfirm] = useState(false);
   const [title, setTitle] = useState("");
   const [details, setDetails] = useState("");
+  const [isTitleEmty, setIsTitleEmty] = useState(false);
+  const [isComEmty, setIsComEmty] = useState(false);
+
+
   const comfirm = () => {
-    setIsComfirm(true);
-    const dataSend = {
-      title: title,
-      details: details,
-      id_reporter: data[i].orderby._id,
-      id_reported: data[i].products[0].sellerId._id,
-      orderedProduct:data[i]._id,
-      status: "Pending",
-    };
-    Report(dataSend);
+    if(title.length && details.length ){
+      console.log("get in here")
+      setIsComfirm(true);
+      const dataSend = {
+        title: title,
+        details: details,
+        id_reporter: data[i].orderby._id,
+        id_reported: data[i].products[0].sellerId._id,
+        orderedProduct:data[i]._id,
+        status: "Pending",
+      };
+      Report(dataSend);
+    } else {
+      setIsTitleEmty(true);
+      setIsComEmty(true);
+    }
+    console.log("length ",title.length ,details.length)
   };
   const Report = async (dataSend) => {
     console.log("hi" ,dataSend);
@@ -43,7 +54,9 @@ export default function PopupReport({ i, close, at, data }) {
             <div className="w-full flex grow">
               <label htmlFor="title">Title:</label>
               <input
-                className="border ml-3 md:w-full"
+                className={`border ml-3 md:w-full ${
+                  (isTitleEmty && !title.length) && "border-red-700"
+                }`}
                 type="text"
                 name="name"
                 id="title"
@@ -53,7 +66,9 @@ export default function PopupReport({ i, close, at, data }) {
             <div className="flex grow items-center">
               <label htmlFor="title">Detail:</label>
               <textarea
-                className="border md:w-full ml-3"
+                className={`border md:w-full ml-3 ${
+                  (isComEmty && !details.length) && "border-red-700"
+                }`}
                 type="text"
                 name="name"
                 id="title"

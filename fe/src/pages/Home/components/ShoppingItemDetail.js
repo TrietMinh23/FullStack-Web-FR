@@ -22,11 +22,6 @@ export default function ProductDetail() {
   const [review, setReview] = useState([]);
   const [dataReview, setDataReview] = useState({});
 
-  // const [review1, setReview1] = useState([]);
-  // const [review2, setReview2] = useState([]);
-  // const [review3, setReview3] = useState([]);
-  // const [review4, setReview4] = useState([]);
-  // const [review5, setReview5] = useState([]);
   const num = 5;
   const a = parseFloat(num.toFixed(1));
   const dispatch = useDispatch();
@@ -139,18 +134,7 @@ export default function ProductDetail() {
     }
   }, [data]);
 
-  // useEffect(() => {
-  //   const filteredReviews5 = review.filter((re) => re.rating.star === 5);
-  //   setReview5(filteredReviews5);
-  //   const filteredReviews4 = review.filter((re) => re.rating.star === 4);
-  //   setReview4(filteredReviews4);
-  //   const filteredReviews3 = review.filter((re) => re.rating.star === 3);
-  //   setReview3(filteredReviews3);
-  //   const filteredReviews2 = review.filter((re) => re.rating.star === 2);
-  //   setReview2(filteredReviews2);
-  //   const filteredReviews1 = review.filter((re) => re.rating.star === 1);
-  //   setReview1(filteredReviews1);
-  // }, [review]);
+
 
   return (
     <section className="text-gray-700 body-font overflow-hidden bg-white">
@@ -177,7 +161,7 @@ export default function ProductDetail() {
                         <span className="text-2xl text-center pr-2">
                           {dataReview.AvgStar}/5.0
                         </span>
-                        <Rating name="read-only" readOnly value={a} />
+                        <Rating name="read-only" readOnly value={dataReview.AvgStar} />
                       </div>
                       <div className="w-[100px] text-center">
                         <div
