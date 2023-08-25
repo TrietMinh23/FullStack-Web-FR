@@ -60,17 +60,19 @@ function Router() {
           <Route path="shoppingcart" element={<ShoppingCart />} />
         </Route>
         <Route path="/auth-admin" element={<LoginAdmin />}></Route>
-        {JSON.parse(localStorage.getItem("role")) === "seller" ? (
+        {localStorage.getItem("role") === "seller" &&
+        getCookie("refresh_token") ? (
           <Route path="/seller" element={<LayoutSeller />}>
             <Route path="/seller" element={<HomeSeller />} />
             <Route path="all-item" element={<AllItems />} />
             <Route path="all-orders" element={<AllOrders />} />
             <Route path="add-new-item" element={<NewItem />} />
-            <Route path='profile' element={<ProfileSeller />}/>
+            <Route path="profile" element={<ProfileSeller />} />
             <Route path="review" element={<Review />} />
           </Route>
         ) : null}
-        {JSON.parse(localStorage.getItem("role")) === "buyer" ? (
+        {localStorage.getItem("role") === "buyer" &&
+        getCookie("refresh_token") ? (
           <Route path="/" element={<LayoutHomePage />}>
             <Route exact path="/" element={<Home />} />
             <Route path="products/:slug" element={<ShoppingItemDetail />} />
@@ -79,7 +81,8 @@ function Router() {
           </Route>
         ) : null}
         // //Admin page
-        {JSON.parse(localStorage.getItem("role")) === "admin" ? (
+        {localStorage.getItem("role") === "admin" &&
+        getCookie("refresh_token") ? (
           <Route path="/admin" element={<Admin />}>
             <Route
               exact
