@@ -400,7 +400,7 @@ const Table = ({ rows, onPageChange, page, onPerPageChange, perPage }) => {
           </select>
         </div>
         <div className="flex w-full justify-end">
-        <h1></h1>
+        
           <PaginationComponent setPage={onPageChange} page={page} />
         </div>
       </div>

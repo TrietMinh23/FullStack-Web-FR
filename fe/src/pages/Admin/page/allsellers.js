@@ -47,16 +47,22 @@ export default function Allsellers() {
   };
 
   useEffect(() => {
+    console.log("AAA")
     const fetchSellers = async () => {
+      sessionStorage.setItem("page", page.toString());
+      sessionStorage.setItem("perPage", perPage.toString());
       try {
-        sessionStorage.setItem("page", page);
-        sessionStorage.setItem("perPage", perPage);
-
         const response = await getSellerPerformanceStats(page, perPage);
         setSellerData(response.data.Sellers);
         setTotalPositive(response.data.totalPositive);
         setTotalNegative(response.data.totalNegative);
-        sessionStorage.setItem("totalPages", response.data.totalPages);
+        setTotalPages(response.data.totalPages);
+
+        console.log(response.data.totalPages.toString());
+        sessionStorage.setItem(
+          "totalPage",
+          response.data.totalPages.toString()
+        );
       } catch (error) {
         console.error(error.message);
       }
