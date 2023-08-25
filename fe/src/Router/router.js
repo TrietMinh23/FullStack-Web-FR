@@ -60,7 +60,7 @@ function Router() {
           <Route path="shoppingcart" element={<ShoppingCart />} />
         </Route>
         <Route path="/auth-admin" element={<LoginAdmin />}></Route>
-        {localStorage.getItem("role").replace(/^"(.*)"$/, "$1") === "seller" &&
+        {localStorage.getItem("role")?.replace(/^"(.*)"$/, "$1") === "seller" &&
         getCookie("refresh_token") ? (
           <Route path="/seller" element={<LayoutSeller />}>
             <Route path="/seller" element={<HomeSeller />} />
@@ -71,7 +71,7 @@ function Router() {
             <Route path="review" element={<Review />} />
           </Route>
         ) : null}
-        {localStorage.getItem("role").replace(/^"(.*)"$/, "$1") === "buyer" &&
+        {localStorage.getItem("role")?.replace(/^"(.*)"$/, "$1") === "buyer" &&
         getCookie("refresh_token") ? (
           <Route path="/" element={<LayoutHomePage />}>
             <Route exact path="/" element={<Home />} />
@@ -81,7 +81,7 @@ function Router() {
           </Route>
         ) : null}
         // //Admin page
-        {localStorage.getItem("role").replace(/^"(.*)"$/, "$1") === "admin" &&
+        {localStorage.getItem("role")?.replace(/^"(.*)"$/, "$1") === "admin" &&
         getCookie("refresh_token") ? (
           <Route path="/admin" element={<Admin />}>
             <Route
