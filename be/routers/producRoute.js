@@ -8,6 +8,7 @@ import {
   updateProduct,
   deleteProductById,
   getProductBySellerId,
+  getProductsByRelativeCategory,
 } from "../controllers/productController.js";
 import multer from "multer";
 
@@ -19,8 +20,9 @@ const router = express.Router();
 router.get("/:id", getProductById);
 router.get("/item/:slug", getProductBySlug);
 router.get("/list/search/:category", getProductsByCategory);
+router.get("/list/search-relative/:category", getProductsByRelativeCategory);
 router.get("/", getAllProducts);
-router.post("/", upload.single("image"), createProduct); 
+router.post("/", upload.single("image"), createProduct);
 router.put("/:id", upload.single("image"), updateProduct);
 router.delete("/:id", deleteProductById);
 router.get("/sellerId/:id", getProductBySellerId);

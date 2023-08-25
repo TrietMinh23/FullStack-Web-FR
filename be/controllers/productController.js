@@ -95,26 +95,52 @@ export const getProductBySlug = async (req, res) => {
   }
 };
 
+export const getProductsByRelativeCategory = async (req, res) => {
+  try {
+    const categorySlug = req.params.category;
+
+    var products = await Product.find({ category: categorySlug })
+      .sort({ createdAt: -1 })
+      .limit(6)
+      .exec();
+
+    if (products.length === 0) {
+      res
+        .status(400)
+        .json({ error: "No products found for the specified category." });
+    }
+
+    res.status(200).json({
+      products,
+    });
+    return;
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
 export const getProductsByCategory = async (req, res) => {
   try {
     const categorySlug = req.params.category;
 
-    const category = await Product.findOne({ slug: categorySlug });
-    if (!category) {
-      res.status(404).json({ error: "Not found!" });
-      return;
-    }
+    // const category = await Product.findOne({ slug: categorySlug });
+    // if (!category) {
+    //   res.status(404).json({ error: "Not found!" });
+    //   return;
+    // }
 
     // pagination
     var page = parseInt(req.params.page) || 1;
     var limit = parseInt(res.params.limit) || 20; //numbers of products per page
 
     const skip = (page - 1) * limit;
-    var products = await Product.find({ category: category })
+    var products = await Product.find({ category: categorySlug })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .exec();
+
+    console.log(products);
 
     if (products.length === 0) {
       res
@@ -168,7 +194,7 @@ export const getAllProducts = async (req, res) => {
       0
     );
 
-    // Calculate total price of unsold products (sold 0)  
+    // Calculate total price of unsold products (sold 0)
     const sold0Products = await Product.find({ sold: 0 });
     const totalPriceSold0 = sold0Products.reduce(
       (total, product) => total + product.price,
