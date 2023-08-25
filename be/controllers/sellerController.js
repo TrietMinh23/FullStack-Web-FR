@@ -16,9 +16,8 @@ export const getSellers = async (req, res) => {
 export const get_seller_performance_stats = async (req, res) => {
   try {
     // pagination
-    var page = parseInt(req.params.page) || 1;
-    var limit = parseInt(req.params.limit) || 5;
-    console.log("page", page, "limit", limit);
+    var page = parseInt(req.query.page) || 1;
+    var limit = parseInt(req.query.limit) || 5;
     const skip = (page - 1) * limit;
     const sellers = await Seller.find({ role: "seller" });
     const sellerIds = sellers.map((seller) => seller._id);

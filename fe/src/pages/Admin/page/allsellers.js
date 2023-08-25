@@ -47,7 +47,6 @@ export default function Allsellers() {
   };
 
   useEffect(() => {
-    console.log("AAA")
     const fetchSellers = async () => {
       sessionStorage.setItem("page", page.toString());
       sessionStorage.setItem("perPage", perPage.toString());
@@ -58,7 +57,6 @@ export default function Allsellers() {
         setTotalNegative(response.data.totalNegative);
         setTotalPages(response.data.totalPages);
 
-        console.log(response.data.totalPages.toString());
         sessionStorage.setItem(
           "totalPage",
           response.data.totalPages.toString()

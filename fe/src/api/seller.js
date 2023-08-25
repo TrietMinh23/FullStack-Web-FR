@@ -35,14 +35,15 @@ export const getSellerPerformanceStats = async (page, limit) => {
       params: {
         page: page,
         limit: limit,
-      },});
+      },
+    });
     return respone;
   } catch (error) {
     throw new Error(
       error.response?.data?.error || "Error get seller performance stats."
     );
   }
-}
+};
 
 export const blockSeller = async (id) => {
   try {
@@ -51,7 +52,7 @@ export const blockSeller = async (id) => {
   } catch (error) {
     throw new Error(error.response?.data?.error || "Error block seller.");
   }
-}
+};
 
 export const unblockSeller = async (id) => {
   try {
@@ -60,4 +61,4 @@ export const unblockSeller = async (id) => {
   } catch (error) {
     throw new Error(error.response?.data?.error || "Error unblock seller.");
   }
-}
+};
