@@ -19,7 +19,8 @@ export default function Allsellers() {
       text: "positive review",
       today: "10",
       all: totalPositive,
-      color: "blue",
+      color: "#bbf7d0",
+      textColor:"text-green-600",
     },
     {
       icon: <ThumbDownAltIcon />,
@@ -28,7 +29,8 @@ export default function Allsellers() {
       text: "negative review",
       today: "10",
       all: totalNegative,
-      color: "orange",
+      color: "#fecaca",
+      textColor:"text-red-600",
     },
   ];
 
@@ -49,7 +51,7 @@ export default function Allsellers() {
   return (
     <React.Fragment>
       <div>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-4 md:gap-6 xl:grid-cols-5 2xl:gap-7.5">
+        <div className="mb-12 grid gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-4">
           {staticTable.map((item) => (
             <Tracker
               icon={item.icon}
@@ -57,6 +59,7 @@ export default function Allsellers() {
               today={item.today}
               all={item.all}
               color={item.color}
+              textColor={item.textColor}
               title={item.title}
               key={item.id}
             />

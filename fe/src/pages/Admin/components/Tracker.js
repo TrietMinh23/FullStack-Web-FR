@@ -1,8 +1,8 @@
-export default function Card({ title, icon, text, today, all, color }) {
+export default function Card({ title, icon, text, today, all, color, textColor }) {
   return (
     <div className="relative flex flex-col bg-clip-border rounded-xl bg-white text-gray-700 shadow-md">
       <div
-        className={`bg-clip-border mx-4 rounded-xl bg-gradient-to-r overflow-hidden text-white shadow-lg absolute mt-4 grid h-16 w-16 place-items-center`}
+        className={`bg-clip-border mx-4 rounded-xl bg-gradient-to-r overflow-hidden shadow-lg absolute mt-4 grid h-16 w-16 place-items-center ${textColor}`}
         style={{
           background: color,
         }}

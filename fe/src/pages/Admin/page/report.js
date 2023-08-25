@@ -3,56 +3,28 @@ import Tracker from "../components/Tracker";
 import TableReport from "../components/Table/TableReport";
 import CancelIcon from "@mui/icons-material/Cancel";
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
-import PhonelinkIcon from '@mui/icons-material/Phonelink';
-import PhonelinkOffIcon from '@mui/icons-material/PhonelinkOff';
-import BlockIcon from '@mui/icons-material/Block';
 import {data} from "../data/dataReport";
 
 const staticTable = [
-    {
-    icon: <PhonelinkIcon/>,
-    id: 1,
-    title: "ONL",
-    text: "online < 15 day",
-    today: "10",
-    all: "53",
-    color: "green",
-  },
-  {
-    icon: <PhonelinkOffIcon/>,
-    id: 2,
-    title: "OFF > 15",
-    text: "offline > 15 day",
-    today: "10",
-    all: "53",
-    color: "gray",
-  },
-  {
-    icon: <BlockIcon/>,
-    id: 3,
-    title: "OFF",
-    text: "offline > 30 day",
-    today: "10",
-    all: "53",
-    color: "red",
-  },
   {
     icon: <ReceiptLongIcon/>,
     id: 4,
-    title: "Purchase",
-    text: "purchase orders",
+    title: "Done",
+    text: "done report",
     today: "10",
-    all: "53",
-    color: "blue",
+    all: data.totalPending,
+    color: "#bbf7d0",
+    textColor:"text-green-600",
   },
   {
     icon: <CancelIcon/>,
     id: 5,
-    title: "Canceled",
-    text: "canceled orders",
+    title: "Pending",
+    text: "pending report",
     today: "10",
-    all: "53",
-    color: "orange",
+    all: data.totalDone,
+    color: "#fef08a",
+    textColor:"text-yellow-800",
   },
 ];
 
@@ -69,6 +41,7 @@ export default function Report() {
               today={item.today}
               all={item.all}
               color={item.color}
+              textColor={item.textColor}
               title={item.title}
               key={item.id}
             />
@@ -76,7 +49,7 @@ export default function Report() {
         </div>
         <div className="w-full">
           <TableReport 
-            rows = {data}
+            rows = {data.report}
           />
         </div>
        

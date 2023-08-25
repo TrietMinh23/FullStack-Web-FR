@@ -3,7 +3,6 @@ import TableReview from "../components/TableReview";
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import ThumbDownAltIcon from "@mui/icons-material/ThumbDownAlt";
 import Card from "../../Home/PersonalProfile/components/card";
-import { rows } from "../data/dataTable";
 import { getReview } from "../../../api/Review/getAllReviewbyID";
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 
@@ -80,7 +79,6 @@ export default function Review() {
     let sellerId = localStorage.getItem("_id");
     let cleanedSellerId = sellerId.replace(/"/g, "");
     const path = cleanedSellerId;
-    console.log("this is",path);
     fetchData(path, 1);
   }, [page, perPage]);
   const fetchData = async (path) => {
@@ -91,8 +89,6 @@ export default function Review() {
       const response = await getReview(path, page);
       setReview(response.data.review);
       setAllData(response.data);
-      console.log("this is",response.data);
-
       return response.data;
     } catch (error) {
       console.error(error);
