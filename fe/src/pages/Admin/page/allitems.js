@@ -14,7 +14,7 @@ export default function Allitems() {
   const [perPage, setPerPage] = useState(5);
   const [selectedTradeCode, setSelectedTradeCode] = useState(false);
   const [totalSold, setTotalSold] = useState(0);
-  const [totalAvaiable, setTotalAvaiable] = useState(0);
+  const [totalAvailable, setTotalAvailable] = useState(0);
   const [totalPriceSold0, setTotalPriceSold0] = useState(0);
   const [totalPriceSold1, setTotalPriceSold1] = useState(0);
 
@@ -39,7 +39,7 @@ export default function Allitems() {
         const response = await getAllProducts(page, perPage);
         const dataProducts = response.data.products;
         setTotalSold(response.data.totalSold0);
-        setTotalAvaiable(response.data.totalSold1);
+        setTotalAvailable(response.data.totalSold1);
         setTotalPriceSold0(response.data.totalPriceSold0);
         setTotalPriceSold1(response.data.totalPriceSold1);
         const data = dataProducts.map((product) => ({
@@ -72,13 +72,13 @@ export default function Allitems() {
       number: totalSold  || 0,
       money: totalPriceSold0 || 0,
       color: "rgb(74, 222, 128)",
-      title: "AVAIABLE",
+      title: "AVAILABLE",
     },
     {
       icon: <ClearIcon fontSize="large" />,
       id: 2,
       text: "Total Money",
-      number: totalAvaiable || 0,
+      number: totalAvailable || 0,
       money: totalPriceSold1 || 0,
       color: "rgb(248, 113, 113)",
       title: "SOLD",

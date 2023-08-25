@@ -7,31 +7,31 @@ import { instance } from "../../../api/config";
 import { rows } from "../data/dataAllBuyers";
 import { getBuyerPerformanceStats } from "../../../api/buyer";
 
-const staticTable = [
-  {
-    icon: <ReceiptLongIcon />,
-    id: 1,
-    title: "Purchase",
-    text: "purchase orders",
-    today: "10",
-    all: "53",
-    color: "#bbf7d0",
-    textColor:"text-green-600",
-  },
-  {
-    icon: <CancelIcon />,
-    id: 2,
-    title: "Canceled",
-    text: "canceled orders",
-    today: "10",
-    all: "53",
-    color: "#fecaca",
-    textColor:"text-red-600",
-  },
-];
-
 export default function Allbuyer() {
   const [buyerData, setBuyerData] = useState([]);
+
+  const staticTable = [
+    {
+      icon: <ReceiptLongIcon />,
+      id: 1,
+      title: "Purchase",
+      text: "purchase orders",
+      today: "10",
+      all: "53",
+      color: "#bbf7d0",
+      textColor:"text-green-600",
+    },
+    {
+      icon: <CancelIcon />,
+      id: 2,
+      title: "Cancelled",
+      text: "canceled orders",
+      today: "10",
+      all: "53",
+      color: "#fecaca",
+      textColor:"text-red-600",
+    },
+  ];
 
   useEffect(() => {
     const fetchBuyers = async () => {

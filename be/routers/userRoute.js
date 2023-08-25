@@ -33,7 +33,6 @@ router.get("/refresh_token", refreshTokenHandle);
 router.post("/update_information", updateInformation);
 
 router.get("/admin", get_buyer_performance_stats);
-
 router.get("/:id", getUserById);
 router.put("/:id", updateUserById);
 router.get("/buyers/count", countBuyer);
