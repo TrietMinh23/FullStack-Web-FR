@@ -19,6 +19,7 @@ export const get_seller_performance_stats = async (req, res) => {
     var page = parseInt(req.query.page) || 1;
     var limit = parseInt(req.query.limit) || 5;
     const skip = (page - 1) * limit;
+    
     const sellers = await Seller.find({ role: "seller" });
     const sellerIds = sellers.map((seller) => seller._id);
 

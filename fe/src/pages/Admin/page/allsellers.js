@@ -5,11 +5,14 @@ import TableAS from "../components/Table/TableAS";
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import ThumbDownAltIcon from "@mui/icons-material/ThumbDownAlt";
 import { getSellerPerformanceStats } from "../../../api/seller";
+import { todayCountReview } from "../../../api/Review/countAllReview";
 
 export default function Allsellers() {
   const [sellerData, setSellerData] = useState([]);
   const [totalPositive, setTotalPositive] = useState(0);
   const [totalNegative, setTotalNegative] = useState(0);
+  const [todayTotalPositive, setTodayTotalPositive] = useState(0);
+  const [todayTotalNegative, setTodayTotalNegative] = useState(0);
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(5);
   const [totalPages, setTotalPages] = useState(0); // Total number of pages returned by the API
@@ -20,7 +23,7 @@ export default function Allsellers() {
       id: 1,
       title: "Positive",
       text: "positive review",
-      today: "10",
+      today: todayTotalPositive,
       all: totalPositive,
       color: "#bbf7d0",
       textColor: "text-green-600",
@@ -30,7 +33,7 @@ export default function Allsellers() {
       id: 2,
       title: "Negative",
       text: "negative review",
-      today: "10",
+      today: todayTotalNegative,
       all: totalNegative,
       color: "#fecaca",
       textColor: "text-red-600",
@@ -56,6 +59,10 @@ export default function Allsellers() {
         setTotalPositive(response.data.totalPositive);
         setTotalNegative(response.data.totalNegative);
         setTotalPages(response.data.totalPages);
+
+        const responseToday = await todayCountReview();
+        setTodayTotalPositive(responseToday.data.positiveCount);
+        setTodayTotalNegative(responseToday.data.negativeCount);
 
         sessionStorage.setItem(
           "totalPage",

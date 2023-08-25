@@ -335,6 +335,11 @@ export const countBuyer = async (req, res) => {
 
 export const get_buyer_performance_stats = async (req, res) => {
   try {
+    // pagination
+    var page = parseInt(req.query.page) || 1;
+    var limit = parseInt(req.query.limit) || 5;
+    var skip = (page - 1) * limit;
+
     const buyers = await User.find({ role: "buyer" });
     const buyerIds = buyers.map((buyer) => buyer._id);
 
@@ -368,9 +373,9 @@ export const get_buyer_performance_stats = async (req, res) => {
               $cond: [{ $eq: ["$orderStatus", "Cancelled"] }, 1, 0],
             },
           },
-          sumPurchased: {
+          sumProcessing: {
             $sum: {
-              $cond: [{ $eq: ["$orderStatus", "Purchased"] }, 1, 0],
+              $cond: [{ $eq: ["$orderStatus", "Processing"] }, 1, 0],
             },
           },
         },
@@ -379,6 +384,10 @@ export const get_buyer_performance_stats = async (req, res) => {
 
     // Execute the aggregation pipeline to calculate totalSalesData
     const totalSalesData = await Order.aggregate(incomePipeline);
+
+    let totalSumDelivered = 0;
+    let totalSumCancelled = 0;
+    let totalSumProcessing = 0;
 
     const buyerStats = buyers.map((buyer) => {
       const {
@@ -398,23 +407,34 @@ export const get_buyer_performance_stats = async (req, res) => {
         totalSales: 0,
         sumDelivered: 0,
         sumCancelled: 0,
-        sumPurchased: 0,
+        sumProcessing: 0,
       };
+
+      totalSumDelivered += totalSalesInfo.sumDelivered;
+      totalSumCancelled += totalSalesInfo.sumCancelled;
+      totalSumProcessing += totalSalesInfo.sumProcessing;
 
       return {
         ...buyerData,
         totalSales: totalSalesInfo.totalSales,
         sumDelivered: totalSalesInfo.sumDelivered,
         sumCancelled: totalSalesInfo.sumCancelled,
-        sumPurchased: totalSalesInfo.sumPurchased,
+        sumProcessing: totalSalesInfo.sumProcessing,
       };
-    });
+    }).slice(skip, skip + limit);
 
     res.status(200).json({
       Buyers: buyerStats,
+      TotalSumDelivered: totalSumDelivered,
+      TotalSumCancelled: totalSumCancelled,
+      TotalSumProcessing: totalSumProcessing,
+      TotalSumAllStatus: totalSumDelivered + totalSumCancelled + totalSumProcessing,
+      totalPages: Math.ceil(buyers.length / limit),
+      currentPage: page,
     });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 };
+
 
