@@ -41,7 +41,8 @@ export const createReview = async (req, res) => {
       const totalStar3 = await userReview.countDocuments({ seller: _id, 'rating.star': 3 });
       const totalStar4 = await userReview.countDocuments({ seller: _id, 'rating.star': 4 });
       const totalStar5 = await userReview.countDocuments({ seller: _id, 'rating.star': 5 });
-      const AvgStar = (totalStar5 * 5 + totalStar4 * 4 + totalStar3 *3 + totalStar2 * 2 + totalStar1 )/ totalReview
+      const Avg = (totalStar5 * 5 + totalStar4 * 4 + totalStar3 *3 + totalStar2 * 2 + totalStar1 )/ totalReview
+      const AvgStar = parseFloat(Avg.toFixed(1))
       if (review) {
         res.status(200).json({ 
           review,

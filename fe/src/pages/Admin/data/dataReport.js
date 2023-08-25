@@ -5,7 +5,7 @@ import { getReport } from "../../../api/Report/getReport";
 const fetchData = async () => {
   try {
     const response = await getReport();
-    console.log("this is",response.data);
+    console.log("this is test",response.data);
     return response.data;
   } catch (error) {
     console.error(error);

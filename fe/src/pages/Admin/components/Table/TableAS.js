@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaTrashAlt, FaPen } from "react-icons/fa";
-
+import PopUpInforSeller from "../PopUp/PopUpInforSeller";
 const Table = ({ rows }) => {
   const [perPage, setPerPage] = useState(5);
   const [currentPage] = useState(1);
@@ -9,6 +9,12 @@ const Table = ({ rows }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedItems, setSelectedItems] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
+  const [detailInfor , setDetailInfor] = useState(false);
+  const [indexInfor, setIndexInfor] = useState(0);
+
+  const closeSee = () => {
+    setDetailInfor(false);
+  }
 
   const handleSort = (column) => {
     if (column === sortColumn) {
@@ -79,6 +85,9 @@ const Table = ({ rows }) => {
 
     return sortedData.slice(startIndex, endIndex);
   };
+  useEffect(() => {
+    console.log(rows);
+  },[rows]);
 
   return (
     <div className="p-5 h-full bg-gray-100 w-full rounded-md">
@@ -209,7 +218,12 @@ const Table = ({ rows }) => {
                   {row.createdAt}
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                  <button className="text-blue-500 font-bold hover:underline">
+                  <button 
+                    onClick ={() => {
+                      setDetailInfor(true);
+                      setIndexInfor(index);
+                    }}
+                    className="text-blue-500 font-bold hover:underline">
                     <FaPen />
                   </button>
                   <button className="text-red-500 font-bold hover:underline ml-2">
@@ -224,7 +238,7 @@ const Table = ({ rows }) => {
 
       {/* Mobile/Tablet Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 xl:hidden">
-        {getCurrentPageData().map((row) => (
+        {getCurrentPageData().map((row, index) => (
           <div
             className="bg-white space-y-3 p-4 rounded-lg shadow"
             key={row._id}
@@ -256,7 +270,12 @@ const Table = ({ rows }) => {
             </div>
             <div className="text-sm font-medium text-black">${row.totalSales}</div>
             <div className="flex justify-end">
-              <button className="text-blue-500 font-bold hover:underline">
+              <button 
+                onClick ={() => {
+                  setDetailInfor(true);
+                  setIndexInfor(index);
+                }}
+                className="text-blue-500 font-bold hover:underline">
                 <FaPen />
               </button>
               <button className="text-red-500 font-bold hover:underline ml-2">
@@ -286,6 +305,20 @@ const Table = ({ rows }) => {
         </div>
         {/* ... (pagination buttons) */}
       </div>
+      {detailInfor && 
+         <div className="flex lg:flex-row flex-col">
+         <PopUpInforSeller
+           close = {closeSee}
+           i = {indexInfor}
+           data = {rows}
+           at={document.documentElement.scrollTop}
+           />
+         <div
+           id="dimScreen"
+           className={"block"}
+           ></div>
+       </div>
+      }
     </div>
   );
 };

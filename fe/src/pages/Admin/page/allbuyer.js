@@ -3,9 +3,6 @@ import Tracker from "../components/Tracker";
 import TableAB from "../components/Table/TableAB";
 import CancelIcon from "@mui/icons-material/Cancel";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
-import PhonelinkIcon from "@mui/icons-material/Phonelink";
-import PhonelinkOffIcon from "@mui/icons-material/PhonelinkOff";
-import BlockIcon from "@mui/icons-material/Block";
 import { instance } from "../../../api/config";
 import { rows } from "../data/dataAllBuyers";
 import { getBuyerPerformanceStats } from "../../../api/buyer";
@@ -18,7 +15,8 @@ const staticTable = [
     text: "purchase orders",
     today: "10",
     all: "53",
-    color: "blue",
+    color: "#bbf7d0",
+    textColor:"text-green-600",
   },
   {
     icon: <CancelIcon />,
@@ -27,7 +25,8 @@ const staticTable = [
     text: "canceled orders",
     today: "10",
     all: "53",
-    color: "orange",
+    color: "#fecaca",
+    textColor:"text-red-600",
   },
 ];
 
@@ -49,7 +48,7 @@ export default function Allbuyer() {
   return (
     <React.Fragment>
       <div>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-4 md:gap-6 xl:grid-cols-5 2xl:gap-7.5">
+        <div className="mb-12 grid gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-4">
           {staticTable.map((item) => (
             <Tracker
               icon={item.icon}
@@ -57,6 +56,7 @@ export default function Allbuyer() {
               today={item.today}
               all={item.all}
               color={item.color}
+              textColor={item.textColor}
               title={item.title}
               key={item.id}
             />

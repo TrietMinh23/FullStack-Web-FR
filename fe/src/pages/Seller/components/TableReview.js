@@ -18,7 +18,7 @@ export default function TableReview ({
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedItems, setSelectedItems] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
-  const [indexReview, setIndexReview] = useState(false);
+  const [indexReview, setIndexReview] = useState(0);
   const [detailReview, setDetailReview] = useState(false);
 
   const closeSee = () => {
@@ -70,7 +70,7 @@ export default function TableReview ({
     const endIndex = startIndex + perPage;
 
     let filteredData = rows;
-
+    console.log(searchTerm);
     if (searchTerm) {
       filteredData = rows.filter((row) =>
         Object.values(row).some((value) =>
@@ -173,7 +173,7 @@ export default function TableReview ({
                 Post date{" "}
                 {sortColumn === "createdAt" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
-              <th className="w-32 p-3 text-sm font-semibold tracking-wide text-left">
+              <th className="w-32 p-3 text-sm font-semibold tracking-wide text-center">
                 Action
               </th>
             </tr>
@@ -194,7 +194,9 @@ export default function TableReview ({
                   />
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                  {row._id}
+                  <div className ="w-20 truncate">
+                    {row._id}
+                  </div>
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
                   {row.buyer.name}
@@ -203,7 +205,9 @@ export default function TableReview ({
                   {row.rating.star}
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap ">
-                  {row.rating.comment}
+                  <div className ="w-40 truncate">
+                    {row.rating.comment}
+                  </div>
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
                   {formatDate(row.createdAt)}
