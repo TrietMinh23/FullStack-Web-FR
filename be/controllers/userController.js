@@ -358,19 +358,19 @@ export const get_buyer_performance_stats = async (req, res) => {
       {
         $group: {
           _id: "$orderby",
-          sumDeliveredPrice: {
+          sumDelivered: {
             $sum: {
-              $cond: [{ $eq: ["$orderStatus", "Delivered"] }, "$productData.price", 0],
+              $cond: [{ $eq: ["$orderStatus", "Delivered"] }, 1, 0],
             },
           },
-          sumCancelledPrice: {
+          sumCancelled: {
             $sum: {
-              $cond: [{ $eq: ["$orderStatus", "Cancelled"] }, "$productData.price", 0],
+              $cond: [{ $eq: ["$orderStatus", "Cancelled"] }, 1, 0],
             },
           },
-          sumPurchasedPrice: {
+          sumPurchased: {
             $sum: {
-              $cond: [{ $eq: ["$orderStatus", "Purchased"] }, "$productData.price", 0],
+              $cond: [{ $eq: ["$orderStatus", "Purchased"] }, 1, 0],
             },
           },
         },
@@ -396,17 +396,17 @@ export const get_buyer_performance_stats = async (req, res) => {
         (item) => item._id.toString() === buyer._id.toString()
       ) || {
         totalSales: 0,
-        sumDeliveredPrice: 0,
-        sumCancelledPrice: 0,
-        sumPurchasedPrice: 0,
+        sumDelivered: 0,
+        sumCancelled: 0,
+        sumPurchased: 0,
       };
 
       return {
         ...buyerData,
         totalSales: totalSalesInfo.totalSales,
-        sumDeliveredPrice: totalSalesInfo.sumDeliveredPrice,
-        sumCancelledPrice: totalSalesInfo.sumCancelledPrice,
-        sumPurchasedPrice: totalSalesInfo.sumPurchasedPrice,
+        sumDelivered: totalSalesInfo.sumDelivered,
+        sumCancelled: totalSalesInfo.sumCancelled,
+        sumPurchased: totalSalesInfo.sumPurchased,
       };
     });
 

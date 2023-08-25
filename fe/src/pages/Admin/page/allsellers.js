@@ -10,6 +10,9 @@ export default function Allsellers() {
   const [sellerData, setSellerData] = useState([]);
   const [totalPositive, setTotalPositive] = useState(0);
   const [totalNegative, setTotalNegative] = useState(0);
+  const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(5);
+  const [totalPages, setTotalPages] = useState(0); // Total number of pages returned by the API
 
   const staticTable = [
     {
@@ -20,7 +23,7 @@ export default function Allsellers() {
       today: "10",
       all: totalPositive,
       color: "#bbf7d0",
-      textColor:"text-green-600",
+      textColor: "text-green-600",
     },
     {
       icon: <ThumbDownAltIcon />,
@@ -30,23 +33,36 @@ export default function Allsellers() {
       today: "10",
       all: totalNegative,
       color: "#fecaca",
-      textColor:"text-red-600",
+      textColor: "text-red-600",
     },
   ];
+
+  const handleChange = (newPage) => {
+    setPage(newPage);
+  };
+
+  const handlePerPageChange = (newPerPage) => {
+    setPerPage(newPerPage);
+    setPage(1); // Reset to first page when changing items per page
+  };
 
   useEffect(() => {
     const fetchSellers = async () => {
       try {
-        const response = await getSellerPerformanceStats();
+        sessionStorage.setItem("page", page);
+        sessionStorage.setItem("perPage", perPage);
+
+        const response = await getSellerPerformanceStats(page, perPage);
         setSellerData(response.data.Sellers);
         setTotalPositive(response.data.totalPositive);
         setTotalNegative(response.data.totalNegative);
+        sessionStorage.setItem("totalPages", response.data.totalPages);
       } catch (error) {
         console.error(error.message);
       }
     };
     fetchSellers();
-  }, []);
+  }, [page, perPage]);
 
   return (
     <React.Fragment>
@@ -66,7 +82,13 @@ export default function Allsellers() {
           ))}
         </div>
         <div className="mt-8 w-full">
-          <TableAS rows={sellerData} />
+          <TableAS
+            rows={sellerData}
+            page={page}
+            onPageChange={handleChange}
+            onPerPageChange={handlePerPageChange}
+            perPage={perPage}
+          />
         </div>
       </div>
     </React.Fragment>

@@ -42,7 +42,7 @@ const Table = ({rows}) => {
     } else {
       setSelectedItems((prevSelectedItems) =>
         prevSelectedItems.filter(
-          (selectedItem) => selectedItem.userName !== item.userName
+          (selectedItem) => selectedItem._id!== item._id
         )
       );
     }
@@ -89,7 +89,7 @@ const Table = ({rows}) => {
         }
       });
     }
-
+    console.log(sortedData);
     return sortedData.slice(startIndex, endIndex);
   };
 
@@ -185,7 +185,7 @@ const Table = ({rows}) => {
                   <input
                     type="checkbox"
                     checked={selectedItems.some(
-                      (item) => item.userName === row.userName
+                      (item) => item._id === row._id
                     )}
                     onChange={(event) => handleCheckboxChange(event, row)}
                   />
@@ -194,13 +194,13 @@ const Table = ({rows}) => {
                   {row.name}
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                  {row.sumPurchasedPrice}
+                  {row.sumPurchased}
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                  {row.sumCancelledPrice}
+                  {row.sumCancelled}
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                  {row.sumDeliveredPrice}
+                  {row.sumDelivered}
                 </td>
                 <td className="p-3 text-xs font-medium uppercase text-gray-700 whitespace-nowrap ">
                   <span
@@ -273,8 +273,8 @@ const Table = ({rows}) => {
                 </span>
               </div>
             </div>
-            <div className="text-sm text-gray-700">Processing order: {row.sumPurchasedPrice}</div>
-            <div className="text-sm font-medium text-black">${row.sumDeliveredPrice}</div>
+            <div className="text-sm text-gray-700">Processing order: {row.sumPurchased}</div>
+            <div className="text-sm font-medium text-black">${row.sumDelivered}</div>
             <div className="flex justify-end">
               <button
                 onClick ={() => {

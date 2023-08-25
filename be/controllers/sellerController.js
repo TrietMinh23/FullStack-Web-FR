@@ -15,6 +15,10 @@ export const getSellers = async (req, res) => {
 
 export const get_seller_performance_stats = async (req, res) => {
   try {
+    // pagination
+    var page = parseInt(req.params.page) || 1;
+    var limit = parseInt(req.params.limit) || 5;
+    const skip = (page - 1) * limit;
     const sellers = await Seller.find({ role: "seller" });
     const sellerIds = sellers.map((seller) => seller._id);
 
@@ -139,7 +143,7 @@ export const get_seller_performance_stats = async (req, res) => {
         positiveCount: ratingsInfo.positiveCount,
         negativeCount: ratingsInfo.negativeCount,
       };
-    });
+    }).slice(skip, skip + limit);
 
     res.status(200).json({"Sellers": sellerStats, "totalPositive": totalPositive, "totalNegative": totalNegative});
   } catch (err) {
