@@ -34,7 +34,7 @@ export default function Login() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (getCookie("refresh_token"))
+    if (getCookie("refresh_token")) {
       if (getCookie("role") === "buyer") {
         navigate("/");
         window.location.reload();
@@ -42,6 +42,7 @@ export default function Login() {
         navigate("/seller");
         window.location.reload();
       }
+    }
   }, []);
 
   const [isLoading, setLoading] = useState(false);

@@ -2,16 +2,31 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
 import { ValidationEmail } from "../../utils/Validation";
+import { forgotPassword } from "../../api/login";
 
 export default function ForgotPassword() {
   const [stateDialogEmail, setStateDialogEmail] = useState(false);
   const [emailInput, setEmailInput] = useState("");
+  const [errorText, setErrorText] = useState("");
 
-  const resetEmail = (e) => {
+  const resetEmail = async (e) => {
     e.preventDefault();
-    !ValidationEmail(emailInput)
-      ? setStateDialogEmail(true)
-      : setStateDialogEmail(false);
+    if (!ValidationEmail(emailInput)) {
+      setErrorText("Email is not valid")
+      setStateDialogEmail(true);
+    } else {
+      setStateDialogEmail(false);
+
+      try {
+        const response = await forgotPassword({ email: emailInput });
+        console.log("API response:", response); // Log the response to the console
+        setStateDialogEmail(false)
+      } catch (error) {
+        console.error("Error sending reset password email:", error);
+        setErrorText("Email is not exit");
+        setStateDialogEmail(true);
+      }
+    }
   };
 
   return (
@@ -44,13 +59,12 @@ export default function ForgotPassword() {
           ></input>
         </div>
         <div
-          className={`alert-box-inner alert-container mb-4 flex font-semibold text-red-600 ${
-            !stateDialogEmail ? "hidden" : "block"
-          }`}
+          className={`alert-box-inner alert-container mb-4 flex font-semibold text-red-600 ${!stateDialogEmail ? "hidden" : "block"
+            }`}
         >
           <PriorityHighIcon className="icon-alert"></PriorityHighIcon>
           <div className="alert-content text-xs ml-2">
-            <p>Enter your email</p>
+            <p>{errorText}</p>
           </div>
         </div>
         <div className="mt-4">

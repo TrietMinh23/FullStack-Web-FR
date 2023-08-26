@@ -45,8 +45,16 @@ userSchema.methods.createPasswordResetToken = async function () {
   return resetToken;
 };
 
-userSchema.method.isAdmin = async function () {
+userSchema.methods.isAdmin = async function () {
   return this.role === "admin";
+};
+
+//Dat
+userSchema.methods.createPasswordChangedToken = function () {
+  const resetToken = crypto.randomBytes(32).toString('hex'); // generate a random string
+  this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex'); // hash the resetToken and save it to the database
+  this.passwordResetExpires = Date.now() + 15 * 60 * 1000; // 15 minutes
+  return resetToken;
 };
 
 export const User = mongoose.model("User", userSchema);

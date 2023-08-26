@@ -140,8 +140,12 @@ const Table = ({rows, onPageChange, page, totalPages}) => {
                 {sortColumn === "createdAt" &&
                   (sortOrder === "asc" ? "▲" : "▼")}
               </th>
-              <th className="w-32 p-3 text-sm font-semibold tracking-wide text-center">
-                Status
+              <th className="w-32 p-3 text-sm font-semibold tracking-wide text-center"
+                onClick={() => handleSort("status")}
+              >
+                Status{" "}
+                {sortColumn === "status"  && 
+                  (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th className="w-32 p-3 text-sm font-semibold tracking-wide text-center">
                 Action
