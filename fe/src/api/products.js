@@ -37,18 +37,29 @@ export const sellerProduct = async (id, page, limit) => {
   }
 };
 
+export const getRelativeProduct = async (category, id) => {
+  try {
+    const response = await instance.get(`/products/list/search-relative`, {
+      params: { category: category, id: id },
+    });
+    return response;
+  } catch (err) {
+    throw new Error(
+      err.response?.data?.error || "Error get products by category"
+    );
+  }
+};
+
 export const deleteProduct = async (productId) => {
   try {
     const response = await instance.delete(`/products/${productId}`);
     // Reload the page after successful deletion
-    if (response.data.message === 'Product deleted.') {
+    if (response.data.message === "Product deleted.") {
       window.location.reload(); // Reload the current page
     }
     return response.data;
   } catch (error) {
-    throw new Error(
-      error.response?.data?.error || "Error deleting product."
-    );
+    throw new Error(error.response?.data?.error || "Error deleting product.");
   }
 };
 
@@ -57,23 +68,18 @@ export const ProductID = async (id) => {
     const respone = await instance.get(`/products/${id}`);
     return respone;
   } catch (error) {
-    throw new Error(
-      error.response?.data?.error || "Error get products by id."
-    );
+    throw new Error(error.response?.data?.error || "Error get products by id.");
   }
 };
 
 export const updateProduct = async (productId, productData) => {
   try {
-    
     const response = await instance.put(`/products/${productId}`, productData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
     return response.data;
   } catch (error) {
-    throw new Error(
-      error.response?.data?.error || "Error updating product."
-    );
+    throw new Error(error.response?.data?.error || "Error updating product.");
   }
 };
 
@@ -89,8 +95,6 @@ export const getAllProducts = async (page, limit, searchQuery) => {
     });
     return respone;
   } catch (error) {
-    throw new Error(
-      error.response?.data?.error || "Error get all products."
-    );
+    throw new Error(error.response?.data?.error || "Error get all products.");
   }
-}
+};

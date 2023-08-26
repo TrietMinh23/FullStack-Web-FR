@@ -17,9 +17,9 @@ module.exports = {
         cultured: "#F5F5F5",
         "philippine-yellow": "#F7CA00",
         graydark: "#333A48",
-        'meta-4': "#313D4A",
-        primary: '#3C50E0',
-        secondary: '#80CAEE',
+        "meta-4": "#313D4A",
+        primary: "#3C50E0",
+        secondary: "#80CAEE",
         "venetian-red": "#ee4d2d",
         lotion: "#fafafa",
         primary: "#3C50E0",
@@ -36,5 +36,8 @@ module.exports = {
   corePlugins: {
     aspectRatio: false,
   },
-  plugins: [require("@tailwindcss/aspect-ratio")],
+  plugins: [
+    require("@tailwindcss/aspect-ratio"),
+    require("@tailwindcss/forms"),
+  ],
 };

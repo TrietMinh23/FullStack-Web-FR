@@ -1,15 +1,24 @@
 import { Link } from "react-router-dom";
 
-export default function ShoppingCard({ title, price, image, id }) {
+export default function ShoppingCardRelative({ title, price, image, id }) {
   return (
-    <Link to={`/products/${id}`} className="group w-full">
-      <div className="w-full bg-white shadow-md duration-500 hover:scale-105 hover:shadow-xl">
+    <Link
+      to={`/products/${id}`}
+      className="group"
+      onClick={() => {
+        window.onload = () => {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        };
+        window.location.reload();
+      }}
+    >
+      <div className="w-72 bg-white shadow-md duration-500 hover:scale-105 hover:shadow-xl">
         <img
           src={image}
           alt="Product"
           className="h-80 w-72 object-cover rounded-t-xl"
         />
-        <div className="px-4 py-3 w-full">
+        <div className="px-4 py-3 w-72">
           <span className="text-gray-400 mr-3 uppercase text-xs">Brand</span>
           <p className="text-lg font-bold text-black truncate block capitalize">
             {title}

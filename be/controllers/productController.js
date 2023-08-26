@@ -4,6 +4,7 @@ import { User } from "../models/userModel.js";
 import { uploadFile, deleteS3 } from "./s3Controller.js";
 import util from "util";
 import fs from "fs";
+import mongoose from "mongoose";
 
 export const getProductById = async (req, res) => {
   try {
@@ -97,17 +98,26 @@ export const getProductBySlug = async (req, res) => {
 
 export const getProductsByRelativeCategory = async (req, res) => {
   try {
-    const categorySlug = req.params.category;
+    const categorySlug = req.query.category;
+    const id = req.query.id;
 
-    var products = await Product.find({ category: categorySlug })
-      .sort({ createdAt: -1 })
-      .limit(6)
-      .exec();
+    const products = await Product.aggregate([
+      {
+        $match: {
+          category: categorySlug,
+          _id: { $ne: id }, // Exclude the specified id
+          sold: 0,
+        },
+      },
+      { $sample: { size: 4 } }, // Randomly select 4 documents
+      { $sort: { createdAt: -1 } }, // Sort the random documents
+    ]).exec();
 
     if (products.length === 0) {
       res
         .status(400)
         .json({ error: "No products found for the specified category." });
+      return;
     }
 
     res.status(200).json({
@@ -116,44 +126,41 @@ export const getProductsByRelativeCategory = async (req, res) => {
     return;
   } catch (err) {
     res.status(400).json({ error: err.message });
+    return;
   }
 };
 
 export const getProductsByCategory = async (req, res) => {
   try {
-    const categorySlug = req.params.category;
-
-    // const category = await Product.findOne({ slug: categorySlug });
-    // if (!category) {
-    //   res.status(404).json({ error: "Not found!" });
-    //   return;
-    // }
+    const categorySlug = req.query.category;
 
     // pagination
-    var page = parseInt(req.params.page) || 1;
-    var limit = parseInt(res.params.limit) || 20; //numbers of products per page
+    var page = parseInt(req.query.page) || 1;
+    var limit = 20; //numbers of products per page
 
     const skip = (page - 1) * limit;
-    var products = await Product.find({ category: categorySlug })
+    const products = await Product.find({
+      category: { $in: categorySlug }, // Tìm các sản phẩm có ít nhất một phần tử nằm trong mảng categorySlugs
+    })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .exec();
 
-    console.log(products);
-
     if (products.length === 0) {
       res
         .status(400)
         .json({ error: "No products found for the specified category." });
+      return;
     }
 
     const totalProducts = await Product.find({
-      category: category,
+      category: { $in: categorySlug },
     }).countDocuments();
     const totalPages = Math.ceil(totalProducts / limit);
 
     res.status(200).json({
+      products: products,
       currentPage: page,
       totalPages,
       totalProducts,
@@ -161,6 +168,7 @@ export const getProductsByCategory = async (req, res) => {
     return;
   } catch (err) {
     res.status(400).json({ error: err.message });
+    return;
   }
 };
 
