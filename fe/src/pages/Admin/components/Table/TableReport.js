@@ -49,22 +49,6 @@ const Table = ({rows}) => {
     setSearchTerm(e.target.value);
   };
 
-  const handleCheckboxChange = (event, item) => {
-    const {checked} = event.target;
-
-    if (checked) {
-      setSelectedItems((prevSelectedItems) => [...prevSelectedItems, item]);
-    } else {
-      setSelectedItems((prevSelectedItems) =>
-        prevSelectedItems.filter(
-          (selectedItem) =>
-            selectedItem._id!== item._id
-        )
-      );
-    }
-  };
-
-
   const getCurrentPageData = () => {
     const startIndex = (currentPage - 1) * perPage;
     const endIndex = startIndex + perPage;
@@ -226,15 +210,9 @@ const Table = ({rows}) => {
             key={row.id_reporter.name}
           >
             <div className="flex items-center space-x-2 text-sm">
-              <div>
-                <a
-                  href="/#"
-                  className="text-blue-500 font-bold hover:underline"
-                >
-                  id_reporter.name {row.id_reporter.name}
-                </a>
+              <div className="text-blue-500 font-bold ">
+                {row.id_reporter.name} reported {row.id_reported.name}
               </div>
-              <div className="text-gray-500">{row.createdAt}</div>
               <div>
                 <span
                   className={`p-1.5 text-xs font-medium uppercase tracking-wider ${
@@ -251,7 +229,7 @@ const Table = ({rows}) => {
             </div>
             <div className="text-sm text-gray-700">{row.title}</div>
             <div className="text-sm font-medium text-black ">
-              Post Date: {row.createdAt}
+              Post Date: {formatDate(row.createdAt)}
             </div>
             <div className="flex justify-end">
               {row.status === "Done" ? (

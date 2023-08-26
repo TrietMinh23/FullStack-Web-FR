@@ -24,9 +24,7 @@ export const getUserReport = async (req, res) => {
 export const createReport = async (req, res) => {
 
     try {
-        console.log("no see",req.body);
         const newReport = new userReport(req.body);
-        console.log("already save");
         await newReport.save();
     } catch (err) {
       res.status(400).json({ error: err.message });
