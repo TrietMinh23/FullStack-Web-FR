@@ -12,7 +12,6 @@ const Table = ({rows}) => {
   const [sortOrder, setSortOrder] = useState(""); // Thứ tự sắp xếp ('asc' hoặc 'desc')
   const [searchTerm, setSearchTerm] = useState(""); // Giá trị tìm kiếm
   const [selectedItems, setSelectedItems] = useState([]); // Các sản phẩm được chọn
-  const [selectAll, setSelectAll] = useState(false); // Tất cả sản phẩm được chọn
   const [isHandle, setIsHandle] = useState(1);
   const [isReview, setIsReview] = useState(false);
   const [isProcess, setIsProcess] = useState(false);
@@ -65,21 +64,6 @@ const Table = ({rows}) => {
     }
   };
 
-  const handleSelectAllChange = (event) => {
-    const {checked} = event.target;
-
-    if (checked) {
-      setSelectAll(true);
-      setSelectedItems(rows);
-    } else {
-      setSelectAll(false);
-      setSelectedItems([]);
-    }
-  };
-
-  const handleDelete = () => {
-    setSelectedItems([]);
-  };
 
   const getCurrentPageData = () => {
     const startIndex = (currentPage - 1) * perPage;
@@ -106,8 +90,7 @@ const Table = ({rows}) => {
         }
       });
     }
-
-    return sortedData.slice(startIndex, endIndex);
+    return sortedData?.slice(startIndex, endIndex);
   };
   const formatDate = (date) => {
     const options = {year: "numeric", month: "short", day: "numeric"};
@@ -116,6 +99,9 @@ const Table = ({rows}) => {
       .split(" ");
     return `${parts[1]} ${parts[0]}, ${parts[2]}`;
   };
+  useEffect(() => {
+    console.log("right?",rows);
+  },[rows]);
   return (
     <div className="p-5 h-full bg-gray-100 w-full rounded-md">
       <h1 className="text-xl mb-2">All Reports</h1>
@@ -131,25 +117,13 @@ const Table = ({rows}) => {
           value={searchTerm}
           onChange={handleSearch}
         />
-        <button
-          className="ml-2 p-4 bg-red-500 text-white rounded-md"
-          onClick={handleDelete}
-        >
-          <FaTrashAlt />
-        </button>
       </div>
 
-      <div className="overflow-auto rounded-lg shadow hidden lg:block">
+       <div className="overflow-auto rounded-lg shadow hidden lg:block">
         <table className="w-full">
           <thead className="bg-gray-50 border-b-2 border-gray-200">
             <tr>
-              <th>
-                <input
-                  type="checkbox"
-                  checked={selectAll}
-                  onChange={handleSelectAllChange}
-                />
-              </th>
+
               <th
                 className="w-20 p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("id_reporter.name")}
@@ -190,20 +164,11 @@ const Table = ({rows}) => {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
-            {getCurrentPageData().map((row, index) => (
+            {getCurrentPageData()?.map((row, index) => (
               <tr
                 className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
                 key={row.id_reporter._id}
               >
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
-                  <input
-                    type="checkbox"
-                    checked={selectedItems.some(
-                      (item) => item._id === row._id
-                    )}
-                    onChange={(event) => handleCheckboxChange(event, row)}
-                  />
-                </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                   {row.id_reporter.name}
                 </td>
@@ -228,8 +193,8 @@ const Table = ({rows}) => {
                   >
                     {row.status}
                   </span>
-                </td>
-                {row.status === "Done" ? (
+                </td> 
+                 {row.status === "Done" ? (
                   <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                     <button className="text-blue-500 font-bold hover:underline">
                       <AiOutlineCheckCircle className="w-5 h-5 text-blue-500" />
@@ -247,15 +212,15 @@ const Table = ({rows}) => {
                       <PiMagnifyingGlass className="w-5 h-5 text-blue-500" />
                     </button>
                   </td>
-                )}
+                )} 
               </tr>
             ))}
           </tbody>
         </table>
-      </div>
+      </div> 
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:hidden">
-        {getCurrentPageData().map((row, index) => (
+        {getCurrentPageData()?.map((row, index) => (
           <div
             className="bg-white space-y-3 p-4 rounded-lg shadow"
             key={row.id_reporter.name}
@@ -307,7 +272,7 @@ const Table = ({rows}) => {
             </div>
           </div>
         ))}
-      </div>
+      </div> 
 
       <div className="flex justify-between items-center mt-4 flex-col lg:flex-row">
         <div className="flex items-center w-full mb-10">
@@ -406,6 +371,8 @@ const Table = ({rows}) => {
             close={closeProcess}
             finish={finishProcess}
             i={isHandle}
+            data={rows}
+            at={document.documentElement.scrollTop}
           />
           <div id="dimScreen" className={"block"}></div>
         </div>

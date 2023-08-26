@@ -3,33 +3,46 @@ import Tracker from "../components/Tracker";
 import TableReport from "../components/Table/TableReport";
 import CancelIcon from "@mui/icons-material/Cancel";
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
-import {data} from "../data/dataReport";
-
-const staticTable = [
-  {
-    icon: <ReceiptLongIcon/>,
-    id: 4,
-    title: "Done",
-    text: "done report",
-    today: "10",
-    all: data.totalPending,
-    color: "#bbf7d0",
-    textColor:"text-green-600",
-  },
-  {
-    icon: <CancelIcon/>,
-    id: 5,
-    title: "Pending",
-    text: "pending report",
-    today: "10",
-    all: data.totalDone,
-    color: "#fef08a",
-    textColor:"text-yellow-800",
-  },
-];
+import { getReport } from "../../../api/Report/getReport";
 
 export default function Report() {
-
+  const [data, setData] = useState({});
+  const staticTable = [
+    {
+      icon: <ReceiptLongIcon/>,
+      id: 4,
+      title: "Done",
+      text: "done report",
+      today: "10",
+      all: data.totalPending,
+      color: "#bbf7d0",
+      textColor:"text-green-600",
+    },
+    {
+      icon: <CancelIcon/>,
+      id: 5,
+      title: "Pending",
+      text: "pending report",
+      today: "10",
+      all: data.totalDone,
+      color: "#fef08a",
+      textColor:"text-yellow-800",
+    },
+  ];
+  useEffect(() => {
+    fetchData();
+  },[]);
+    const fetchData = async () => {
+      try {
+        const response = await getReport();
+        setData(response.data);
+        // console.log("this is dadgsuadg",response.data.report);
+        return response.data;
+      } catch (error) {
+        console.error(error);
+        return null;
+      }
+    };
   return (
     <React.Fragment>
       <div>
