@@ -1,4 +1,4 @@
-import React, { useState} from "react";
+import React, { useState, useEffect } from "react";
 import PaginationComponent from "../../Home/components/Pagination";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { updateOrderStatusToDispatched } from "../../../api/order";
@@ -140,7 +140,7 @@ export default function TableOrders({
     <div className="p-5 h-full bg-gray-100 w-full rounded-md">
       <h1 className="text-xl mb-2">{nameTable}</h1>
 
-      <div className="flex items-center mb-4">       
+      <div className="flex items-center mb-4">
         <button
           id="All"
           className="ml-2 p-2 bg-green-500 text-white rounded-md hover:bg-green-600 font-bold"
@@ -273,17 +273,16 @@ export default function TableOrders({
                   </td>
                   <td className="p-3 text-xs font-medium uppercase text-gray-700 whitespace-nowrap">
                     <span
-                      className={`p-1.5 text-xs font-medium uppercase tracking-wider ${
-                        row.status == "Delivered"
+                      className={`p-1.5 text-xs font-medium uppercase tracking-wider ${row.status == "Delivered"
                           ? "text-green-800 bg-green-200"
                           : row.status == "Dispatched"
-                          ? "text-blue-800 bg-gray-200"
-                          : row.status == "Processing"
-                          ? "text-yellow-800 bg-yellow-200"
-                          : row.status == "Cancelled"
-                          ? "text-red-800 bg-red-200"
-                          : ""
-                      } rounded-lg bg-opacity-50`}
+                            ? "text-blue-800 bg-gray-200"
+                            : row.status == "Processing"
+                              ? "text-yellow-800 bg-yellow-200"
+                              : row.status == "Cancelled"
+                                ? "text-red-800 bg-red-200"
+                                : ""
+                        } rounded-lg bg-opacity-50`}
                     >
                       {row.status}
                     </span>
@@ -335,17 +334,16 @@ export default function TableOrders({
               <div className="text-gray-500">{row.orderDate}</div>
               <div>
                 <span
-                  className={`p-1.5 text-xs font-medium uppercase tracking-wider ${
-                    row.status == "Delivered"
+                  className={`p-1.5 text-xs font-medium uppercase tracking-wider ${row.status == "Delivered"
                       ? "text-green-800 bg-green-200"
                       : row.status == "Dispatched"
-                      ? "text-blue-800 bg-gray-200"
-                      : row.status == "Processing"
-                      ? "text-yellow-800 bg-yellow-200"
-                      : row.status == "Cancelled"
-                      ? "text-red-800 bg-red-200"
-                      : ""
-                  } rounded-lg bg-opacity-50`}
+                        ? "text-blue-800 bg-gray-200"
+                        : row.status == "Processing"
+                          ? "text-yellow-800 bg-yellow-200"
+                          : row.status == "Cancelled"
+                            ? "text-red-800 bg-red-200"
+                            : ""
+                    } rounded-lg bg-opacity-50`}
                 >
                   {row.status}
                 </span>
