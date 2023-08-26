@@ -7,14 +7,13 @@ export const getUserReport = async (req, res) => {
       .populate("id_reporter", "name")
       .populate("id_reported", "name");
 
-    const searchQuery = req.query.searchQuery || "";
+    var searchQuery = req.query.searchQuery || "";
 
-    if (!searchQuery) {
-      report.forEach((report) => {
-        report.id_reporter.name === searchQuery;
+    if (searchQuery) {
+      report.forEach((item) => {
+        item.id_reporter.name === searchQuery;
       });
     }
-    console.log(report);
 
     const currentDate = new Date();
     currentDate.setHours(0, 0, 0, 0);

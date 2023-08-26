@@ -20,8 +20,6 @@ export const get_seller_performance_stats = async (req, res) => {
     var limit = parseInt(req.query.limit) || 5;
     var searchQuery = req.query.searchQuery || "";
     console.log(searchQuery);
-    var searchQuery = req.query.searchQuery || "";
-    console.log(searchQuery);
 
     const skip = (page - 1) * limit;
 

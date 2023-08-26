@@ -138,37 +138,37 @@ export default function TableReview({
                 />
               </th>
               <th
-                className="w-20 p-3 text-sm font-semibold tracking-wide text-left"
+                className="w-20 p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("_id")}
               >
-                ID {sortColumn === "_id" && (sortOrder === "asc" ? "▲" : "▼")}
+                Review ID {sortColumn === "_id" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
-                className="p-3 text-sm font-semibold tracking-wide text-left"
+                className="p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("buyer")}
               >
                 Buyer{" "}
                 {sortColumn === "buyer" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
-                className="p-3 text-sm font-semibold tracking-wide text-left"
+                className="p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("star")}
               >
                 Star{" "}
                 {sortColumn === "star" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
-                className="p-3 text-sm font-semibold tracking-wide text-left"
+                className="p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("comment")}
               >
                 Comment{" "}
                 {sortColumn === "comment" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
-                className="w-24 p-3 text-sm font-semibold tracking-wide text-left"
+                className="w-24 p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("createdAt")}
               >
-                Post date{" "}
+                Post Date{" "}
                 {sortColumn === "createdAt" &&
                   (sortOrder === "asc" ? "▲" : "▼")}
               </th>
@@ -177,32 +177,32 @@ export default function TableReview({
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-gray-100 ">
             {getCurrentPageData().map((row, index) => (
               <tr
                 className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
                 key={row._id}
               >
-                <td className="p-3 text-sm text-center text-gray-700 whitespace-nowrap">
+                <td className="p-3 text-sm text-center text-gray-700 whitespace-nowrap text-center">
                   <input
                     type="checkbox"
                     checked={selectedItems.some((item) => item._id === row._id)}
                     onChange={(event) => handleCheckboxChange(event, row)}
                   />
                 </td>
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                   <div className="w-20 truncate">{row._id}</div>
                 </td>
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                   {row.buyer.name}
                 </td>
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                   {row.rating.star}
                 </td>
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap ">
+                <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-left">
                   <div className="w-40 truncate">{row.rating.comment}</div>
                 </td>
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                   {formatDate(row.createdAt)}
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap flex justify-center">

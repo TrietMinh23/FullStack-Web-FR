@@ -155,7 +155,13 @@ const Table = ({
 
     return sortedData.slice(startIndex, endIndex);
   };
-
+  const formatDate = (date) => {
+    const options = {year: "numeric", month: "short", day: "numeric"};
+    const parts = new Date(date)
+      .toLocaleDateString(undefined, options)
+      .split(" ");
+    return `${parts[1]} ${parts[0]}, ${parts[2]}`;
+  };
   return (
     <div className="p-5 h-full bg-gray-100 w-full rounded-md">
       <h1 className="text-xl mb-2">All sellers</h1>
@@ -289,7 +295,7 @@ const Table = ({
                 </td>
 
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
-                  {row.createdAt}
+                  {formatDate(row.createdAt)}
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                   <button
@@ -336,7 +342,7 @@ const Table = ({
                   {row.name}
                 </a>
               </div>
-              <div className="text-gray-500">{row.createdAt}</div>
+              <div className="text-gray-500">{formatDate(row.createdAt)}</div>
               <div>
                 <span
                   className={`p-1.5 text-xs font-medium uppercase tracking-wider ${
