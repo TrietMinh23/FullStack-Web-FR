@@ -22,6 +22,7 @@ const Profile = lazy(() => import("../pages/Home/PersonalProfile/Profile"));
 const Notification = lazy(() =>
   import("../pages/Home/Notification/notification")
 );
+const ResetPass = lazy(() => import("../pages/ResetPassword/resetPass"));
 const HomeSeller = lazy(() => import("../pages/Seller/Home/home"));
 const AllItems = lazy(() => import("../pages/Seller/AllItems/allItem"));
 const NewItem = lazy(() => import("../pages/Seller/NewItem/newItem"));
@@ -59,9 +60,10 @@ function Router() {
           <Route path="products/:slug" element={<ShoppingItemDetail />}></Route>
           <Route path="shoppingcart" element={<ShoppingCart />} />
         </Route>
+        <Route path="/reset-password/:id" element={<ResetPass />}></Route>
         <Route path="/auth-admin" element={<LoginAdmin />}></Route>
         {localStorage.getItem("role")?.replace(/^"(.*)"$/, "$1") === "seller" &&
-        getCookie("refresh_token") ? (
+          getCookie("refresh_token") ? (
           <Route path="/seller" element={<LayoutSeller />}>
             <Route path="/seller" element={<HomeSeller />} />
             <Route path="all-item" element={<AllItems />} />
@@ -72,7 +74,7 @@ function Router() {
           </Route>
         ) : null}
         {localStorage.getItem("role")?.replace(/^"(.*)"$/, "$1") === "buyer" &&
-        getCookie("refresh_token") ? (
+          getCookie("refresh_token") ? (
           <Route path="/" element={<LayoutHomePage />}>
             <Route exact path="/" element={<Home />} />
             <Route path="products/:slug" element={<ShoppingItemDetail />} />
@@ -82,7 +84,7 @@ function Router() {
         ) : null}
         // //Admin page
         {localStorage.getItem("role")?.replace(/^"(.*)"$/, "$1") === "admin" &&
-        getCookie("refresh_token") ? (
+          getCookie("refresh_token") ? (
           <Route path="/admin" element={<Admin />}>
             <Route
               exact

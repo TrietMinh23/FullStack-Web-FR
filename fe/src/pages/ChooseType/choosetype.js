@@ -59,7 +59,7 @@ export default function ChooseType() {
             Technology creates an "addictive" experience
           </h1>
           <h2 className="px-5 md:text-justify text-start leading-8">
-            Website based on fashion sharing platform and community launched in
+            A website based on a fashion sharing platform and community launched in
             2023.
           </h2>
         </div>
@@ -69,7 +69,7 @@ export default function ChooseType() {
           <div>
             <h1 className="text-2xl font-bold">Choose Account Type</h1>
             <p className="text-[#B4BCC7]">
-              Optimized account type for each other user
+              Optimized account types for different types of users
             </p>
             <div className="relative flex flex-col">
               <div className="mt-12">
@@ -87,8 +87,8 @@ export default function ChooseType() {
                     htmlFor="buyer"
                     onClick={() => handleBuyerClick()}
                     className={`border-2 px-4 py-6 rounded-2xl text-2xl flex flex-row ${isBuyerSelected
-                        ? "bg-[#E5F6EF] border-green-sheen"
-                        : "bg-white"
+                      ? "bg-[#E5F6EF] border-green-sheen"
+                      : "bg-white"
                       }`}
                   >
                     <MdOutlineLocalGroceryStore className="mr-3 self-center text-5xl" />
@@ -116,8 +116,8 @@ export default function ChooseType() {
                     htmlFor="seller"
                     onClick={() => handleSellerClick()}
                     className={`border-2 px-4 py-6 rounded-2xl text-2xl flex flex-row ${isSellerSelected
-                        ? "bg-[#E5F6EF] border-green-sheen"
-                        : "bg-white"
+                      ? "bg-[#E5F6EF] border-green-sheen"
+                      : "bg-white"
                       }`}
                   >
                     <BsShop className="mr-3 self-center text-5xl" />
