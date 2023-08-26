@@ -6,7 +6,14 @@ import PopUpInforSeller from "../PopUp/PopUpInforSeller";
 import { blockSeller, unblockSeller } from "../../../../api/seller";
 import PaginationComponent from "../../../Home/components/Pagination";
 
-const Table = ({ rows, onPageChange, page, onPerPageChange, perPage }) => {
+const Table = ({
+  rows,
+  onPageChange,
+  page,
+  onPerPageChange,
+  perPage,
+  totalPages,
+}) => {
   const [currentPage] = useState(1);
   const [sortColumn, setSortColumn] = useState("");
   const [sortOrder, setSortOrder] = useState("");
@@ -206,7 +213,7 @@ const Table = ({ rows, onPageChange, page, onPerPageChange, perPage }) => {
                 className="p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("positiveCount")}
               >
-                Positive Orders{" "}
+                Positive Reviews{" "}
                 {sortColumn === "positiveCount" &&
                   (sortOrder === "asc" ? "▲" : "▼")}
               </th>
@@ -214,7 +221,7 @@ const Table = ({ rows, onPageChange, page, onPerPageChange, perPage }) => {
                 className="p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("negativeCount")}
               >
-                Negative Orders{" "}
+                Negative Reviews{" "}
                 {sortColumn === "negativeCount" &&
                   (sortOrder === "asc" ? "▲" : "▼")}
               </th>
@@ -390,7 +397,7 @@ const Table = ({ rows, onPageChange, page, onPerPageChange, perPage }) => {
           </label>
           <select
             id="rowsPerPage"
-            className="border border-gray-300 rounded-md p-1"
+            className="border border-gray-300 rounded-md p-1 w-12"
             value={perPage}
             onChange={(e) => onPerPageChange(Number(e.target.value))}
           >
@@ -399,8 +406,12 @@ const Table = ({ rows, onPageChange, page, onPerPageChange, perPage }) => {
             <option value={15}>15</option>
           </select>
         </div>
-        <div className="flex w-full justify-end">      
-          <PaginationComponent setPage={onPageChange} page={page} />
+        <div className="flex w-full justify-end">
+          <PaginationComponent
+            setPage={onPageChange}
+            page={page}
+            totalPage={totalPages}
+          />
         </div>
       </div>
       {detailInfor && (
