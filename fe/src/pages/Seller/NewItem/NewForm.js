@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Select from "react-tailwindcss-select";
 import { useEffect } from "react";
+import { rows } from "../data/dataTable";
 import { ProductID, createProduct, updateProduct } from "../../../api/products";
 import getCookie from "../../../utils/getCookie";
 
@@ -92,7 +93,6 @@ const NewProductForm = ({ tradeCode, role }) => {
   };
 
   useEffect(() => {
-    console.log(roleUser);
     if (tradeCode) {
       // Fetch product details based on the tradeCode
       const fetchProductDetails = async () => {
@@ -183,6 +183,11 @@ const NewProductForm = ({ tradeCode, role }) => {
               isMultiple={true}
             />
           </div>
+          <Form
+            title="condition"
+            PH="Guess how new your items are"
+            value={productData?.condition}
+          ></Form>
           <div className="mb-4">
             <label htmlFor="image" className="mb-2 self-start capitalize">
               Image :
