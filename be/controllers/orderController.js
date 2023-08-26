@@ -401,11 +401,19 @@ export const getIncomeBySellerIdForAllMonths = async (req, res) => {
     ]);
 
     if (income.length > 0) {
-      return res.status(200).json({income});
+      return res.status(200).json({ income });
     } else {
-      return res
-        .status(404)
-        .json({message: "Seller not found or no income for any month."});
+      // Thêm mã vào đây để trả về các trường có giá trị là 0
+      const zeroIncome = [
+        {
+          _id: {
+            year: 0,
+            month: 0,
+          },
+          totalIncome: 0,
+        },
+      ];
+      return res.status(200).json({ income: zeroIncome });
     }
   } catch (error) {
     console.error("Error calculating income:", error);
@@ -462,11 +470,19 @@ export const getRefundBySellerIdForAllMonths = async (req, res) => {
     ]);
 
     if (refund.length > 0) {
-      return res.status(200).json({refund});
+      return res.status(200).json({ refund });
     } else {
-      return res
-        .status(404)
-        .json({message: "Seller not found or no refund for any month."});
+      // Thêm mã vào đây để trả về các trường có giá trị là 0
+      const zeroRefund = [
+        {
+          _id: {
+            year: 0,
+            month: 0,
+          },
+          totalRefund: 0,
+        },
+      ];
+      return res.status(200).json({ refund: zeroRefund });
     }
   } catch (error) {
     console.error("Error calculating refund:", error);
@@ -654,6 +670,9 @@ export const getOrderBySellerId = async (req, res) => {
     // Pagination
     var page = parseInt(req.query.page) || 1;
     var limit = parseInt(req.query.limit) || 15;
+    var searchQuery = req.query.searchQuery || "";
+    console.log(searchQuery);
+    
     const skip = (page - 1) * limit;
 
     const orders = await Order.find()
@@ -681,6 +700,8 @@ export const getOrderBySellerId = async (req, res) => {
       Delivered: 0,
     };
 
+    var totalPages = 0;
+
     const filteredOrders = orders
       .filter((order) =>
         order.products.some(
@@ -689,6 +710,7 @@ export const getOrderBySellerId = async (req, res) => {
       )
       .map((order) => {
         orderStatusCounts[order.orderStatus]++;
+        totalPages++;
 
         const orderTotalAmount = order.products
           .filter((product) => product.sellerId.toString() === sellerId)
@@ -737,7 +759,7 @@ export const getOrderBySellerId = async (req, res) => {
     if (filteredOrders.length === 0) {
       return res.status(404).json({error: "No orders found for this seller."});
     }
-
+    
     res
       .status(200)
       .json({
@@ -745,7 +767,7 @@ export const getOrderBySellerId = async (req, res) => {
         orderStatusCounts,
         orderStatusTotalAmounts,
         currentPage: page,
-        totalPages: Math.ceil(filteredOrders.length / limit),
+        totalPages: Math.ceil(totalPages / limit),
       });
   } catch (err) {
     console.log({error: err.message});

@@ -2,9 +2,10 @@ import { fakeapi, instance } from "./config";
 
 export const productsFake = async () => await fakeapi.get();
 
-export const products = async (page) => {
+export const products = async (page, slug) => {
   return await instance.get(`/products`, {
     params: {
+      searchQuery: slug || "",
       page: page,
     },
   });
@@ -21,12 +22,13 @@ export const createProduct = async (productData) => {
   }
 };
 
-export const sellerProduct = async (id, page, limit) => {
+export const sellerProduct = async (id, page, limit, searchQuery) => {
   try {
     const respone = await instance.get(`/products/sellerId/${id}`, {
       params: {
         page: page,
         limit: limit,
+        searchQuery: searchQuery,
       },
     });
     return respone;

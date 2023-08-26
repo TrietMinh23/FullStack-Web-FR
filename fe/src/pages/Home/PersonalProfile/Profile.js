@@ -1,11 +1,15 @@
 import SideBar from "./components/SideBar";
-import All from "./components/All";
+import { Outlet } from 'react-router-dom';
 
 export default function Profile() {
   return (
     <div className="profile-container">
-      <SideBar />
-      <All />
+      <div>
+        <SideBar />
+        <div>
+          <Outlet />
+        </div>
+      </div>
     </div>
   );
 }

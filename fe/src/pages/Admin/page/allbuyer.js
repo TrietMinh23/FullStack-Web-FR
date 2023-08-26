@@ -13,6 +13,7 @@ export default function Allbuyer() {
   const [totalPages, setTotalPages] = useState(0); // Total number of pages returned by the API
   const [totalSumProcessing, setTotalSumProcessing] = useState(0); // Total number of pages returned by the API
   const [totalSumCancelled, setTotalSumCancelled] = useState(0); // Total number of pages returned by the API
+  const [searchQuery, setSearchQuery] = useState("");
 
   const staticTable = [
     {
@@ -46,12 +47,16 @@ export default function Allbuyer() {
     setPage(1); // Reset to first page when changing items per page
   };
 
+  const handleSearch = (newSearchTerm) => {
+    setSearchQuery( new RegExp(newSearchTerm.replace(/\s+/g, " "), "i").source); // Update the search query state
+  };
+
   useEffect(() => {
     const fetchBuyers = async () => {
       sessionStorage.setItem("page", page.toString());
       sessionStorage.setItem("perPage", perPage.toString());
       try {
-        const response = await getBuyerPerformanceStats(page, perPage);
+        const response = await getBuyerPerformanceStats(page, perPage, searchQuery);
         setBuyerData(response.data.Buyers);
 
         setTotalPages(response.data.totalPages);
@@ -68,7 +73,7 @@ export default function Allbuyer() {
       }
     };
     fetchBuyers();
-  }, [page, perPage]);
+  }, [page, perPage, searchQuery]);
 
   return (
     <React.Fragment>
@@ -94,6 +99,8 @@ export default function Allbuyer() {
             onPageChange={handleChange}
             onPerPageChange={handlePerPageChange}
             perPage={perPage}
+            totalPages={totalPages}
+            onSearchTermChange={handleSearch}
           />
         </div>
       </div>

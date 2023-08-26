@@ -16,6 +16,7 @@ export default function Allsellers() {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(5);
   const [totalPages, setTotalPages] = useState(0); // Total number of pages returned by the API
+  const [searchQuery, setSearchQuery] = useState("");
 
   const staticTable = [
     {
@@ -48,13 +49,17 @@ export default function Allsellers() {
     setPerPage(newPerPage);
     setPage(1); // Reset to first page when changing items per page
   };
+  
+  const handleSearch = (newSearchTerm) => {
+    setSearchQuery( new RegExp(newSearchTerm.replace(/\s+/g, " "), "i").source); // Update the search query state
+  };
 
   useEffect(() => {
     const fetchSellers = async () => {
       sessionStorage.setItem("page", page.toString());
       sessionStorage.setItem("perPage", perPage.toString());
       try {
-        const response = await getSellerPerformanceStats(page, perPage);
+        const response = await getSellerPerformanceStats(page, perPage, searchQuery);
         setSellerData(response.data.Sellers);
         setTotalPositive(response.data.totalPositive);
         setTotalNegative(response.data.totalNegative);
@@ -73,7 +78,7 @@ export default function Allsellers() {
       }
     };
     fetchSellers();
-  }, [page, perPage]);
+  }, [page, perPage, searchQuery]);
 
   return (
     <React.Fragment>
@@ -99,6 +104,8 @@ export default function Allsellers() {
             onPageChange={handleChange}
             onPerPageChange={handlePerPageChange}
             perPage={perPage}
+            totalPages={totalPages}
+            onSearchTermChange={handleSearch} // Pass the callback prop
           />
         </div>
       </div>

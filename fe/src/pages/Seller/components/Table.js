@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { FaTrashAlt, FaPen } from "react-icons/fa";
 import PaginationComponent from "../../Home/components/Pagination";
 import { deleteProduct } from "../../../api/products";
+import formatNumberWithCommas from "../../../utils/formatNumberWithCommas";
 
 export default function Table({
   rows,
@@ -11,6 +12,8 @@ export default function Table({
   onPerPageChange,
   perPage,
   onSelectEditRow,
+  totalPage,
+  onSearchTermChange,
 }) {
   // const [perPage, setPerPage] = useState(5); // Số hàng trên mỗi trang
   const [currentPage] = useState(1); // Trang hiện tại
@@ -31,8 +34,11 @@ export default function Table({
     }
   };
 
-  const handleSearch = (e) => {
-    setSearchTerm(e.target.value);
+  // Update the search term when input changes
+  const updateSearchTerm = (event) => {
+    const newSearchTerm = event.target.value;
+    setSearchTerm(newSearchTerm);
+    onSearchTermChange(newSearchTerm); // Call the callback prop
   };
 
   const handleCheckboxChange = (event, item) => {
@@ -91,21 +97,12 @@ export default function Table({
   const handleEditRow = (item) => {
     onSelectEditRow(item.tradeCode); // Call the provided prop with the TradeCode
   };
-  
+
   const getCurrentPageData = () => {
     const startIndex = (currentPage - 1) * perPage;
     const endIndex = startIndex + perPage;
 
     let filteredData = rows;
-
-    if (searchTerm) {
-      filteredData = rows.filter((row) => {
-        return Object.values(row).some((value) =>
-          value.toString().toLowerCase().includes(searchTerm.toLowerCase())
-        );
-      });
-    }
-
     let sortedData = filteredData;
 
     if (sortColumn) {
@@ -134,15 +131,16 @@ export default function Table({
           type="text"
           className="border border-gray-300 rounded-md p-1"
           value={searchTerm}
-          onChange={handleSearch}
+          onChange={updateSearchTerm}
         />
-        <button
-          id="All"
-          className="ml-2 p-2 bg-red-500 text-white rounded-md lg:p-4"
-          onClick={handleDelete}
-        >
-          <FaTrashAlt />
-        </button>
+      <button
+  id="All"
+  className="ml-2 p-2 bg-red-500 text-white rounded-md lg:p-4 hover:bg-red-600"
+  onClick={handleDelete}
+>
+  <FaTrashAlt />
+</button>
+
       </div>
 
       <div className="overflow-auto rounded-lg shadow hidden lg:block">
@@ -157,45 +155,45 @@ export default function Table({
                 />
               </th>
               <th
-                className="w-20 p-3 text-sm font-semibold tracking-wide text-left"
+                className="w-20 p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("tradeCode")}
               >
-                TradeCode{" "}
+                Trade Code{" "}
                 {sortColumn === "tradeCode" &&
                   (sortOrder === "asc" ? "▲" : "▼")}
               </th>
-              <th className="p-3 text-sm font-semibold tracking-wide text-left">
+              <th className="p-3 text-sm font-semibold tracking-wide text-center">
                 Image
               </th>
               <th
-                className="p-3 text-sm font-semibold tracking-wide text-left"
+                className="p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("itemName")}
               >
-                Item name{" "}
+                Item Name{" "}
                 {sortColumn === "itemName" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
-                className="p-3 text-sm font-semibold tracking-wide text-left"
+                className="p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("price")}
               >
                 Price{" "}
                 {sortColumn === "price" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
-                className="w-24 p-3 text-sm font-semibold tracking-wide text-left"
+                className="w-24 p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("status")}
               >
                 Status{" "}
                 {sortColumn === "status" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
-                className="w-24 p-3 text-sm font-semibold tracking-wide text-left"
+                className="w-24 p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("postDate")}
               >
-                Post date{" "}
+                Post Date{" "}
                 {sortColumn === "postDate" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
-              <th className="w-32 p-3 text-sm font-semibold tracking-wide text-left">
+              <th className="w-32 p-3 text-sm font-semibold tracking-wide text-center">
                 Action
               </th>
             </tr>
@@ -215,10 +213,10 @@ export default function Table({
                     onChange={(event) => handleCheckboxChange(event, row)}
                   />
                 </td>
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                   {row.tradeCode}
                 </td>
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                   <div className="w-12 h-12 overflow-hidden m-1 rounded-lg">
                     <img
                       src={row.image}
@@ -227,13 +225,13 @@ export default function Table({
                     />
                   </div>
                 </td>
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                   {row.itemName}
                 </td>
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                   {row.price}
                 </td>
-                <td className="p-3 text-xs font-medium uppercase text-gray-700 whitespace-nowrap ">
+                <td className="p-3 text-xs font-medium uppercase text-gray-700 whitespace-nowrap">
                   <span
                     className={
                       "block text-center p-2 rounded-md bg-opacity-50  " +
@@ -252,18 +250,18 @@ export default function Table({
                   </span>
                 </td>
 
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                   {row.postDate}
                 </td>
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                   <button
-                    className="text-blue-500 font-bold hover:underline"
+                    className="text-blue-500 font-bold hover:underline hover:text-blue-600"
                     onClick={() => handleEditRow(row)}
                   >
                     <FaPen />
                   </button>
                   <button
-                    className="text-red-500 font-bold hover:underline ml-2"
+                    className="text-red-500 font-bold hover:underline ml-2 hover:text-red-600"
                     onClick={() => handleDeleteRow(row)}
                   >
                     <FaTrashAlt />
@@ -310,13 +308,13 @@ export default function Table({
             <div className="text-sm font-medium text-black">${row.price}</div>
             <div className="flex justify-end">
               <button
-                className="text-blue-500 font-bold hover:underline"
+                className="text-blue-500 font-bold hover:underline hover:text-blue-600"
                 onClick={() => handleEditRow(row)}
               >
                 <FaPen />
               </button>
               <button
-                className="text-red-500 font-bold hover:underline ml-2"
+                className="text-red-500 font-bold hover:underline ml-2 hover:text-red-600"
                 onClick={handleDelete}
               >
                 <FaTrashAlt />
@@ -333,7 +331,7 @@ export default function Table({
           </label>
           <select
             id="rowsPerPage"
-            className="border border-gray-300 rounded-md p-1"
+            className="border border-gray-300 rounded-md p-1 w-12"
             value={perPage}
             onChange={(e) => onPerPageChange(Number(e.target.value))}
           >
@@ -343,7 +341,11 @@ export default function Table({
           </select>
         </div>
         <div className="flex w-full justify-end">
-          <PaginationComponent setPage={onPageChange} page={page} />
+          <PaginationComponent
+            setPage={onPageChange}
+            page={page}
+            totalPage={totalPage}
+          />
         </div>
       </div>
     </div>

@@ -10,6 +10,8 @@ export default function TableOrders({
   page,
   onPerPageChange,
   perPage,
+  totalPages,
+  onSearchTermChange,
 }) {
   // const [perPage, setPerPage] = useState(5); // Số hàng trên mỗi trang
   const [currentPage] = useState(1); // Trang hiện tại
@@ -19,6 +21,7 @@ export default function TableOrders({
   const [selectedItems, setSelectedItems] = useState([]); // Các sản phẩm được chọn
   const [selectAll, setSelectAll] = useState(false); // Tất cả sản phẩm được chọn
   const [isUpdating, setIsUpdating] = useState(false);
+  const [items, setItems] = useState(null);
 
   const handleSort = (column) => {
     if (column === sortColumn) {
@@ -31,8 +34,11 @@ export default function TableOrders({
     }
   };
 
-  const handleSearch = (e) => {
-    setSearchTerm(e.target.value);
+  // Update the search term when input changes
+  const updateSearchTerm = (event) => {
+    const newSearchTerm = event.target.value;
+    setSearchTerm(newSearchTerm);
+    onSearchTermChange(newSearchTerm); // Call the callback prop
   };
 
   const handleCheckboxChange = (event, item) => {
@@ -40,6 +46,7 @@ export default function TableOrders({
 
     if (checked) {
       setSelectedItems((prevSelectedItems) => [...prevSelectedItems, item]);
+      console.log(item);
     } else {
       setSelectedItems((prevSelectedItems) =>
         prevSelectedItems.filter(
@@ -93,57 +100,51 @@ export default function TableOrders({
     }
   };
 
+  useEffect(() => {
+    const getCurrentPageData = () => {
+      const startIndex = (currentPage - 1) * perPage;
+      const endIndex = startIndex + perPage;
 
-  const getCurrentPageData = () => {
-    const startIndex = (currentPage - 1) * perPage;
-    const endIndex = startIndex + perPage;
+      let filteredData = rows;
+      let sortedData = filteredData;
 
-    let filteredData = rows;
-
-    if (searchTerm) {
-      filteredData = rows.filter((row) => {
-        return Object.values(row).some((value) =>
-          value.toString().toLowerCase().includes(searchTerm.toLowerCase())
-        );
-      });
-    }
-
-    let sortedData = filteredData;
-
-    if (sortColumn) {
-      sortedData = filteredData.sort((a, b) => {
-        if (sortOrder === "asc") {
-          return a[sortColumn] > b[sortColumn] ? 1 : -1;
-        } else {
-          return a[sortColumn] < b[sortColumn] ? 1 : -1;
-        }
-      });
-    }
-
-    // Consolidate rows with the same tradeCode
-    const groupedData = {};
-    sortedData.forEach((row) => {
-      if (!groupedData[row.tradeCode]) {
-        groupedData[row.tradeCode] = [];
+      if (sortColumn) {
+        sortedData = filteredData.sort((a, b) => {
+          if (sortOrder === "asc") {
+            return a[sortColumn] > b[sortColumn] ? 1 : -1;
+          } else {
+            return a[sortColumn] < b[sortColumn] ? 1 : -1;
+          }
+        });
       }
-      groupedData[row.tradeCode].push(row);
-    });
 
-    const consolidatedData = [];
-    Object.keys(groupedData).forEach((tradeCode) => {
-      const items = groupedData[tradeCode];
-      const totalPrice = items.reduce((sum, item) => sum + item.price, 0);
-      const consolidatedRow = {
-        ...items[0],
-        itemName: items.map((item) => item.itemName).join(", "),
-        image: items.map((item) => item.image).join(", "), // Combine image URLs
-        price: totalPrice,
-      };
-      consolidatedData.push(consolidatedRow);
-    });
+      // Consolidate rows with the same tradeCode
+      const groupedData = {};
+      sortedData.forEach((row) => {
+        if (!groupedData[row.tradeCode]) {
+          groupedData[row.tradeCode] = [];
+        }
+        groupedData[row.tradeCode].push(row);
+      });
 
-    return consolidatedData.slice(startIndex, endIndex);
-  };
+      const consolidatedData = [];
+      Object.keys(groupedData).forEach((tradeCode) => {
+        const items = groupedData[tradeCode];
+        const totalPrice = items.reduce((sum, item) => sum + item.price, 0);
+        const consolidatedRow = {
+          ...items[0],
+          itemName: items.map((item) => item.itemName).join(", "),
+          image: items.map((item) => item.image).join(", "), // Combine image URLs
+          price: totalPrice,
+        };
+        consolidatedData.push(consolidatedRow);
+      });
+
+      setItems(consolidatedData.slice(startIndex, endIndex));
+    };
+
+    getCurrentPageData();
+  }, [rows]);
   return (
     <div className="p-5 h-full bg-gray-100 w-full rounded-md">
       <h1 className="text-xl mb-2">{nameTable}</h1>
@@ -157,11 +158,11 @@ export default function TableOrders({
           type="text"
           className="border border-gray-300 rounded-md p-1"
           value={searchTerm}
-          onChange={handleSearch}
+          onChange={updateSearchTerm}
         />
         <button
           id="All"
-          className="ml-2 p-2 bg-green-500 text-white rounded-md"
+          className="ml-2 p-2 bg-green-500 text-white rounded-md hover:bg-green-600"
           onClick={handleUpdateStatus}
         >
           <CheckCircleIcon />
@@ -190,12 +191,8 @@ export default function TableOrders({
               <th className="p-3 text-sm font-semibold tracking-wide text-left">
                 Image
               </th>
-              <th
-                className="p-3 text-sm font-semibold tracking-wide text-left"
-                onClick={() => handleSort("itemName")}
-              >
+              <th className="p-3 text-sm font-semibold tracking-wide text-left">
                 Item name{" "}
-                {sortColumn === "itemName" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
                 className="p-3 text-sm font-semibold tracking-wide text-left"
@@ -225,19 +222,11 @@ export default function TableOrders({
                 Buyer{" "}
                 {sortColumn === "order" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
-              <th
-                className="p-3 text-sm font-semibold tracking-wide text-left"
-                onClick={() => handleSort("phone")}
-              >
+              <th className="p-3 text-sm font-semibold tracking-wide text-left">
                 Phone{" "}
-                {sortColumn === "phone" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
-              <th
-                className="p-3 text-sm font-semibold tracking-wide text-left"
-                onClick={() => handleSort("address")}
-              >
+              <th className="p-3 text-sm font-semibold tracking-wide text-left">
                 Address{" "}
-                {sortColumn === "address" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
                 className="w-24 p-3 text-sm font-semibold tracking-wide text-left"
@@ -252,7 +241,7 @@ export default function TableOrders({
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
-            {getCurrentPageData().map((row, index) => (
+            {items?.map((row, index) => (
               <React.Fragment key={row.tradeCode}>
                 <tr
                   classNam
@@ -332,14 +321,14 @@ export default function TableOrders({
                   </td>
                   <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
                     <button
-                      className="text-green-500 font-bold hover:underline ml-2"
+                      className="text-green-500 font-bold hover:underline ml-2 hover:text-green-600"
                       onClick={() => handleUpdateStatusRow(row)}
                     >
                       <CheckCircleIcon />
                     </button>
                   </td>
                 </tr>
-                {index < getCurrentPageData().length - 1 && (
+                {index < items?.length - 1 && (
                   <tr className="h-4">
                     <td colSpan="12"></td>
                   </tr>
@@ -351,7 +340,7 @@ export default function TableOrders({
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:hidden">
-        {getCurrentPageData().map((row) => (
+        {items?.map((row) => (
           <div
             className="bg-white space-y-3 p-4 rounded-lg shadow"
             key={row.tradeCode}
@@ -385,7 +374,7 @@ export default function TableOrders({
             <div className="text-sm font-medium text-black">${row.price}</div>
             <div className="flex justify-end">
               <button
-                className="text-green-500 font-bold hover:underline ml-2"
+                className="text-green-500 font-bold hover:underline ml-2 hover:text-green-600"
                 onClick={() => handleUpdateStatusRow(row)}
               >
                 <CheckCircleIcon />
@@ -402,7 +391,7 @@ export default function TableOrders({
           </label>
           <select
             id="rowsPerPage"
-            className="border border-gray-300 rounded-md p-1"
+            className="border border-gray-300 rounded-md p-1 w-12"
             value={perPage}
             onChange={(e) => onPerPageChange(Number(e.target.value))}
           >
@@ -411,7 +400,11 @@ export default function TableOrders({
             <option value={15}>15</option>
           </select>
         </div>
-        <PaginationComponent setPage={onPageChange} page={page} />
+        <PaginationComponent
+          setPage={onPageChange}
+          page={page}
+          totalPage={totalPages}
+        />
       </div>
     </div>
   );

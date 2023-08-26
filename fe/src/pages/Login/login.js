@@ -73,12 +73,16 @@ export default function Login() {
   const Login = async (e) => {
     e.preventDefault();
     setMessage("");
+    const rememberMe = document.getElementById("remember_me").checked;
 
     setStateDialog({
       type: "SET_STATUS_DIALOG",
       payload: {
         stateDialogEmail: !ValidationEmail(formData.email) ? false : true,
-        stateDialogPassword: formData.password.length >= 6 && formData.password.length <= 20 ? true : false,
+        stateDialogPassword:
+          formData.password.length >= 6 && formData.password.length <= 20
+            ? true
+            : false,
       },
     });
 
@@ -101,6 +105,10 @@ export default function Login() {
 
               if (res.status === 200) {
                 setLoading(false);
+                if (rememberMe) {
+                  setCookie("email", formData.email, 3 * 24 * 60 * 60);
+                  setCookie("password", formData.password, 3 * 24 * 60 * 60);
+                }
                 if (role === "buyer") {
                   navigate("/");
                   window.location.reload();
@@ -122,6 +130,17 @@ export default function Login() {
     }
   };
 
+  useEffect(() => {
+    const email = getCookie("email")?.replace(/^"(.*)"$/, "$1");
+    const password = getCookie("password")?.replace(/^"(.*)"$/, "$1");
+    if (email && password) {
+      formData["email"] = email;
+      formData["password"] = password;
+      document.getElementById("email").value = email;
+      document.getElementById("password").value = password;
+    }
+  }, []);
+
   return (
     <div className="w-full min-h-screen bg-gray-50 flex flex-col sm:justify-center items-center pt-6 sm:pt-0">
       <div className="w-full sm:max-w-md p-5 mx-auto">
@@ -137,16 +156,18 @@ export default function Login() {
               name="email"
               placeholder="abc123@gmail.com"
               onChange={(e) => handleLoginInputChange(e)}
-              className={`py-2 px-3 border focus:outline-none focus:ring focus:ring-red-200 focus:ring-opacity-50 rounded-md shadow-sm disabled:bg-gray-100 mt-1 block w-full ${!stateDialog.stateDialogEmail
-                ? "border-red-300"
-                : "border-gray-300"
-                }`}
+              className={`py-2 px-3 border focus:outline-none focus:ring focus:ring-red-200 focus:ring-opacity-50 rounded-md shadow-sm disabled:bg-gray-100 mt-1 block w-full ${
+                !stateDialog.stateDialogEmail
+                  ? "border-red-300"
+                  : "border-gray-300"
+              }`}
               required
             />
           </div>
           <div
-            className={`alert-box-inner alert-container mb-4 flex font-semibold text-red-600 ${!stateDialog.stateDialogEmail ? "block" : "hidden"
-              }`}
+            className={`alert-box-inner alert-container mb-4 flex font-semibold text-red-600 ${
+              !stateDialog.stateDialogEmail ? "block" : "hidden"
+            }`}
           >
             <PriorityHighIcon className="icon-alert"></PriorityHighIcon>
             <div className="alert-content text-xs ml-2">
@@ -163,16 +184,18 @@ export default function Login() {
               name="password"
               placeholder="***********"
               onChange={(e) => handleLoginInputChange(e)}
-              className={`py-2 px-3 border focus:outline-none focus:ring focus:ring-red-200 focus:ring-opacity-50 rounded-md shadow-sm disabled:bg-gray-100 mt-1 block w-full ${!stateDialog.stateDialogPassword
-                ? "border-red-300"
-                : "border-gray-300"
-                }`}
+              className={`py-2 px-3 border focus:outline-none focus:ring focus:ring-red-200 focus:ring-opacity-50 rounded-md shadow-sm disabled:bg-gray-100 mt-1 block w-full ${
+                !stateDialog.stateDialogPassword
+                  ? "border-red-300"
+                  : "border-gray-300"
+              }`}
               required
             />
           </div>
           <div
-            className={`alert-box-inner alert-container mb-4 flex font-semibold text-red-600 ${!stateDialog.stateDialogPassword ? "block" : "hidden"
-              }`}
+            className={`alert-box-inner alert-container mb-4 flex font-semibold text-red-600 ${
+              !stateDialog.stateDialogPassword ? "block" : "hidden"
+            }`}
           >
             <PriorityHighIcon className="icon-alert"></PriorityHighIcon>
             <div className="alert-content text-xs ml-2">
@@ -180,8 +203,11 @@ export default function Login() {
             </div>
           </div>
           <div
-            className={`alert-box-inner alert-container mb-4 flex font-semibold text-red-600 ${message !== "" && stateDialog.stateDialogPassword ? "block" : "hidden"
-              }`}
+            className={`alert-box-inner alert-container mb-4 flex font-semibold text-red-600 ${
+              message !== "" && stateDialog.stateDialogPassword
+                ? "block"
+                : "hidden"
+            }`}
           >
             <PriorityHighIcon className="icon-alert"></PriorityHighIcon>
             <div className="alert-content text-xs ml-2">

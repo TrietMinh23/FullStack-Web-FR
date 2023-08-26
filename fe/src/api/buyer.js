@@ -1,5 +1,18 @@
 import { instance } from "./config";
 
+export const getBuyerById = async (id) => {
+  try {
+    const respone = await instance.get(`/users/${id}`,{
+      params: {
+        id: id,
+      },
+    });
+    return respone;
+  } catch (error) {
+    throw new Error(error.response?.data?.error || "Error get seller by id.");
+  }
+};
+
 export const countBuyer = async () => {
   try {
     const respone = await instance.get("/users/buyers/count");
@@ -9,12 +22,13 @@ export const countBuyer = async () => {
   }
 };
 
-export const getBuyerPerformanceStats = async (page, limit) => {
+export const getBuyerPerformanceStats = async (page, limit, searchQuery) => {
   try {
     const respone = await instance.get("/users/admin", {
       params: {
         page: page,
         limit: limit,
+        searchQuery: searchQuery,
       },
     });
     return respone;
@@ -40,5 +54,16 @@ export const unblockBuyer = async (id) => {
     return respone;
   } catch (error) {
     throw new Error(error.response?.data?.error || "Error unblock seller.");
+  }
+};
+
+export const updateBuyerById = async (id, data) => {
+  try {
+    const respone = await instance.put(`/users/${id}`, data);
+    return respone;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.error || "Error update seller by id."
+    );
   }
 };

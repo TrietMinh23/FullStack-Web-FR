@@ -7,8 +7,9 @@ export default function Home() {
   const [page, setPage] = React.useState(sessionStorage.getItem("page") || 1);
   const [category, setCategory] = React.useState(null);
   const [totalPage, setTotalPage] = React.useState(
-    React.useState(sessionStorage.getItem("totalPage"))
+    sessionStorage.getItem("totalPage") || 1
   );
+
   const handleChange = (value) => {
     setPage(value);
   };

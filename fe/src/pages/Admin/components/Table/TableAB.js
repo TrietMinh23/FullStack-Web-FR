@@ -4,9 +4,17 @@ import { ImBlocked } from "react-icons/im";
 import { BsCheckCircleFill } from "react-icons/bs";
 import { blockBuyer, unblockBuyer } from "../../../../api/buyer";
 import PopUpInforBuyer from "../PopUp/PopUpInforBuyer";
-import PaginationComponent from "../../../Home/components/Pagination"; 
+import PaginationComponent from "../../../Home/components/Pagination";
 
-const Table = ({ rows, onPageChange, page, onPerPageChange, perPage }) => {
+const Table = ({
+  rows,
+  onPageChange,
+  page,
+  onPerPageChange,
+  perPage,
+  totalPages,
+  onSearchTermChange,
+}) => {
   const [currentPage] = useState(1); // Trang hiện tại
   const [sortColumn, setSortColumn] = useState(""); // Cột hiện tại được sắp xếp
   const [sortOrder, setSortOrder] = useState(""); // Thứ tự sắp xếp ('asc' hoặc 'desc')
@@ -32,9 +40,12 @@ const Table = ({ rows, onPageChange, page, onPerPageChange, perPage }) => {
     }
   };
 
-  const handleSearch = (e) => {
-    setSearchTerm(e.target.value);
-  };
+    // Update the search term when input changes
+    const updateSearchTerm = (event) => {
+      const newSearchTerm = event.target.value;
+      setSearchTerm(newSearchTerm);
+      onSearchTermChange(newSearchTerm); // Call the callback prop
+    };
 
   const handleCheckboxChange = (event, item) => {
     const { checked } = event.target;
@@ -131,15 +142,6 @@ const Table = ({ rows, onPageChange, page, onPerPageChange, perPage }) => {
     const endIndex = startIndex + perPage;
 
     let filteredData = rows;
-
-    if (searchTerm) {
-      filteredData = rows.filter((row) => {
-        return Object.values(row).some((value) =>
-          value.toString().toLowerCase().includes(searchTerm.toLowerCase())
-        );
-      });
-    }
-
     let sortedData = filteredData;
 
     if (sortColumn) {
@@ -167,7 +169,7 @@ const Table = ({ rows, onPageChange, page, onPerPageChange, perPage }) => {
           type="text"
           className="border border-gray-300 rounded-md p-1"
           value={searchTerm}
-          onChange={handleSearch}
+          onChange={updateSearchTerm}
         />
         <button
           className="ml-2 p-2 hover:bg-red-600 bg-red-500 text-white rounded-md"
@@ -374,7 +376,7 @@ const Table = ({ rows, onPageChange, page, onPerPageChange, perPage }) => {
           </label>
           <select
             id="rowsPerPage"
-            className="border border-gray-300 rounded-md p-1"
+            className="border border-gray-300 rounded-md p-1 w-12"
             value={perPage}
             onChange={(e) => onPerPageChange(Number(e.target.value))}
           >
@@ -384,7 +386,7 @@ const Table = ({ rows, onPageChange, page, onPerPageChange, perPage }) => {
           </select>
         </div>
         <div className="flex w-full justify-end">
-          <PaginationComponent setPage={onPageChange} page={page} />
+          <PaginationComponent setPage={onPageChange} page={page} totalPage={totalPages}/>
         </div>
       </div>
       {detailInfor && (

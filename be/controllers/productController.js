@@ -32,14 +32,17 @@ export const getProductBySellerId = async (req, res) => {
     // Pagination
     var page = parseInt(req.query.page) || 1;
     var limit = parseInt(req.query.limit) || 15;
+    var searchQuery = req.query.searchQuery || "";
     const skip = (page - 1) * limit;
 
-    const products = await Product.find({sellerId: _id})
+    const products = await Product.find({
+      sellerId: _id,
+      title: {$regex: searchQuery, $options: "i"},
+    })
       .sort({createdAt: -1})
       .skip(skip)
       .limit(limit)
       .exec();
-
     if (products.length === 0) {
       return res.status(400).json({error: "No products found by seller id."});
     }
@@ -196,42 +199,41 @@ export const getAllProducts = async (req, res) => {
       return;
     }
 
-    const totalProducts = await Product.find({
+    const totalSold0 = await Product.find({
       sold: 0,
       title: {$regex: searchQuery, $options: "i"},
-    }).countDocuments();
-    const totalPages = Math.ceil(totalProducts / limit);
-
-    const totalSold0 = await Product.countDocuments({sold: 0});
-    const totalSold1 = await Product.countDocuments({sold: 1});
-
-    // Calculate total price of sold products (sold 1)
-    const sold1Products = await Product.find({
-      sold: 1
     });
-    const totalPriceSold1 = sold1Products.reduce(
+    const totalSold1 = await Product.find({
+      sold: 1,
+      title: {$regex: searchQuery, $options: "i"},
+    });
+    const quantityTotalSold0 = totalSold0.length;
+    const quantityTotalSold1 = totalSold1.length;
+
+    const totalPages = Math.ceil(
+      (quantityTotalSold0 + quantityTotalSold1) / limit
+    );
+    // Calculate total price of sold products (sold 1)
+    const totalPriceSold1 = totalSold1.reduce(
       (total, product) => total + product.price,
       0
     );
 
     // Calculate total price of unsold products (sold 0)
-    const sold0Products = await Product.find({
-      sold: 0,
-    });
-    const totalPriceSold0 = sold0Products.reduce(
+    const totalPriceSold0 = totalSold0.reduce(
       (total, product) => total + product.price,
       0
     );
 
     res.status(200).json({
       currentPage: page,
-      totalProducts,
-      totalPages,
+      totalPages: totalPages,
+      totalProducts: totalPriceSold0,
       products: products,
-      totalSold0,
-      totalSold1,
-      totalPriceSold0,
-      totalPriceSold1,
+      totalSold0: quantityTotalSold0,
+      totalSold1: quantityTotalSold1,
+      totalPriceSold0: totalPriceSold0,
+      totalPriceSold1: totalPriceSold1,
     });
   } catch (err) {
     res.status(400).json({error: err.message});

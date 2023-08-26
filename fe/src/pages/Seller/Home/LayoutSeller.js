@@ -18,7 +18,7 @@ export default function LayoutSeller() {
         setCoverFunc={() => setCover(false)}
       />
 
-      <div className="bg-white xl:ml-64 ml-0 mt-[-100vh] relative min-h-screen">
+      <div className="bg-white xl:ml-64 ml-0 mt-[-100vh] relative min-h-screen overflow-hidden">
         <div className="p-4">
           <Outlet />
         </div>

@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { TiTick } from "react-icons/ti";
-import {data} from "../../data/dataReport";
+import RowData from "./rowData";
 
-export default function PopupReview ({close, finish, i}) {
+export default function PopupReview ({close, finish, i, data, at}) {
     const steps = ["Report Info", "Action","Informing" ];
     const [currentStep, setCurrentStep] = useState(1);
     const [complete, setComplete] = useState(false);
+
+    console.log(at)
 
     const formatDate = (date) => {
         const options = { year: 'numeric', month: 'short', day: 'numeric' };
@@ -13,7 +15,7 @@ export default function PopupReview ({close, finish, i}) {
         return `${parts[1]} ${parts[0]}, ${parts[2]}`;
       }
     return (
-        <div className ="container popUpBigModal ">
+        <div className="modal p-2" style={{ top: `calc(50% + ${at}px)` }}>
             <div className ="model-wrapper p-10">
                 {complete &&
                     <div className="mb-16 rounded-md ">
@@ -49,10 +51,10 @@ export default function PopupReview ({close, finish, i}) {
                 </div>
                 {currentStep === 1 &&
                     <div className="m-5 p-5 border rounded-md border-green-sheen">
-                        <div className = "flex">
-                            <div>People involved: </div>
+                        <div className = "flex grow">
+                            <div className ="md:w-2/5" >People involved: </div>
                             <div
-                                className="flex justify-center w-1/2 ml-1" 
+                                className="flex md:w-3/5" 
                             >   
                                 <div>
                                     <span className ="text-blue-400	">{data[i].id_reporter.name}</span> 
@@ -61,19 +63,21 @@ export default function PopupReview ({close, finish, i}) {
                                 </div>
                             </div>
                         </div>
-                        <div className = "flex mt-5">
-                            <div>Post date: </div>
-                            <div className ="ml-16 pl-2" 
-                            >{formatDate(data[i].createdAt)}</div>
-                        </div>
-                        <div className = "flex mt-5 ">
-                            <div>Title: </div>
-                            <div className="ml-24 pl-3 ">{data[i].title}</div>
-                        </div>
-                        <div className = "flex mt-5">
-                            <div>Content: </div>
-                            <div className="ml-20 ">{data[i].details}</div>
-                        </div>
+                        <RowData
+                            titles ={"Post date"}
+                            data = {formatDate(data[i].createdAt)}
+                            css ={"mt-5"}
+                        />
+                        <RowData
+                            titles ={"Title"}
+                            data = {data[i].title}
+                            css ={"mt-5"}
+                        />
+                        <RowData
+                            titles ={"Content"}
+                            data = {data[i].details}
+                            css ={"mt-5"}
+                        />
                     </div>
                 }
                 {currentStep === 2 &&

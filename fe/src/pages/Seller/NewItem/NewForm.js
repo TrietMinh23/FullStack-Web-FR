@@ -1,14 +1,12 @@
 import React, { useState } from "react";
 import Select from "react-tailwindcss-select";
 import { useEffect } from "react";
+import { rows } from "../data/dataTable";
 import { ProductID, createProduct, updateProduct } from "../../../api/products";
-import getCookie from "../../../utils/getCookie";
+import { getByCategoryRelative } from "../../../api/category";
+import { MultiSelect } from "react-multi-select-component";
 
-const options = [
-  { value: "Apparel", label: "Apparel" },
-  { value: "Topwear", label: "Topwear" },
-  { value: "Tshirts", label: "Tshirts" },
-];
+let options = [];
 
 const Form = ({ title, PH, value }) => (
   <div className="mb-4">
@@ -30,7 +28,7 @@ const NewProductForm = ({ tradeCode, role }) => {
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [imageFile, setImageFile] = useState(null);
   const [productData, setProductData] = useState(null);
-  const [category, setCategory] = useState([]);
+  const [category, setCategory] = useState(null);
   const [roleUser, setRoleUser] = useState(role);
 
   const handleChange = (selected) => {
@@ -84,15 +82,29 @@ const NewProductForm = ({ tradeCode, role }) => {
       if (roleUser === "seller") {
         window.location.href = "http://localhost:3000/seller/all-item";
       } else {
-        window.location.href = "http://localhost:3000/admin/usemanagement/allitems";
+        window.location.href =
+          "http://localhost:3000/admin/usemanagement/allitems";
       }
     } catch (error) {
       console.error("Error creating product:", error.message);
     }
   };
 
+  const getCategory = async () => {
+    await getByCategoryRelative()
+      .then((res) => {
+        res.data.forEach((item) => {
+          options.push({
+            value: item.title,
+            label: item.title,
+          });
+        });
+        sessionStorage.setItem("listCategory", JSON.stringify(options));
+      })
+      .catch((err) => console.log(err));
+  };
+
   useEffect(() => {
-    console.log(roleUser);
     if (tradeCode) {
       // Fetch product details based on the tradeCode
       const fetchProductDetails = async () => {
@@ -133,8 +145,14 @@ const NewProductForm = ({ tradeCode, role }) => {
     }
   }, [imageFile]);
 
+  useEffect(() => {
+    if (!sessionStorage.getItem("listCategory")) {
+      getCategory();
+    }
+  }, []);
+
   return (
-    <div class="container mx-auto flex flex-col justify-center items-center max-w-4xl">
+    <div className="container mx-auto flex flex-col justify-center items-center max-w-4xl">
       <h1 className="text-2xl font-bold mb-4 block w-full text-left">
         {tradeCode ? "Update Product" : "New Product"}
       </h1>
@@ -175,14 +193,18 @@ const NewProductForm = ({ tradeCode, role }) => {
             <label htmlFor="type" className="mb-2 self-start">
               Category :
             </label>
-            <Select
-              id="type"
+            <MultiSelect
+              options={JSON.parse(sessionStorage.getItem("listCategory"))}
               value={selectedOptions}
               onChange={handleChange}
-              options={options}
-              isMultiple={true}
+              id="type"
             />
           </div>
+          <Form
+            title="condition"
+            PH="Guess how new your items are"
+            value={productData?.condition}
+          ></Form>
           <div className="mb-4">
             <label htmlFor="image" className="mb-2 self-start capitalize">
               Image :
