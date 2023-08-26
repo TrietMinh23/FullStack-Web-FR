@@ -315,13 +315,6 @@ export const deleteProductById = async (req, res) => {
   try {
     if (req.params.role === "seller" || true) {
       const id = req.params.id;
-
-      //if the product has been delivered, seller can't delete it
-      //const status = await Product.findOne({ id }).populate("status");
-      // if (status === "Delivered") {
-      //  res.status(400).json({ error: "You can't delete this product." });
-      // } else {
-
       const deleteProduct = await Product.findOneAndDelete({_id: id});
       const key = deleteProduct.image.slice(
         deleteProduct.image.lastIndexOf("/") + 1
@@ -343,3 +336,35 @@ export const deleteProductById = async (req, res) => {
     res.status(400).json({error: err.message});
   }
 };
+
+export const filterProductsByPrice = async (req, res) => {
+  try {
+    const priceRange = parseInt(res.query.price);
+
+    let price = {};
+
+    if (priceRange <= 200) {
+      price = {$lt: priceRange};
+    } else {
+      price = {$gt: priceRange};
+    }
+    
+    const products = await Product.find({price: price});
+    res.status(200).json(products);
+  } catch (err) {
+    res.status(400).json({error: err.message});
+  }
+};
+
+export const filterProductsByCondition = async (req, res) => {
+  try {
+    const conditionRange = parseInt(res.query.condition);
+
+    const condition = {$lt: conditionRange};
+
+    const products = await Product.find({condition: condition});
+    res.status(200).json(products);
+  } catch (err) {
+    res.status(400).json({error: err.message});
+  }
+}
