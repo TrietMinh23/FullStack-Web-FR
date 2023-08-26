@@ -17,6 +17,7 @@ export default function AllOrders() {
   const [perPage, setPerPage] = useState(5);
   const [totalPages, setTotalPages] = useState(0); // Total number of pages returned by the API 
   const [orderStatusTotalAmounts, setOrderStatusTotalAmounts] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
   
   const staticTable = [
     {
@@ -66,6 +67,10 @@ export default function AllOrders() {
     setPage(1); // Reset to first page when changing items per page
   };
 
+  const handleSearch = (newSearchTerm) => {
+    setSearchQuery( new RegExp(newSearchTerm.replace(/\s+/g, " "), "i").source); // Update the search query state
+  };
+
   useEffect(() => {
     let sellerId = localStorage.getItem("_id");
     let cleanedSellerId = sellerId.replace(/"/g, "");
@@ -77,7 +82,7 @@ export default function AllOrders() {
 
       try {
         // window.scrollTo(0, 0);
-        const response = await getOrdersBySellerId(cleanedSellerId, page, perPage);
+        const response = await getOrdersBySellerId(cleanedSellerId, page, perPage, searchQuery);
         
         const dataOrders = response.data.filteredOrders;
         setOrderStatus(response.data.orderStatusCounts)
@@ -111,7 +116,7 @@ export default function AllOrders() {
     };
 
     fetchOrders();
-  }, [page, perPage]);
+  }, [page, perPage, searchQuery]);
 
   return (
     <div>
@@ -136,6 +141,8 @@ export default function AllOrders() {
             page={page}
             onPerPageChange={handlePerPageChange}
             perPage={perPage}
+            totalPages={totalPages}
+            onSearchTermChange={handleSearch}
           />
         </div>
     </div>

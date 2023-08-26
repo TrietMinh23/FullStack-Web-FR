@@ -28,12 +28,13 @@ export const createPaymentUrl = async (order) => {
   }
 };
 
-export const getOrdersBySellerId = async (id, page, limit) => {
+export const getOrdersBySellerId = async (id, page, limit, searchQuery) => {
   try {
     const respone = await instance.get(`/orders/sellerId/${id}`, {
       params: {
         page: page,
         limit: limit,
+        searchQuery: searchQuery,
       },
     });
     return respone;
