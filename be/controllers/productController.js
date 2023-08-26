@@ -181,7 +181,10 @@ export const getAllProducts = async (req, res) => {
 
     const skip = (page - 1) * limit;
 
-    const products = await Product.find({ sold: 0 })
+    const products = await Product.find({
+      sold: 0,
+      title: { $regex: searchQuery, $options: "i" },
+    })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
@@ -189,10 +192,17 @@ export const getAllProducts = async (req, res) => {
 
     if (products.length === 0) {
       res.status(400).json({ error: "No products found." });
+      return;
     }
 
-    const totalSold0 = await Product.find({ sold: 1 });
-    const totalSold1 = await Product.find({ sold: 0 });
+    const totalSold0 = await Product.find({
+      sold: 1,
+      title: { $regex: searchQuery, $options: "i" },
+    });
+    const totalSold1 = await Product.find({
+      sold: 0,
+      title: { $regex: searchQuery, $options: "i" },
+    });
     const quantityTotalSold0 = totalSold0.length;
     const quantityTotalSold1 = totalSold1.length;
 
