@@ -15,6 +15,7 @@ import {
   updateUserById,
   countBuyer,
   get_buyer_performance_stats,
+  count_status_today,
 } from "../controllers/userController.js";
 
 const router = express.Router();
@@ -32,6 +33,7 @@ router.get("/user_info", getUserInformation);
 router.get("/refresh_token", refreshTokenHandle);
 router.post("/update_information", updateInformation);
 router.get("/admin", get_buyer_performance_stats);
+router.get("/counter", count_status_today);
 router.get("/:id", getUserById);
 router.put("/:id", updateUserById);
 // router.get("/:name", getUserByName);
