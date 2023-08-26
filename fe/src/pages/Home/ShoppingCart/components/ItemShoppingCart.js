@@ -22,6 +22,8 @@ export default function ItemShoppingCart({ shop }) {
           name={item.title}
           price={item.price}
           image={item.image}
+          brand={item.brandName}
+          condition={item.condition ? item.condition : 100}
           key={i}
           shop={shop.name}
           id={item._id}

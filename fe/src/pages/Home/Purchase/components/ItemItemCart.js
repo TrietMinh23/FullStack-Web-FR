@@ -1,4 +1,4 @@
-export default function ItemItemCart({ image, name, price }) {
+export default function ItemItemCart({ image, name, price, brand, condition }) {
   return (
     <tr className="bg-white">
       <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
@@ -8,10 +8,10 @@ export default function ItemItemCart({ image, name, price }) {
         </div>
       </td>
       <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
-        {price}₫
+        {brand}
       </td>
       <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
-        1
+        {condition}
       </td>
       <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
         {price}₫

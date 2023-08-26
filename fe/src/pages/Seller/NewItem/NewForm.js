@@ -3,13 +3,10 @@ import Select from "react-tailwindcss-select";
 import { useEffect } from "react";
 import { rows } from "../data/dataTable";
 import { ProductID, createProduct, updateProduct } from "../../../api/products";
-import getCookie from "../../../utils/getCookie";
+import { getByCategoryRelative } from "../../../api/category";
+import { MultiSelect } from "react-multi-select-component";
 
-const options = [
-  { value: "Apparel", label: "Apparel" },
-  { value: "Topwear", label: "Topwear" },
-  { value: "Tshirts", label: "Tshirts" },
-];
+let options = [];
 
 const Form = ({ title, PH, value }) => (
   <div className="mb-4">
@@ -29,19 +26,22 @@ const Form = ({ title, PH, value }) => (
 
 const NewProductForm = ({ tradeCode, role }) => {
   const [selectedOptions, setSelectedOptions] = useState([]);
+  const [selected, setSelected] = useState([]);
   const [imageFile, setImageFile] = useState(null);
   const [productData, setProductData] = useState(null);
-  const [category, setCategory] = useState([]);
+  const [category, setCategory] = useState(
+    JSON.parse(sessionStorage.getItem("listCategory")) || []
+  );
   const [roleUser, setRoleUser] = useState(role);
 
-  const handleChange = (selected) => {
-    if (selected === null || selected === undefined) {
-      return;
-    }
-    setSelectedOptions(selected);
-    const newCategory = selected.map((item) => item.value);
-    setCategory(newCategory);
-  };
+  // const handleChange = (selected) => {
+  //   console.log(selected[0]);
+  //   if (selected === null || selected === undefined) {
+  //     return;
+  //   }
+  //   const newSelectedOptions = [...selectedOptions, selected[0]]; // Replace newValue with the actual value you want to add
+  //   setSelectedOptions(newSelectedOptions);
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -51,6 +51,10 @@ const NewProductForm = ({ tradeCode, role }) => {
     formData.append("description", e.target.description.value);
     formData.append("price", e.target.price.value);
     formData.append("brandName", e.target.brand.value);
+    if (!imageFile || !productData?.image) {
+      alert("No image");
+      return;
+    }
     if (imageFile instanceof File) {
       console.log(1);
       formData.append("image", imageFile); // Thêm hình ảnh mới vào formData nếu có sự thay đổi
@@ -71,7 +75,6 @@ const NewProductForm = ({ tradeCode, role }) => {
 
     // Append the cleaned sellerId to the formData
     formData.append("sellerId", cleanedSellerId);
-
     try {
       if (tradeCode) {
         // Update product if tradeCode is available
@@ -91,6 +94,21 @@ const NewProductForm = ({ tradeCode, role }) => {
     } catch (error) {
       console.error("Error creating product:", error.message);
     }
+  };
+
+  const getCategory = async () => {
+    await getByCategoryRelative()
+      .then((res) => {
+        res.data.forEach((item) => {
+          options.push({
+            value: item.title,
+            label: item.title,
+          });
+        });
+        sessionStorage.setItem("listCategory", JSON.stringify(options));
+        setCategory(options);
+      })
+      .catch((err) => console.log(err));
   };
 
   useEffect(() => {
@@ -134,8 +152,14 @@ const NewProductForm = ({ tradeCode, role }) => {
     }
   }, [imageFile]);
 
+  useEffect(() => {
+    if (!sessionStorage.getItem("listCategory")) {
+      getCategory();
+    }
+  }, []);
+
   return (
-    <div class="container mx-auto flex flex-col justify-center items-center max-w-4xl">
+    <div className="container mx-auto flex flex-col justify-center items-center max-w-4xl">
       <h1 className="text-2xl font-bold mb-4 block w-full text-left">
         {tradeCode ? "Update Product" : "New Product"}
       </h1>
@@ -176,12 +200,12 @@ const NewProductForm = ({ tradeCode, role }) => {
             <label htmlFor="type" className="mb-2 self-start">
               Category :
             </label>
-            <Select
+            <MultiSelect
+              options={category || []}
+              value={selected}
+              onChange={setSelected}
+              labelledBy="Select"
               id="type"
-              value={selectedOptions}
-              onChange={handleChange}
-              options={options}
-              isMultiple={true}
             />
           </div>
           <Form

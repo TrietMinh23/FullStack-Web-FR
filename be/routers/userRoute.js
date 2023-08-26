@@ -15,6 +15,8 @@ import {
   updateUserById,
   countBuyer,
   get_buyer_performance_stats,
+  forgotPassword,
+  resetPassword
   count_status_today,
 } from "../controllers/userController.js";
 
@@ -26,6 +28,8 @@ router.get("/", getUsers);
 router.post("/register", createUser);
 router.post("/login", loginUser);
 router.post("/logout", logoutUser);
+router.post("/forgotpassword", forgotPassword)
+router.put('/reset-password/:id', resetPassword)
 router.put("/block/:id", blockUser);
 router.put("/unblock/:id", unblockUser);
 router.delete("/delete/:id", authenticationUser, deleteUser);
