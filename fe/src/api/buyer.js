@@ -22,12 +22,13 @@ export const countBuyer = async () => {
   }
 };
 
-export const getBuyerPerformanceStats = async (page, limit) => {
+export const getBuyerPerformanceStats = async (page, limit, searchQuery) => {
   try {
     const respone = await instance.get("/users/admin", {
       params: {
         page: page,
         limit: limit,
+        searchQuery: searchQuery,
       },
     });
     return respone;

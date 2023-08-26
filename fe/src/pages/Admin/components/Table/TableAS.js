@@ -13,6 +13,7 @@ const Table = ({
   onPerPageChange,
   perPage,
   totalPages,
+  onSearchTermChange,
 }) => {
   const [currentPage] = useState(1);
   const [sortColumn, setSortColumn] = useState("");
@@ -23,6 +24,7 @@ const Table = ({
   const [detailInfor, setDetailInfor] = useState(false);
   const [indexInfor, setIndexInfor] = useState(0);
   const [isUpdating, setIsUpdating] = useState(false);
+
 
   const closeSee = () => {
     setDetailInfor(false);
@@ -37,8 +39,11 @@ const Table = ({
     }
   };
 
-  const handleSearch = (e) => {
-    setSearchTerm(e.target.value);
+  // Update the search term when input changes
+  const updateSearchTerm = (event) => {
+    const newSearchTerm = event.target.value;
+    setSearchTerm(newSearchTerm);
+    onSearchTermChange(newSearchTerm); // Call the callback prop
   };
 
   const handleCheckboxChange = (event, item) => {
@@ -136,15 +141,6 @@ const Table = ({
     const endIndex = startIndex + perPage;
 
     let filteredData = rows;
-
-    if (searchTerm) {
-      filteredData = rows.filter((row) =>
-        Object.values(row).some((value) =>
-          value.toString().toLowerCase().includes(searchTerm.toLowerCase())
-        )
-      );
-    }
-
     let sortedData = filteredData;
 
     if (sortColumn) {
@@ -174,7 +170,7 @@ const Table = ({
           type="text"
           className="border border-gray-300 rounded-md p-1"
           value={searchTerm}
-          onChange={handleSearch}
+          onChange={updateSearchTerm}
         />
         <button
           className="ml-2 p-2 hover:bg-red-600 bg-red-500 text-white rounded-md"

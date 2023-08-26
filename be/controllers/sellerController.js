@@ -18,6 +18,8 @@ export const get_seller_performance_stats = async (req, res) => {
     // pagination
     var page = parseInt(req.query.page) || 1;
     var limit = parseInt(req.query.limit) || 5;
+    var searchQuery = req.query.searchQuery || "";
+    console.log(searchQuery);
     const skip = (page - 1) * limit;
     
     const sellers = await Seller.find({ role: "seller" });
