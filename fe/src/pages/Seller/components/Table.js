@@ -11,6 +11,8 @@ export default function Table({
   onPerPageChange,
   perPage,
   onSelectEditRow,
+  totalPage,
+  onSearchTermChange,
 }) {
   // const [perPage, setPerPage] = useState(5); // Số hàng trên mỗi trang
   const [currentPage] = useState(1); // Trang hiện tại
@@ -31,8 +33,11 @@ export default function Table({
     }
   };
 
-  const handleSearch = (e) => {
-    setSearchTerm(e.target.value);
+  // Update the search term when input changes
+  const updateSearchTerm = (event) => {
+    const newSearchTerm = event.target.value;
+    setSearchTerm(newSearchTerm);
+    onSearchTermChange(newSearchTerm); // Call the callback prop
   };
 
   const handleCheckboxChange = (event, item) => {
@@ -91,21 +96,12 @@ export default function Table({
   const handleEditRow = (item) => {
     onSelectEditRow(item.tradeCode); // Call the provided prop with the TradeCode
   };
-  
+
   const getCurrentPageData = () => {
     const startIndex = (currentPage - 1) * perPage;
     const endIndex = startIndex + perPage;
 
     let filteredData = rows;
-
-    if (searchTerm) {
-      filteredData = rows.filter((row) => {
-        return Object.values(row).some((value) =>
-          value.toString().toLowerCase().includes(searchTerm.toLowerCase())
-        );
-      });
-    }
-
     let sortedData = filteredData;
 
     if (sortColumn) {
@@ -134,7 +130,7 @@ export default function Table({
           type="text"
           className="border border-gray-300 rounded-md p-1"
           value={searchTerm}
-          onChange={handleSearch}
+          onChange={updateSearchTerm}
         />
         <button
           id="All"
@@ -333,7 +329,7 @@ export default function Table({
           </label>
           <select
             id="rowsPerPage"
-            className="border border-gray-300 rounded-md p-1"
+            className="border border-gray-300 rounded-md p-1 w-12"
             value={perPage}
             onChange={(e) => onPerPageChange(Number(e.target.value))}
           >
@@ -343,7 +339,11 @@ export default function Table({
           </select>
         </div>
         <div className="flex w-full justify-end">
-          <PaginationComponent setPage={onPageChange} page={page} />
+          <PaginationComponent
+            setPage={onPageChange}
+            page={page}
+            totalPage={totalPage}
+          />
         </div>
       </div>
     </div>

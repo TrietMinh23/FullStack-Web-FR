@@ -21,12 +21,13 @@ export const createProduct = async (productData) => {
   }
 };
 
-export const sellerProduct = async (id, page, limit) => {
+export const sellerProduct = async (id, page, limit, searchQuery) => {
   try {
     const respone = await instance.get(`/products/sellerId/${id}`, {
       params: {
         page: page,
         limit: limit,
+        searchQuery: searchQuery,
       },
     });
     return respone;

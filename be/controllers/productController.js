@@ -32,6 +32,8 @@ export const getProductBySellerId = async (req, res) => {
     // Pagination
     var page = parseInt(req.query.page) || 1;
     var limit = parseInt(req.query.limit) || 15;
+    var searchQuery = req.query.searchQuery || "";
+    console.log(searchQuery);
     const skip = (page - 1) * limit;
 
     const products = await Product.find({ sellerId: _id })
@@ -182,7 +184,7 @@ export const getAllProducts = async (req, res) => {
     
     const skip = (page - 1) * limit;
 
-    const products = await Product.find({ sold: 0 }).regex
+    const products = await Product.find({ sold: 0 })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)

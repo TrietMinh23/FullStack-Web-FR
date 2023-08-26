@@ -12,6 +12,7 @@ export default function TableAl({
   perPage,
   onSelectEditRow,
   onSearchTermChange,
+  totalPages,
 }) {
   // const [perPage, setPerPage] = useState(5); // Số hàng trên mỗi trang
   const [currentPage] = useState(1); // Trang hiện tại
