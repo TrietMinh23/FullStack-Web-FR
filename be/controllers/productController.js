@@ -196,11 +196,11 @@ export const getAllProducts = async (req, res) => {
     }
 
     const totalSold0 = await Product.find({
-      sold: 1,
+      sold: 0,
       title: { $regex: searchQuery, $options: "i" },
     });
     const totalSold1 = await Product.find({
-      sold: 0,
+      sold: 1,
       title: { $regex: searchQuery, $options: "i" },
     });
     const quantityTotalSold0 = totalSold0.length;
