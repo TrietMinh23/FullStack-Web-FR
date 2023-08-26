@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { FaTrashAlt, FaPen } from "react-icons/fa";
 import PaginationComponent from "../../../Home/components/Pagination";
 import { deleteProduct } from "../../../../api/products";
+import LoadingIcon from "../LoadingIcon";
 
 export default function TableAl({
   rows,
@@ -21,6 +22,7 @@ export default function TableAl({
   const [selectedItems, setSelectedItems] = useState([]); // Các sản phẩm được chọn
   const [selectAll, setSelectAll] = useState(false); // Tất cả sản phẩm được chọn
   const [searchTerm, setSearchTerm] = useState(""); // Từ khóa tìm kiếm
+  const [isLoading, setLoading] = useState(false);
 
   // Update the search term when input changes
   const updateSearchTerm = (event) => {
@@ -140,6 +142,14 @@ export default function TableAl({
         >
           <FaTrashAlt />
         </button>
+        {isLoading ? (
+          <div>
+            <LoadingIcon />
+          </div>
+        ) : (
+          ""
+        )}
+        {console.log(isLoading)}
       </div>
 
       <div className="overflow-auto rounded-lg shadow hidden lg:block">
