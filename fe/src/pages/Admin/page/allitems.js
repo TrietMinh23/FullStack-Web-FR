@@ -31,8 +31,8 @@ export default function Allitems() {
   };
 
   const handleSearch = (newSearchTerm) => {
-    setSearchQuery(newSearchTerm); // Update the search query state
-  };
+    setSearchQuery(new RegExp(newSearchTerm.replace(/\s+/g, ' '), 'i')); // Update the search query state
+  }
 
   useEffect(() => {
 
