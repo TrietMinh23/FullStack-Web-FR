@@ -42,10 +42,12 @@ export default function TableOrders({
 
   const handleCheckboxChange = (event, item) => {
     const { checked } = event.target;
-
+    
     if (checked) {
       setSelectedItems((prevSelectedItems) => [...prevSelectedItems, item]);
+      console.log(item);
     } else {
+      console.log(2);
       setSelectedItems((prevSelectedItems) =>
         prevSelectedItems.filter(
           (selectedItem) => selectedItem.tradeCode !== item.tradeCode
@@ -185,12 +187,8 @@ export default function TableOrders({
               <th className="p-3 text-sm font-semibold tracking-wide text-left">
                 Image
               </th>
-              <th
-                className="p-3 text-sm font-semibold tracking-wide text-left"
-                onClick={() => handleSort("itemName")}
-              >
+              <th className="p-3 text-sm font-semibold tracking-wide text-left">
                 Item name{" "}
-                {sortColumn === "itemName" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
                 className="p-3 text-sm font-semibold tracking-wide text-left"
