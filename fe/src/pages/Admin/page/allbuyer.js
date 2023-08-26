@@ -68,7 +68,6 @@ export default function Allbuyer() {
       }
     };
     fetchBuyers();
-    console.log(buyerData);
   }, [page, perPage]);
 
   return (

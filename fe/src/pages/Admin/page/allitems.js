@@ -12,6 +12,7 @@ export default function Allitems() {
   const [products, setProducts] = useState([]);
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(5);
+  const [totalPages, setTotalPages] = useState(0);
   const [selectedTradeCode, setSelectedTradeCode] = useState(false);
   const [totalSold, setTotalSold] = useState(0);
   const [totalAvailable, setTotalAvailable] = useState(0);
@@ -51,11 +52,15 @@ export default function Allitems() {
           postDate: product.createdAt?.split("T")[0] || "N/A",
         }));
         setProducts(data); // Assuming the response contains the actual data
+
+        sessionStorage.setItem(
+          "totalPage",
+          response.data.totalPages.toString()
+        );
       } catch (error) {
         console.error(error.message);
       }
     };
-
     fetchProducts();
     console.log(totalPriceSold0);
   }, [page, perPage]);
