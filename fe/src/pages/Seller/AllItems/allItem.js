@@ -49,7 +49,6 @@ export default function AllItems() {
           "totalPage",
           response.data.totalPages.toString()
         );
-        console.log("totalPage: ", totalPages);
         const data = dataProducts.map((product) => ({
           tradeCode: product._id,
           itemName: product.title,

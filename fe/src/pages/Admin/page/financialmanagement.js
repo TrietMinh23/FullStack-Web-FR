@@ -5,7 +5,7 @@ import ChartOne from "../components/ChartOne";
 import AnalyticEcommerce from "../components/AnalyticEcommerce";
 
 import { Stack, Grid } from "@mui/material";
-import { getIncomeForAllMonths, getRefundForAllMonths,getIncomeForAllDeliveredOrders, getCurrentMonthIncome } from "../../../api/order";
+import { getIncomeForAllMonths, getRefundForAllMonths,getIncomeForAllDeliveredOrders, getCurrentMonthIncome, getCurrentYearIncome } from "../../../api/order";
 import { countSellers } from "../../../api/seller";
 import { countBuyer } from "../../../api/buyer";
 
@@ -21,9 +21,10 @@ const defaultMonthlyIncome = [
 ];
 
 export default function FinancialManagement() {
-  const [monthlyIncome, setMonthlyIncome] = useState(defaultMonthlyIncome); // income for the month [1, 12
+  const [monthlyIncome, setMonthlyIncome] = useState(defaultMonthlyIncome); // income for the month [1, 12]
   const [incomeForAllDeliveredOrders, setIncomeForAllDeliveredOrders] = useState(0);
   const [incomeCurrentMonth, setIncomeCurrentMonth] = useState(0); // income for the current month
+  const [incomeCurrentYear, setIncomeCurrentYear] = useState(0); // income for the current year
   const [sellerCount, setSellerCount] = useState(0);  // count sellers
   const [buyerCount, setBuyerCount] = useState(0);  // count buyers
 
@@ -33,7 +34,8 @@ export default function FinancialManagement() {
         const responeMonthlyIncome = await getIncomeForAllMonths();
         const responeMonthlyRefund = await getRefundForAllMonths();
         const responeIncomeForAllDeliveredOrders = await getIncomeForAllDeliveredOrders();
-        const responeIncomeCurrentMonth = await getCurrentMonthIncome();  
+        const responeIncomeCurrentMonth = await getCurrentMonthIncome();
+        const responeIncomeCurrentYear = await getCurrentYearIncome();  
         const responeCountSellers = await countSellers();
         const responeCountBuyers = await countBuyer();
 
@@ -65,6 +67,7 @@ export default function FinancialManagement() {
         // Set the mappedCustomSeries to the state
         setIncomeForAllDeliveredOrders(responeIncomeForAllDeliveredOrders.data["totalIncome"]);
         setMonthlyIncome(mappedCustomSeries);
+        setIncomeCurrentYear(responeIncomeCurrentYear.data["income"]);
         setIncomeCurrentMonth(responeIncomeCurrentMonth.data["income"]);
         setSellerCount(responeCountSellers.data["count"]);
         setBuyerCount(responeCountBuyers.data["count"]);
@@ -84,7 +87,7 @@ export default function FinancialManagement() {
             title="Total Seller"
             count={`${sellerCount}`}
             percentage={(sellerCount - 1) / 1 * 100}
-            extra={`${sellerCount}`}
+            extra={`${sellerCount - 1}`}
             liltitle="you have an extra"
           />
         </Grid>
@@ -93,16 +96,7 @@ export default function FinancialManagement() {
             title="Total Buyer"
             count={`${buyerCount}`}
             percentage={(buyerCount - 1) / 1 * 100}
-            extra={`${buyerCount}`}
-            liltitle="you have an extra"
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={4} lg={3}>
-          <AnalyticEcommerce
-            title="Total Visit"
-            count="78,250"
-            percentage={27.3}
-            extra="8,900"
+            extra={`${buyerCount - 1}`}
             liltitle="you have an extra"
           />
         </Grid>
@@ -110,8 +104,8 @@ export default function FinancialManagement() {
           <AnalyticEcommerce
             title="Total Sales"
             count={incomeForAllDeliveredOrders}
-            percentage={27.3}
-            extra={incomeCurrentMonth}
+            percentage={`${(incomeCurrentYear - incomeForAllDeliveredOrders) / incomeForAllDeliveredOrders * 100}`}
+            extra={`${incomeCurrentYear}`}
             liltitle="you made an extra"
           />
         </Grid>

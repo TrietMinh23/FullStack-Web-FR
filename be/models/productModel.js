@@ -1,12 +1,7 @@
 import mongoose from "mongoose";
-import nodeCron from "node-cron";
 
 const productSchema = new mongoose.Schema(
   {
-    title: { type: String, required: true, trim: true },
-    description: { type: String, required: true, trim: true },
-    price: { type: Number, required: true },
-    brandName: { type: String },
     title: { type: String, required: true, trim: true },
     description: { type: String, required: true, trim: true },
     price: { type: Number, required: true },

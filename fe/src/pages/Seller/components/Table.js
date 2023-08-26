@@ -91,6 +91,7 @@ export default function Table({
   const handleEditRow = (item) => {
     onSelectEditRow(item.tradeCode); // Call the provided prop with the TradeCode
   };
+  
   const getCurrentPageData = () => {
     const startIndex = (currentPage - 1) * perPage;
     const endIndex = startIndex + perPage;

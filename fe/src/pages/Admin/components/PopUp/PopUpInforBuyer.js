@@ -49,17 +49,17 @@ export default function PopUpInforBuyer({ close, i, at, data }) {
                 />
                 <RowData
                     titles ={"Total Cancelled"}
-                    data = {data[i].sumCancelledPrice}
+                    data = {data[i].sumCancelled}
                     css ={"mt-3"}
                 />
                 <RowData
                     titles ={"Total Delivered"}
-                    data = {data[i]. sumDeliveredPrice}
+                    data = {data[i]. sumDelivered}
                     css ={"mt-3"}
                 />
                 <RowData
                     titles ={"Total Purchase"}
-                    data = {data[i].sumPurchasedPrice}
+                    data = {data[i].sumPurchased}
                     css ={"mt-3"}
                 />
 

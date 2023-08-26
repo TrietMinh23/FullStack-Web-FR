@@ -135,11 +135,22 @@ export const getIncomeForAllDeliveredOrders = async () => {
 
 export const getCurrentMonthIncome = async () => {
   try {
-    const response = await instance.get("/orders/admin/income/current");
+    const response = await instance.get("/orders/admin/income/current/month");
     return response;
   } catch (error) {
     throw new Error(
       error.response?.data?.error || "Error getting current month income."
+    );
+  }
+}
+
+export const getCurrentYearIncome = async () => {
+  try {
+    const response = await instance.get("/orders/admin/income/current/year");
+    return response;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.error || "Error getting current year income."
     );
   }
 }

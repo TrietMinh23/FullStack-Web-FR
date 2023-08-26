@@ -93,6 +93,7 @@ export default function TableOrders({
     }
   };
 
+
   const getCurrentPageData = () => {
     const startIndex = (currentPage - 1) * perPage;
     const endIndex = startIndex + perPage;

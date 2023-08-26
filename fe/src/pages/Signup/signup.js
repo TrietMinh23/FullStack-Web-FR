@@ -128,6 +128,7 @@ export default function Signup() {
         })
         .catch((err) => {
           console.log(err);
+          
           setMessage(err.response.data.message);
         });
     }

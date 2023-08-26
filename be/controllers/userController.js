@@ -335,6 +335,11 @@ export const countBuyer = async (req, res) => {
 
 export const get_buyer_performance_stats = async (req, res) => {
   try {
+    // pagination
+    var page = parseInt(req.query.page) || 1;
+    var limit = parseInt(req.query.limit) || 5;
+    var skip = (page - 1) * limit;
+
     const buyers = await User.find({ role: "buyer" });
     const buyerIds = buyers.map((buyer) => buyer._id);
 
@@ -358,19 +363,19 @@ export const get_buyer_performance_stats = async (req, res) => {
       {
         $group: {
           _id: "$orderby",
-          sumDeliveredPrice: {
+          sumDelivered: {
             $sum: {
-              $cond: [{ $eq: ["$orderStatus", "Delivered"] }, "$productData.price", 0],
+              $cond: [{ $eq: ["$orderStatus", "Delivered"] }, 1, 0],
             },
           },
-          sumCancelledPrice: {
+          sumCancelled: {
             $sum: {
-              $cond: [{ $eq: ["$orderStatus", "Cancelled"] }, "$productData.price", 0],
+              $cond: [{ $eq: ["$orderStatus", "Cancelled"] }, 1, 0],
             },
           },
-          sumPurchasedPrice: {
+          sumProcessing: {
             $sum: {
-              $cond: [{ $eq: ["$orderStatus", "Purchased"] }, "$productData.price", 0],
+              $cond: [{ $eq: ["$orderStatus", "Processing"] }, 1, 0],
             },
           },
         },
@@ -379,6 +384,10 @@ export const get_buyer_performance_stats = async (req, res) => {
 
     // Execute the aggregation pipeline to calculate totalSalesData
     const totalSalesData = await Order.aggregate(incomePipeline);
+
+    let totalSumDelivered = 0;
+    let totalSumCancelled = 0;
+    let totalSumProcessing = 0;
 
     const buyerStats = buyers.map((buyer) => {
       const {
@@ -396,25 +405,54 @@ export const get_buyer_performance_stats = async (req, res) => {
         (item) => item._id.toString() === buyer._id.toString()
       ) || {
         totalSales: 0,
-        sumDeliveredPrice: 0,
-        sumCancelledPrice: 0,
-        sumPurchasedPrice: 0,
+        sumDelivered: 0,
+        sumCancelled: 0,
+        sumProcessing: 0,
       };
+
+      totalSumDelivered += totalSalesInfo.sumDelivered;
+      totalSumCancelled += totalSalesInfo.sumCancelled;
+      totalSumProcessing += totalSalesInfo.sumProcessing;
 
       return {
         ...buyerData,
         totalSales: totalSalesInfo.totalSales,
-        sumDeliveredPrice: totalSalesInfo.sumDeliveredPrice,
-        sumCancelledPrice: totalSalesInfo.sumCancelledPrice,
-        sumPurchasedPrice: totalSalesInfo.sumPurchasedPrice,
+        sumDelivered: totalSalesInfo.sumDelivered,
+        sumCancelled: totalSalesInfo.sumCancelled,
+        sumProcessing: totalSalesInfo.sumProcessing,
       };
-    });
+    }).slice(skip, skip + limit);
 
     res.status(200).json({
       Buyers: buyerStats,
+      TotalSumDelivered: totalSumDelivered,
+      TotalSumCancelled: totalSumCancelled,
+      TotalSumProcessing: totalSumProcessing,
+      TotalSumAllStatus: totalSumDelivered + totalSumCancelled + totalSumProcessing,
+      totalPages: Math.ceil(buyers.length / limit),
+      currentPage: page,
     });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 };
 
+
+// const getUserByName = async (req, res) => {
+//   try {
+//     // find with sub-name
+//     const name = req.params.name;
+
+//     const user = await User.find({name: {$regrex: name, $options: 'i'}});
+
+//     if (!user) {
+//       res.status(404).json({message: "User not found!"});
+//     } else {
+//       res.status(200).json(user);
+//     }
+    
+
+//   } catch (err) {
+//     console.error(err);
+//   }
+// };

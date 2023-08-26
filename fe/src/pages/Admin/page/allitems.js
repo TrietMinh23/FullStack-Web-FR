@@ -2,7 +2,7 @@ import React from "react";
 import TableAI from "../components/Table/TableAI";
 import { useState } from "react";
 import { useEffect } from "react";
-import { getAllProducts} from "../../../api/products";
+import { getAllProducts } from "../../../api/products";
 import NewProductForm from "../../Seller/NewItem/NewForm";
 import ClearIcon from "@mui/icons-material/Clear";
 import DoneOutlineIcon from "@mui/icons-material/DoneOutline";
@@ -12,11 +12,13 @@ export default function Allitems() {
   const [products, setProducts] = useState([]);
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(5);
+  const [totalPages, setTotalPages] = useState(0);
   const [selectedTradeCode, setSelectedTradeCode] = useState(false);
   const [totalSold, setTotalSold] = useState(0);
-  const [totalAvaiable, setTotalAvaiable] = useState(0);
+  const [totalAvailable, setTotalAvailable] = useState(0);
   const [totalPriceSold0, setTotalPriceSold0] = useState(0);
   const [totalPriceSold1, setTotalPriceSold1] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleChange = (newPage) => {
     setPage(newPage);
@@ -27,8 +29,11 @@ export default function Allitems() {
     setPage(1); // Reset to first page when changing items per page
   };
 
-  useEffect(() => {
+  const handleSearch = (newSearchTerm) => {
+    setSearchQuery( new RegExp(newSearchTerm.replace(/\s+/g, " "), "i").source); // Update the search query state
+  };
 
+  useEffect(() => {
     const fetchProducts = async () => {
       sessionStorage.setItem("pageTableProducts", page.toString());
 
@@ -36,10 +41,10 @@ export default function Allitems() {
 
       try {
         // window.scrollTo(0, 0);
-        const response = await getAllProducts(page, perPage);
+        const response = await getAllProducts(page, perPage, searchQuery);
         const dataProducts = response.data.products;
         setTotalSold(response.data.totalSold0);
-        setTotalAvaiable(response.data.totalSold1);
+        setTotalAvailable(response.data.totalSold1);
         setTotalPriceSold0(response.data.totalPriceSold0);
         setTotalPriceSold1(response.data.totalPriceSold1);
         const data = dataProducts.map((product) => ({
@@ -51,14 +56,17 @@ export default function Allitems() {
           postDate: product.createdAt?.split("T")[0] || "N/A",
         }));
         setProducts(data); // Assuming the response contains the actual data
+
+        sessionStorage.setItem(
+          "totalPage",
+          response.data.totalPages.toString()
+        );
       } catch (error) {
         console.error(error.message);
       }
     };
-
     fetchProducts();
-    console.log(totalPriceSold0);
-  }, [page, perPage]);
+  }, [page, perPage,searchQuery]);
 
   const handleSelectEditRow = (tradeCode) => {
     setSelectedTradeCode(tradeCode); // Set the selected TradeCode in state
@@ -69,16 +77,16 @@ export default function Allitems() {
       icon: <DoneOutlineIcon fontSize="large" />,
       id: 1,
       text: "Total Money",
-      number: totalSold  || 0,
+      number: totalSold || 0,
       money: totalPriceSold0 || 0,
       color: "rgb(74, 222, 128)",
-      title: "AVAIABLE",
+      title: "AVAILABLE",
     },
     {
       icon: <ClearIcon fontSize="large" />,
       id: 2,
       text: "Total Money",
-      number: totalAvaiable || 0,
+      number: totalAvailable || 0,
       money: totalPriceSold1 || 0,
       color: "rgb(248, 113, 113)",
       title: "SOLD",
@@ -112,17 +120,18 @@ export default function Allitems() {
               onPerPageChange={handlePerPageChange}
               perPage={perPage}
               onSelectEditRow={handleSelectEditRow}
+              onSearchTermChange={handleSearch} // Pass the callback prop
             />
           </div>
         )}
-  
+
         {selectedTradeCode && (
           <div>
-            <NewProductForm tradeCode={selectedTradeCode} role={"admin"} /> {/* Pass the selected TradeCode as a prop */}
+            <NewProductForm tradeCode={selectedTradeCode} role={"admin"} />{" "}
+            {/* Pass the selected TradeCode as a prop */}
           </div>
         )}
       </div>
     </React.Fragment>
   );
 }
-  

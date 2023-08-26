@@ -57,7 +57,6 @@ export default function AllOrders() {
     },
   ];
   
-
   const handleChange = (newPage) => {
     setPage(newPage);
   };
@@ -85,7 +84,6 @@ export default function AllOrders() {
         setOrderStatusTotalAmounts(response.data.orderStatusTotalAmounts)
         setTotalPages(response.data.totalPages);
         sessionStorage.setItem("totalPage", response.data.totalPages.toString());
-        console.log(response.data.totalPages);
 
         const data = dataOrders.flatMap((order) => {
           const orderInfo = {

@@ -7,13 +7,17 @@ import { ADDTOCART } from "../../../utils/redux/productsSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Rating from "@mui/material/Rating";
-import Review from "./Review"
+import Review from "./Review";
 import CheapIcon from "../../../assets/CheapIcon";
 import CardSkeletonDetail from "../../../components/ui/CardSkeletonDetail";
 import formatNumberWithCommas from "../../../utils/formatNumberWithCommas";
 import StoreIcon from "@mui/icons-material/Store";
-
+import getRandomInt from "../../../utils/randomInRange";
 import PopupSeller from "./PopupSeller";
+import ShoppingRelativeProducts from "./ShoppingRelativeProducts";
+import getCookie from "../../../utils/getCookie";
+import { useNavigate } from "react-router-dom";
+
 export default function ProductDetail() {
   const [seeStar, setSeeStar] = useState(0);
   const params = useParams();
@@ -21,6 +25,7 @@ export default function ProductDetail() {
 
   const [review, setReview] = useState([]);
   const [dataReview, setDataReview] = useState({});
+  const navigator = useNavigate();
 
   const num = 5;
   const dispatch = useDispatch();
@@ -42,6 +47,11 @@ export default function ProductDetail() {
   };
 
   const addToCart = () => {
+    if (!getCookie("refresh_token")) {
+      navigator("/type");
+      return;
+    }
+
     // Check if product has been available in shopping cart
     if (currentShoppingCart.length) {
       console.log(currentShoppingCart);
@@ -118,22 +128,17 @@ export default function ProductDetail() {
       });
   }, [params.slug]);
 
-
   useEffect(() => {
-    if(data){
+    if (data) {
       const path = data?.sellerId._id;
       console.log(path);
-       instance
-         .get(`review/all/${path}`)
-         .then((res) => {
-           console.log("data review", res.data);
-           setDataReview(res.data);
-           setReview(res.data.review);
-         })
+      instance.get(`review/all/${path}`).then((res) => {
+        console.log("data review", res.data);
+        setDataReview(res.data);
+        setReview(res.data.review);
+      });
     }
   }, [data]);
-
-
 
   return (
     <section className="text-gray-700 body-font overflow-hidden bg-white">
@@ -160,7 +165,11 @@ export default function ProductDetail() {
                         <span className="text-2xl text-center pr-2">
                           {dataReview.AvgStar}/5.0
                         </span>
-                        <Rating name="read-only" readOnly value={dataReview.AvgStar} />
+                        <Rating
+                          name="read-only"
+                          readOnly
+                          value={dataReview.AvgStar}
+                        />
                       </div>
                       <div className="w-[100px] text-center">
                         <div
@@ -213,10 +222,7 @@ export default function ProductDetail() {
                         </div>
                       </div>
                       <div className=" border w-40 lg:w-72 overflow-y-scroll ">
-                        <Review 
-                          review ={review}
-                          seeStar ={seeStar}
-                        />
+                        <Review review={review} seeStar={seeStar} />
                       </div>
                     </div>
                   </div>
@@ -351,6 +357,10 @@ export default function ProductDetail() {
           )}
         </div>
       </div>
+      <ShoppingRelativeProducts
+        category={data?.category[getRandomInt(0, data.category.length - 1)]}
+        id={data?._id}
+      />
     </section>
   );
 }

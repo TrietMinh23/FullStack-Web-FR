@@ -1,23 +1,25 @@
 import React, { useState, useEffect } from "react";
-import { FaTrashAlt, FaPen } from "react-icons/fa";
+import { PiMagnifyingGlassBold } from "react-icons/pi";
+import { ImBlocked } from "react-icons/im";
+import { BsCheckCircleFill } from "react-icons/bs";
+import { blockBuyer, unblockBuyer } from "../../../../api/buyer";
 import PopUpInforBuyer from "../PopUp/PopUpInforBuyer";
-const Table = ({rows}) => {
-  const [perPage, setPerPage] = useState(5); // Số hàng trên mỗi trang
+import PaginationComponent from "../../../Home/components/Pagination"; 
+
+const Table = ({ rows, onPageChange, page, onPerPageChange, perPage }) => {
   const [currentPage] = useState(1); // Trang hiện tại
   const [sortColumn, setSortColumn] = useState(""); // Cột hiện tại được sắp xếp
   const [sortOrder, setSortOrder] = useState(""); // Thứ tự sắp xếp ('asc' hoặc 'desc')
   const [searchTerm, setSearchTerm] = useState(""); // Giá trị tìm kiếm
   const [selectedItems, setSelectedItems] = useState([]); // Các sản phẩm được chọn
   const [selectAll, setSelectAll] = useState(false); // Tất cả sản phẩm được chọn
-  const [detailInfor , setDetailInfor] = useState(false);
+  const [detailInfor, setDetailInfor] = useState(false);
   const [indexInfor, setIndexInfor] = useState(0);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const closeSee = () => {
     setDetailInfor(false);
-  }
-  useEffect(() => {
-    console.log(rows);
-  },[rows]);
+  };
 
   const handleSort = (column) => {
     if (column === sortColumn) {
@@ -42,7 +44,7 @@ const Table = ({rows}) => {
     } else {
       setSelectedItems((prevSelectedItems) =>
         prevSelectedItems.filter(
-          (selectedItem) => selectedItem.userName !== item.userName
+          (selectedItem) => selectedItem._id !== item._id
         )
       );
     }
@@ -60,8 +62,68 @@ const Table = ({rows}) => {
     }
   };
 
-  const handleDelete = () => {
-    setSelectedItems([]);
+  const handleBlockUser = async () => {
+    try {
+      const userIsBlock = selectedItems.map((item) => item._id);
+      for (const orderId of userIsBlock) {
+        await blockBuyer(orderId);
+      }
+      setSelectedItems([]);
+      window.location.reload();
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
+
+  const handleUnblockUser = async () => {
+    try {
+      const userIsBlock = selectedItems.map((item) => item._id);
+      for (const orderId of userIsBlock) {
+        await unblockBuyer(orderId);
+      }
+      setSelectedItems([]);
+      window.location.reload();
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
+
+  const handleBlockUserRow = async (item) => {
+    try {
+      setIsUpdating(true);
+      await blockBuyer(item._id);
+      // Handle success or update your local data accordingly
+      setSelectedItems((prevSelectedItems) =>
+        prevSelectedItems.filter(
+          (selectedItem) => selectedItem.tradeCode !== item.tradeCode
+        )
+      );
+      window.location.reload();
+    } catch (error) {
+      console.error("Error updating order status:", error.message);
+      // Handle error or display an error message
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const handleUnblockUserRow = async (item) => {
+    try {
+      setIsUpdating(true);
+      await unblockBuyer(item._id);
+      // Handle success or update your local data accordingly
+      setSelectedItems((prevSelectedItems) =>
+        prevSelectedItems.filter(
+          (selectedItem) => selectedItem.tradeCode !== item.tradeCode
+        )
+      );
+      window.location.reload();
+    } catch (error) {
+      console.error("Error updating order status:", error.message);
+      // Handle error or display an error message
+    } finally {
+      setIsUpdating(false);
+    }
   };
 
   const getCurrentPageData = () => {
@@ -89,7 +151,6 @@ const Table = ({rows}) => {
         }
       });
     }
-
     return sortedData.slice(startIndex, endIndex);
   };
 
@@ -110,12 +171,19 @@ const Table = ({rows}) => {
         />
         <button
           className="ml-2 p-2 hover:bg-red-600 bg-red-500 text-white rounded-md"
-          onClick={handleDelete}
+          onClick={handleBlockUser}
         >
-          <FaTrashAlt />
+          <ImBlocked />
+        </button>
+        <button
+          className="ml-2 p-2 hover:bg-green-600 bg-green-500 text-white rounded-md"
+          onClick={handleUnblockUser}
+        >
+          <BsCheckCircleFill />
         </button>
       </div>
 
+      {/* Desktop Table */}
       <div className="overflow-auto rounded-lg shadow hidden xl:block">
         <table className="w-full">
           <thead className="bg-gray-50 border-b-2 border-gray-200">
@@ -128,49 +196,43 @@ const Table = ({rows}) => {
                 />
               </th>
               <th
-                className="w-20 p-3 text-sm font-semibold tracking-wide text-left"
+                className="w-20 p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("userName")}
               >
-                userName{" "}
-                {sortColumn === "userName" &&
+                Username{" "}
+                {sortColumn === "userName" && (sortOrder === "asc" ? "▲" : "▼")}
+              </th>
+              <th
+                className="p-3 text-sm font-semibold tracking-wide text-center"
+                onClick={() => handleSort("processing")}
+              >
+                Processing Orders{" "}
+                {sortColumn === "processing" &&
                   (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
-                className="p-3 text-sm font-semibold tracking-wide text-left"
-                onClick={() => handleSort("processing")}
-              >
-                Processing orders{" "}
-                {sortColumn === "processing" && (sortOrder === "asc" ? "▲" : "▼")}
-              </th>
-              <th
-                className="p-3 text-sm font-semibold tracking-wide text-left"
+                className="p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("canceled")}
               >
-                Canceled orders{" "}
+                Cancelled Orders{" "}
                 {sortColumn === "canceled" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
-                className="p-3 text-sm font-semibold tracking-wide text-left"
-                onClick={() => handleSort("totalIncome")}
-              >
-                Total Income{" "}
-                {sortColumn === "totalIncome" && (sortOrder === "asc" ? "▲" : "▼")}
-              </th>
-              <th
-                className="w-24 p-3 text-sm font-semibold tracking-wide text-left"
+                className="w-24 p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("status")}
               >
                 Status{" "}
                 {sortColumn === "status" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
-                className="w-24 p-3 text-sm font-semibold tracking-wide text-left"
+                className="w-24 p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("signUpDate")}
               >
-                signUpDate{" "}
-                {sortColumn === "signUpDate" && (sortOrder === "asc" ? "▲" : "▼")}
+                Sign Up Date{" "}
+                {sortColumn === "signUpDate" &&
+                  (sortOrder === "asc" ? "▲" : "▼")}
               </th>
-              <th className="w-32 p-3 text-sm font-semibold tracking-wide text-left">
+              <th className="w-32 p-3 text-sm font-semibold tracking-wide text-center">
                 Action
               </th>
             </tr>
@@ -184,55 +246,56 @@ const Table = ({rows}) => {
                 <td className="p-3 text-sm text-center text-gray-700 whitespace-nowrap">
                   <input
                     type="checkbox"
-                    checked={selectedItems.some(
-                      (item) => item.userName === row.userName
-                    )}
+                    checked={selectedItems.some((item) => item._id === row._id)}
                     onChange={(event) => handleCheckboxChange(event, row)}
                   />
                 </td>
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                   {row.name}
                 </td>
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                  {row.sumPurchasedPrice}
+                <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
+                  {row.sumProcessing}
                 </td>
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                  {row.sumCancelledPrice}
-                </td>
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                  {row.sumDeliveredPrice}
+                <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
+                  {row.sumCancelled}
                 </td>
                 <td className="p-3 text-xs font-medium uppercase text-gray-700 whitespace-nowrap ">
                   <span
                     className={
                       "block text-center p-2 rounded-md bg-opacity-50  " +
-                      ( true
+                      (row.isBlocked === false
                         ? "text-green-800 bg-green-200"
-                        : row.status === "OFF > 15 day"
-                        ? "text-gray-800 bg-gray-200"
-                        : row.status === "OFF"
-                        ? "text-red-800 bg-red-200"
-                        : "")
+                        : "text-red-800 bg-red-200")
                     }
                   >
-                    Active
+                    {row.isBlocked === false ? "Active" : "Blocked"}
                   </span>
                 </td>
 
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                   {row.createdAt}
                 </td>
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                  <button 
-                    onClick ={() => {
+                <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
+                  <button
+                    onClick={() => {
                       setDetailInfor(true);
                       setIndexInfor(index);
                     }}
-                    className="text-blue-500 font-bold hover:underline">
-                    <FaPen />
+                    className="text-blue-500 font-bold hover:underline"
+                  >
+                    <PiMagnifyingGlassBold />
                   </button>
-                  <button className="text-red-500 font-bold hover:underline ml-2">
-                    <FaTrashAlt />
+                  <button
+                    className="text-red-500 font-bold hover:underline ml-2"
+                    onClick={() => handleBlockUserRow(row)}
+                  >
+                    <ImBlocked />
+                  </button>
+                  <button
+                    className="text-green-500 font-bold hover:underline ml-2"
+                    onClick={() => handleUnblockUserRow(row)}
+                  >
+                    <BsCheckCircleFill />
                   </button>
                 </td>
               </tr>
@@ -241,6 +304,7 @@ const Table = ({rows}) => {
         </table>
       </div>
 
+      {/* Mobile/Tablet Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 xl:hidden">
         {getCurrentPageData().map((row, index) => (
           <div
@@ -260,38 +324,49 @@ const Table = ({rows}) => {
               <div>
                 <span
                   className={`p-1.5 text-xs font-medium uppercase tracking-wider ${
-                    true
+                    row.isBlocked === false
                       ? "text-green-800 bg-green-200"
-                      : row.status === "OFF > 15 day"
-                      ? "text-gray-800 bg-gray-200"
-                      : row.status === "OFF"
-                      ? "text-yellow-800 bg-yellow-200"
-                      : ""
+                      : "text-red-800 bg-red-200"
                   } rounded-lg bg-opacity-50`}
                 >
-                  ACTIVE
+                  {row.isBlocked === false ? "Active" : "Blocked"}
                 </span>
               </div>
             </div>
-            <div className="text-sm text-gray-700">Processing order: {row.sumPurchasedPrice}</div>
-            <div className="text-sm font-medium text-black">${row.sumDeliveredPrice}</div>
+            <div className="text-sm text-gray-700">
+              Processing order: {row.sumProcessing}
+            </div>
+            <div className="text-sm font-medium text-black">
+              ${row.sumCancelled}
+            </div>
             <div className="flex justify-end">
               <button
-                onClick ={() => {
+                onClick={() => {
                   setDetailInfor(true);
                   setIndexInfor(index);
                 }}
-                className="text-blue-500 font-bold hover:underline">
-                <FaPen />
+                className="text-blue-500 font-bold hover:underline"
+              >
+                <PiMagnifyingGlassBold />
               </button>
-              <button className="text-red-500 font-bold hover:underline ml-2">
-                <FaTrashAlt />
+              <button
+                className="text-red-500 font-bold hover:underline ml-2"
+                onClick={() => handleBlockUserRow(row)}
+              >
+                <ImBlocked />
+              </button>
+              <button
+                className="text-green-500 font-bold hover:underline ml-2"
+                onClick={() => handleUnblockUserRow(row)}
+              >
+                <BsCheckCircleFill />
               </button>
             </div>
           </div>
         ))}
       </div>
 
+      {/* Pagination */}
       <div className="flex justify-between items-center mt-4 flex-col lg:flex-row">
         <div className="flex items-center w-full mb-10">
           <label htmlFor="rowsPerPage" className="mr-2">
@@ -301,102 +376,28 @@ const Table = ({rows}) => {
             id="rowsPerPage"
             className="border border-gray-300 rounded-md p-1"
             value={perPage}
-            onChange={(e) => setPerPage(Number(e.target.value))}
+            onChange={(e) => onPerPageChange(Number(e.target.value))}
           >
             <option value={5}>5</option>
             <option value={10}>10</option>
             <option value={15}>15</option>
           </select>
         </div>
-        <div className="flex">
-          <a
-            href="/#"
-            className="px-4 py-2 mx-1 text-gray-500 capitalize bg-white rounded-md cursor-not-allowed dark:bg-gray-800 dark:text-gray-600"
-          >
-            <div className="flex items-center -mx-1">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-6 h-6 mx-1 rtl:-scale-x-100"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M7 16l-4-4m0 0l4-4m-4 4h18"
-                />
-              </svg>
-            </div>
-          </a>
-          <a
-            href="/#"
-            className="px-4 py-2 mx-1 text-gray-700 transition-colors duration-300 transform bg-white rounded-md sm:inline dark:bg-gray-800 dark:text-gray-200 hover:bg-blue-500 dark:hover:bg-blue-500 hover:text-white dark:hover:text-gray-200"
-          >
-            1
-          </a>
-          <a
-            href="/#"
-            className="px-4 py-2 mx-1 text-gray-700 transition-colors duration-300 transform bg-white rounded-md sm:inline dark:bg-gray-800 dark:text-gray-200 hover:bg-blue-500 dark:hover:bg-blue-500 hover:text-white dark:hover:text-gray-200"
-          >
-            2
-          </a>
-          <a
-            href="/#"
-            className="hidden px-4 py-2 mx-1 text-gray-700 transition-colors duration-300 transform bg-white rounded-md sm:inline dark:bg-gray-800 dark:text-gray-200 hover:bg-blue-500 dark:hover:bg-blue-500 hover:text-white dark:hover:text-gray-200"
-          >
-            3
-          </a>
-          <a
-            href="/#"
-            className="hidden px-4 py-2 mx-1 text-gray-700 transition-colors duration-300 transform bg-white rounded-md sm:inline dark:bg-gray-800 dark:text-gray-200 hover:bg-blue-500 dark:hover:bg-blue-500 hover:text-white dark:hover:text-gray-200"
-          >
-            4
-          </a>
-          <a
-            href="/#"
-            className="hidden px-4 py-2 mx-1 text-gray-700 transition-colors duration-300 transform bg-white rounded-md sm:inline dark:bg-gray-800 dark:text-gray-200 hover:bg-blue-500 dark:hover:bg-blue-500 hover:text-white dark:hover:text-gray-200"
-          >
-            5
-          </a>
-          <a
-            href="/#"
-            className="px-4 py-2 mx-1 text-gray-700 transition-colors duration-300 transform bg-white rounded-md dark:bg-gray-800 dark:text-gray-200 hover:bg-blue-500 dark:hover:bg-blue-500 hover:text-white dark:hover:text-gray-200"
-          >
-            <div className="flex items-center -mx-1">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-6 h-6 mx-1 rtl:-scale-x-100"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M17 8l4 4m0 0l-4 4m4-4H3"
-                />
-              </svg>
-            </div>
-          </a>
+        <div className="flex w-full justify-end">
+          <PaginationComponent setPage={onPageChange} page={page} />
         </div>
       </div>
-      {detailInfor && 
-         <div className="flex lg:flex-row flex-col">
-         <PopUpInforBuyer
-           close = {closeSee}
-           i = {indexInfor}
-           data = {rows}
-           at={document.documentElement.scrollTop}
-           />
-         <div
-           id="dimScreen"
-           className={"block"}
-           ></div>
-       </div>
-      }
+      {detailInfor && (
+        <div className="flex lg:flex-row flex-col">
+          <PopUpInforBuyer
+            close={closeSee}
+            i={indexInfor}
+            data={rows}
+            at={document.documentElement.scrollTop}
+          />
+          <div id="dimScreen" className={"block"}></div>
+        </div>
+      )}
     </div>
   );
 };

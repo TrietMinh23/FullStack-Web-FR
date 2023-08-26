@@ -10,6 +10,7 @@ export const getUserReview = async (req, res) => {
       res.status(404).json({ error: err.message });
     }
   };
+  
 export const createReview = async (req, res) => {
 
     try {
@@ -93,5 +94,35 @@ export const createReview = async (req, res) => {
       }
     } catch (err) {
       res.json({ message: "noooooo"});
+    }
+  };
+
+  export const countAllReview = async (req, res) => {
+    try {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      const review = await userReview.find({
+        createdAt: { $gte: today },
+      })
+
+      // Count positive and negative reviews
+      let positiveCount = 0;
+      let negativeCount = 0;
+  
+      review.forEach((r) => {
+        if (r.rating.star >= 4) {
+          positiveCount++;
+        } else if (r.rating.star <= 2) {
+          negativeCount++;
+        }
+      });
+  
+      res.status(200).json({
+        positiveCount,
+        negativeCount,
+      });
+    } catch (err) {
+      res.status(404).json({ error: err.message });
     }
   };

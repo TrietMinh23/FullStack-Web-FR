@@ -1,9 +1,9 @@
-import React, { useState ,useEffect } from "react";
-import { FaTrashAlt, FaPen } from "react-icons/fa";
+import React, {useState, useEffect} from "react";
+import {FaTrashAlt, FaPen} from "react-icons/fa";
 import {PiMagnifyingGlass} from "react-icons/pi";
 import {AiOutlineCheckCircle} from "react-icons/ai";
 import PopupProcess from "../PopUp/PopupProcess";
-import { updateReport } from "../../../../api/Report/updateReport";
+import {updateReport} from "../../../../api/Report/updateReport";
 
 const Table = ({rows}) => {
   const [perPage, setPerPage] = useState(5); // Số hàng trên mỗi trang
@@ -31,42 +31,42 @@ const Table = ({rows}) => {
     setIsProcess(false);
     rows[isHandle].status = "Done";
     Update(rows[isHandle]._id);
-  }
-
-  const Update = async (data) => {
-    await updateReport({ _id: data })
-    .then((res) => {
-      console.log(res.data);
-    })
-    .catch((err) => {
-        console.log(err.response.data.message);
-    });
   };
 
+  const Update = async (data) => {
+    await updateReport({_id: data})
+      .then((res) => {
+        console.log(res.data);
+      })
+      .catch((err) => {
+        console.log(err.response.data.message);
+      });
+  };
 
   const closeProcess = () => {
     setIsProcess(false);
-  }
+  };
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
   };
 
   const handleCheckboxChange = (event, item) => {
-    const { checked } = event.target;
+    const {checked} = event.target;
 
     if (checked) {
       setSelectedItems((prevSelectedItems) => [...prevSelectedItems, item]);
     } else {
       setSelectedItems((prevSelectedItems) =>
         prevSelectedItems.filter(
-          (selectedItem) => selectedItem.id_reporter.name !== item.id_reporter.name
+          (selectedItem) =>
+            selectedItem._id!== item._id
         )
       );
     }
   };
 
   const handleSelectAllChange = (event) => {
-    const { checked } = event.target;
+    const {checked} = event.target;
 
     if (checked) {
       setSelectAll(true);
@@ -110,13 +110,15 @@ const Table = ({rows}) => {
     return sortedData.slice(startIndex, endIndex);
   };
   const formatDate = (date) => {
-    const options = { year: 'numeric', month: 'short', day: 'numeric' };
-    const parts = new Date(date).toLocaleDateString(undefined, options).split(' ');
+    const options = {year: "numeric", month: "short", day: "numeric"};
+    const parts = new Date(date)
+      .toLocaleDateString(undefined, options)
+      .split(" ");
     return `${parts[1]} ${parts[0]}, ${parts[2]}`;
-  }
+  };
   return (
     <div className="p-5 h-full bg-gray-100 w-full rounded-md">
-      <h1 className="text-xl mb-2">All reports</h1>
+      <h1 className="text-xl mb-2">All Reports</h1>
 
       <div className="flex items-center mb-4">
         <label htmlFor="search" className="mr-2">
@@ -149,7 +151,7 @@ const Table = ({rows}) => {
                 />
               </th>
               <th
-                className="w-20 p-3 text-sm font-semibold tracking-wide text-left"
+                className="w-20 p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("id_reporter.name")}
               >
                 Reporter{" "}
@@ -157,30 +159,32 @@ const Table = ({rows}) => {
                   (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
-                className="w-24 p-3 text-sm font-semibold tracking-wide text-left"
+                className="w-24 p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("id_reported.name")}
               >
                 Reported{" "}
-                {sortColumn === "id_reported.name" && (sortOrder === "asc" ? "▲" : "▼")}
+                {sortColumn === "id_reported.name" &&
+                  (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
-                className="p-3 text-sm font-semibold tracking-wide text-left"
+                className="p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("title")}
               >
                 Report title{" "}
                 {sortColumn === "title" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
-                className="w-24 p-3 text-sm font-semibold tracking-wide text-left"
+                className="w-24 p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("createdAt")}
               >
                 Post date{" "}
-                {sortColumn === "createdAt" && (sortOrder === "asc" ? "▲" : "▼")}
+                {sortColumn === "createdAt" &&
+                  (sortOrder === "asc" ? "▲" : "▼")}
               </th>
-              <th className="w-32 p-3 text-sm font-semibold tracking-wide text-left">
+              <th className="w-32 p-3 text-sm font-semibold tracking-wide text-center">
                 Status
               </th>
-              <th className="w-32 p-3 text-sm font-semibold tracking-wide text-left">
+              <th className="w-32 p-3 text-sm font-semibold tracking-wide text-center">
                 Action
               </th>
             </tr>
@@ -189,30 +193,30 @@ const Table = ({rows}) => {
             {getCurrentPageData().map((row, index) => (
               <tr
                 className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
-                key={row.id_reporter.name}
+                key={row.id_reporter._id}
               >
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                   <input
                     type="checkbox"
                     checked={selectedItems.some(
-                      (item) => item.id_reporter.name === row.id_reporter.name
+                      (item) => item._id === row._id
                     )}
                     onChange={(event) => handleCheckboxChange(event, row)}
                   />
                 </td>
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                   {row.id_reporter.name}
                 </td>
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                   {row.id_reported.name}
                 </td>
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                   {row.title}
                 </td>
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                   {formatDate(row.createdAt)}
                 </td>
-                <td className="p-3 text-xs font-medium uppercase text-gray-700 whitespace-nowrap ">
+                <td className="p-3 text-xs font-medium uppercase text-gray-700 whitespace-nowrap text-center">
                   <span
                     className={`p-1.5 text-xs font-medium uppercase tracking-wider ${
                       row.status === "Done"
@@ -225,30 +229,30 @@ const Table = ({rows}) => {
                     {row.status}
                   </span>
                 </td>
-                {row.status === "Done" ?
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap ">
-                  <button className="text-blue-500 font-bold hover:underline">
-                    <AiOutlineCheckCircle className="w-5 h-5 text-blue-500" />
-                  </button>
-                </td>
-                 :
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                  <button 
-                    onClick ={() => {
-                      setIsProcess(!isProcess);
-                      setIsHandle(index);
-                    } }
-                    className="text-blue-500 font-bold hover:underline "
+                {row.status === "Done" ? (
+                  <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
+                    <button className="text-blue-500 font-bold hover:underline">
+                      <AiOutlineCheckCircle className="w-5 h-5 text-blue-500" />
+                    </button>
+                  </td>
+                ) : (
+                  <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
+                    <button
+                      onClick={() => {
+                        setIsProcess(!isProcess);
+                        setIsHandle(index);
+                      }}
+                      className="text-blue-500 font-bold hover:underline "
                     >
-                    <PiMagnifyingGlass className="w-5 h-5 text-blue-500"/>
-                  </button>
-                </td>
-                }
+                      <PiMagnifyingGlass className="w-5 h-5 text-blue-500" />
+                    </button>
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>
         </table>
-      </div> 
+      </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:hidden">
         {getCurrentPageData().map((row, index) => (
@@ -281,24 +285,25 @@ const Table = ({rows}) => {
               </div>
             </div>
             <div className="text-sm text-gray-700">{row.title}</div>
-            <div className="text-sm font-medium text-black ">Post Date: {row.createdAt}</div>
+            <div className="text-sm font-medium text-black ">
+              Post Date: {row.createdAt}
+            </div>
             <div className="flex justify-end">
-              {row.status === "Done" ?
+              {row.status === "Done" ? (
                 <button className="text-blue-500 font-bold hover:underline">
                   <AiOutlineCheckCircle className="w-5 h-5 text-blue-500" />
                 </button>
-                
-                 :
-                <button 
-                  onClick ={() => {
+              ) : (
+                <button
+                  onClick={() => {
                     setIsProcess(!isProcess);
                     setIsHandle(index);
-                  } }
+                  }}
                   className="text-blue-500 font-bold hover:underline "
-                  >
-                  <PiMagnifyingGlass className="w-5 h-5 text-blue-500"/>
-                </button>   
-                }
+                >
+                  <PiMagnifyingGlass className="w-5 h-5 text-blue-500" />
+                </button>
+              )}
             </div>
           </div>
         ))}
@@ -394,21 +399,17 @@ const Table = ({rows}) => {
             </div>
           </a>
         </div>
-      </div> 
-       {isProcess && (
+      </div>
+      {isProcess && (
         <div className="flex lg:flex-row flex-col">
           <PopupProcess
-            close = {closeProcess}
-            finish = {finishProcess}
-            i = {isHandle}
-            />
-          <div
-            id="dimScreen"
-            className={"block"}
-            ></div>
+            close={closeProcess}
+            finish={finishProcess}
+            i={isHandle}
+          />
+          <div id="dimScreen" className={"block"}></div>
         </div>
-        )
-      } 
+      )}
     </div>
   );
 };

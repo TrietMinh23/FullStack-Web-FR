@@ -16,6 +16,7 @@ import {
   getIncomeForAllMonths,
   getRefundForALlMonths,
   getIncomeForAllDeliveredOrders,
+  getCurrentYearIncome,
 } from "../controllers/orderController.js";
 import {
   verifyToken,
@@ -36,7 +37,8 @@ router.get("/", verifyTokenAndAdmin, getAllOrders);
 // router.get("/income", verifyTokenAndAdmin, getMonthlyIncome);
 
 // admin
-router.get("/admin/income/current", getCurrentMonthIncome);
+router.get("/admin/income/current/year", getCurrentYearIncome);
+router.get("/admin/income/current/month", getCurrentMonthIncome);
 router.get("/admin/income/allmonth", getIncomeForAllMonths);
 router.get("/admin/refund/allmonth", getRefundForALlMonths);
 router.get("/admin/income", getIncomeForAllDeliveredOrders);

@@ -23,7 +23,6 @@ export default function LayoutHomePage() {
       }
       // Check if listFromLocalStorage is not null before accessing length
       else if (listFromLocalStorage && listFromLocalStorage.products.length) {
-        console.log("CHECKKKKK");
         dispatch(UPDATEPRODUCT({ listProduct: listFromLocalStorage.products }));
       }
     }
