@@ -9,6 +9,8 @@ import {
   Divider,
   TextField,
   InputLabel,
+  Typography,
+  Snackbar,
   Unstable_Grid2 as Grid,
 } from "@mui/material";
 import { updateSellerById } from "../../../api/seller";
@@ -46,6 +48,10 @@ export const AccountProfileDetails = ({ name, email, mobile, address }) => {
     country: "",
   });
 
+  const [unchangedDataNotification, setUnchangedDataNotification] =
+    useState(true);
+  const [missingFieldNotification, setMissingFieldNotification] = useState(false);
+
   useEffect(() => {
     if (name) {
       const nameParts = name.split(" ");
@@ -72,6 +78,7 @@ export const AccountProfileDetails = ({ name, email, mobile, address }) => {
 
   const handleChange = useCallback((event) => {
     const { name, value } = event.target;
+    setUnchangedDataNotification(false);
     setValues((prevState) => ({
       ...prevState,
       [name]: value,
@@ -81,11 +88,26 @@ export const AccountProfileDetails = ({ name, email, mobile, address }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    // Check for missing required fields
+    if (!values.firstName || !values.lastName || !values.email || !values.country || !values.phone || !values.address) {
+      window.alert("Please fill in all required fields.");
+      setMissingFieldNotification(false);
+      return;
+    }
+
     let sellerId = localStorage.getItem("_id");
     let cleanedSellerId = sellerId.replace(/"/g, "");
     const id = cleanedSellerId;
 
+    // Check if the data is unchanged
+    if (unchangedDataNotification) {
+      window.alert("No changes to save.");
+      setUnchangedDataNotification(true);
+      return;
+    }
+
     try {
+      setUnchangedDataNotification(true);
       // Make an API call to update the seller's details
       const response = await updateSellerById(id, formattedValues); // Use formattedValues here
       console.log("Updated seller: ", response.data);
@@ -102,7 +124,14 @@ export const AccountProfileDetails = ({ name, email, mobile, address }) => {
   return (
     <form autoComplete="off" noValidate onSubmit={handleSubmit}>
       <Card className="px-6 py-4 shadow-lg">
-        <CardHeader subheader="The information can be edited" title="Profile" />
+        <CardHeader
+          subheader="The information can be edited"
+          title={
+            <Typography variant="h5" component="div" fontWeight="bold">
+              Profile
+            </Typography>
+          }
+        />
         <CardContent>
           <Box className="space-y-4">
             <Grid container spacing={4}>

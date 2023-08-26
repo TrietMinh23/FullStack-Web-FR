@@ -208,8 +208,7 @@ export const getAllProducts = async (req, res) => {
     const quantityTotalSold0 = totalSold0.length;
     const quantityTotalSold1 = totalSold1.length;
 
-    const totalPages = Math.ceil(quantityTotalSold0 / limit);
-
+    const totalPages = Math.ceil((quantityTotalSold0 + quantityTotalSold1) / limit);
     // Calculate total price of sold products (sold 1)
     const totalPriceSold1 = totalSold1.reduce(
       (total, product) => total + product.price,

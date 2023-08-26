@@ -99,6 +99,7 @@ export default function Allsellers() {
             onPageChange={handleChange}
             onPerPageChange={handlePerPageChange}
             perPage={perPage}
+            totalPages={totalPages}
           />
         </div>
       </div>

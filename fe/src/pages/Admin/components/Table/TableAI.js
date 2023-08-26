@@ -199,7 +199,7 @@ export default function TableAl({
                 className="w-24 p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("postDate")}
               >
-                Post date{" "}
+                Update date{" "}
                 {sortColumn === "postDate" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th className="w-32 p-3 text-sm font-semibold tracking-wide text-center">
@@ -340,7 +340,7 @@ export default function TableAl({
           </label>
           <select
             id="rowsPerPage"
-            className="border border-gray-300 rounded-md p-1"
+            className="border border-gray-300 rounded-md p-1 w-12"
             value={perPage}
             onChange={(e) => onPerPageChange(Number(e.target.value))}
           >
@@ -350,7 +350,7 @@ export default function TableAl({
           </select>
         </div>
         <div className="flex w-full justify-end">
-          <PaginationComponent setPage={onPageChange} page={page} />
+          <PaginationComponent setPage={onPageChange} page={page} totalPage={totalPages}/>
         </div>
       </div>
     </div>
