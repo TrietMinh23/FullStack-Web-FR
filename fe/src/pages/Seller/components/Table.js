@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { FaTrashAlt, FaPen } from "react-icons/fa";
 import PaginationComponent from "../../Home/components/Pagination";
 import { deleteProduct } from "../../../api/products";
+import formatNumberWithCommas from "../../../utils/formatNumberWithCommas";
 
 export default function Table({
   rows,

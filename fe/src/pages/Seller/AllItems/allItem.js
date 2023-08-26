@@ -7,12 +7,15 @@ import DoneOutlineIcon from "@mui/icons-material/DoneOutline";
 import Card from "../../Home/PersonalProfile/components/card";
 import { sellerProduct } from "../../../api/products";
 import NewProductForm from "../NewItem/NewForm";
+import formatNumberWithCommas from "../../../utils/formatNumberWithCommas";
 
 export default function AllItems() {
   const [products, setProducts] = useState([]);
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(5);
-  const [totalPages, setTotalPages] = useState(Number(sessionStorage.getItem("totalPage")) || 1); // Total number of pages returned by the API
+  const [totalPages, setTotalPages] = useState(
+    Number(sessionStorage.getItem("totalPage")) || 1
+  ); // Total number of pages returned by the API
   const [selectedTradeCode, setSelectedTradeCode] = useState(false);
   const [totalSold, setTotalSold] = useState(0);
   const [totalAvaiable, setTotalAvaiable] = useState(0);
@@ -30,9 +33,8 @@ export default function AllItems() {
   };
 
   const handleSearch = (newSearchTerm) => {
-    setSearchQuery( new RegExp(newSearchTerm.replace(/\s+/g, " "), "i").source); // Update the search query state
+    setSearchQuery(new RegExp(newSearchTerm.replace(/\s+/g, " "), "i").source); // Update the search query state
   };
-
 
   useEffect(() => {
     let sellerId = localStorage.getItem("_id");
@@ -44,7 +46,12 @@ export default function AllItems() {
     const fetchProducts = async () => {
       try {
         // window.scrollTo(0, 0);
-        const response = await sellerProduct(cleanedSellerId, page, perPage, searchQuery);
+        const response = await sellerProduct(
+          cleanedSellerId,
+          page,
+          perPage,
+          searchQuery
+        );
         const dataProducts = response.data.products;
 
         const data = dataProducts.map((product) => ({
@@ -58,14 +65,15 @@ export default function AllItems() {
 
         setProducts(data); // Assuming the response contains the actual data
         setTotalSold(response.data.totalSold0);
-        setTotalAvaiable(response.data.totalSold1);   
-        setTotalPriceSold0(response.data.totalPriceSold0);
-        setTotalPriceSold1(response.data.totalPriceSold1);
-        setTotalPages(response.data.totalPages);
-        sessionStorage.setItem(
-          "totalPage",
-          response.data.totalPages
+        setTotalAvaiable(response.data.totalSold1);
+        setTotalPriceSold0(
+          formatNumberWithCommas(response.data.totalPriceSold0)
         );
+        setTotalPriceSold1(
+          formatNumberWithCommas(response.data.totalPriceSold1)
+        );
+        setTotalPages(response.data.totalPages);
+        sessionStorage.setItem("totalPage", response.data.totalPages);
       } catch (error) {
         console.error(error.message);
       }
@@ -127,7 +135,7 @@ export default function AllItems() {
             onPerPageChange={handlePerPageChange}
             perPage={perPage}
             onSelectEditRow={handleSelectEditRow}
-            onSearchTermChange={handleSearch} 
+            onSearchTermChange={handleSearch}
           />
         </div>
       )}

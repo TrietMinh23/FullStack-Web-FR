@@ -116,7 +116,7 @@ export const productsSlice = createSlice({
       }
     },
     GETALLPRODUCTS: (state, action) => {
-      state.products = action.payload.products;
+      state.products = action.payload;
     },
   },
 });
