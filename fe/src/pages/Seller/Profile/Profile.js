@@ -45,7 +45,7 @@ export default function Profile() {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-semibold text-gray-800 mb-2 ml-3">
+      <h1 className="text-3xl font-bold text-gray-800 mb-2 ml-3">
         Your Profile
       </h1>
       <div className="flex flex-wrap justify-between">

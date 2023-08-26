@@ -47,13 +47,14 @@ export default function Allitems() {
         setTotalAvailable(response.data.totalSold1);
         setTotalPriceSold0(response.data.totalPriceSold0);
         setTotalPriceSold1(response.data.totalPriceSold1);
+        setTotalPages(response.data.totalPages);
         const data = dataProducts.map((product) => ({
           tradeCode: product._id,
           itemName: product.title,
           price: product.price,
           status: product.sold,
           image: product.image,
-          postDate: product.createdAt?.split("T")[0] || "N/A",
+          postDate: product.updatedAt?.split("T")[0] || "N/A",
         }));
         setProducts(data); // Assuming the response contains the actual data
 
@@ -61,6 +62,7 @@ export default function Allitems() {
           "totalPage",
           response.data.totalPages.toString()
         );
+        
       } catch (error) {
         console.error(error.message);
       }
@@ -121,6 +123,7 @@ export default function Allitems() {
               perPage={perPage}
               onSelectEditRow={handleSelectEditRow}
               onSearchTermChange={handleSearch} // Pass the callback prop
+              totalPages={totalPages}
             />
           </div>
         )}

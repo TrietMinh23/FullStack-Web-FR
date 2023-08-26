@@ -4,9 +4,16 @@ import { ImBlocked } from "react-icons/im";
 import { BsCheckCircleFill } from "react-icons/bs";
 import { blockBuyer, unblockBuyer } from "../../../../api/buyer";
 import PopUpInforBuyer from "../PopUp/PopUpInforBuyer";
-import PaginationComponent from "../../../Home/components/Pagination"; 
+import PaginationComponent from "../../../Home/components/Pagination";
 
-const Table = ({ rows, onPageChange, page, onPerPageChange, perPage }) => {
+const Table = ({
+  rows,
+  onPageChange,
+  page,
+  onPerPageChange,
+  perPage,
+  totalPages,
+}) => {
   const [currentPage] = useState(1); // Trang hiện tại
   const [sortColumn, setSortColumn] = useState(""); // Cột hiện tại được sắp xếp
   const [sortOrder, setSortOrder] = useState(""); // Thứ tự sắp xếp ('asc' hoặc 'desc')
@@ -374,7 +381,7 @@ const Table = ({ rows, onPageChange, page, onPerPageChange, perPage }) => {
           </label>
           <select
             id="rowsPerPage"
-            className="border border-gray-300 rounded-md p-1"
+            className="border border-gray-300 rounded-md p-1 w-12"
             value={perPage}
             onChange={(e) => onPerPageChange(Number(e.target.value))}
           >
@@ -384,7 +391,7 @@ const Table = ({ rows, onPageChange, page, onPerPageChange, perPage }) => {
           </select>
         </div>
         <div className="flex w-full justify-end">
-          <PaginationComponent setPage={onPageChange} page={page} />
+          <PaginationComponent setPage={onPageChange} page={page} totalPage={totalPages}/>
         </div>
       </div>
       {detailInfor && (
