@@ -401,11 +401,19 @@ export const getIncomeBySellerIdForAllMonths = async (req, res) => {
     ]);
 
     if (income.length > 0) {
-      return res.status(200).json({income});
+      return res.status(200).json({ income });
     } else {
-      return res
-        .status(404)
-        .json({message: "Seller not found or no income for any month."});
+      // Thêm mã vào đây để trả về các trường có giá trị là 0
+      const zeroIncome = [
+        {
+          _id: {
+            year: 0,
+            month: 0,
+          },
+          totalIncome: 0,
+        },
+      ];
+      return res.status(200).json({ income: zeroIncome });
     }
   } catch (error) {
     console.error("Error calculating income:", error);
@@ -462,11 +470,19 @@ export const getRefundBySellerIdForAllMonths = async (req, res) => {
     ]);
 
     if (refund.length > 0) {
-      return res.status(200).json({refund});
+      return res.status(200).json({ refund });
     } else {
-      return res
-        .status(404)
-        .json({message: "Seller not found or no refund for any month."});
+      // Thêm mã vào đây để trả về các trường có giá trị là 0
+      const zeroRefund = [
+        {
+          _id: {
+            year: 0,
+            month: 0,
+          },
+          totalRefund: 0,
+        },
+      ];
+      return res.status(200).json({ refund: zeroRefund });
     }
   } catch (error) {
     console.error("Error calculating refund:", error);
