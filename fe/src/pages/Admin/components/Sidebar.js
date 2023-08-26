@@ -225,7 +225,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                 (isActive && "!text-white")
                               }
                             >
-                              All buyer
+                              All buyers
                             </NavLink>
                           </li>
                           <li>
@@ -247,7 +247,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                 (isActive && "!text-white")
                               }
                             >
-                              Report
+                              All reports
                             </NavLink>
                           </li>
                         </ul>
