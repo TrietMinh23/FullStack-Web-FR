@@ -84,7 +84,8 @@ const NewProductForm = ({ tradeCode, role }) => {
       if (roleUser === "seller") {
         window.location.href = "http://localhost:3000/seller/all-item";
       } else {
-        window.location.href = "http://localhost:3000/admin/usemanagement/allitems";
+        window.location.href =
+          "http://localhost:3000/admin/usemanagement/allitems";
       }
     } catch (error) {
       console.error("Error creating product:", error.message);

@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
+  products: [],
   shoppingCart: [],
   total: 0,
 };
@@ -114,10 +115,19 @@ export const productsSlice = createSlice({
         state.total = listProduct.length;
       }
     },
+    GETALLPRODUCTS: (state, action) => {
+      state.products = action.payload.products;
+    },
   },
 });
 
-export const { ADDTOCART, REMOVEFROMCART, DELETE, UPDATEPRODUCT, UPDATETOTAL } =
-  productsSlice.actions;
+export const {
+  ADDTOCART,
+  REMOVEFROMCART,
+  DELETE,
+  UPDATEPRODUCT,
+  UPDATETOTAL,
+  GETALLPRODUCTS,
+} = productsSlice.actions;
 
 export default productsSlice.reducer;

@@ -2,9 +2,10 @@ import { fakeapi, instance } from "./config";
 
 export const productsFake = async () => await fakeapi.get();
 
-export const products = async (page) => {
+export const products = async (page, slug) => {
   return await instance.get(`/products`, {
     params: {
+      searchQuery: slug || "",
       page: page,
     },
   });

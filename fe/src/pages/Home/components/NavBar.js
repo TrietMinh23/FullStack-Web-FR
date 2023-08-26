@@ -12,10 +12,24 @@ import ButtonSignUp from "./ButtonSignUp";
 import { getCart } from "../../../api/cart";
 import { UPDATEPRODUCT } from "../../../utils/redux/productsSlice";
 import { useDispatch } from "react-redux";
+import { products } from "../../../api/products";
+import { useEffect } from "react";
 
 const Navbar = () => {
   const dispatch = useDispatch();
   const [isDropdownOpenMenu, setIsDropdownOpenMenu] = useState(false);
+
+  useEffect(() => {
+    const inputElement = document.getElementById("search");
+    inputElement.addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        products(Number(sessionStorage.getItem("page")), this.value)
+          .then((res) => console.log(res))
+          .catch((err) => console.log(err));
+      }
+    });
+  }, []);
+
   const getShoppingCart = () => {
     if (JSON.parse(localStorage.getItem("cart")).first) {
       getCart(JSON.parse(localStorage.getItem("_id")))
@@ -38,6 +52,7 @@ const Navbar = () => {
       });
     }
   };
+
   return (
     <nav className="nav bg-dark-jungle-green">
       <div className="max-w-7xl mx-auto px-4 lg:pt-2 sm:px-6 lg:px-8">
