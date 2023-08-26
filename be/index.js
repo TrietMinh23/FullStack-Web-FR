@@ -16,6 +16,8 @@ import s3Router from "./routers/s3Route.js";
 import reportRouter from "./routers/reportRoute.js";
 import reviewRouter from "./routers/reviewRoute.js";
 
+import { PCategory } from "./models/pCategoryModel.js";
+
 const app = express(process.env.DATABASE);
 const PORT = process.env.PORT || 5000;
 const URI = process.env.DATABASE;

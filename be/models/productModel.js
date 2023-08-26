@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import nodeCron from "node-cron";
 
 const productSchema = new mongoose.Schema(
   {
