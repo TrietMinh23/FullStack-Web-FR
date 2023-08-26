@@ -1,14 +1,25 @@
-import React, { useState } from "react";
-import { FaTrashAlt, FaPen } from "react-icons/fa";
+import React, { useState, useEffect } from "react";
+import { PiMagnifyingGlassBold } from "react-icons/pi";
+import { ImBlocked } from "react-icons/im";
+import { BsCheckCircleFill } from "react-icons/bs";
+import PopUpInforSeller from "../PopUp/PopUpInforSeller";
+import { blockSeller, unblockSeller } from "../../../../api/seller";
+import PaginationComponent from "../../../Home/components/Pagination";
 
-const Table = ({ rows }) => {
-  const [perPage, setPerPage] = useState(5);
+const Table = ({ rows, onPageChange, page, onPerPageChange, perPage }) => {
   const [currentPage] = useState(1);
   const [sortColumn, setSortColumn] = useState("");
   const [sortOrder, setSortOrder] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedItems, setSelectedItems] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
+  const [detailInfor, setDetailInfor] = useState(false);
+  const [indexInfor, setIndexInfor] = useState(0);
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  const closeSee = () => {
+    setDetailInfor(false);
+  };
 
   const handleSort = (column) => {
     if (column === sortColumn) {
@@ -30,7 +41,9 @@ const Table = ({ rows }) => {
       setSelectedItems((prevSelectedItems) => [...prevSelectedItems, item]);
     } else {
       setSelectedItems((prevSelectedItems) =>
-        prevSelectedItems.filter((selectedItem) => selectedItem._id !== item._id)
+        prevSelectedItems.filter(
+          (selectedItem) => selectedItem._id !== item._id
+        )
       );
     }
   };
@@ -47,8 +60,68 @@ const Table = ({ rows }) => {
     }
   };
 
-  const handleDelete = () => {
-    setSelectedItems([]);
+  const handleBlockUser = async () => {
+    try {
+      const userIsBlock = selectedItems.map((item) => item._id);
+      for (const orderId of userIsBlock) {
+        await blockSeller(orderId);
+      }
+      setSelectedItems([]);
+      window.location.reload();
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
+
+  const handleUnblockUser = async () => {
+    try {
+      const userIsBlock = selectedItems.map((item) => item._id);
+      for (const orderId of userIsBlock) {
+        await unblockSeller(orderId);
+      }
+      setSelectedItems([]);
+      window.location.reload();
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
+
+  const handleBlockUserRow = async (item) => {
+    try {
+      setIsUpdating(true);
+      await blockSeller(item._id);
+      // Handle success or update your local data accordingly
+      setSelectedItems((prevSelectedItems) =>
+        prevSelectedItems.filter(
+          (selectedItem) => selectedItem.tradeCode !== item.tradeCode
+        )
+      );
+      window.location.reload();
+    } catch (error) {
+      console.error("Error updating order status:", error.message);
+      // Handle error or display an error message
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const handleUnblockUserRow = async (item) => {
+    try {
+      setIsUpdating(true);
+      await unblockSeller(item._id);
+      // Handle success or update your local data accordingly
+      setSelectedItems((prevSelectedItems) =>
+        prevSelectedItems.filter(
+          (selectedItem) => selectedItem.tradeCode !== item.tradeCode
+        )
+      );
+      window.location.reload();
+    } catch (error) {
+      console.error("Error updating order status:", error.message);
+      // Handle error or display an error message
+    } finally {
+      setIsUpdating(false);
+    }
   };
 
   const getCurrentPageData = () => {
@@ -98,9 +171,15 @@ const Table = ({ rows }) => {
         />
         <button
           className="ml-2 p-2 hover:bg-red-600 bg-red-500 text-white rounded-md"
-          onClick={handleDelete}
+          onClick={handleBlockUser}
         >
-          <FaTrashAlt />
+          <ImBlocked />
+        </button>
+        <button
+          className="ml-2 p-2 hover:bg-green-600 bg-green-500 text-white rounded-md"
+          onClick={handleUnblockUser}
+        >
+          <BsCheckCircleFill />
         </button>
       </div>
 
@@ -120,7 +199,8 @@ const Table = ({ rows }) => {
                 className="w-20 p-3 text-sm font-semibold tracking-wide text-left"
                 onClick={() => handleSort("name")}
               >
-                Name {sortColumn === "name" && (sortOrder === "asc" ? "▲" : "▼")}
+                Name{" "}
+                {sortColumn === "name" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
                 className="p-3 text-sm font-semibold tracking-wide text-left"
@@ -143,7 +223,8 @@ const Table = ({ rows }) => {
                 onClick={() => handleSort("totalSales")}
               >
                 Total Income{" "}
-                {sortColumn === "totalSales" && (sortOrder === "asc" ? "▲" : "▼")}
+                {sortColumn === "totalSales" &&
+                  (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
                 className="w-24 p-3 text-sm font-semibold tracking-wide text-left"
@@ -158,7 +239,8 @@ const Table = ({ rows }) => {
                 onClick={() => handleSort("createdAt")}
               >
                 Sign up date{" "}
-                {sortColumn === "createdAt" && (sortOrder === "asc" ? "▲" : "▼")}
+                {sortColumn === "createdAt" &&
+                  (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th className="w-32 p-3 text-sm font-semibold tracking-wide text-left">
                 Action
@@ -174,9 +256,7 @@ const Table = ({ rows }) => {
                 <td className="p-3 text-sm text-center text-gray-700 whitespace-nowrap">
                   <input
                     type="checkbox"
-                    checked={selectedItems.some(
-                      (item) => item._id === row._id
-                    )}
+                    checked={selectedItems.some((item) => item._id === row._id)}
                     onChange={(event) => handleCheckboxChange(event, row)}
                   />
                 </td>
@@ -209,11 +289,26 @@ const Table = ({ rows }) => {
                   {row.createdAt}
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                  <button className="text-blue-500 font-bold hover:underline">
-                    <FaPen />
+                  <button
+                    onClick={() => {
+                      setDetailInfor(true);
+                      setIndexInfor(index);
+                    }}
+                    className="text-blue-500 font-bold hover:underline"
+                  >
+                    <PiMagnifyingGlassBold />
                   </button>
-                  <button className="text-red-500 font-bold hover:underline ml-2">
-                    <FaTrashAlt />
+                  <button
+                    className="text-red-500 font-bold hover:underline ml-2"
+                    onClick={() => handleBlockUserRow(row)}
+                  >
+                    <ImBlocked />
+                  </button>
+                  <button
+                    className="text-green-500 font-bold hover:underline ml-2"
+                    onClick={() => handleUnblockUserRow(row)}
+                  >
+                    <BsCheckCircleFill />
                   </button>
                 </td>
               </tr>
@@ -224,7 +319,7 @@ const Table = ({ rows }) => {
 
       {/* Mobile/Tablet Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 xl:hidden">
-        {getCurrentPageData().map((row) => (
+        {getCurrentPageData().map((row, index) => (
           <div
             className="bg-white space-y-3 p-4 rounded-lg shadow"
             key={row._id}
@@ -252,15 +347,35 @@ const Table = ({ rows }) => {
               </div>
             </div>
             <div className="text-sm text-gray-700">
-              Positive reviews: <span className="text-sky-500">{row.positiveCount}</span>, negative reviews: <span className="text-red-400">{row.negativeCount}</span>
+              Positive reviews:{" "}
+              <span className="text-sky-500">{row.positiveCount}</span>,
+              negative reviews:{" "}
+              <span className="text-red-400">{row.negativeCount}</span>
             </div>
-            <div className="text-sm font-medium text-black">${row.totalSales}</div>
+            <div className="text-sm font-medium text-black">
+              ${row.totalSales}
+            </div>
             <div className="flex justify-end">
-              <button className="text-blue-500 font-bold hover:underline">
-                <FaPen />
+              <button
+                onClick={() => {
+                  setDetailInfor(true);
+                  setIndexInfor(index);
+                }}
+                className="text-blue-500 font-bold hover:underline"
+              >
+                <PiMagnifyingGlassBold />
               </button>
-              <button className="text-red-500 font-bold hover:underline ml-2">
-                <FaTrashAlt />
+              <button
+                className="text-red-500 font-bold hover:underline ml-2"
+                onClick={() => handleBlockUserRow(row)}
+              >
+                <ImBlocked />
+              </button>
+              <button
+                className="text-green-500 font-bold hover:underline ml-2"
+                onClick={() => handleBlockUserRow(row)}
+              >
+                <BsCheckCircleFill />
               </button>
             </div>
           </div>
@@ -277,15 +392,28 @@ const Table = ({ rows }) => {
             id="rowsPerPage"
             className="border border-gray-300 rounded-md p-1"
             value={perPage}
-            onChange={(e) => setPerPage(Number(e.target.value))}
+            onChange={(e) => onPerPageChange(Number(e.target.value))}
           >
             <option value={5}>5</option>
             <option value={10}>10</option>
             <option value={15}>15</option>
           </select>
         </div>
-        {/* ... (pagination buttons) */}
+        <div className="flex w-full justify-end">      
+          <PaginationComponent setPage={onPageChange} page={page} />
+        </div>
       </div>
+      {detailInfor && (
+        <div className="flex lg:flex-row flex-col">
+          <PopUpInforSeller
+            close={closeSee}
+            i={indexInfor}
+            data={rows}
+            at={document.documentElement.scrollTop}
+          />
+          <div id="dimScreen" className={"block"}></div>
+        </div>
+      )}
     </div>
   );
 };

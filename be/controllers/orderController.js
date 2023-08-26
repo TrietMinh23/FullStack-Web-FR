@@ -149,6 +149,54 @@ export const getCurrentMonthIncome = async (req, res) => {
   }
 };
 
+export const getCurrentYearIncome = async (req, res) => {
+  try {
+    const income = await Order.aggregate([
+      {
+        $match: {
+          orderStatus: "Delivered",
+          createdAt: {
+            $gte: new Date(new Date().getFullYear(), 0, 1),
+          },
+        },
+      },
+      {
+        $unwind: "$products",
+      },
+      {
+        $lookup: {
+          from: "products",
+          localField: "products",
+          foreignField: "_id",
+          as: "productData",
+        },
+      },
+      {
+        $unwind: "$productData",
+      },
+      {
+        $group: {
+          _id: null,
+          totalIncome: { $sum: "$productData.price" },
+        },
+      },
+    ]);
+
+    if (income.length > 0) {
+      return res.status(200).json({ income: income[0].totalIncome });
+    } else {
+      return res
+        .status(404)
+        .json({ message: "No income available for current year." });
+    }
+  } catch (error) {
+    console.error("Error calculating income:", error);
+    return res
+      .status(500)
+      .json({ message: "An error occurred while calculating income." });
+  }
+};
+
 
 export const getIncomeForAllMonths = async (req, res) => {
   try {

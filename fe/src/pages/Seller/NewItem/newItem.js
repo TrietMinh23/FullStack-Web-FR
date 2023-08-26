@@ -1,5 +1,5 @@
 import NewProductForm from "./NewForm";
 
 export default function NewItem() {
-  return <NewProductForm tradeCode={""}/>;
+  return <NewProductForm tradeCode={""} role="seller"/>;
 }

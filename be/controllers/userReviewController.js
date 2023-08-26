@@ -10,6 +10,7 @@ export const getUserReview = async (req, res) => {
       res.status(404).json({ error: err.message });
     }
   };
+  
 export const createReview = async (req, res) => {
 
     try {
@@ -41,7 +42,8 @@ export const createReview = async (req, res) => {
       const totalStar3 = await userReview.countDocuments({ seller: _id, 'rating.star': 3 });
       const totalStar4 = await userReview.countDocuments({ seller: _id, 'rating.star': 4 });
       const totalStar5 = await userReview.countDocuments({ seller: _id, 'rating.star': 5 });
-      const AvgStar = (totalStar5 * 5 + totalStar4 * 4 + totalStar3 *3 + totalStar2 * 2 + totalStar1 )/ totalReview
+      const Avg = (totalStar5 * 5 + totalStar4 * 4 + totalStar3 *3 + totalStar2 * 2 + totalStar1 )/ totalReview
+      const AvgStar = parseFloat(Avg.toFixed(1))
       if (review) {
         res.status(200).json({ 
           review,
@@ -92,5 +94,35 @@ export const createReview = async (req, res) => {
       }
     } catch (err) {
       res.json({ message: "noooooo"});
+    }
+  };
+
+  export const countAllReview = async (req, res) => {
+    try {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      const review = await userReview.find({
+        createdAt: { $gte: today },
+      })
+
+      // Count positive and negative reviews
+      let positiveCount = 0;
+      let negativeCount = 0;
+  
+      review.forEach((r) => {
+        if (r.rating.star >= 4) {
+          positiveCount++;
+        } else if (r.rating.star <= 2) {
+          negativeCount++;
+        }
+      });
+  
+      res.status(200).json({
+        positiveCount,
+        negativeCount,
+      });
+    } catch (err) {
+      res.status(404).json({ error: err.message });
     }
   };

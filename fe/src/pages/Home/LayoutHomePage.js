@@ -10,7 +10,7 @@ export default function LayoutHomePage() {
   useEffect(() => {
     if (
       getCookie("refresh_token") &&
-      localStorage.getItem("role").replace(/^"(.*)"$/, "$1") === "buyer"
+      localStorage.getItem("role")?.replace(/^"(.*)"$/, "$1") === "buyer"
     ) {
       const listFromLocalStorage = JSON.parse(localStorage.getItem("cart"));
       if (listFromLocalStorage.first) {

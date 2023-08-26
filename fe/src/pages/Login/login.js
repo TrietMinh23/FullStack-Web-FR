@@ -7,7 +7,6 @@ import { auth } from "../../firebase/firebase";
 import { login } from "../../api/login";
 import { useSelector } from "react-redux";
 import LoadingIcon from "../../components/ui/LoadingIcon";
-import ButtonReport from "../../components/ButtonReport";
 import setCookie from "../../utils/setCookie";
 import axios from "axios";
 import getCookie from "../../utils/getCookie";
@@ -137,18 +136,16 @@ export default function Login() {
               name="email"
               placeholder="abc123@gmail.com"
               onChange={(e) => handleLoginInputChange(e)}
-              className={`py-2 px-3 border focus:outline-none focus:ring focus:ring-red-200 focus:ring-opacity-50 rounded-md shadow-sm disabled:bg-gray-100 mt-1 block w-full ${
-                !stateDialog.stateDialogEmail
+              className={`py-2 px-3 border focus:outline-none focus:ring focus:ring-red-200 focus:ring-opacity-50 rounded-md shadow-sm disabled:bg-gray-100 mt-1 block w-full ${!stateDialog.stateDialogEmail
                   ? "border-red-300"
                   : "border-gray-300"
-              }`}
+                }`}
               required
             />
           </div>
           <div
-            className={`alert-box-inner alert-container mb-4 flex font-semibold text-red-600 ${
-              !stateDialog.stateDialogEmail ? "block" : "hidden"
-            }`}
+            className={`alert-box-inner alert-container mb-4 flex font-semibold text-red-600 ${!stateDialog.stateDialogEmail ? "block" : "hidden"
+              }`}
           >
             <PriorityHighIcon className="icon-alert"></PriorityHighIcon>
             <div className="alert-content text-xs ml-2">
@@ -165,18 +162,16 @@ export default function Login() {
               name="password"
               placeholder="***********"
               onChange={(e) => handleLoginInputChange(e)}
-              className={`py-2 px-3 border focus:outline-none focus:ring focus:ring-red-200 focus:ring-opacity-50 rounded-md shadow-sm disabled:bg-gray-100 mt-1 block w-full ${
-                !stateDialog.stateDialogPassword
+              className={`py-2 px-3 border focus:outline-none focus:ring focus:ring-red-200 focus:ring-opacity-50 rounded-md shadow-sm disabled:bg-gray-100 mt-1 block w-full ${!stateDialog.stateDialogPassword
                   ? "border-red-300"
                   : "border-gray-300"
-              }`}
+                }`}
               required
             />
           </div>
           <div
-            className={`alert-box-inner alert-container mb-4 flex font-semibold text-red-600 ${
-              !stateDialog.stateDialogPassword ? "block" : "hidden"
-            }`}
+            className={`alert-box-inner alert-container mb-4 flex font-semibold text-red-600 ${!stateDialog.stateDialogPassword ? "block" : "hidden"
+              }`}
           >
             <PriorityHighIcon className="icon-alert"></PriorityHighIcon>
             <div className="alert-content text-xs ml-2">
@@ -184,9 +179,8 @@ export default function Login() {
             </div>
           </div>
           <div
-            className={`alert-box-inner alert-container mb-4 flex font-semibold text-red-600 ${
-              message !== "" ? "block" : "hidden"
-            }`}
+            className={`alert-box-inner alert-container mb-4 flex font-semibold text-red-600 ${message !== "" ? "block" : "hidden"
+              }`}
           >
             <PriorityHighIcon className="icon-alert"></PriorityHighIcon>
             <div className="alert-content text-xs ml-2">
@@ -232,7 +226,6 @@ export default function Login() {
                 Sign up
               </Link>
             </div>
-            <ButtonReport />
           </div>
           <div className="flex items-center py-4">
             <div className="flex-grow h-px bg-gray-400"></div>

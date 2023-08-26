@@ -28,7 +28,6 @@ export default function ProductDetail() {
   const navigator = useNavigate();
 
   const num = 5;
-  const a = parseFloat(num.toFixed(1));
   const dispatch = useDispatch();
   const currentShoppingCart = useSelector(
     (state) => state.product.shoppingCart

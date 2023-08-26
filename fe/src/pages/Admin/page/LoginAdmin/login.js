@@ -49,7 +49,8 @@ export default function LoginAdmin() {
           .catch((err) => console.log(err));
       })
       .catch((err) => {
-        setMessage(err.response.data.message);
+        console.log(err)
+        setMessage(err.responses);
       });
   };
 
