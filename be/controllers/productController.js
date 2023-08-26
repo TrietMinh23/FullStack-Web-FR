@@ -180,6 +180,7 @@ export const getAllProducts = async (req, res) => {
     var page = parseInt(req.query.page) || 1;
     var limit = parseInt(req.query.limit) || 20;
     var searchQuery = req.query.searchQuery || "";
+    console.log(searchQuery);
 
     const skip = (page - 1) * limit;
 
