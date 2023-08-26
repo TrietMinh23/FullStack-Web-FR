@@ -2,7 +2,7 @@ import React from "react";
 import TableAI from "../components/Table/TableAI";
 import { useState } from "react";
 import { useEffect } from "react";
-import { getAllProducts} from "../../../api/products";
+import { getAllProducts } from "../../../api/products";
 import NewProductForm from "../../Seller/NewItem/NewForm";
 import ClearIcon from "@mui/icons-material/Clear";
 import DoneOutlineIcon from "@mui/icons-material/DoneOutline";
@@ -20,7 +20,6 @@ export default function Allitems() {
   const [totalPriceSold1, setTotalPriceSold1] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
 
-
   const handleChange = (newPage) => {
     setPage(newPage);
   };
@@ -31,11 +30,10 @@ export default function Allitems() {
   };
 
   const handleSearch = (newSearchTerm) => {
-    setSearchQuery(new RegExp(newSearchTerm.replace(/\s+/g, ' '), 'i')); // Update the search query state
-  }
+    setSearchQuery( new RegExp(newSearchTerm.replace(/\s+/g, " "), "i").source); // Update the search query state
+  };
 
   useEffect(() => {
-
     const fetchProducts = async () => {
       sessionStorage.setItem("pageTableProducts", page.toString());
 
@@ -79,7 +77,7 @@ export default function Allitems() {
       icon: <DoneOutlineIcon fontSize="large" />,
       id: 1,
       text: "Total Money",
-      number: totalSold  || 0,
+      number: totalSold || 0,
       money: totalPriceSold0 || 0,
       color: "rgb(74, 222, 128)",
       title: "AVAILABLE",
@@ -126,14 +124,14 @@ export default function Allitems() {
             />
           </div>
         )}
-  
+
         {selectedTradeCode && (
           <div>
-            <NewProductForm tradeCode={selectedTradeCode} role={"admin"} /> {/* Pass the selected TradeCode as a prop */}
+            <NewProductForm tradeCode={selectedTradeCode} role={"admin"} />{" "}
+            {/* Pass the selected TradeCode as a prop */}
           </div>
         )}
       </div>
     </React.Fragment>
   );
 }
-  
