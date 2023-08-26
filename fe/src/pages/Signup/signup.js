@@ -204,15 +204,6 @@ export default function Signup() {
             />
           </div>
           <div
-            className={`alert-box-inner alert-container mb-4 flex font-semibold ${!stateRequiredPassword ? "block" : "hidden"
-              }`}
-          >
-            <ErrorOutlineIcon className="icon-alert flex items-center"></ErrorOutlineIcon>
-            <div className="alert-content text-xs ml-2">
-              <p>Password must be at least 6 characters.</p>
-            </div>
-          </div>
-          <div
             className={`alert-box-inner alert-container mb-4 flex font-semibold text-red-600 ${!stateDialog.stateDialogPassword ? "block" : "hidden"
               } `}
           >

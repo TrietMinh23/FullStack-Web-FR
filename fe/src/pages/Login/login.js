@@ -77,7 +77,7 @@ export default function Login() {
       type: "SET_STATUS_DIALOG",
       payload: {
         stateDialogEmail: !ValidationEmail(formData.email) ? false : true,
-        stateDialogPassword: formData.password === "" ? false : true,
+        stateDialogPassword: formData.password.length >= 6 && formData.password.length <= 20 ? true : false,
       },
     });
 
@@ -124,7 +124,7 @@ export default function Login() {
   return (
     <div className="w-full min-h-screen bg-gray-50 flex flex-col sm:justify-center items-center pt-6 sm:pt-0">
       <div className="w-full sm:max-w-md p-5 mx-auto">
-        <h2 className="mb-12 text-center text-5xl font-extrabold">Welcome.</h2>
+        <h2 className="mb-12 text-center text-5xl font-extrabold">Welcome</h2>
         <form>
           <div className={!stateDialog.stateDialogEmail ? "mb-2" : "mb-4"}>
             <label className="block mb-1" htmlFor="email">
@@ -137,8 +137,8 @@ export default function Login() {
               placeholder="abc123@gmail.com"
               onChange={(e) => handleLoginInputChange(e)}
               className={`py-2 px-3 border focus:outline-none focus:ring focus:ring-red-200 focus:ring-opacity-50 rounded-md shadow-sm disabled:bg-gray-100 mt-1 block w-full ${!stateDialog.stateDialogEmail
-                  ? "border-red-300"
-                  : "border-gray-300"
+                ? "border-red-300"
+                : "border-gray-300"
                 }`}
               required
             />
@@ -163,8 +163,8 @@ export default function Login() {
               placeholder="***********"
               onChange={(e) => handleLoginInputChange(e)}
               className={`py-2 px-3 border focus:outline-none focus:ring focus:ring-red-200 focus:ring-opacity-50 rounded-md shadow-sm disabled:bg-gray-100 mt-1 block w-full ${!stateDialog.stateDialogPassword
-                  ? "border-red-300"
-                  : "border-gray-300"
+                ? "border-red-300"
+                : "border-gray-300"
                 }`}
               required
             />
@@ -175,11 +175,11 @@ export default function Login() {
           >
             <PriorityHighIcon className="icon-alert"></PriorityHighIcon>
             <div className="alert-content text-xs ml-2">
-              <p>Enter your password</p>
+              <p>Password must contain 6-20 characters</p>
             </div>
           </div>
           <div
-            className={`alert-box-inner alert-container mb-4 flex font-semibold text-red-600 ${message !== "" ? "block" : "hidden"
+            className={`alert-box-inner alert-container mb-4 flex font-semibold text-red-600 ${message !== "" && stateDialog.stateDialogPassword ? "block" : "hidden"
               }`}
           >
             <PriorityHighIcon className="icon-alert"></PriorityHighIcon>
