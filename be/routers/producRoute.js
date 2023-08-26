@@ -10,7 +10,7 @@ import {
   getProductBySellerId,
   getProductsByRelativeCategory,
   filterProductsByPrice,
-  filterProductsByCondition
+  filterProductsByCondition,
 } from "../controllers/productController.js";
 import multer from "multer";
 
