@@ -28,21 +28,14 @@ export default function Purchase() {
   const [isVNPAYPayment, setVNPAYPayment] = useState(false);
   const dispatch = useDispatch();
   const address = localStorage.getItem("address")?.split(",") || [];
-  {
-    console.log(address);
-  }
   const [isChange, setIsChange] = useState(false);
   const shipping = useSelector((state) => state.purchase.shipping);
   const products = useSelector((state) => state.product.shoppingCart);
   const [information, setInformation] = useState({
     name: localStorage.getItem("name")?.replace(/^"(.*)"$/, "$1") || "",
-    phone:
-      localStorage
-        .getItem("mobile")
-        .replace(/^"(.*)"$/, "$1")
-        .search("__MOBILE_NULL_FOR_") >= 0
-        ? ""
-        : localStorage.getItem("mobile")?.replace(/^"(.*)"$/, "$1"),
+    phone: localStorage.getItem("mobile").replace(/^"(.*)"$/, "$1")
+      ? ""
+      : localStorage.getItem("mobile")?.replace(/^"(.*)"$/, "$1"),
     city: address[3] || "",
     district: address[2] || "",
     ward: address[1] || "",
@@ -197,17 +190,17 @@ export default function Purchase() {
                 />
               )}
               <div className="flex lg:flex-row flex-col gap-x-3 ml-2">
-                <div className="name font-bold">
+                <div className="name font-bold" id="name">
                   <p>{information.name ? information.name : "No name"}</p>
                 </div>
-                <div className="phone font-bold">
+                <div className="phone font-bold" id="phone">
                   <p>
                     {information.phone !== ""
                       ? information.phone
                       : "No phone number"}
                   </p>
                 </div>
-                <div className="address">
+                <div className="address" id="address">
                   <p>
                     {localStorage.getItem("address")
                       ? localStorage
@@ -334,7 +327,7 @@ export default function Purchase() {
                   </div>
                   <hr />
                   <div>
-                    <CheckoutModal />
+                    <CheckoutModal formData={information} />
                   </div>
                 </div>
               </div>
