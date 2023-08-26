@@ -154,45 +154,45 @@ export default function Table({
                 />
               </th>
               <th
-                className="w-20 p-3 text-sm font-semibold tracking-wide text-left"
+                className="w-20 p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("tradeCode")}
               >
-                TradeCode{" "}
+                Trade Code{" "}
                 {sortColumn === "tradeCode" &&
                   (sortOrder === "asc" ? "▲" : "▼")}
               </th>
-              <th className="p-3 text-sm font-semibold tracking-wide text-left">
+              <th className="p-3 text-sm font-semibold tracking-wide text-center">
                 Image
               </th>
               <th
-                className="p-3 text-sm font-semibold tracking-wide text-left"
+                className="p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("itemName")}
               >
-                Item name{" "}
+                Item Name{" "}
                 {sortColumn === "itemName" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
-                className="p-3 text-sm font-semibold tracking-wide text-left"
+                className="p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("price")}
               >
                 Price{" "}
                 {sortColumn === "price" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
-                className="w-24 p-3 text-sm font-semibold tracking-wide text-left"
+                className="w-24 p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("status")}
               >
                 Status{" "}
                 {sortColumn === "status" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
-                className="w-24 p-3 text-sm font-semibold tracking-wide text-left"
+                className="w-24 p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("postDate")}
               >
-                Post date{" "}
+                Post Date{" "}
                 {sortColumn === "postDate" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
-              <th className="w-32 p-3 text-sm font-semibold tracking-wide text-left">
+              <th className="w-32 p-3 text-sm font-semibold tracking-wide text-center">
                 Action
               </th>
             </tr>
@@ -212,10 +212,10 @@ export default function Table({
                     onChange={(event) => handleCheckboxChange(event, row)}
                   />
                 </td>
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                   {row.tradeCode}
                 </td>
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                   <div className="w-12 h-12 overflow-hidden m-1 rounded-lg">
                     <img
                       src={row.image}
@@ -224,13 +224,13 @@ export default function Table({
                     />
                   </div>
                 </td>
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                   {row.itemName}
                 </td>
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                   {row.price}
                 </td>
-                <td className="p-3 text-xs font-medium uppercase text-gray-700 whitespace-nowrap ">
+                <td className="p-3 text-xs font-medium uppercase text-gray-700 whitespace-nowrap">
                   <span
                     className={
                       "block text-center p-2 rounded-md bg-opacity-50  " +
@@ -249,10 +249,10 @@ export default function Table({
                   </span>
                 </td>
 
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                   {row.postDate}
                 </td>
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                   <button
                     className="text-blue-500 font-bold hover:underline"
                     onClick={() => handleEditRow(row)}
@@ -260,7 +260,7 @@ export default function Table({
                     <FaPen />
                   </button>
                   <button
-                    className="text-red-500 font-bold hover:underline ml-2"
+                    className="text-red-500 font-bold hover:underline ml-2 "
                     onClick={() => handleDeleteRow(row)}
                   >
                     <FaTrashAlt />

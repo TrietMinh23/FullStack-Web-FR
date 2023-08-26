@@ -94,7 +94,7 @@ export default function AllItems() {
       number: totalSold || 0,
       money: totalPriceSold0 || 0,
       color: "rgb(74, 222, 128)",
-      title: "AVAIABLE",
+      title: "AVAILABLE",
     },
     {
       icon: <ClearIcon fontSize="large" />,
