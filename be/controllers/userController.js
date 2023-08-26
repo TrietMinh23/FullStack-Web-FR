@@ -449,7 +449,6 @@ export const get_buyer_performance_stats = async (req, res) => {
     res.status(400).json({error: err.message});
   }
 };
-<<<<<<< HEAD
 
 //Reset Password 
 //forgot password & reset password
@@ -521,5 +520,3 @@ export const resetPassword = asyncHandler(async (req, res) => {
 //     console.error(err);
 //   }
 // };
-=======
->>>>>>> cd7e0fb2fea33b0381268952f43448cecefa2a87
