@@ -567,3 +567,23 @@ export const resetPassword = asyncHandler(async (req, res) => {
       mes: user ? 'Password changed successfully' : 'Something went wrong'
   })
 })
+
+
+// const getUserByName = async (req, res) => {
+//   try {
+//     // find with sub-name
+//     const name = req.params.name;
+
+//     const user = await User.find({name: {$regrex: name, $options: 'i'}});
+
+//     if (!user) {
+//       res.status(404).json({message: "User not found!"});
+//     } else {
+//       res.status(200).json(user);
+//     }
+    
+
+//   } catch (err) {
+//     console.error(err);
+//   }
+// };
