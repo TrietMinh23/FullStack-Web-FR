@@ -196,14 +196,14 @@ const Table = ({ rows, onPageChange, page, onPerPageChange, perPage }) => {
                 />
               </th>
               <th
-                className="w-20 p-3 text-sm font-semibold tracking-wide text-left"
+                className="w-20 p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("name")}
               >
                 Name{" "}
                 {sortColumn === "name" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
-                className="p-3 text-sm font-semibold tracking-wide text-left"
+                className="p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("positiveCount")}
               >
                 Positive Orders{" "}
@@ -211,7 +211,7 @@ const Table = ({ rows, onPageChange, page, onPerPageChange, perPage }) => {
                   (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
-                className="p-3 text-sm font-semibold tracking-wide text-left"
+                className="p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("negativeCount")}
               >
                 Negative Orders{" "}
@@ -219,7 +219,7 @@ const Table = ({ rows, onPageChange, page, onPerPageChange, perPage }) => {
                   (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
-                className="p-3 text-sm font-semibold tracking-wide text-left"
+                className="p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("totalSales")}
               >
                 Total Income{" "}
@@ -227,7 +227,7 @@ const Table = ({ rows, onPageChange, page, onPerPageChange, perPage }) => {
                   (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
-                className="w-24 p-3 text-sm font-semibold tracking-wide text-left"
+                className="w-24 p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("isBlocked")}
               >
                 Status{" "}
@@ -235,14 +235,14 @@ const Table = ({ rows, onPageChange, page, onPerPageChange, perPage }) => {
                   (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
-                className="w-24 p-3 text-sm font-semibold tracking-wide text-left"
+                className="w-24 p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("createdAt")}
               >
                 Sign up date{" "}
                 {sortColumn === "createdAt" &&
                   (sortOrder === "asc" ? "▲" : "▼")}
               </th>
-              <th className="w-32 p-3 text-sm font-semibold tracking-wide text-left">
+              <th className="w-32 p-3 text-sm font-semibold tracking-wide text-center">
                 Action
               </th>
             </tr>
@@ -253,26 +253,26 @@ const Table = ({ rows, onPageChange, page, onPerPageChange, perPage }) => {
                 className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
                 key={row._id}
               >
-                <td className="p-3 text-sm text-center text-gray-700 whitespace-nowrap">
+                <td className="p-3 text-sm text-center text-gray-700 whitespace-nowrap text-center">
                   <input
                     type="checkbox"
                     checked={selectedItems.some((item) => item._id === row._id)}
                     onChange={(event) => handleCheckboxChange(event, row)}
                   />
                 </td>
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                   {row.name}
                 </td>
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                   {row.positiveCount}
                 </td>
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                   {row.negativeCount}
                 </td>
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                   {row.totalSales}
                 </td>
-                <td className="p-3 text-xs font-medium uppercase text-gray-700 whitespace-nowrap">
+                <td className="p-3 text-xs font-medium uppercase text-gray-700 whitespace-nowrap text-center">
                   <span
                     className={
                       "block text-center p-2 rounded-md bg-opacity-50  " +
@@ -285,10 +285,10 @@ const Table = ({ rows, onPageChange, page, onPerPageChange, perPage }) => {
                   </span>
                 </td>
 
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                   {row.createdAt}
                 </td>
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                   <button
                     onClick={() => {
                       setDetailInfor(true);
