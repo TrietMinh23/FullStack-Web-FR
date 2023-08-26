@@ -35,6 +35,8 @@ export default function ShoppingList({ page, category, handleSetTotalPage }) {
     } else getProduct();
   }, [page, category, listProduct]);
 
+  console.log(productsList);
+
   return (
     <section
       id="Projects"
@@ -48,6 +50,7 @@ export default function ShoppingList({ page, category, handleSetTotalPage }) {
             title={item.title}
             image={item.image}
             price={item.price}
+            brand={item.brandName}
           />
         ))
       ) : (

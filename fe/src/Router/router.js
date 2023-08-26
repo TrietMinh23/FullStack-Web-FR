@@ -2,6 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import React, { Suspense, lazy, useState } from "react";
 import Loading from "../components/ui/Loading";
 import getCookie from "../utils/getCookie";
+import { Navigate } from "react-router-dom";
 const LoginAdmin = lazy(() => import("../pages/Admin/page/LoginAdmin/login"));
 
 const Login = lazy(() => import("../pages/Login/login"));
@@ -19,8 +20,12 @@ const ShoppingCart = lazy(() =>
   import("../pages/Home/ShoppingCart/ShoppingCart")
 );
 const Profile = lazy(() => import("../pages/Home/PersonalProfile/Profile"));
-const AllOrdersBuyer = lazy(() => import("../pages/Home/PersonalProfile/pages/AllOrders"));
-const ProfileBuyer = lazy(() => import("../pages/Home/PersonalProfile/pages/Profile"));
+const AllOrdersBuyer = lazy(() =>
+  import("../pages/Home/PersonalProfile/pages/AllOrders")
+);
+const ProfileBuyer = lazy(() =>
+  import("../pages/Home/PersonalProfile/pages/Profile")
+);
 
 const Notification = lazy(() =>
   import("../pages/Home/Notification/notification")
@@ -83,8 +88,9 @@ function Router() {
             <Route path="products/:slug" element={<ShoppingItemDetail />} />
             <Route path="purchase" element={<Purchase />} />
             <Route path="profile" element={<Profile />}>
-              <Route path="order" element={<AllOrdersBuyer/>} />
-              <Route path="yourprofile" element={<ProfileBuyer/>} />
+              <Route path="order" element={<AllOrdersBuyer />} />
+              <Route path="yourprofile" element={<ProfileBuyer />} />
+              <Route index element={<Navigate to="order" />} />
             </Route>
           </Route>
         ) : null}

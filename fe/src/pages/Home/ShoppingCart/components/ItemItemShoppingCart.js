@@ -3,7 +3,15 @@ import { useDispatch } from "react-redux";
 import { DELETE } from "../../../../utils/redux/productsSlice";
 import { instance } from "../../../../api/config";
 
-export default function ItemItemShoppingCart({ name, image, price, shop, id }) {
+export default function ItemItemShoppingCart({
+  name,
+  image,
+  price,
+  shop,
+  id,
+  condition,
+  brand,
+}) {
   const dispatch = useDispatch();
 
   const deleteItem = async () => {
@@ -40,10 +48,10 @@ export default function ItemItemShoppingCart({ name, image, price, shop, id }) {
         </div>
       </td>
       <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
-        {price}₫
+        {brand}
       </td>
       <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
-        1
+        {condition}
       </td>
       <td className="total-price p-3 text-sm text-gray-700 whitespace-nowrap text-center">
         {price}₫
