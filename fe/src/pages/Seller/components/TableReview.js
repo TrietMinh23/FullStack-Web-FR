@@ -159,10 +159,8 @@ export default function TableReview({
               </th>
               <th
                 className="p-3 text-sm font-semibold tracking-wide text-center"
-                onClick={() => handleSort("comment")}
               >
-                Comment{" "}
-                {sortColumn === "comment" && (sortOrder === "asc" ? "▲" : "▼")}
+                Comment
               </th>
               <th
                 className="w-24 p-3 text-sm font-semibold tracking-wide text-center"

@@ -17,7 +17,6 @@ export default function AllOrders() {
   const [perPage, setPerPage] = useState(5);
   const [totalPages, setTotalPages] = useState(0); // Total number of pages returned by the API
   const [orderStatusTotalAmounts, setOrderStatusTotalAmounts] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
 
   const staticTable = [
     {
@@ -25,7 +24,7 @@ export default function AllOrders() {
       id: 1,
       text: "Total Money",
       number: orderStatus["Processing"] || 0,
-      money: orderStatusTotalAmounts["Processing"] || 0,
+      money: Number(orderStatusTotalAmounts["Processing"]) || 0,
       color: "orange",
       title: "Processing",
     },
@@ -34,7 +33,7 @@ export default function AllOrders() {
       id: 2,
       text: "Total Money",
       number: orderStatus["Dispatched"] || 0,
-      money: orderStatusTotalAmounts["Dispatched"] || 0,
+      money: Number(orderStatusTotalAmounts["Dispatched"]) || 0,
       color: "blue",
       title: "Dispatched",
     },
@@ -43,7 +42,7 @@ export default function AllOrders() {
       id: 3,
       text: "Total Money",
       number: orderStatus["Delivered"] || 0,
-      money: orderStatusTotalAmounts["Delivered"] || 0,
+      money: Number(orderStatusTotalAmounts["Delivered"]) || 0,
       color: "green",
       title: "Delivered",
     },
@@ -52,7 +51,7 @@ export default function AllOrders() {
       id: 4,
       text: "Total Money",
       number: orderStatus["Cancelled"] || 0,
-      money: orderStatusTotalAmounts["Cancelled"] || 0,
+      money: Number(orderStatusTotalAmounts["Cancelled"]) || 0,
       color: "tomato",
       title: "Cancelled",
     },
@@ -65,10 +64,6 @@ export default function AllOrders() {
   const handlePerPageChange = (newPerPage) => {
     setPerPage(newPerPage);
     setPage(1); // Reset to first page when changing items per page
-  };
-
-  const handleSearch = (newSearchTerm) => {
-    setSearchQuery(new RegExp(newSearchTerm.replace(/\s+/g, " "), "i").source); // Update the search query state
   };
 
   useEffect(() => {
@@ -85,15 +80,12 @@ export default function AllOrders() {
         const response = await getOrdersBySellerId(
           cleanedSellerId,
           page,
-          perPage,
-          searchQuery
+          perPage
         );
 
         const dataOrders = response.data.filteredOrders;
         setOrderStatus(response.data.orderStatusCounts);
-        setOrderStatusTotalAmounts(
-          formatNumberWithCommas(response.data.orderStatusTotalAmounts)
-        );
+        setOrderStatusTotalAmounts(response.data.orderStatusTotalAmounts);
         setTotalPages(response.data.totalPages);
         sessionStorage.setItem(
           "totalPage",
@@ -126,7 +118,7 @@ export default function AllOrders() {
     };
 
     fetchOrders();
-  }, [page, perPage, searchQuery]);
+  }, [page, perPage]);
 
   return (
     <div>
@@ -152,7 +144,6 @@ export default function AllOrders() {
           onPerPageChange={handlePerPageChange}
           perPage={perPage}
           totalPages={totalPages}
-          onSearchTermChange={handleSearch}
         />
       </div>
     </div>

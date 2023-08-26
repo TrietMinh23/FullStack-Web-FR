@@ -8,7 +8,7 @@ const routerSeller = [
     url: "/seller",
   },
   {
-    name: "All item",
+    name: "All items",
     url: "all-item",
   },
   {

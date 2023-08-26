@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { createPaymentUrl } from "../../../../api/order";
 import getCookie from "../../../../utils/getCookie";
+import validatePhoneNumber from "../../../../utils/validatePhone";
 
 // Component hiển thị thông tin chi tiết về thanh toán
 function PaymentDetailsRow({ label, amount }) {
@@ -38,7 +39,7 @@ function PaymentDetails({ productPrice, shipPrice }) {
 }
 
 // Component CheckoutModal
-export default function CheckoutModal() {
+export default function CheckoutModal({ formData }) {
   // Sử dụng useSelector để lấy dữ liệu từ Redux store
   const payments = useSelector((state) => state.purchase.payments);
   const shippingPrice = useSelector((state) => state.purchase.shipPrice);
@@ -84,6 +85,18 @@ export default function CheckoutModal() {
   let totalOrder = [];
   // Xử lý sự kiện khi người dùng click vào nút "Place Order"
   const handlePlaceOrderClick = async () => {
+    if (!validatePhoneNumber(formData.phone)) {
+      alert("Your phone is not valid");
+      return;
+    } else if (
+      !formData.city ||
+      !formData.district ||
+      !formData.ward ||
+      !formData.address
+    ) {
+      alert("Your address is not valid");
+      return;
+    }
     // Tạo đơn hàng mới
     const arrAddress = localStorage
       .getItem("address")
@@ -115,7 +128,7 @@ export default function CheckoutModal() {
     // Gửi yêu cầu tạo URL thanh toán với thông tin đơn hàng
     createPaymentUrl(JSON.stringify(totalOrder))
       .then((res) => console.log(res))
-      .catch((err) => console.error("Error creating payment URL:", err));
+      .catch((err) => console.log("Error creating payment URL:", err));
   };
 
   // Render giao diện của component

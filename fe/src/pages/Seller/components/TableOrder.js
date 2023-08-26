@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState} from "react";
 import PaginationComponent from "../../Home/components/Pagination";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { updateOrderStatusToDispatched } from "../../../api/order";
@@ -11,13 +11,11 @@ export default function TableOrders({
   onPerPageChange,
   perPage,
   totalPages,
-  onSearchTermChange,
 }) {
   // const [perPage, setPerPage] = useState(5); // Số hàng trên mỗi trang
   const [currentPage] = useState(1); // Trang hiện tại
   const [sortColumn, setSortColumn] = useState("postDate"); // Cột hiện tại được sắp xếp
   const [sortOrder, setSortOrder] = useState("desc"); // Thứ tự sắp xếp ('asc' hoặc 'desc')
-  const [searchTerm, setSearchTerm] = useState(""); // Giá trị tìm kiếm
   const [selectedItems, setSelectedItems] = useState([]); // Các sản phẩm được chọn
   const [selectAll, setSelectAll] = useState(false); // Tất cả sản phẩm được chọn
   const [isUpdating, setIsUpdating] = useState(false);
@@ -32,13 +30,6 @@ export default function TableOrders({
       setSortColumn(column);
       setSortOrder("asc");
     }
-  };
-
-  // Update the search term when input changes
-  const updateSearchTerm = (event) => {
-    const newSearchTerm = event.target.value;
-    setSearchTerm(newSearchTerm);
-    onSearchTermChange(newSearchTerm); // Call the callback prop
   };
 
   const handleCheckboxChange = (event, item) => {
@@ -149,23 +140,13 @@ export default function TableOrders({
     <div className="p-5 h-full bg-gray-100 w-full rounded-md">
       <h1 className="text-xl mb-2">{nameTable}</h1>
 
-      <div className="flex items-center mb-4">
-        <label htmlFor="search" className="mr-2 hidden lg:block">
-          Search:
-        </label>
-        <input
-          id="search"
-          type="text"
-          className="border border-gray-300 rounded-md p-1"
-          value={searchTerm}
-          onChange={updateSearchTerm}
-        />
+      <div className="flex items-center mb-4">       
         <button
           id="All"
-          className="ml-2 p-2 bg-green-500 text-white rounded-md hover:bg-green-600"
+          className="ml-2 p-2 bg-green-500 text-white rounded-md hover:bg-green-600 font-bold"
           onClick={handleUpdateStatus}
         >
-          <CheckCircleIcon />
+          Confirm
         </button>
       </div>
 
