@@ -206,7 +206,7 @@ const Table = ({ rows, onPageChange, page, onPerPageChange, perPage }) => {
                 className="p-3 text-sm font-semibold tracking-wide text-left"
                 onClick={() => handleSort("positiveCount")}
               >
-                Positive Orders{" "}
+                Positive Reviews{" "}
                 {sortColumn === "positiveCount" &&
                   (sortOrder === "asc" ? "▲" : "▼")}
               </th>
@@ -214,7 +214,7 @@ const Table = ({ rows, onPageChange, page, onPerPageChange, perPage }) => {
                 className="p-3 text-sm font-semibold tracking-wide text-left"
                 onClick={() => handleSort("negativeCount")}
               >
-                Negative Orders{" "}
+                Negative Reviews{" "}
                 {sortColumn === "negativeCount" &&
                   (sortOrder === "asc" ? "▲" : "▼")}
               </th>

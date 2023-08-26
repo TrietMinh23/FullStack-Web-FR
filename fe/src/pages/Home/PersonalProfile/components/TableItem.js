@@ -126,7 +126,7 @@ const TableItem = () => {
 
   return (
     <div className="p-5 h-full bg-gray-100 w-full rounded-md">
-      <h1 className="text-xl mb-2">All Order</h1>
+      <h1 className="text-xl mb-2">All Orders</h1>
 
       <div className="flex items-center mb-4">
         <label htmlFor="search" className="mr-2">
