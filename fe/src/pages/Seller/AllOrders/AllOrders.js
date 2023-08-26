@@ -5,20 +5,20 @@ import { useEffect } from "react";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
 import CancelIcon from "@mui/icons-material/Cancel";
-import AutorenewIcon from '@mui/icons-material/Autorenew';
+import AutorenewIcon from "@mui/icons-material/Autorenew";
 import Card from "../../Home/PersonalProfile/components/card";
 import { getOrdersBySellerId } from "../../../api/order";
-
+import formatNumberWithCommas from "../../../utils/formatNumberWithCommas";
 
 export default function AllOrders() {
   const [orders, setOrders] = useState([]);
   const [orderStatus, setOrderStatus] = useState([]);
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(5);
-  const [totalPages, setTotalPages] = useState(0); // Total number of pages returned by the API 
+  const [totalPages, setTotalPages] = useState(0); // Total number of pages returned by the API
   const [orderStatusTotalAmounts, setOrderStatusTotalAmounts] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  
+
   const staticTable = [
     {
       icon: <AutorenewIcon fontSize="large" />,
@@ -57,7 +57,7 @@ export default function AllOrders() {
       title: "Cancelled",
     },
   ];
-  
+
   const handleChange = (newPage) => {
     setPage(newPage);
   };
@@ -68,7 +68,7 @@ export default function AllOrders() {
   };
 
   const handleSearch = (newSearchTerm) => {
-    setSearchQuery( new RegExp(newSearchTerm.replace(/\s+/g, " "), "i").source); // Update the search query state
+    setSearchQuery(new RegExp(newSearchTerm.replace(/\s+/g, " "), "i").source); // Update the search query state
   };
 
   useEffect(() => {
@@ -82,13 +82,23 @@ export default function AllOrders() {
 
       try {
         // window.scrollTo(0, 0);
-        const response = await getOrdersBySellerId(cleanedSellerId, page, perPage, searchQuery);
-        
+        const response = await getOrdersBySellerId(
+          cleanedSellerId,
+          page,
+          perPage,
+          searchQuery
+        );
+
         const dataOrders = response.data.filteredOrders;
-        setOrderStatus(response.data.orderStatusCounts)
-        setOrderStatusTotalAmounts(response.data.orderStatusTotalAmounts)
+        setOrderStatus(response.data.orderStatusCounts);
+        setOrderStatusTotalAmounts(
+          formatNumberWithCommas(response.data.orderStatusTotalAmounts)
+        );
         setTotalPages(response.data.totalPages);
-        sessionStorage.setItem("totalPage", response.data.totalPages.toString());
+        sessionStorage.setItem(
+          "totalPage",
+          response.data.totalPages.toString()
+        );
 
         const data = dataOrders.flatMap((order) => {
           const orderInfo = {
@@ -120,31 +130,31 @@ export default function AllOrders() {
 
   return (
     <div>
-        <div className="mb-12 grid gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-4">
-          {staticTable.map((item) => (
-            <Card
-              icon={item.icon}
-              text={item.text}
-              number={item.number}
-              money={item.money}
-              color={item.color}
-              title={item.title}
-              key={item.id}
-            />
-          ))}
-        </div>
-        <div className="w-full">
-          <TableOrders
-            rows={orders}
-            nameTable={"All Orders"}
-            onPageChange={handleChange}
-            page={page}
-            onPerPageChange={handlePerPageChange}
-            perPage={perPage}
-            totalPages={totalPages}
-            onSearchTermChange={handleSearch}
+      <div className="mb-12 grid gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-4">
+        {staticTable.map((item) => (
+          <Card
+            icon={item.icon}
+            text={item.text}
+            number={item.number}
+            money={item.money}
+            color={item.color}
+            title={item.title}
+            key={item.id}
           />
-        </div>
+        ))}
+      </div>
+      <div className="w-full">
+        <TableOrders
+          rows={orders}
+          nameTable={"All Orders"}
+          onPageChange={handleChange}
+          page={page}
+          onPerPageChange={handlePerPageChange}
+          perPage={perPage}
+          totalPages={totalPages}
+          onSearchTermChange={handleSearch}
+        />
+      </div>
     </div>
   );
 }

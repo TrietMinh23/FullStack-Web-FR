@@ -213,7 +213,7 @@ const Table = ({
                 className="p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("positiveCount")}
               >
-                Positive Orders{" "}
+                Positive Reviews{" "}
                 {sortColumn === "positiveCount" &&
                   (sortOrder === "asc" ? "▲" : "▼")}
               </th>
@@ -221,7 +221,7 @@ const Table = ({
                 className="p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("negativeCount")}
               >
-                Negative Orders{" "}
+                Negative Reviews{" "}
                 {sortColumn === "negativeCount" &&
                   (sortOrder === "asc" ? "▲" : "▼")}
               </th>

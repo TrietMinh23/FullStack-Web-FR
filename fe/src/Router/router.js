@@ -19,6 +19,9 @@ const ShoppingCart = lazy(() =>
   import("../pages/Home/ShoppingCart/ShoppingCart")
 );
 const Profile = lazy(() => import("../pages/Home/PersonalProfile/Profile"));
+const AllOrdersBuyer = lazy(() => import("../pages/Home/PersonalProfile/pages/AllOrders"));
+const ProfileBuyer = lazy(() => import("../pages/Home/PersonalProfile/pages/Profile"));
+
 const Notification = lazy(() =>
   import("../pages/Home/Notification/notification")
 );
@@ -77,7 +80,10 @@ function Router() {
             <Route exact path="/" element={<Home />} />
             <Route path="products/:slug" element={<ShoppingItemDetail />} />
             <Route path="purchase" element={<Purchase />} />
-            <Route path="profile" element={<Profile />} />
+            <Route path="profile" element={<Profile />}>
+              <Route path="order" element={<AllOrdersBuyer/>} />
+              <Route path="yourprofile" element={<ProfileBuyer/>} />
+            </Route>
           </Route>
         ) : null}
         // //Admin page

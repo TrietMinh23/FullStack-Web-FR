@@ -4,9 +4,11 @@ import { products } from "../../../api/products";
 import React from "react";
 import CardSkeleton from "../../../components/ui/CardSkeleton";
 import { getByCategory } from "../../../api/category";
+import { useSelector } from "react-redux";
 
 export default function ShoppingList({ page, category, handleSetTotalPage }) {
   const [productsList, setProducts] = useState(null);
+  const listProduct = useSelector((state) => state.product.products);
 
   useEffect(() => {
     async function getProduct() {
@@ -28,8 +30,10 @@ export default function ShoppingList({ page, category, handleSetTotalPage }) {
       }
     }
 
-    getProduct();
-  }, [page, category]);
+    if (listProduct.length > 0) {
+      setProducts(listProduct);
+    } else getProduct();
+  }, [page, category, listProduct]);
 
   return (
     <section

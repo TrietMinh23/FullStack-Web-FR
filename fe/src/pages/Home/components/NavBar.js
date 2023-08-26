@@ -4,28 +4,38 @@ import ButtonShoppingCart from "./ButtonShoppingCart";
 import ButtonUser from "./ButtonUser";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import getCookie from "../../../utils/getCookie";
 import ButtonLogin from "./ButtonLogin";
 import ButtonSignUp from "./ButtonSignUp";
 import { getCart } from "../../../api/cart";
-import { UPDATEPRODUCT } from "../../../utils/redux/productsSlice";
+import {
+  GETALLPRODUCTS,
+  UPDATEPRODUCT,
+} from "../../../utils/redux/productsSlice";
 import { useDispatch } from "react-redux";
 import { products } from "../../../api/products";
 import { useEffect } from "react";
+import deleteAllCookies from "../../../utils/deleteCookie";
 
 const Navbar = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [isDropdownOpenMenu, setIsDropdownOpenMenu] = useState(false);
 
   useEffect(() => {
     const inputElement = document.getElementById("search");
     inputElement.addEventListener("keydown", function (event) {
       if (event.key === "Enter") {
-        products(Number(sessionStorage.getItem("page")), this.value)
-          .then((res) => console.log(res))
-          .catch((err) => console.log(err));
+        if (this.value !== "") {
+          products(Number(sessionStorage.getItem("page")), this.value)
+            .then((res) => dispatch(GETALLPRODUCTS(res.data.products)))
+            .catch((err) => console.log(err));
+        } else {
+          dispatch(GETALLPRODUCTS([]));
+        }
       }
     });
   }, []);
@@ -50,6 +60,17 @@ const Navbar = () => {
       UPDATEPRODUCT({
         listProduct: JSON.parse(localStorage.getItem("cart")).products,
       });
+    }
+  };
+
+  const logOut = () => {
+    localStorage.clear();
+    deleteAllCookies();
+    setIsDropdownOpenMenu(!isDropdownOpenMenu);
+    if (location.pathname == "/") window.location.reload();
+    else {
+      navigate("/");
+      window.location.reload();
     }
   };
 
@@ -143,13 +164,21 @@ const Navbar = () => {
               </Link>
             </div>
           ) : (
-            <Link
-              to="profile"
-              onClick={() => setIsDropdownOpenMenu(!isDropdownOpenMenu)}
-              className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
-            >
-              My Account
-            </Link>
+            <React.Fragment>
+              <Link
+                to="profile"
+                onClick={() => setIsDropdownOpenMenu(!isDropdownOpenMenu)}
+                className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+              >
+                My Account
+              </Link>
+              <div
+                onClick={logOut}
+                className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+              >
+                Log out
+              </div>
+            </React.Fragment>
           )}
           <Link
             to="shoppingcart"
