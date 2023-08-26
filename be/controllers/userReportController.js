@@ -7,11 +7,12 @@ export const getUserReport = async (req, res) => {
       .populate("id_reporter", "name")
       .populate("id_reported", "name");
 
-    try {
-        const newReport = new userReport(req.body);
-        await newReport.save();
-    } catch (err) {
-      res.status(400).json({ error: err.message });
+    const searchQuery = req.query.searchQuery || "";
+
+    if (!searchQuery) {
+      report.forEach((report) => {
+        report.id_reporter.name === searchQuery;
+      });
     }
     console.log(report);
 
