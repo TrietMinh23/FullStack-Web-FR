@@ -21,6 +21,7 @@ export default function TableOrders({
   const [selectedItems, setSelectedItems] = useState([]); // Các sản phẩm được chọn
   const [selectAll, setSelectAll] = useState(false); // Tất cả sản phẩm được chọn
   const [isUpdating, setIsUpdating] = useState(false);
+  const [items, setItems] = useState(null);
 
   const handleSort = (column) => {
     if (column === sortColumn) {
@@ -47,7 +48,6 @@ export default function TableOrders({
       setSelectedItems((prevSelectedItems) => [...prevSelectedItems, item]);
       console.log(item);
     } else {
-      console.log(2);
       setSelectedItems((prevSelectedItems) =>
         prevSelectedItems.filter(
           (selectedItem) => selectedItem.tradeCode !== item.tradeCode
@@ -100,47 +100,51 @@ export default function TableOrders({
     }
   };
 
-  const getCurrentPageData = () => {
-    const startIndex = (currentPage - 1) * perPage;
-    const endIndex = startIndex + perPage;
+  useEffect(() => {
+    const getCurrentPageData = () => {
+      const startIndex = (currentPage - 1) * perPage;
+      const endIndex = startIndex + perPage;
 
-    let filteredData = rows;
-    let sortedData = filteredData;
+      let filteredData = rows;
+      let sortedData = filteredData;
 
-    if (sortColumn) {
-      sortedData = filteredData.sort((a, b) => {
-        if (sortOrder === "asc") {
-          return a[sortColumn] > b[sortColumn] ? 1 : -1;
-        } else {
-          return a[sortColumn] < b[sortColumn] ? 1 : -1;
-        }
-      });
-    }
-
-    // Consolidate rows with the same tradeCode
-    const groupedData = {};
-    sortedData.forEach((row) => {
-      if (!groupedData[row.tradeCode]) {
-        groupedData[row.tradeCode] = [];
+      if (sortColumn) {
+        sortedData = filteredData.sort((a, b) => {
+          if (sortOrder === "asc") {
+            return a[sortColumn] > b[sortColumn] ? 1 : -1;
+          } else {
+            return a[sortColumn] < b[sortColumn] ? 1 : -1;
+          }
+        });
       }
-      groupedData[row.tradeCode].push(row);
-    });
 
-    const consolidatedData = [];
-    Object.keys(groupedData).forEach((tradeCode) => {
-      const items = groupedData[tradeCode];
-      const totalPrice = items.reduce((sum, item) => sum + item.price, 0);
-      const consolidatedRow = {
-        ...items[0],
-        itemName: items.map((item) => item.itemName).join(", "),
-        image: items.map((item) => item.image).join(", "), // Combine image URLs
-        price: totalPrice,
-      };
-      consolidatedData.push(consolidatedRow);
-    });
+      // Consolidate rows with the same tradeCode
+      const groupedData = {};
+      sortedData.forEach((row) => {
+        if (!groupedData[row.tradeCode]) {
+          groupedData[row.tradeCode] = [];
+        }
+        groupedData[row.tradeCode].push(row);
+      });
 
-    return consolidatedData.slice(startIndex, endIndex);
-  };
+      const consolidatedData = [];
+      Object.keys(groupedData).forEach((tradeCode) => {
+        const items = groupedData[tradeCode];
+        const totalPrice = items.reduce((sum, item) => sum + item.price, 0);
+        const consolidatedRow = {
+          ...items[0],
+          itemName: items.map((item) => item.itemName).join(", "),
+          image: items.map((item) => item.image).join(", "), // Combine image URLs
+          price: totalPrice,
+        };
+        consolidatedData.push(consolidatedRow);
+      });
+
+      setItems(consolidatedData.slice(startIndex, endIndex));
+    };
+
+    getCurrentPageData();
+  }, [rows]);
   return (
     <div className="p-5 h-full bg-gray-100 w-full rounded-md">
       <h1 className="text-xl mb-2">{nameTable}</h1>
@@ -237,7 +241,7 @@ export default function TableOrders({
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
-            {getCurrentPageData().map((row, index) => (
+            {items?.map((row, index) => (
               <React.Fragment key={row.tradeCode}>
                 <tr
                   classNam
@@ -324,7 +328,7 @@ export default function TableOrders({
                     </button>
                   </td>
                 </tr>
-                {index < getCurrentPageData().length - 1 && (
+                {index < items?.length - 1 && (
                   <tr className="h-4">
                     <td colSpan="12"></td>
                   </tr>
@@ -336,7 +340,7 @@ export default function TableOrders({
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:hidden">
-        {getCurrentPageData().map((row) => (
+        {items?.map((row) => (
           <div
             className="bg-white space-y-3 p-4 rounded-lg shadow"
             key={row.tradeCode}
