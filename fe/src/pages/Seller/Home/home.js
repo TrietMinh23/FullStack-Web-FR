@@ -46,7 +46,7 @@ export default function Review() {
       number: orderStatusTotalAmounts["Cancelled"] || 0,
       interaction: "53",
       color: "orange",
-      title: "Refund",
+      title: "Total Refund",
     },
   ];
 

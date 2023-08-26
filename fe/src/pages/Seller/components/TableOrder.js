@@ -42,7 +42,7 @@ export default function TableOrders({
 
   const handleCheckboxChange = (event, item) => {
     const { checked } = event.target;
-    
+
     if (checked) {
       setSelectedItems((prevSelectedItems) => [...prevSelectedItems, item]);
       console.log(item);
@@ -158,7 +158,7 @@ export default function TableOrders({
         />
         <button
           id="All"
-          className="ml-2 p-2 bg-green-500 text-white rounded-md"
+          className="ml-2 p-2 bg-green-500 text-white rounded-md hover:bg-green-600"
           onClick={handleUpdateStatus}
         >
           <CheckCircleIcon />
@@ -218,19 +218,11 @@ export default function TableOrders({
                 Buyer{" "}
                 {sortColumn === "order" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
-              <th
-                className="p-3 text-sm font-semibold tracking-wide text-left"
-                onClick={() => handleSort("phone")}
-              >
+              <th className="p-3 text-sm font-semibold tracking-wide text-left">
                 Phone{" "}
-                {sortColumn === "phone" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
-              <th
-                className="p-3 text-sm font-semibold tracking-wide text-left"
-                onClick={() => handleSort("address")}
-              >
+              <th className="p-3 text-sm font-semibold tracking-wide text-left">
                 Address{" "}
-                {sortColumn === "address" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
                 className="w-24 p-3 text-sm font-semibold tracking-wide text-left"
@@ -325,7 +317,7 @@ export default function TableOrders({
                   </td>
                   <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
                     <button
-                      className="text-green-500 font-bold hover:underline ml-2"
+                      className="text-green-500 font-bold hover:underline ml-2 hover:text-green-600"
                       onClick={() => handleUpdateStatusRow(row)}
                     >
                       <CheckCircleIcon />
@@ -378,7 +370,7 @@ export default function TableOrders({
             <div className="text-sm font-medium text-black">${row.price}</div>
             <div className="flex justify-end">
               <button
-                className="text-green-500 font-bold hover:underline ml-2"
+                className="text-green-500 font-bold hover:underline ml-2 hover:text-green-600"
                 onClick={() => handleUpdateStatusRow(row)}
               >
                 <CheckCircleIcon />

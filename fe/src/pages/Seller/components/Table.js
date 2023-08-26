@@ -133,13 +133,14 @@ export default function Table({
           value={searchTerm}
           onChange={updateSearchTerm}
         />
-        <button
-          id="All"
-          className="ml-2 p-2 bg-red-500 text-white rounded-md lg:p-4"
-          onClick={handleDelete}
-        >
-          <FaTrashAlt />
-        </button>
+      <button
+  id="All"
+  className="ml-2 p-2 bg-red-500 text-white rounded-md lg:p-4 hover:bg-red-600"
+  onClick={handleDelete}
+>
+  <FaTrashAlt />
+</button>
+
       </div>
 
       <div className="overflow-auto rounded-lg shadow hidden lg:block">
@@ -254,13 +255,13 @@ export default function Table({
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
                   <button
-                    className="text-blue-500 font-bold hover:underline"
+                    className="text-blue-500 font-bold hover:underline hover:text-blue-600"
                     onClick={() => handleEditRow(row)}
                   >
                     <FaPen />
                   </button>
                   <button
-                    className="text-red-500 font-bold hover:underline ml-2"
+                    className="text-red-500 font-bold hover:underline ml-2 hover:text-red-600"
                     onClick={() => handleDeleteRow(row)}
                   >
                     <FaTrashAlt />
@@ -307,13 +308,13 @@ export default function Table({
             <div className="text-sm font-medium text-black">${row.price}</div>
             <div className="flex justify-end">
               <button
-                className="text-blue-500 font-bold hover:underline"
+                className="text-blue-500 font-bold hover:underline hover:text-blue-600"
                 onClick={() => handleEditRow(row)}
               >
                 <FaPen />
               </button>
               <button
-                className="text-red-500 font-bold hover:underline ml-2"
+                className="text-red-500 font-bold hover:underline ml-2 hover:text-red-600"
                 onClick={handleDelete}
               >
                 <FaTrashAlt />
