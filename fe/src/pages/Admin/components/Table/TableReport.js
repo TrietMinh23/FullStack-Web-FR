@@ -12,7 +12,6 @@ const Table = ({rows}) => {
   const [sortOrder, setSortOrder] = useState(""); // Thứ tự sắp xếp ('asc' hoặc 'desc')
   const [searchTerm, setSearchTerm] = useState(""); // Giá trị tìm kiếm
   const [selectedItems, setSelectedItems] = useState([]); // Các sản phẩm được chọn
-  const [selectAll, setSelectAll] = useState(false); // Tất cả sản phẩm được chọn
   const [isHandle, setIsHandle] = useState(1);
   const [isReview, setIsReview] = useState(false);
   const [isProcess, setIsProcess] = useState(false);
@@ -65,21 +64,6 @@ const Table = ({rows}) => {
     }
   };
 
-  const handleSelectAllChange = (event) => {
-    const {checked} = event.target;
-
-    if (checked) {
-      setSelectAll(true);
-      setSelectedItems(rows);
-    } else {
-      setSelectAll(false);
-      setSelectedItems([]);
-    }
-  };
-
-  const handleDelete = () => {
-    setSelectedItems([]);
-  };
 
   const getCurrentPageData = () => {
     const startIndex = (currentPage - 1) * perPage;
@@ -139,7 +123,7 @@ const Table = ({rows}) => {
         <table className="w-full">
           <thead className="bg-gray-50 border-b-2 border-gray-200">
             <tr>
-        
+
               <th
                 className="w-20 p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("id_reporter.name")}
@@ -185,15 +169,6 @@ const Table = ({rows}) => {
                 className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
                 key={row.id_reporter._id}
               >
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
-                  <input
-                    type="checkbox"
-                    checked={selectedItems.some(
-                      (item) => item._id === row._id
-                    )}
-                    onChange={(event) => handleCheckboxChange(event, row)}
-                  />
-                </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                   {row.id_reporter.name}
                 </td>
