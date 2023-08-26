@@ -16,7 +16,7 @@ import {
   countBuyer,
   get_buyer_performance_stats,
   forgotPassword,
-  resetPassword
+  resetPassword,
   count_status_today,
 } from "../controllers/userController.js";
 
