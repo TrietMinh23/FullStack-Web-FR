@@ -78,12 +78,13 @@ export const updateProduct = async (productId, productData) => {
 };
 
 // admin
-export const getAllProducts = async (page, limit) => {
+export const getAllProducts = async (page, limit, searchQuery) => {
   try {
     const respone = await instance.get(`/products`, {
       params: {
         page: page,
         limit: limit,
+        searchQuery: searchQuery,
       },
     });
     return respone;

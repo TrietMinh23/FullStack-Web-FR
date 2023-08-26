@@ -18,6 +18,8 @@ export default function Allitems() {
   const [totalAvailable, setTotalAvailable] = useState(0);
   const [totalPriceSold0, setTotalPriceSold0] = useState(0);
   const [totalPriceSold1, setTotalPriceSold1] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
+
 
   const handleChange = (newPage) => {
     setPage(newPage);
@@ -26,6 +28,10 @@ export default function Allitems() {
   const handlePerPageChange = (newPerPage) => {
     setPerPage(newPerPage);
     setPage(1); // Reset to first page when changing items per page
+  };
+
+  const handleSearch = (newSearchTerm) => {
+    setSearchQuery(newSearchTerm); // Update the search query state
   };
 
   useEffect(() => {
@@ -37,7 +43,7 @@ export default function Allitems() {
 
       try {
         // window.scrollTo(0, 0);
-        const response = await getAllProducts(page, perPage);
+        const response = await getAllProducts(page, perPage, searchQuery);
         const dataProducts = response.data.products;
         setTotalSold(response.data.totalSold0);
         setTotalAvailable(response.data.totalSold1);
@@ -62,8 +68,7 @@ export default function Allitems() {
       }
     };
     fetchProducts();
-    console.log(totalPriceSold0);
-  }, [page, perPage]);
+  }, [page, perPage, searchQuery]);
 
   const handleSelectEditRow = (tradeCode) => {
     setSelectedTradeCode(tradeCode); // Set the selected TradeCode in state
@@ -117,6 +122,7 @@ export default function Allitems() {
               onPerPageChange={handlePerPageChange}
               perPage={perPage}
               onSelectEditRow={handleSelectEditRow}
+              onSearchTermChange={handleSearch} // Pass the callback prop
             />
           </div>
         )}
