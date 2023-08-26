@@ -27,7 +27,7 @@ export default function Purchase() {
   const [isCashPayment, setCashPayment] = useState(true);
   const [isVNPAYPayment, setVNPAYPayment] = useState(false);
   const dispatch = useDispatch();
-  const address = localStorage.getItem("address").split(",") || [];
+  const address = localStorage.getItem("address")?.split(",") || [];
   {
     console.log(address);
   }
@@ -35,14 +35,14 @@ export default function Purchase() {
   const shipping = useSelector((state) => state.purchase.shipping);
   const products = useSelector((state) => state.product.shoppingCart);
   const [information, setInformation] = useState({
-    name: localStorage.getItem("name").replace(/^"(.*)"$/, "$1") || "",
+    name: localStorage.getItem("name")?.replace(/^"(.*)"$/, "$1") || "",
     phone:
       localStorage
         .getItem("mobile")
         .replace(/^"(.*)"$/, "$1")
         .search("__MOBILE_NULL_FOR_") >= 0
         ? ""
-        : localStorage.getItem("mobile").replace(/^"(.*)"$/, "$1"),
+        : localStorage.getItem("mobile")?.replace(/^"(.*)"$/, "$1"),
     city: address[3] || "",
     district: address[2] || "",
     ward: address[1] || "",
@@ -241,13 +241,13 @@ export default function Purchase() {
                           Details
                         </th>
                         <th className="w-24 p-3 text-sm font-semibold tracking-wide text-center">
-                          Price
+                          Brand
                         </th>
                         <th className="w-24 p-3 text-sm font-semibold tracking-wide text-center">
-                          Quantities
+                          Condition
                         </th>
                         <th className="w-32 p-3 text-sm font-semibold tracking-wide text-center">
-                          Total
+                          Price
                         </th>
                       </tr>
                     </thead>

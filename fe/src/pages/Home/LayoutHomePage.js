@@ -16,7 +16,7 @@ export default function LayoutHomePage() {
       if (listFromLocalStorage.first) {
         dispatch(
           UPDATEPRODUCT({
-            total: listFromLocalStorage.products.length,
+            total: listFromLocalStorage.products?.length,
             flag: true,
           })
         );

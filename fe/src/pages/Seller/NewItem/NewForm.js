@@ -26,19 +26,22 @@ const Form = ({ title, PH, value }) => (
 
 const NewProductForm = ({ tradeCode, role }) => {
   const [selectedOptions, setSelectedOptions] = useState([]);
+  const [selected, setSelected] = useState([]);
   const [imageFile, setImageFile] = useState(null);
   const [productData, setProductData] = useState(null);
-  const [category, setCategory] = useState(null);
+  const [category, setCategory] = useState(
+    JSON.parse(sessionStorage.getItem("listCategory")) || []
+  );
   const [roleUser, setRoleUser] = useState(role);
 
-  const handleChange = (selected) => {
-    if (selected === null || selected === undefined) {
-      return;
-    }
-    setSelectedOptions(selected);
-    const newCategory = selected.map((item) => item.value);
-    setCategory(newCategory);
-  };
+  // const handleChange = (selected) => {
+  //   console.log(selected[0]);
+  //   if (selected === null || selected === undefined) {
+  //     return;
+  //   }
+  //   const newSelectedOptions = [...selectedOptions, selected[0]]; // Replace newValue with the actual value you want to add
+  //   setSelectedOptions(newSelectedOptions);
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -48,6 +51,10 @@ const NewProductForm = ({ tradeCode, role }) => {
     formData.append("description", e.target.description.value);
     formData.append("price", e.target.price.value);
     formData.append("brandName", e.target.brand.value);
+    if (!imageFile || !productData?.image) {
+      alert("No image");
+      return;
+    }
     if (imageFile instanceof File) {
       console.log(1);
       formData.append("image", imageFile); // Thêm hình ảnh mới vào formData nếu có sự thay đổi
@@ -68,7 +75,6 @@ const NewProductForm = ({ tradeCode, role }) => {
 
     // Append the cleaned sellerId to the formData
     formData.append("sellerId", cleanedSellerId);
-
     try {
       if (tradeCode) {
         // Update product if tradeCode is available
@@ -100,6 +106,7 @@ const NewProductForm = ({ tradeCode, role }) => {
           });
         });
         sessionStorage.setItem("listCategory", JSON.stringify(options));
+        setCategory(options);
       })
       .catch((err) => console.log(err));
   };
@@ -194,9 +201,10 @@ const NewProductForm = ({ tradeCode, role }) => {
               Category :
             </label>
             <MultiSelect
-              options={JSON.parse(sessionStorage.getItem("listCategory"))}
-              value={selectedOptions}
-              onChange={handleChange}
+              options={category || []}
+              value={selected}
+              onChange={setSelected}
+              labelledBy="Select"
               id="type"
             />
           </div>

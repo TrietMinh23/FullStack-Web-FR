@@ -46,6 +46,10 @@ export default function ProductDetail() {
     });
   };
 
+  const buyNow = () => {
+    if (getCookie("refresh_token")) addToCart();
+  };
+
   const addToCart = () => {
     if (!getCookie("refresh_token")) {
       navigator("/type");
@@ -77,8 +81,7 @@ export default function ProductDetail() {
     );
 
     let listItem = JSON.parse(localStorage.getItem("cart"));
-    listItem.products.push(data);
-    console.log(listItem.products);
+    listItem.products?.push(data);
     localStorage.setItem("cart", JSON.stringify(listItem));
 
     notify();
@@ -157,7 +160,7 @@ export default function ProductDetail() {
                     <StoreIcon className="mr-2"></StoreIcon>SHOP:
                   </h2>
                   <div className="group relative ">
-                    <button className="uppercase inline-block hover:scale-110 hover:text-blue-600 font-bold hover:underline transition-all">
+                    <button className="uppercase inline-block hover:scale-110 hover:text-blue-600 font-bold transition-all">
                       {data.sellerId?.name} shop
                     </button>
                     <div className="grid h-[304px] absolute left-[-100px] top-7 invisible border group-hover:visible bg-white rounded">
@@ -235,7 +238,10 @@ export default function ProductDetail() {
                 </h1>
                 <div className="flex mb-4">
                   <span className="flex py-2">
-                    <a href="/#" className="text-gray-500">
+                    <a
+                      href="https://www.facebook.com/"
+                      className="text-gray-500 hover:text-blue-600"
+                    >
                       <svg
                         fill="currentColor"
                         strokeLinecap="round"
@@ -247,7 +253,10 @@ export default function ProductDetail() {
                         <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z" />
                       </svg>
                     </a>
-                    <a href="/#" className="ml-2 text-gray-500">
+                    <a
+                      href="https://twitter.com/"
+                      className="ml-2 text-gray-500 hover:text-blue-400"
+                    >
                       <svg
                         fill="currentColor"
                         strokeLinecap="round"
@@ -259,7 +268,10 @@ export default function ProductDetail() {
                         <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z" />
                       </svg>
                     </a>
-                    <a href="/#" className="ml-2 text-gray-500">
+                    <a
+                      href="https://www.wechat.com/"
+                      className="ml-2 text-gray-500 hover:text-green-600"
+                    >
                       <svg
                         fill="currentColor"
                         strokeLinecap="round"
@@ -326,6 +338,12 @@ export default function ProductDetail() {
                               </div>
                             </div>
                           </li>
+                          <li>
+                            Condition :{" "}
+                            <span>
+                              {data?.condition ? data?.condition : 100}
+                            </span>
+                          </li>
                         </ul>
                       </div>
                     </div>
@@ -341,8 +359,8 @@ export default function ProductDetail() {
 
                     <div className="max-sm:grow">
                       <Link
-                        to="/purchase"
-                        onClick={addToCart}
+                        to={getCookie("refresh_token") ? "/purchase" : "/type"}
+                        onClick={buyNow}
                         className="block text-center sm:ml-3 w-full max-sm:block text-white bg-red-500 hover:bg-red-600 border-0 py-3 px-7 focus:outline-none rounded"
                       >
                         Buy Now

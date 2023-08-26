@@ -40,13 +40,13 @@ export default function ShoppingCart() {
                     Details
                   </th>
                   <th className="w-24 p-3 text-sm font-semibold tracking-wide text-center">
-                    Price
+                    Brand
                   </th>
                   <th className="w-24 p-3 text-sm font-semibold tracking-wide text-center">
-                    Quantities
+                    Condition
                   </th>
                   <th className="w-32 p-3 text-sm font-semibold tracking-wide text-center">
-                    Total
+                    Price
                   </th>
                   <th className="w-32 p-3 text-sm font-semibold tracking-wide text-center">
                     Action
