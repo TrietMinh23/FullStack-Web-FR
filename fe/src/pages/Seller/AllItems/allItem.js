@@ -7,17 +7,21 @@ import DoneOutlineIcon from "@mui/icons-material/DoneOutline";
 import Card from "../../Home/PersonalProfile/components/card";
 import { sellerProduct } from "../../../api/products";
 import NewProductForm from "../NewItem/NewForm";
+import formatNumberWithCommas from "../../../utils/formatNumberWithCommas";
 
 export default function AllItems() {
   const [products, setProducts] = useState([]);
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(5);
-  const [totalPages, setTotalPages] = useState(0); // Total number of pages returned by the API
+  const [totalPages, setTotalPages] = useState(
+    Number(sessionStorage.getItem("totalPage")) || 1
+  ); // Total number of pages returned by the API
   const [selectedTradeCode, setSelectedTradeCode] = useState(false);
   const [totalSold, setTotalSold] = useState(0);
   const [totalAvaiable, setTotalAvaiable] = useState(0);
   const [totalPriceSold0, setTotalPriceSold0] = useState(0);
   const [totalPriceSold1, setTotalPriceSold1] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleChange = (newPage) => {
     setPage(newPage);
@@ -26,6 +30,10 @@ export default function AllItems() {
   const handlePerPageChange = (newPerPage) => {
     setPerPage(newPerPage);
     setPage(1); // Reset to first page when changing items per page
+  };
+
+  const handleSearch = (newSearchTerm) => {
+    setSearchQuery(new RegExp(newSearchTerm.replace(/\s+/g, " "), "i").source); // Update the search query state
   };
 
   useEffect(() => {
@@ -38,17 +46,14 @@ export default function AllItems() {
     const fetchProducts = async () => {
       try {
         // window.scrollTo(0, 0);
-        const response = await sellerProduct(cleanedSellerId, page, perPage);
-        const dataProducts = response.data.products;
-        setTotalSold(response.data.totalSold0);
-        setTotalAvaiable(response.data.totalSold1);
-        setTotalPriceSold0(response.data.totalPriceSold0);
-        setTotalPriceSold1(response.data.totalPriceSold1);
-        setTotalPages(response.data.totalPages);
-        sessionStorage.setItem(
-          "totalPage",
-          response.data.totalPages.toString()
+        const response = await sellerProduct(
+          cleanedSellerId,
+          page,
+          perPage,
+          searchQuery
         );
+        const dataProducts = response.data.products;
+
         const data = dataProducts.map((product) => ({
           tradeCode: product._id,
           itemName: product.title,
@@ -59,13 +64,23 @@ export default function AllItems() {
         }));
 
         setProducts(data); // Assuming the response contains the actual data
+        setTotalSold(response.data.totalSold0);
+        setTotalAvaiable(response.data.totalSold1);
+        setTotalPriceSold0(
+          formatNumberWithCommas(response.data.totalPriceSold0)
+        );
+        setTotalPriceSold1(
+          formatNumberWithCommas(response.data.totalPriceSold1)
+        );
+        setTotalPages(response.data.totalPages);
+        sessionStorage.setItem("totalPage", response.data.totalPages);
       } catch (error) {
         console.error(error.message);
       }
     };
 
     fetchProducts();
-  }, [page, perPage]);
+  }, [page, perPage, searchQuery]);
 
   const handleSelectEditRow = (tradeCode) => {
     setSelectedTradeCode(tradeCode); // Set the selected TradeCode in state
@@ -76,7 +91,7 @@ export default function AllItems() {
       icon: <DoneOutlineIcon fontSize="large" />,
       id: 1,
       text: "Total Money",
-      number: totalSold  || 0,
+      number: totalSold || 0,
       money: totalPriceSold0 || 0,
       color: "rgb(74, 222, 128)",
       title: "AVAIABLE",
@@ -116,15 +131,17 @@ export default function AllItems() {
             nameTable={"All Items"}
             onPageChange={handleChange}
             page={page}
+            totalPage={totalPages}
             onPerPageChange={handlePerPageChange}
             perPage={perPage}
             onSelectEditRow={handleSelectEditRow}
+            onSearchTermChange={handleSearch}
           />
         </div>
       )}
 
       {selectedTradeCode && (
-        <NewProductForm tradeCode={selectedTradeCode} role={"seller"}/> // Pass the selected TradeCode as a prop
+        <NewProductForm tradeCode={selectedTradeCode} role={"seller"} /> // Pass the selected TradeCode as a prop
       )}
     </div>
   );

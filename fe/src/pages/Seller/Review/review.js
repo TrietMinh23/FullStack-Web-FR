@@ -11,6 +11,9 @@ export default function Review() {
   const [allData, setAllData] = useState({});
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(5);
+  const [totalPages, setTotalPages] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
+
   const staticTable = [
     {
       icon: <StarBorderIcon />,
@@ -67,28 +70,36 @@ export default function Review() {
       title: "Avg Star",
     },
   ];
+
   const handleChange = (newPage) => {
     setPage(newPage);
   };
+
   const handlePerPageChange = (newPerPage) => {
     setPerPage(newPerPage);
     setPage(1); 
   };
+
+  const handleSearch = (newSearchTerm) => {
+    setSearchQuery( new RegExp(newSearchTerm.replace(/\s+/g, " "), "i").source); // Update the search query state
+  };
+
   useEffect(() => {
 
     let sellerId = localStorage.getItem("_id");
     let cleanedSellerId = sellerId.replace(/"/g, "");
     const path = cleanedSellerId;
     fetchData(path, 1);
-  }, [page, perPage]);
+  }, [page, perPage, searchQuery]);
   const fetchData = async (path) => {
     sessionStorage.setItem("pageTableReviews", page.toString());
     sessionStorage.setItem("pageTableReviewsPerPage", perPage.toString());
 
     try {
-      const response = await getReview(path, page);
+      const response = await getReview(path, page, perPage, searchQuery);
       setReview(response.data.review);
       setAllData(response.data);
+      setTotalPages(response.data.totalPages);
       return response.data;
     } catch (error) {
       console.error(error);
@@ -118,6 +129,8 @@ export default function Review() {
         perPage={perPage}
         onPageChange={handleChange}
         onPerPageChange={handlePerPageChange}
+        onSearchTermChange={handleSearch}
+        totalPages={totalPages}
         />
       </div>
     </div>

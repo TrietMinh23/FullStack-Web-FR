@@ -86,13 +86,13 @@ export default function ChooseType() {
                   <label
                     htmlFor="buyer"
                     onClick={() => handleBuyerClick()}
-                    className={`border-2 px-4 py-6 rounded-2xl text-2xl flex flex-row ${
-                      isBuyerSelected
+                    className={`border-2 px-4 py-6 rounded-2xl text-2xl flex flex-row ${isBuyerSelected
                         ? "bg-[#E5F6EF] border-green-sheen"
                         : "bg-white"
-                    }`}
+                      }`}
                   >
-                    <BsShop className="mr-3 self-center text-5xl" />
+                    <MdOutlineLocalGroceryStore className="mr-3 self-center text-5xl" />
+
                     <div className="ml-4 font-bold ">
                       <p className="self-center">Buyer</p>
                       <p className="text-xs text-silver-sand">
@@ -115,13 +115,12 @@ export default function ChooseType() {
                   <label
                     htmlFor="seller"
                     onClick={() => handleSellerClick()}
-                    className={`border-2 px-4 py-6 rounded-2xl text-2xl flex flex-row ${
-                      isSellerSelected
+                    className={`border-2 px-4 py-6 rounded-2xl text-2xl flex flex-row ${isSellerSelected
                         ? "bg-[#E5F6EF] border-green-sheen"
                         : "bg-white"
-                    }`}
+                      }`}
                   >
-                    <MdOutlineLocalGroceryStore className="mr-3 self-center text-5xl" />
+                    <BsShop className="mr-3 self-center text-5xl" />
 
                     <div className="ml-4 font-bold">
                       <p className="self-center">Seller</p>

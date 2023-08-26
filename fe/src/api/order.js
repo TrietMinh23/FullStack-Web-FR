@@ -28,12 +28,13 @@ export const createPaymentUrl = async (order) => {
   }
 };
 
-export const getOrdersBySellerId = async (id, page, limit) => {
+export const getOrdersBySellerId = async (id, page, limit, searchQuery) => {
   try {
     const respone = await instance.get(`/orders/sellerId/${id}`, {
       params: {
         page: page,
         limit: limit,
+        searchQuery: searchQuery,
       },
     });
     return respone;
@@ -120,7 +121,7 @@ export const getRefundForAllMonths = async () => {
       error.response?.data?.error || "Error getting refund for all months."
     );
   }
-}
+};
 
 export const getIncomeForAllDeliveredOrders = async () => {
   try {
@@ -128,10 +129,11 @@ export const getIncomeForAllDeliveredOrders = async () => {
     return response;
   } catch (error) {
     throw new Error(
-      error.response?.data?.error || "Error getting income for all delivered orders."
+      error.response?.data?.error ||
+        "Error getting income for all delivered orders."
     );
   }
-}
+};
 
 export const getCurrentMonthIncome = async () => {
   try {
@@ -142,7 +144,7 @@ export const getCurrentMonthIncome = async () => {
       error.response?.data?.error || "Error getting current month income."
     );
   }
-}
+};
 
 export const getCurrentYearIncome = async () => {
   try {
@@ -153,4 +155,4 @@ export const getCurrentYearIncome = async () => {
       error.response?.data?.error || "Error getting current year income."
     );
   }
-}
+};

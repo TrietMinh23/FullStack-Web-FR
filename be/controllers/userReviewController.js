@@ -24,6 +24,9 @@ export const createReview = async (req, res) => {
     try {
       var page = parseInt(req.query.page) || 1;
       var limit = parseInt(req.query.limit) || 20;
+      var searchQuery = req.query.searchQuery || "";
+      console.log(searchQuery);
+      
       const skip = (page - 1) * limit;
 
       const _id = req.params.id;

@@ -4,7 +4,13 @@ import { useEffect } from "react";
 import ChartOne from "../components/ChartOne";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import Card from "../../Home/PersonalProfile/components/card";
-import { getOrdersBySellerId, getDailyIncomeBySeller, getDailyRefundBySeller, getIncomeBySellerIdForAllMonths, getRefundBySellerIdForAllMonths } from "../../../api/order";
+import {
+  getOrdersBySellerId,
+  getDailyIncomeBySeller,
+  getDailyRefundBySeller,
+  getIncomeBySellerIdForAllMonths,
+  getRefundBySellerIdForAllMonths,
+} from "../../../api/order";
 
 const defaultMonthlyIncome = [
   {
@@ -54,38 +60,54 @@ export default function Review() {
 
         setOrderStatusTotalAmounts(response.data.orderStatusTotalAmounts);
 
-        const responeDailyIncome = await getDailyIncomeBySeller(cleanedSellerId);
-        setDailyIncome(responeDailyIncome.data['income']);
+        const responeDailyIncome = await getDailyIncomeBySeller(
+          cleanedSellerId
+        );
+        setDailyIncome(responeDailyIncome.data["income"]);
 
-        const responeDailyRefund = await getDailyRefundBySeller(cleanedSellerId);
-        setDailyRefund(responeDailyRefund.data['refund']);
+        const responeDailyRefund = await getDailyRefundBySeller(
+          cleanedSellerId
+        );
+        setDailyRefund(responeDailyRefund.data["refund"]);
 
-        const responeMonthlyIncome = await getIncomeBySellerIdForAllMonths(cleanedSellerId);
+        const responeMonthlyIncome = await getIncomeBySellerIdForAllMonths(
+          cleanedSellerId
+        );
 
-        const responeMonthlyRefund = await getRefundBySellerIdForAllMonths(cleanedSellerId);
-        
+        const responeMonthlyRefund = await getRefundBySellerIdForAllMonths(
+          cleanedSellerId
+        );
+
         // Map the API data to the customSeries format
         const mappedCustomSeries = [
           {
             name: "Total Sales",
-            data: Array(12).fill(0).map((_, index) => {
-              const matchingMonth = responeMonthlyIncome.data['income'].find(item => item._id.month === index + 1);
-              return matchingMonth ? matchingMonth.totalIncome : 0;
-            }),
+            data: Array(12)
+              .fill(0)
+              .map((_, index) => {
+                const matchingMonth = responeMonthlyIncome.data["income"].find(
+                  (item) => item._id.month === index + 1
+                );
+                return matchingMonth ? matchingMonth.totalIncome : 0;
+              }),
           },
           {
             name: "Total Refund",
-            data: Array(12).fill(0).map((_, index) => {
-              const matchingMonth = responeMonthlyRefund.data['refund'].find(item => item._id.month === index + 1);
-              return matchingMonth ? matchingMonth.totalRefund : 0;
-            }),
+            data: Array(12)
+              .fill(0)
+              .map((_, index) => {
+                const matchingMonth = responeMonthlyRefund.data["refund"].find(
+                  (item) => item._id.month === index + 1
+                );
+                return matchingMonth ? matchingMonth.totalRefund : 0;
+              }),
           },
         ];
 
         // Set the mapped customSeries to state
         setMonthlyIncome(mappedCustomSeries);
       } catch (error) {
-        console.error(error.message);
+        console.log(error.message);
       }
     };
 
