@@ -23,9 +23,8 @@ export const createReview = async (req, res) => {
   export const getReviewBySellerId = async (req, res) => {
     try {
       var page = parseInt(req.query.page) || 1;
-      var limit = parseInt(req.query.limit) || 20;
+      var limit = parseInt(req.query.limit) || 5;
       var searchQuery = req.query.searchQuery || "";
-      console.log(searchQuery);
       
       const skip = (page - 1) * limit;
 

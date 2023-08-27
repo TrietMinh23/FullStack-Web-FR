@@ -346,7 +346,6 @@ export const get_buyer_performance_stats = async (req, res) => {
 
     var skip = (page - 1) * limit;
 
-    var searchQuery = req.query.searchQuery || "";
     const buyers = await User.find({
       role: "buyer",
       name: { $regex: searchQuery, $options: "i" },

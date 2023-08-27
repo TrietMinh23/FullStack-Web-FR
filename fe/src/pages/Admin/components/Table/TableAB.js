@@ -206,18 +206,18 @@ const Table = ({
               </th>
               <th
                 className="p-3 text-sm font-semibold tracking-wide text-center"
-                onClick={() => handleSort("processing")}
+                onClick={() => handleSort("sumProcessing")}
               >
                 Processing Orders{" "}
-                {sortColumn === "processing" &&
+                {sortColumn === "sumProcessing" &&
                   (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
                 className="p-3 text-sm font-semibold tracking-wide text-center"
-                onClick={() => handleSort("canceled")}
+                onClick={() => handleSort("sumCancelled")}
               >
                 Cancelled Orders{" "}
-                {sortColumn === "canceled" && (sortOrder === "asc" ? "▲" : "▼")}
+                {sortColumn === "sumCancelled" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
                 className="w-24 p-3 text-sm font-semibold tracking-wide text-center"

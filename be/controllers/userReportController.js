@@ -2,11 +2,18 @@ import {userReport} from "../models/userReportModel.js";
 
 export const getUserReport = async (req, res) => {
   try {
+    var page = parseInt(req.query.page) || 1;
+    var limit = parseInt(req.query.limit) || 5;
+    var searchQuery = req.query.searchQuery || "";
+    const skip = (page - 1) * limit;
+
     const report = await userReport
       .find()
       .populate("id_reporter", "name")
-      .populate("id_reported", "name");
-
+      .populate("id_reported", "name")
+      .skip(skip)
+      .limit(limit)
+      .exec();
     var searchQuery = req.query.searchQuery || "";
 
     if (searchQuery) {
@@ -14,6 +21,10 @@ export const getUserReport = async (req, res) => {
         item.id_reporter.name === searchQuery;
       });
     }
+    console.log("search",searchQuery);
+    const total = await userReport
+      .find();
+    const totalPages= Math.ceil(total.length/limit);
 
     const currentDate = new Date();
     currentDate.setHours(0, 0, 0, 0);
@@ -25,13 +36,17 @@ export const getUserReport = async (req, res) => {
     });
     const totalDoneToday = await userReport.countDocuments({
       status: "Done",
-      createdAt: {$gte: currentDate},
+      updatedAt: {$gte: currentDate},
     });
     console.log(totalPendingToday, totalDoneToday);
     res.status(200).json({
       report,
       totalPending,
       totalDone,
+      total,
+      totalPages,
+      totalPendingToday,
+      totalDoneToday,
     });
   } catch (err) {
     res.status(404).json({error: err.message});

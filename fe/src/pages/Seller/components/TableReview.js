@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { FaTrashAlt } from "react-icons/fa";
 import { AiFillEye } from "react-icons/ai";
 import PopupReview from "./Popup/PopupReview";
 import PaginationComponent from "../../Home/components/Pagination";
@@ -18,8 +17,6 @@ export default function TableReview({
   const [sortColumn, setSortColumn] = useState("");
   const [sortOrder, setSortOrder] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedItems, setSelectedItems] = useState([]);
-  const [selectAll, setSelectAll] = useState(false);
   const [indexReview, setIndexReview] = useState(0);
   const [detailReview, setDetailReview] = useState(false);
 
@@ -28,48 +25,19 @@ export default function TableReview({
   };
   const handleSort = (column) => {
     if (column === sortColumn) {
+      // Đang sắp xếp theo cột đã chọn, thay đổi thứ tự sắp xếp
       setSortOrder(sortOrder === "asc" ? "desc" : "asc");
     } else {
+      // Đang sắp xếp theo một cột khác, đặt cột và thứ tự sắp xếp mới
       setSortColumn(column);
       setSortOrder("asc");
     }
   };
-
   // Update the search term when input changes
   const updateSearchTerm = (event) => {
     const newSearchTerm = event.target.value;
     setSearchTerm(newSearchTerm);
     onSearchTermChange(newSearchTerm); // Call the callback prop
-  };
-
-  const handleCheckboxChange = (event, item) => {
-    const { checked } = event.target;
-
-    if (checked) {
-      setSelectedItems((prevSelectedItems) => [...prevSelectedItems, item]);
-    } else {
-      setSelectedItems((prevSelectedItems) =>
-        prevSelectedItems.filter(
-          (selectedItem) => selectedItem._id !== item._id
-        )
-      );
-    }
-  };
-
-  const handleSelectAllChange = (event) => {
-    const { checked } = event.target;
-
-    if (checked) {
-      setSelectAll(true);
-      setSelectedItems(rows);
-    } else {
-      setSelectAll(false);
-      setSelectedItems([]);
-    }
-  };
-
-  const handleDelete = () => {
-    setSelectedItems([]);
   };
 
   const getCurrentPageData = () => {
@@ -88,7 +56,33 @@ export default function TableReview({
         }
       });
     }
-
+    if (sortColumn === 'buyer') {
+      sortedData = filteredData.sort((a, b) => {
+        if (sortOrder === "asc") {
+          return a.buyer.name > b.buyer.name ? 1 : -1;
+        } else {
+          return a.buyer.name < b.buyer.name ? 1 : -1;
+        }
+      });
+    }
+    if (sortColumn === 'comment') {
+      sortedData = filteredData.sort((a, b) => {
+        if (sortOrder === "asc") {
+          return a.rating.comment > b.rating.comment ? 1 : -1;
+        } else {
+          return a.rating.comment < b.rating.comment ? 1 : -1;
+        }
+      });
+    }
+    if (sortColumn === 'star') {
+      sortedData = filteredData.sort((a, b) => {
+        if (sortOrder === "asc") {
+          return a.rating.star > b.rating.star ? 1 : -1;
+        } else {
+          return a.rating.star < b.rating.star ? 1 : -1;
+        }
+      });
+    }
     return sortedData.slice(startIndex, endIndex);
   };
   useEffect(() => {
@@ -117,12 +111,6 @@ export default function TableReview({
           value={searchTerm}
           onChange={updateSearchTerm}
         />
-        <button
-          className="ml-2 p-2 hover:bg-red-600 bg-red-500 text-white rounded-md"
-          onClick={handleDelete}
-        >
-          <FaTrashAlt />
-        </button>
       </div>
 
       {/* Desktop Table */}
@@ -130,13 +118,6 @@ export default function TableReview({
         <table className="w-full">
           <thead className="bg-gray-50 border-b-2 border-gray-200">
             <tr>
-              <th>
-                <input
-                  type="checkbox"
-                  checked={selectAll}
-                  onChange={handleSelectAllChange}
-                />
-              </th>
               <th
                 className="w-20 p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("_id")}
@@ -155,12 +136,15 @@ export default function TableReview({
                 onClick={() => handleSort("star")}
               >
                 Star{" "}
-                {sortColumn === "star" && (sortOrder === "asc" ? "▲" : "▼")}
+                {sortColumn === "rating.star" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
-                className="p-3 text-sm font-semibold tracking-wide text-center"
+                className=" p-3 text-sm font-semibold tracking-wide text-center"
+                onClick={() => handleSort("comment")}
               >
-                Comment
+                <div className="w-96">Comment{" "}</div>
+                {sortColumn === "rating.comment" &&
+                  (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
                 className="w-24 p-3 text-sm font-semibold tracking-wide text-center"
@@ -181,13 +165,6 @@ export default function TableReview({
                 className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
                 key={row._id}
               >
-                <td className="p-3 text-sm text-center text-gray-700 whitespace-nowrap text-center">
-                  <input
-                    type="checkbox"
-                    checked={selectedItems.some((item) => item._id === row._id)}
-                    onChange={(event) => handleCheckboxChange(event, row)}
-                  />
-                </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                   <div className="w-20 truncate">{row._id}</div>
                 </td>
@@ -197,8 +174,8 @@ export default function TableReview({
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                   {row.rating.star}
                 </td>
-                <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-left">
-                  <div className="w-40 truncate">{row.rating.comment}</div>
+                <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
+                  <div className="w-96 truncate">{row.rating.comment}</div>
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                   {formatDate(row.createdAt)}
@@ -273,7 +250,9 @@ export default function TableReview({
             <option value={15}>15</option>
           </select>
         </div>
-        <PaginationComponent setPage={onPageChange} page={page} totalPage={totalPages}/>
+        <div className="flex w-full justify-end">
+          <PaginationComponent setPage={onPageChange} page={page} totalPage={totalPages}/>
+        </div>
       </div>
       {detailReview && (
         <div className="flex lg:flex-row flex-col">
