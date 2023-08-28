@@ -1,12 +1,17 @@
 import { useEffect, useState } from "react";
 import ShoppingCard from "./ShoppingCard";
-import { products } from "../../../api/products";
+import { getByPrice, products } from "../../../api/products";
 import React from "react";
 import CardSkeleton from "../../../components/ui/CardSkeleton";
 import { getByCategory } from "../../../api/category";
 import { useSelector } from "react-redux";
 
-export default function ShoppingList({ page, category, handleSetTotalPage }) {
+export default function ShoppingList({
+  page,
+  category,
+  handleSetTotalPage,
+  price,
+}) {
   const [productsList, setProducts] = useState(null);
   const listProduct = useSelector((state) => state.product.products);
   const isSearch = useSelector((state) => state.product.search);
@@ -22,6 +27,9 @@ export default function ShoppingList({ page, category, handleSetTotalPage }) {
         if (category && category.length > 0) {
           // Call the appropriate API based on the category
           res = await getByCategory(category, page);
+        } else if (price) {
+          console.log("hello");
+          res = await getByPrice(price, page);
         } else {
           res = await products(page);
         }
@@ -40,7 +48,7 @@ export default function ShoppingList({ page, category, handleSetTotalPage }) {
     } else if (listProduct.length > 0) {
       setProducts(listProduct);
     } else getProduct();
-  }, [page, category, listProduct]);
+  }, [page, category, listProduct, price]);
 
   return (
     <section

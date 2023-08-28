@@ -64,7 +64,7 @@ export const updateOrder = async (req, res) => {
 export const getOrdersByUserId = async (req, res) => {
   try {
     const userId = req.params.userId;
-
+    console.log("in");
     // Pagination
     var page = parseInt(req.query.page) || 1;
     var limit = parseInt(req.query.limit) || 10;
@@ -99,7 +99,6 @@ export const getOrdersByUserId = async (req, res) => {
       .skip(skip)
       .limit(limit)
       .exec();
-    console.log("length",req.query.searchQuery);
 
     if (orders.length === 0) {
       return res.status(404).json({ message: "No orders found." });

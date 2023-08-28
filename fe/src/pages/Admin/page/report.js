@@ -71,9 +71,6 @@ export default function Report() {
         return null;
       }
     };
-  useEffect(() => {
-    console.log("pages",totalPages);
-  },[totalPages])
   return (
     <React.Fragment>
       <div>

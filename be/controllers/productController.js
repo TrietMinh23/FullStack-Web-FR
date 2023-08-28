@@ -351,20 +351,49 @@ export const deleteProductById = async (req, res) => {
 
 export const filterProductsByPrice = async (req, res) => {
   try {
-    const priceRange = parseInt(res.query.price);
+    const priceRange = parseInt(req.query.price);
 
     let price = {};
 
-    if (priceRange <= 200) {
+    if (priceRange <= 200000) {
       price = { $lt: priceRange };
     } else {
       price = { $gt: priceRange };
     }
 
-    const products = await Product.find({ price: price });
-    res.status(200).json(products);
+    // pagination
+    var page = parseInt(req.query.page) || 1;
+    var limit = 20; //numbers of products per page
+
+    const skip = (page - 1) * limit;
+    const products = await Product.find({
+      price: price, // Tìm các sản phẩm có ít nhất một phần tử nằm trong mảng categorySlugs
+    })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .exec();
+
+    if (products.length === 0) {
+      res
+        .status(400)
+        .json({ error: "No products found for the specified price." });
+      return;
+    }
+
+    const totalProducts = await Product.find({ price: price }).countDocuments();
+    const totalPages = Math.ceil(totalProducts / limit);
+
+    res.status(200).json({
+      products: products,
+      currentPage: page,
+      totalPages,
+      totalProducts,
+    });
+    return;
   } catch (err) {
     res.status(400).json({ error: err.message });
+    return;
   }
 };
 

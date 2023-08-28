@@ -1,15 +1,15 @@
 import express from "express";
 import {
-    getUserReview,
-    createReview,
-    getReviewBySellerId,
-    getAllReviewsBySellerId,
-    countAllReview,
-  } from "../controllers/userReviewController.js";
+  getUserReview,
+  createReview,
+  getReviewBySellerId,
+  getAllReviewsBySellerId,
+  countAllReview,
+} from "../controllers/userReviewController.js";
 
 const router = express.Router();
 
-// create API endpoints 
+// create API endpoints
 
 router.get("/count", countAllReview);
 router.get("/", getUserReview);
