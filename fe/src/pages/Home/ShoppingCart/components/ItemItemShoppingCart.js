@@ -1,11 +1,12 @@
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   ADDTOPURCHASE,
   DELETE,
   REMOVEFROMPURCHASE,
 } from "../../../../utils/redux/productsSlice";
 import { instance } from "../../../../api/config";
+import { useState } from "react";
 
 export default function ItemItemShoppingCart({
   name,
@@ -18,9 +19,20 @@ export default function ItemItemShoppingCart({
 }) {
   const dispatch = useDispatch();
 
+  const list = useSelector((state) => state.product.shoppingCart);
+  console.log("LIST: ", list);
+
   const deleteItem = async () => {
     const list = JSON.parse(localStorage.getItem("cart"));
+    list.products.forEach((item) => console.log(item._id, id));
     const index = list.products.findIndex((item) => item._id === id);
+
+    dispatch(
+      DELETE({
+        id: id,
+        shop: shop,
+      })
+    );
 
     await instance
       .post(`http://localhost:5000/carts/list_remove`, {
@@ -32,13 +44,6 @@ export default function ItemItemShoppingCart({
 
     list.products.splice(index, 1);
     localStorage.setItem("cart", JSON.stringify(list));
-
-    dispatch(
-      DELETE({
-        id: id,
-        shop: shop,
-      })
-    );
   };
 
   const addToPurchase = (data) => {
