@@ -9,6 +9,7 @@ import SuccessfullForm from "./components/SuccessfullForm";
 import UnsuccessFullForm from "./components/UnsuccessFullForm";
 import PopupChangeInfo from "./components/PopUp/PopupChangeInfo";
 import CheckoutModal from "./components/ModalPayments";
+import formatNumberWithCommas from "../../../utils/formatNumberWithCommas";
 
 import {
   updatedPayments,
@@ -21,25 +22,39 @@ import { UPDATETOTAL } from "../../../utils/redux/productsSlice";
 
 export default function Purchase() {
   const [statePayment, setStatePayment] = useState(false);
-
   const [modalIsOpen, setModalOpen] = useState(false);
-
   const [isCashPayment, setCashPayment] = useState(true);
   const [isVNPAYPayment, setVNPAYPayment] = useState(false);
   const dispatch = useDispatch();
   const address = localStorage.getItem("address")?.split(",") || [];
   const [isChange, setIsChange] = useState(false);
   const shipping = useSelector((state) => state.purchase.shipping);
-  const products = useSelector((state) => state.product.shoppingCart);
+  const [products, setProducts] = useState(
+    useSelector((state) => state.product.purchase)
+  );
+  console.log("Products", products);
   const [information, setInformation] = useState({
     name: localStorage.getItem("name")?.replace(/^"(.*)"$/, "$1") || "",
-    phone: localStorage.getItem("mobile").replace(/^"(.*)"$/, "$1")
-      ? ""
-      : localStorage.getItem("mobile")?.replace(/^"(.*)"$/, "$1"),
+    phone:
+      localStorage
+        .getItem("mobile")
+        .replace(/^"(.*)"$/, "$1")
+        .search("__MOBILE_NULL_FOR_") >= 0
+        ? ""
+        : localStorage.getItem("mobile")?.replace(/^"(.*)"$/, "$1"),
     city: address[3] || "",
     district: address[2] || "",
     ward: address[1] || "",
     address: address[0] || "",
+  });
+
+  const [informationChange, setInformationChange] = useState({
+    name: information.name,
+    phone: information.phone,
+    city: information.city,
+    district: information.district,
+    ward: information.ward,
+    address: information.address,
   });
 
   const changeShipping = () => {
@@ -54,25 +69,41 @@ export default function Purchase() {
   };
 
   const handleChangeInput = (event) => {
-    setInformation({
-      ...information,
+    setInformationChange({
+      ...informationChange,
       [event.target.name]: event.target.value,
     });
   };
 
+  const checkEmptyFields = (form) => {
+    for (const key in form) {
+      if (form[key] === "") {
+        return false;
+      }
+    }
+    return true;
+  };
+
   const finishUpdateInfomation = () => {
+    if (!checkEmptyFields(informationChange)) {
+      alert("Please fill out all the information");
+      return;
+    }
+
+    setInformation(informationChange);
+
     localStorage.setItem(
       "address",
-      `${information.address}, ${information.ward}, ${information.district}, ${information.city}`
+      `${informationChange.address}, ${informationChange.ward}, ${informationChange.district}, ${informationChange.city}`
     );
-    localStorage.setItem("mobile", information.phone);
-    localStorage.setItem("name", information.name);
+    localStorage.setItem("mobile", informationChange.phone);
+    localStorage.setItem("name", informationChange.name);
 
     instance
-      .post("/users/update_information", {
+      .post("/users/update_informationChange", {
         userId: localStorage.getItem("_id").replace(/^"(.*)"$/, "$1"),
-        address: `${information.address}, ${information.ward}, ${information.district}, ${information.city}`,
-        phone: information.phone,
+        address: `${informationChange.address}, ${informationChange.ward}, ${informationChange.district}, ${informationChange.city}`,
+        phone: informationChange.phone,
         name: localStorage.getItem("name").replace(/^"(.*)"$/, "$1"),
       })
       .then((res) => console.log(res))
@@ -82,13 +113,13 @@ export default function Purchase() {
 
   const closeUpdateInfomation = () => {
     setIsChange(false);
-    setInformation({
-      name: "",
-      phone: "",
-      city: "",
-      district: "",
-      ward: "",
-      address: "",
+    setInformationChange({
+      name: information.name,
+      phone: information.phone,
+      city: information.city,
+      district: information.district,
+      ward: information.ward,
+      address: information.address,
     });
   };
 
@@ -118,7 +149,7 @@ export default function Purchase() {
       sum += i.item.length;
     }
 
-    return sum;
+    return formatNumberWithCommas(sum);
   };
 
   const summarizePrice = (list) => {
@@ -134,16 +165,15 @@ export default function Purchase() {
       })
     );
 
-    return sum;
+    return formatNumberWithCommas(sum);
   };
 
   useEffect(() => {
     setStatePayment(
       JSON.parse(decodeURIComponent(getCookie("vnp_params")))?.vnp_ResponseCode
     );
-    console.log(statePayment);
     if (statePayment === "00") {
-      console.log("BANANA");
+      console.log("BÂNNÂNNÂNN");
       const cart = JSON.parse(localStorage.getItem("cart"));
       cart.products = [];
       localStorage.setItem("cart", JSON.stringify(cart));
@@ -155,6 +185,10 @@ export default function Purchase() {
       setCookie("vnp_params", null, 1);
     }
   }, [statePayment]);
+
+  useEffect(() => {
+    setProducts(JSON.parse(sessionStorage.getItem("purchase")));
+  }, []);
 
   return (
     <React.Fragment>
@@ -187,6 +221,7 @@ export default function Purchase() {
                   changeFunc={(event) => handleChangeInput(event)}
                   close={() => closeUpdateInfomation()}
                   open={() => finishUpdateInfomation()}
+                  form={informationChange}
                 />
               )}
               <div className="flex lg:flex-row flex-col gap-x-3 ml-2">
@@ -261,7 +296,39 @@ export default function Purchase() {
                       <div className="md:ml-10">
                         <span>{shipping}</span>
                         <div className="time-recieve text-xs text-gray-800">
-                          Nhận hàng vào 18 Th07 - 19 Th07
+                          Nhận hàng vào{" "}
+                          {shipping === "Normal"
+                            ? `${new Date(
+                                Date.now() + 3 * 24 * 60 * 60 * 1000
+                              ).toLocaleDateString("vi-VN", {
+                                weekday: "long",
+                                year: "numeric",
+                                month: "short",
+                                day: "numeric",
+                              })} - ${new Date(
+                                Date.now() + 5 * 24 * 60 * 60 * 1000
+                              ).toLocaleDateString("vi-VN", {
+                                weekday: "long",
+                                year: "numeric",
+                                month: "short",
+                                day: "numeric",
+                              })}`
+                            : `${new Date(Date.now()).toLocaleDateString(
+                                "vi-VN",
+                                {
+                                  weekday: "long",
+                                  year: "numeric",
+                                  month: "short",
+                                  day: "numeric",
+                                }
+                              )} - ${new Date(
+                                Date.now() + 24 * 60 * 60 * 1000
+                              ).toLocaleDateString("vi-VN", {
+                                weekday: "long",
+                                year: "numeric",
+                                month: "short",
+                                day: "numeric",
+                              })}`}
                         </div>
                       </div>
                       <div className="btn-change">

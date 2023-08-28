@@ -67,8 +67,21 @@ export const getOrdersByUserId = async (req, res) => {
 
     // Pagination
     var page = parseInt(req.query.page) || 1;
-    var limit = parseInt(req.query.limit) || 20;
+    var limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
+
+    const ordersl = await Order.find({orderby: userId})
+    .populate({
+      path: "products",
+      populate: {
+        path: "sellerId",
+        model: "User",
+        select: "name",
+      },
+    })
+    .populate("orderby", "name")
+    .populate("payment", "paymentMethod")
+    .populate("shipping", "address city ward")
 
     const orders = await Order.find({orderby: userId})
       .populate({
@@ -86,13 +99,14 @@ export const getOrdersByUserId = async (req, res) => {
       .skip(skip)
       .limit(limit)
       .exec();
+    console.log("length",req.query.searchQuery);
 
     if (orders.length === 0) {
       return res.status(404).json({ message: "No orders found." });
     } else {
       return res.status(200).json({
         currentPage: page,
-        totalPages: Math.ceil(orders.length / limit),
+        totalPages: Math.ceil(ordersl.length / limit),
         orders,
       });
     }

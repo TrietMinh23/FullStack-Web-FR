@@ -98,11 +98,8 @@ function Router() {
         {localStorage.getItem("role")?.replace(/^"(.*)"$/, "$1") === "admin" &&
           getCookie("refresh_token") ? (
           <Route path="/admin" element={<Admin />}>
-            <Route
-              exact
-              path="/admin/financialmanagement"
-              element={<FinancialManagement />}
-            />
+            <Route index element={<Navigate to="/admin/financialmanagement" />} />
+            <Route path="/admin/financialmanagement" element={<FinancialManagement />}/>
             <Route path="usemanagement" element={<Usemanagement />}>
               <Route path="allbuyer" element={<Allbuyer />} />
               <Route path="allitems" element={<Allitems />} />

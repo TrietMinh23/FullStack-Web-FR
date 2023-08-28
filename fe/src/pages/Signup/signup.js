@@ -127,9 +127,9 @@ export default function Signup() {
             .catch((err) => console.log(err));
         })
         .catch((err) => {
-          console.log(err);
-          
           setMessage(err.response.data.message);
+          console.log(err);
+          setLoading(false);
         });
     }
   };
@@ -241,7 +241,7 @@ export default function Signup() {
           >
             <PriorityHighIcon className="icon-alert"></PriorityHighIcon>
             <div className="alert-content text-xs ml-2">
-              <p>{message}</p>
+              <p>User already exist</p>
             </div>
           </div>
           <div className="text-xs mb-4">

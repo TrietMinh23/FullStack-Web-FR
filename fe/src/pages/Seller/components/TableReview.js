@@ -120,9 +120,8 @@ export default function TableReview({
             <tr>
               <th
                 className="w-20 p-3 text-sm font-semibold tracking-wide text-center"
-                onClick={() => handleSort("_id")}
               >
-                Review ID {sortColumn === "_id" && (sortOrder === "asc" ? "▲" : "▼")}
+                Review ID {sortColumn === "_id" }
               </th>
               <th
                 className="p-3 text-sm font-semibold tracking-wide text-center"
@@ -136,15 +135,13 @@ export default function TableReview({
                 onClick={() => handleSort("star")}
               >
                 Star{" "}
-                {sortColumn === "rating.star" && (sortOrder === "asc" ? "▲" : "▼")}
+                {sortColumn === "star" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
                 className=" p-3 text-sm font-semibold tracking-wide text-center"
-                onClick={() => handleSort("comment")}
               >
                 <div className="w-96">Comment{" "}</div>
-                {sortColumn === "rating.comment" &&
-                  (sortOrder === "asc" ? "▲" : "▼")}
+                
               </th>
               <th
                 className="w-24 p-3 text-sm font-semibold tracking-wide text-center"

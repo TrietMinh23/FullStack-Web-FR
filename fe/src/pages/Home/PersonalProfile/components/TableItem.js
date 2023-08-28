@@ -5,9 +5,17 @@ import PopupCancel from "./Popup/PopupCancel";
 import moment from "moment";
 import PopupReport from "./Popup/PopupReport";
 import { getOrdersByUserId } from "../../../../api/order";
+import PaginationComponent from "../../../Home/components/Pagination";
 
-const TableItem = () => {
-  const [perPage, setPerPage] = useState(5); // Số hàng trên mỗi trang
+const TableItem = (
+  {rows,
+  onPageChange,
+  page,
+  onPerPageChange,
+  perPage,
+  totalPages,
+  onSearchTermChange,}
+) => {
   const [currentPage] = useState(1); // Trang hiện tại
   const [sortColumn, setSortColumn] = useState(""); // Cột hiện tại được sắp xếp
   const [sortOrder, setSortOrder] = useState(""); // Thứ tự sắp xếp ('asc' hoặc 'desc')
@@ -18,7 +26,6 @@ const TableItem = () => {
   const [isCancel, setIsCancel] = useState(false);
   const [isReport, setIsReport] = useState(false);
   // const [isAlReview, setIsAlReview] = useState(false);
-  const [orders, setOrders] = useState(null);
 
   const [indexReview, setIndexReview] = useState("");
   const [indexReport, setIndexReport] = useState("");
@@ -52,8 +59,10 @@ const TableItem = () => {
     }
   };
 
-  const handleSearch = (e) => {
-    setSearchTerm(e.target.value);
+  const updateSearchTerm = (event) => {
+    const newSearchTerm = event.target.value;
+    setSearchTerm(newSearchTerm);
+    onSearchTermChange(newSearchTerm); // Call the callback prop
   };
 
   const handleCheckboxChange = (event, item) => {
@@ -85,45 +94,38 @@ const TableItem = () => {
     setSelectedItems([]);
   };
 
-  // const getCurrentPageData = () => {
-  //   const startIndex = (currentPage - 1) * perPage;
-  //   const endIndex = startIndex + perPage;
+  const getCurrentPageData = () => {
+    const startIndex = (currentPage - 1) * perPage;
+    const endIndex = startIndex + perPage;
 
-  //   let filteredData = orders;
+    let filteredData = rows;
 
-  //   if (searchTerm) {
-  //     filteredData = orders.filter((row) => {
-  //       return Object.values(row).some((value) =>
-  //         value.toString().toLowerCase().includes(searchTerm.toLowerCase())
-  //       );
-  //     });
-  //   }
+    if (searchTerm) {
+      filteredData = rows.filter((row) => {
+        return Object.values(row).some((value) =>
+          value.toString().toLowerCase().includes(searchTerm.toLowerCase())
+        );
+      });
+    }
 
-  //   let sortedData = filteredData;
+    let sortedData = filteredData;
 
-  //   if (sortColumn) {
-  //     sortedData = filteredData.sort((a, b) => {
-  //       if (sortOrder === "asc") {
-  //         return a[sortColumn] > b[sortColumn] ? 1 : -1;
-  //       } else {
-  //         return a[sortColumn] < b[sortColumn] ? 1 : -1;
-  //       }
-  //     });
-  //   }
+    if (sortColumn) {
+      sortedData = filteredData.sort((a, b) => {
+        if (sortOrder === "asc") {
+          return a[sortColumn] > b[sortColumn] ? 1 : -1;
+        } else {
+          return a[sortColumn] < b[sortColumn] ? 1 : -1;
+        }
+      });
+    }
 
-  //   return sortedData.slice(startIndex, endIndex);
-  // };
+    return sortedData?.slice(startIndex, endIndex);
+  };
 
   useEffect(() => {
-    getOrdersByUserId(JSON.parse(localStorage.getItem("_id")))
-      .then((res) => setOrders(res.data.orders))
-      .catch((err) => console.log(err));
-  }, []);
-
-  {
-    console.log(orders);
-  }
-
+    console.log("right?",rows);
+  },[rows]);
   return (
     <div className="p-5 h-full bg-gray-100 w-full rounded-md">
       <h1 className="text-xl mb-2">All Orders</h1>
@@ -137,7 +139,7 @@ const TableItem = () => {
           type="text"
           className="border border-gray-300 rounded-md p-1"
           value={searchTerm}
-          onChange={handleSearch}
+          onChange={updateSearchTerm}
         />
         <button
           className="ml-2 p-2 hover:bg-red-600 bg-red-500 text-white rounded-md"
@@ -200,7 +202,7 @@ const TableItem = () => {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
-            {orders?.map((row, index) => (
+            {getCurrentPageData()?.map((row, index) => (
               <tr
                 className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
                 key={index}
@@ -262,7 +264,6 @@ const TableItem = () => {
                         className={`mr-2 md:w-1/2 bg-green-sheen text-white font-semibold rounded-md border-2 border-transparent hover:border-2 hover:border-green-sheen hover:text-green-sheen hover:bg-white
                         `}
                       >
-                        {/* {(isAlReview && (indexReview === index))  ? "Done Review": "Review"} */}
                         Review
                       </button>
                       <button
@@ -335,7 +336,7 @@ const TableItem = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 xl:hidden">
-        {orders?.map((row, index) => (
+        {getCurrentPageData()?.map((row, index) => (
           <div className="bg-white space-y-3 p-4 rounded-lg shadow" key={index}>
             <div className="flex items-center space-x-2 text-sm">
               <div>
@@ -450,6 +451,7 @@ const TableItem = () => {
         ))}
       </div>
 
+      {/* Pagination */}
       <div className="flex justify-between items-center mt-4 flex-col lg:flex-row">
         <div className="flex items-center w-full mb-10">
           <label htmlFor="rowsPerPage" className="mr-2">
@@ -457,88 +459,17 @@ const TableItem = () => {
           </label>
           <select
             id="rowsPerPage"
-            className="border border-gray-300 rounded-md p-1"
+            className="border border-gray-300 rounded-md p-1 w-12"
             value={perPage}
-            onChange={(e) => setPerPage(Number(e.target.value))}
+            onChange={(e) => onPerPageChange(Number(e.target.value))}
           >
             <option value={5}>5</option>
             <option value={10}>10</option>
             <option value={15}>15</option>
           </select>
         </div>
-        <div className="flex">
-          <a
-            href="/#"
-            className="px-4 py-2 mx-1 text-gray-500 capitalize bg-white rounded-md cursor-not-allowed dark:bg-gray-800 dark:text-gray-600"
-          >
-            <div className="flex items-center -mx-1">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-6 h-6 mx-1 rtl:-scale-x-100"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M7 16l-4-4m0 0l4-4m-4 4h18"
-                />
-              </svg>
-            </div>
-          </a>
-          <a
-            href="/#"
-            className="px-4 py-2 mx-1 text-gray-700 transition-colors duration-300 transform bg-white rounded-md sm:inline dark:bg-gray-800 dark:text-gray-200 hover:bg-blue-500 dark:hover:bg-blue-500 hover:text-white dark:hover:text-gray-200"
-          >
-            1
-          </a>
-          <a
-            href="/#"
-            className="px-4 py-2 mx-1 text-gray-700 transition-colors duration-300 transform bg-white rounded-md sm:inline dark:bg-gray-800 dark:text-gray-200 hover:bg-blue-500 dark:hover:bg-blue-500 hover:text-white dark:hover:text-gray-200"
-          >
-            2
-          </a>
-          <a
-            href="/#"
-            className="hidden px-4 py-2 mx-1 text-gray-700 transition-colors duration-300 transform bg-white rounded-md sm:inline dark:bg-gray-800 dark:text-gray-200 hover:bg-blue-500 dark:hover:bg-blue-500 hover:text-white dark:hover:text-gray-200"
-          >
-            3
-          </a>
-          <a
-            href="/#"
-            className="hidden px-4 py-2 mx-1 text-gray-700 transition-colors duration-300 transform bg-white rounded-md sm:inline dark:bg-gray-800 dark:text-gray-200 hover:bg-blue-500 dark:hover:bg-blue-500 hover:text-white dark:hover:text-gray-200"
-          >
-            4
-          </a>
-          <a
-            href="/#"
-            className="hidden px-4 py-2 mx-1 text-gray-700 transition-colors duration-300 transform bg-white rounded-md sm:inline dark:bg-gray-800 dark:text-gray-200 hover:bg-blue-500 dark:hover:bg-blue-500 hover:text-white dark:hover:text-gray-200"
-          >
-            5
-          </a>
-          <a
-            href="/#"
-            className="px-4 py-2 mx-1 text-gray-700 transition-colors duration-300 transform bg-white rounded-md dark:bg-gray-800 dark:text-gray-200 hover:bg-blue-500 dark:hover:bg-blue-500 hover:text-white dark:hover:text-gray-200"
-          >
-            <div className="flex items-center -mx-1">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-6 h-6 mx-1 rtl:-scale-x-100"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M17 8l4 4m0 0l-4 4m4-4H3"
-                />
-              </svg>
-            </div>
-          </a>
+        <div className="flex w-full justify-end">
+          <PaginationComponent setPage={onPageChange} page={page} totalPage={totalPages}/>
         </div>
       </div>
 
@@ -548,7 +479,7 @@ const TableItem = () => {
             close={closeReport}
             i={indexReport}
             at={document.documentElement.scrollTop}
-            data={orders}
+            data={rows}
           />
           <div id="dimScreen" className={"block "}></div>
         </div>
@@ -570,7 +501,7 @@ const TableItem = () => {
             i={indexReview}
             at={document.documentElement.scrollTop}
             finish = {finishReview}
-            data ={orders}
+            data ={rows}
           />
           <div id="dimScreen" className={"block "}></div>
         </div>

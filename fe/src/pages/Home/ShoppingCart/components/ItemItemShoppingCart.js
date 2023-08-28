@@ -1,6 +1,10 @@
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useDispatch } from "react-redux";
-import { DELETE } from "../../../../utils/redux/productsSlice";
+import {
+  ADDTOPURCHASE,
+  DELETE,
+  REMOVEFROMPURCHASE,
+} from "../../../../utils/redux/productsSlice";
 import { instance } from "../../../../api/config";
 
 export default function ItemItemShoppingCart({
@@ -19,7 +23,7 @@ export default function ItemItemShoppingCart({
     const index = list.products.findIndex((item) => item._id === id);
 
     await instance
-      .post(`http://localhost:5000/users/list_remove`, {
+      .post(`http://localhost:5000/carts/list_remove`, {
         productId: id,
         cartId: JSON.parse(localStorage.getItem("cart"))._id,
       })
@@ -37,12 +41,51 @@ export default function ItemItemShoppingCart({
     );
   };
 
+  const addToPurchase = (data) => {
+    dispatch(
+      ADDTOPURCHASE({
+        data,
+      })
+    );
+  };
+
+  const removeFromPurchase = (data) => {
+    dispatch(
+      REMOVEFROMPURCHASE({
+        data,
+      })
+    );
+  };
+
+  const handleCheck = (e) => {
+    const data = {
+      name,
+      image,
+      price,
+      shop,
+      id,
+      condition,
+      brand,
+    };
+    if (e.target.checked) addToPurchase(data);
+    else {
+      const selectAll = document.querySelector("#select-all");
+      if (selectAll.checked) selectAll.checked = false;
+      removeFromPurchase(data);
+    }
+  };
+
   return (
-    <tr className="bg-white">
+    <tr className="bg-white item">
       <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-        <div className="flex">
+        <div className="flex items-center">
+          <input
+            type="checkbox"
+            className={`checkbox ${shop} mr-3`}
+            onChange={handleCheck}
+          ></input>
           <img src={image} alt="something" style={{ width: "15%" }} />
-          <span className="ml-4 flex items-center whitespace-break-spaces">
+          <span className="name-item ml-4 flex items-center whitespace-break-spaces">
             {name}
           </span>
         </div>

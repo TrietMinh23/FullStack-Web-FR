@@ -1,8 +1,14 @@
 import { instance } from "./config";
 
-export const getOrdersByUserId = async (id) => {
+export const getOrdersByUserId = async (id,page,limit, searchQuery) => {
   try {
-    const response = await instance.get(`/orders/${id}`);
+    const response = await instance.get(`/orders/${id}`,{
+      params: {
+        page:  page,
+        limit: limit,
+        searchQuery: searchQuery,
+      },
+    });
     return response;
   } catch (err) {
     return err;
@@ -14,8 +20,6 @@ export const createPaymentUrl = async (order) => {
     const data = await instance.post("/vnpay/create_payment_url", {
       order,
     });
-
-    console.log("CHECK", data);
 
     if (data.data) {
       if (data.data.code === "00") {
@@ -153,5 +157,17 @@ export const getCurrentYearIncome = async () => {
     throw new Error(
       error.response?.data?.error || "Error getting current year income."
     );
+  }
+};
+
+export const paymentCash = async (order) => {
+  console.log(order);
+  try {
+    const response = await instance.post("/vnpay/payment-cash", {
+      order,
+    });
+    return response;
+  } catch (err) {
+    return err;
   }
 };

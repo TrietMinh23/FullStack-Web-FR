@@ -1,9 +1,11 @@
 import { useSelector, useDispatch } from "react-redux";
 import React, { useCallback, useEffect, useState } from "react";
 import axios from "axios";
-import { createPaymentUrl } from "../../../../api/order";
+import { createPaymentUrl, paymentCash } from "../../../../api/order";
 import getCookie from "../../../../utils/getCookie";
 import validatePhoneNumber from "../../../../utils/validatePhone";
+import setCookie from "../../../../utils/setCookie";
+import formatNumberWithCommas from "../../../../utils/formatNumberWithCommas";
 
 // Component hiển thị thông tin chi tiết về thanh toán
 function PaymentDetailsRow({ label, amount }) {
@@ -23,13 +25,16 @@ function PaymentDetails({ productPrice, shipPrice }) {
         <thead>
           <PaymentDetailsRow
             label="Merchandise Subtotal"
-            amount={productPrice}
+            amount={formatNumberWithCommas(productPrice)}
           />
-          <PaymentDetailsRow label="Shipping Total" amount={shipPrice} />
+          <PaymentDetailsRow
+            label="Shipping Total"
+            amount={formatNumberWithCommas(shipPrice)}
+          />
           <tr>
             <th className="text-left">Total Payment:</th>
             <td className="text-right pl-4 py-2 text-3xl font-semibold text-red-500">
-              ₫{productPrice + shipPrice}
+              ₫{formatNumberWithCommas(productPrice + shipPrice)}
             </td>
           </tr>
         </thead>
@@ -78,6 +83,15 @@ export default function CheckoutModal({ formData }) {
     }
   }
 
+  const checkEmptyFields = (form) => {
+    for (const key in form) {
+      if (form[key].trim() === "") {
+        return false;
+      }
+    }
+    return true;
+  };
+
   if (getCookie("vnp_params")) {
     console.log(JSON.parse(decodeURIComponent(getCookie("vnp_params"))));
   }
@@ -85,16 +99,8 @@ export default function CheckoutModal({ formData }) {
   let totalOrder = [];
   // Xử lý sự kiện khi người dùng click vào nút "Place Order"
   const handlePlaceOrderClick = async () => {
-    if (!validatePhoneNumber(formData.phone)) {
-      alert("Your phone is not valid");
-      return;
-    } else if (
-      !formData.city ||
-      !formData.district ||
-      !formData.ward ||
-      !formData.address
-    ) {
-      alert("Your address is not valid");
+    if (!checkEmptyFields(formData)) {
+      alert("Please fill out your information");
       return;
     }
     // Tạo đơn hàng mới
@@ -125,10 +131,21 @@ export default function CheckoutModal({ formData }) {
       );
       totalOrder.push(order);
     }
-    // Gửi yêu cầu tạo URL thanh toán với thông tin đơn hàng
-    createPaymentUrl(JSON.stringify(totalOrder))
-      .then((res) => console.log(res))
-      .catch((err) => console.log("Error creating payment URL:", err));
+
+    if (payments === "Cash") {
+      paymentCash(JSON.stringify(totalOrder))
+        .then((res) => {
+          console.log(res);
+          setCookie("vnp_params", { vnp_ResponseCode: "00" }, 3 * 60 * 60);
+          setTimeout(window.location.reload(), 1500);
+        })
+        .catch((err) => console.log("Error creating payment URL:", err));
+    } else {
+      // Gửi yêu cầu tạo URL thanh toán với thông tin đơn hàng
+      createPaymentUrl(JSON.stringify(totalOrder))
+        .then((res) => console.log(res))
+        .catch((err) => console.log("Error creating payment URL:", err));
+    }
   };
 
   // Render giao diện của component

@@ -1,7 +1,7 @@
 import slugify from "slugify";
-import {Product} from "../models/productModel.js";
-import {User} from "../models/userModel.js";
-import {uploadFile, deleteS3} from "./s3Controller.js";
+import { Product } from "../models/productModel.js";
+import { User } from "../models/userModel.js";
+import { uploadFile, deleteS3 } from "./s3Controller.js";
 import util from "util";
 import fs from "fs";
 import mongoose from "mongoose";
@@ -15,13 +15,13 @@ export const getProductById = async (req, res) => {
     });
 
     if (!product) {
-      res.status(404).json({error: "Not found!"});
+      res.status(404).json({ error: "Not found!" });
       return;
     } else {
       res.status(200).json(product);
     }
   } catch (err) {
-    res.json({message: err.message});
+    res.json({ message: err.message });
   }
 };
 
@@ -37,30 +37,30 @@ export const getProductBySellerId = async (req, res) => {
 
     const products = await Product.find({
       sellerId: _id,
-      title: {$regex: searchQuery, $options: "i"},
+      title: { $regex: searchQuery, $options: "i" },
     })
-      .sort({createdAt: -1})
+      .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .exec();
     if (products.length === 0) {
-      return res.status(400).json({error: "No products found by seller id."});
+      return res.status(400).json({ error: "No products found by seller id." });
     }
 
-    const totalProducts = await Product.countDocuments({sellerId: _id});
+    const totalProducts = await Product.countDocuments({ sellerId: _id });
 
-    const totalSold0 = await Product.countDocuments({sellerId: _id, sold: 0});
-    const totalSold1 = await Product.countDocuments({sellerId: _id, sold: 1});
+    const totalSold0 = await Product.countDocuments({ sellerId: _id, sold: 0 });
+    const totalSold1 = await Product.countDocuments({ sellerId: _id, sold: 1 });
 
     // Calculate total price of sold products (sold 1)
-    const sold1Products = await Product.find({sellerId: _id, sold: 1});
+    const sold1Products = await Product.find({ sellerId: _id, sold: 1 });
     const totalPriceSold1 = sold1Products.reduce(
       (total, product) => total + product.price,
       0
     );
 
     // Calculate total price of unsold products (sold 0)
-    const sold0Products = await Product.find({sellerId: _id, sold: 0});
+    const sold0Products = await Product.find({ sellerId: _id, sold: 0 });
     const totalPriceSold0 = sold0Products.reduce(
       (total, product) => total + product.price,
       0
@@ -79,23 +79,23 @@ export const getProductBySellerId = async (req, res) => {
       products,
     });
   } catch (err) {
-    res.status(500).json({message: err.message});
+    res.status(500).json({ message: err.message });
   }
 };
 
 export const getProductBySlug = async (req, res) => {
   try {
     const slug = req.params.slug;
-    const product = await Product.find({slug});
+    const product = await Product.find({ slug });
 
     if (!product) {
-      res.status(404).json({error: "Not found!"});
+      res.status(404).json({ error: "Not found!" });
       return;
     } else {
       res.status(200).json(product);
     }
   } catch (err) {
-    res.status(400).json({error: err.message});
+    res.status(400).json({ error: err.message });
   }
 };
 
@@ -104,22 +104,24 @@ export const getProductsByRelativeCategory = async (req, res) => {
     const categorySlug = req.query.category;
     const id = req.query.id;
 
+    console.log(categorySlug, id);
+
     const products = await Product.aggregate([
       {
         $match: {
           category: categorySlug,
-          _id: {$ne: id}, // Exclude the specified id
+          _id: { $ne: id }, // Exclude the specified id
           sold: 0,
         },
       },
-      {$sample: {size: 4}}, // Randomly select 4 documents
-      {$sort: {createdAt: -1}}, // Sort the random documents
+      { $sample: { size: 4 } }, // Randomly select 4 documents
+      { $sort: { createdAt: -1 } }, // Sort the random documents
     ]).exec();
 
     if (products.length === 0) {
       res
         .status(400)
-        .json({error: "No products found for the specified category."});
+        .json({ error: "No products found for the specified category." });
       return;
     }
 
@@ -128,7 +130,7 @@ export const getProductsByRelativeCategory = async (req, res) => {
     });
     return;
   } catch (err) {
-    res.status(400).json({error: err.message});
+    res.status(400).json({ error: err.message });
     return;
   }
 };
@@ -143,9 +145,9 @@ export const getProductsByCategory = async (req, res) => {
 
     const skip = (page - 1) * limit;
     const products = await Product.find({
-      category: {$in: categorySlug}, // Tìm các sản phẩm có ít nhất một phần tử nằm trong mảng categorySlugs
+      category: { $in: categorySlug }, // Tìm các sản phẩm có ít nhất một phần tử nằm trong mảng categorySlugs
     })
-      .sort({createdAt: -1})
+      .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .exec();
@@ -153,12 +155,12 @@ export const getProductsByCategory = async (req, res) => {
     if (products.length === 0) {
       res
         .status(400)
-        .json({error: "No products found for the specified category."});
+        .json({ error: "No products found for the specified category." });
       return;
     }
 
     const totalProducts = await Product.find({
-      category: {$in: categorySlug},
+      category: { $in: categorySlug },
     }).countDocuments();
     const totalPages = Math.ceil(totalProducts / limit);
 
@@ -170,7 +172,7 @@ export const getProductsByCategory = async (req, res) => {
     });
     return;
   } catch (err) {
-    res.status(400).json({error: err.message});
+    res.status(400).json({ error: err.message });
     return;
   }
 };
@@ -189,13 +191,22 @@ export const getAllProducts = async (req, res) => {
     const products = await Product.find({
       title: {$regex: searchQuery, $options: "i"},
     })
-      .sort({createdAt: -1})
+      .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .exec();
 
     if (products.length === 0) {
-      res.status(400).json({error: "No products found."});
+      res.status(200).json({
+        currentPage: 0,
+        totalPages: 0,
+        totalProducts: 0,
+        products: [],
+        totalSold0: 0,
+        totalSold1: 0,
+        totalPriceSold0: 0,
+        totalPriceSold1: 0,
+      });
       return;
     }
 
@@ -203,11 +214,11 @@ export const getAllProducts = async (req, res) => {
 
     const totalSold0 = await Product.find({
       sold: 0,
-      title: {$regex: searchQuery, $options: "i"},
+      title: { $regex: searchQuery, $options: "i" },
     });
     const totalSold1 = await Product.find({
       sold: 1,
-      title: {$regex: searchQuery, $options: "i"},
+      title: { $regex: searchQuery, $options: "i" },
     });
     const quantityTotalSold0 = totalSold0.length;
     const quantityTotalSold1 = totalSold1.length;
@@ -237,7 +248,7 @@ export const getAllProducts = async (req, res) => {
       totalPriceSold1: totalPriceSold1,
     });
   } catch (err) {
-    res.status(400).json({error: err.message});
+    res.status(400).json({ error: err.message });
   }
 };
 
@@ -246,12 +257,12 @@ const unlinkFile = util.promisify(fs.unlink);
 export const createProduct = async (req, res) => {
   try {
     if (req.body.role === "seller") {
-      res.status(400).json({error: "You are not a seller."});
+      res.status(400).json({ error: "You are not a seller." });
       return;
     }
 
     if (req.body.title) {
-      req.body.slug = slugify(req.body.title, {lower: true});
+      req.body.slug = slugify(req.body.title, { lower: true });
 
       const file = req.file;
       const url_link = await uploadFile(file);
@@ -264,7 +275,7 @@ export const createProduct = async (req, res) => {
       res.status(201).json(newProduct);
     }
   } catch (err) {
-    res.status(400).json({error: err.message});
+    res.status(400).json({ error: err.message });
     console.log(err);
   }
 };
@@ -273,10 +284,10 @@ export const updateProduct = async (req, res) => {
   try {
     if (req.body.role === "seller" || true) {
       const id = req.params.id;
-      const product = await Product.findOne({_id: id});
+      const product = await Product.findOne({ _id: id });
 
       if (!product) {
-        res.status(404).json({error: "Not found!"});
+        res.status(404).json({ error: "Not found!" });
       }
 
       if (req.file != null) {
@@ -305,10 +316,10 @@ export const updateProduct = async (req, res) => {
 
       res.status(200).json(productUpdated);
     } else {
-      res.status(400).json({error: "You are not a seller."});
+      res.status(400).json({ error: "You are not a seller." });
     }
   } catch (err) {
-    res.status(400).json({error: err.message});
+    res.status(400).json({ error: err.message });
   }
 };
 
@@ -316,13 +327,13 @@ export const deleteProductById = async (req, res) => {
   try {
     if (req.params.role === "seller" || true) {
       const id = req.params.id;
-      const deleteProduct = await Product.findOneAndDelete({_id: id});
+      const deleteProduct = await Product.findOneAndDelete({ _id: id });
       const key = deleteProduct.image.slice(
         deleteProduct.image.lastIndexOf("/") + 1
       );
 
       if (!deleteProduct) {
-        res.status(404).json({error: "Not found!"});
+        res.status(404).json({ error: "Not found!" });
       }
 
       // Delete associated image from S3
@@ -330,11 +341,11 @@ export const deleteProductById = async (req, res) => {
         // Assuming you store S3 object key in 'imageKey' field
         await deleteS3(key);
       }
-      res.status(200).json({message: "Product deleted."});
+      res.status(200).json({ message: "Product deleted." });
     }
   } catch (err) {
     console.log(5);
-    res.status(400).json({error: err.message});
+    res.status(400).json({ error: err.message });
   }
 };
 
@@ -345,15 +356,15 @@ export const filterProductsByPrice = async (req, res) => {
     let price = {};
 
     if (priceRange <= 200) {
-      price = {$lt: priceRange};
+      price = { $lt: priceRange };
     } else {
-      price = {$gt: priceRange};
+      price = { $gt: priceRange };
     }
-    
-    const products = await Product.find({price: price});
+
+    const products = await Product.find({ price: price });
     res.status(200).json(products);
   } catch (err) {
-    res.status(400).json({error: err.message});
+    res.status(400).json({ error: err.message });
   }
 };
 
@@ -361,11 +372,11 @@ export const filterProductsByCondition = async (req, res) => {
   try {
     const conditionRange = parseInt(res.query.condition);
 
-    const condition = {$lt: conditionRange};
+    const condition = { $lt: conditionRange };
 
-    const products = await Product.find({condition: condition});
+    const products = await Product.find({ condition: condition });
     res.status(200).json(products);
   } catch (err) {
-    res.status(400).json({error: err.message});
+    res.status(400).json({ error: err.message });
   }
-}
+};

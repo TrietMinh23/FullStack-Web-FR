@@ -1,20 +1,28 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import ItemShoppingCart from "./components/ItemShoppingCart";
 import TableResponsiveShoppingCart from "./components/TableResponsiveShoppingCart";
-import { Link } from "react-router-dom";
-import React from "react";
-
+import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect } from "react";
+import {
+  ADDTOPURCHASEALL,
+  REMOVEFROMPURCHASEALL,
+} from "../../../utils/redux/productsSlice";
+import formatNumberWithCommas from "../../../utils/formatNumberWithCommas";
 export default function ShoppingCart() {
   const products = useSelector((state) => state.product.shoppingCart);
+  const purchase = useSelector((state) => state.product.purchase);
+  console.log("Purchase: ", purchase);
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const summarizeQuantity = (list) => {
-    console.log(list);
     let sum = 0;
     for (let i of list) {
       sum += i.item.length;
     }
 
-    return sum;
+    return formatNumberWithCommas(sum);
   };
 
   const summarizePrice = (list) => {
@@ -25,8 +33,57 @@ export default function ShoppingCart() {
       }
     }
 
-    return sum;
+    return formatNumberWithCommas(sum);
   };
+
+  const checkOut = () => {
+    if (purchase.length) {
+      sessionStorage.setItem("purchase", JSON.stringify(purchase));
+      navigate("/purchase");
+    } else {
+      alert("Choose one to buy");
+    }
+  };
+
+  const selectAllProducts = (e) => {
+    const listCheckedBox = document.getElementsByClassName("checkbox");
+    for (let index = 0; index < listCheckedBox.length; index++) {
+      const element = listCheckedBox[index];
+      element.checked = e.target.checked ? true : false;
+    }
+
+    if (e.target.checked) dispatch(ADDTOPURCHASEALL());
+    else dispatch(REMOVEFROMPURCHASEALL());
+  };
+
+  useEffect(() => {
+    const listItemsShop = document.getElementsByClassName("contents");
+    if (summarizeQuantity(purchase) === summarizeQuantity(products)) {
+      const selectAll = document.getElementById("select-all");
+      if (selectAll) selectAll.checked = true;
+    }
+
+    for (let shop of listItemsShop) {
+      const shopName = shop.querySelector(".shop-name").innerText;
+      const shopTitle = shop.querySelector(".shop-title");
+      const shopItem = shop.querySelectorAll(".item");
+      const foundItem = purchase.find((item) => item.name === shopName);
+      if (foundItem) {
+        shopTitle.querySelector(".checkbox").checked = true;
+        for (let index = 0; index < foundItem.item.length; index++) {
+          const element = foundItem.item[index];
+          let nameItem = "";
+          for (let a of shopItem) {
+            nameItem = a.querySelector(".name-item").innerText;
+            if (nameItem == element?.title) {
+              a.querySelector(".checkbox").checked = true;
+              break;
+            }
+          }
+        }
+      }
+    }
+  }, []);
 
   return (
     <React.Fragment>
@@ -37,7 +94,15 @@ export default function ShoppingCart() {
               <thead className="bg-gray-50">
                 <tr>
                   <th className="p-3 text-sm font-semibold tracking-wide text-left">
-                    Details
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        className="checkbox mr-3"
+                        id="select-all"
+                        onChange={selectAllProducts}
+                      ></input>
+                      Details
+                    </div>
                   </th>
                   <th className="w-24 p-3 text-sm font-semibold tracking-wide text-center">
                     Brand
@@ -68,12 +133,12 @@ export default function ShoppingCart() {
                 {summarizePrice(products)}{" "}
               </div>
               <div className="ml-6">
-                <Link
-                  to="/purchase"
+                <button
+                  onClick={checkOut}
                   className="uppercase py-2 px-6 bg-gray-800 text-white hover:bg-gray-700"
                 >
                   check out
-                </Link>
+                </button>
               </div>
             </div>
           </div>

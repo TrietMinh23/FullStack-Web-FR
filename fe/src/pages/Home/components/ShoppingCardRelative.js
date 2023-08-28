@@ -6,10 +6,7 @@ export default function ShoppingCardRelative({ title, price, image, id }) {
       to={`/products/${id}`}
       className="group"
       onClick={() => {
-        window.onload = () => {
-          window.scrollTo({ top: 0, behavior: "smooth" });
-        };
-        window.location.reload();
+        window.scrollTo({ top: 0, behavior: "smooth" });
       }}
     >
       <div className="w-72 bg-white shadow-md duration-500 hover:scale-105 hover:shadow-xl">
