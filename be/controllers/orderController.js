@@ -79,7 +79,7 @@ export const getOrdersByUserId = async (req, res) => {
       return;
     }
 
-    let orders = await Order.find({ orderby: userId })
+    var orders = await Order.find({orderby: userId})
       .populate({
         path: "products",
         populate: {
@@ -96,8 +96,8 @@ export const getOrdersByUserId = async (req, res) => {
       .limit(limit)
       .exec();
 
-    if (orders.length === 0) {
-      return res.status(404).json({ message: "No orders found." });
+    if (!orders.length) {
+      return res.status(404).json({message: "No orders found."});
     } else {
       if (searchQuery) {
         const regex = new RegExp(searchQuery, "i");
@@ -707,105 +707,62 @@ export const getOrderBySellerId = async (req, res) => {
     // Pagination
     var page = parseInt(req.query.page) || 1;
     var limit = parseInt(req.query.limit) || 15;
-    var searchQuery = req.query.searchQuery || "";
-    console.log(searchQuery);
-
     const skip = (page - 1) * limit;
 
-    const orders = await Order.find()
-      .populate("products")
-      .populate("shipping")
-      .populate("payment")
-      .populate("orderby")
-      .sort({ createdAt: -1 });
-
-    const orderStatusCounts = {
-      "Not Processed": 0,
-      "Cash on Delivery": 0,
-      Processing: 0,
-      Dispatched: 0,
-      Cancelled: 0,
-      Delivered: 0,
-    };
-
-    const orderStatusTotalAmounts = {
-      "Not Processed": 0,
-      "Cash on Delivery": 0,
-      Processing: 0,
-      Dispatched: 0,
-      Cancelled: 0,
-      Delivered: 0,
-    };
-
-    var totalPages = 0;
-
-    const filteredOrders = orders
-      .filter((order) =>
-        order.products.some(
-          (product) => product.sellerId.toString() === sellerId
-        )
+    var ordersCount = await Order.find()
+      .populate("products", "sellerId")
+      .countDocuments();
+    var orders = await Order.find()
+      .populate(
+        "products",
+        "title description price brandName category slug sold image sellerId createdAt condition"
       )
-      .map((order) => {
-        orderStatusCounts[order.orderStatus]++;
-        totalPages++;
+      .populate("shipping", "address city district ward")
+      .populate("payment", "paymentMethod")
+      .populate("orderby", "mobile name")
+      .sort({createdAt: -1})
+      .skip(skip)
+      .limit(limit)
+      .exec();
 
-        const orderTotalAmount = order.products
-          .filter((product) => product.sellerId.toString() === sellerId)
-          .reduce((total, product) => total + product.price, 0);
+    if (!orders.length) {
+      return res.status(404).json({error: "No orders found."});
+    } else {
+      const orderStatusCounts = {
+        Processing: 0,
+        Dispatched: 0,
+        Cancelled: 0,
+        Delivered: 0,
+      };
 
-        orderStatusTotalAmounts[order.orderStatus] += orderTotalAmount;
+      const orderStatusTotalAmounts = {
+        Processing: 0,
+        Dispatched: 0,
+        Cancelled: 0,
+        Delivered: 0,
+      };
 
-        return {
-          _id: order._id,
-          products: order.products
-            .filter((product) => product.sellerId.toString() === sellerId)
-            .map((product) => ({
-              _id: product._id,
-              title: product.title,
-              description: product.description,
-              price: product.price,
-              brandName: product.brandName,
-              category: product.category,
-              slug: product.slug,
-              sold: product.sold,
-              image: product.image,
-              color: product.color,
-              sellerId: product.sellerId,
-              createdAt: product.createdAt,
-              condition: product.condition,
-            })),
-          orderStatus: order.orderStatus,
-          orderby: {
-            mobile: order.orderby.mobile,
-            name: order.orderby.name,
-          },
-          payment: {
-            paymentMethod: order.payment.paymentMethod,
-          },
-          shipping: {
-            address: order.shipping.address,
-            city: order.shipping.city,
-            district: order.shipping.district,
-            ward: order.shipping.ward,
-          },
-          orderDate: order.orderDate,
-        };
-      })
-      .slice(skip, skip + limit);
+      for (var item of orders) {
+        var status = item.orderStatus;
+        var totalAmount = await item.calculateTotalPrice();
 
-    if (filteredOrders.length === 0) {
-      return res
-        .status(404)
-        .json({ error: "No orders found for this seller." });
+        if (orderStatusTotalAmounts.hasOwnProperty(status)) {
+          orderStatusCounts[status]++;
+          orderStatusTotalAmounts[status] += totalAmount;
+        }
+
+        console.log("Order status counts: ", orderStatusCounts);
+        console.log("Order status total amounts: ", orderStatusTotalAmounts);
+      }
+
+      return res.status(200).json({
+        currentPage: page,
+        totalPages: Math.ceil(ordersCount / limit),
+        orders,
+        orderStatusCounts,
+        orderStatusTotalAmounts,
+      });
     }
-
-    res.status(200).json({
-      filteredOrders,
-      orderStatusCounts,
-      orderStatusTotalAmounts,
-      currentPage: page,
-      totalPages: Math.ceil(totalPages / limit),
-    });
   } catch (err) {
     console.log({ error: err.message });
     res.status(500).json({ error: "Internal server error" });

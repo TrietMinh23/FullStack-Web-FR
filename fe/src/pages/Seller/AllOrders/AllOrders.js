@@ -83,7 +83,7 @@ export default function AllOrders() {
           perPage
         );
 
-        const dataOrders = response.data.filteredOrders;
+        const dataOrders = response.data.orders;
         setOrderStatus(response.data.orderStatusCounts);
         setOrderStatusTotalAmounts(response.data.orderStatusTotalAmounts);
         setTotalPages(response.data.totalPages);
@@ -113,7 +113,7 @@ export default function AllOrders() {
 
         setOrders(data); // Assuming the response contains the actual data
       } catch (error) {
-        console.error(error.message);
+        console.log(error.message);
       }
     };
 
