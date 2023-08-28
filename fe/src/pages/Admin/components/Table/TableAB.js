@@ -407,12 +407,7 @@ const Table = ({
       </div>
       {detailInfor && (
         <div className="flex lg:flex-row flex-col">
-          <PopUpInforBuyer
-            close={closeSee}
-            i={indexInfor}
-            data={rows}
-            at={document.documentElement.scrollTop}
-          />
+          <PopUpInforBuyer close={closeSee} i={indexInfor} data={rows} />
           <div id="dimScreen" className={"block"}></div>
         </div>
       )}

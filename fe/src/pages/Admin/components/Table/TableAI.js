@@ -126,28 +126,27 @@ export default function TableAl({
       <h1 className="text-xl mb-2">{nameTable}</h1>
 
       <div className="flex items-center mb-4">
-        
-      <div className="flex justify-start w-1/2">
-      <label htmlFor="search" className="xl:mr-2 hidden lg:block">
-          Search:
-        </label>
-        <input
-          id="search"
-          type="text"
-          className="border border-gray-300 rounded-md p-1 w-full"
-          value={searchTerm}
-          onChange={updateSearchTerm}
-        />
+        <div className="flex justify-start w-1/2">
+          <label htmlFor="search" className="xl:mr-2 hidden lg:block">
+            Search:
+          </label>
+          <input
+            id="search"
+            type="text"
+            className="border border-gray-300 rounded-md p-1 w-full"
+            value={searchTerm}
+            onChange={updateSearchTerm}
+          />
         </div>
         <div className="flex justify-end w-1/2">
-        <button
-          id="All"
-          className="ml-2 bg-red-500 text-white rounded-md p-2 hover:bg-red-600 flex items-center"
-          onClick={handleDelete}
-        >
-          <FaTrashAlt className="xl:mr-2"/>
-          <span className="xl:block hidden">Delete</span>
-        </button>
+          <button
+            id="All"
+            className="ml-2 bg-red-500 text-white rounded-md p-2 hover:bg-red-600 flex items-center"
+            onClick={handleDelete}
+          >
+            <FaTrashAlt className="xl:mr-2" />
+            <span className="xl:block hidden">Delete</span>
+          </button>
         </div>
         {isLoading ? (
           <div>
@@ -321,7 +320,9 @@ export default function TableAl({
               </div>
             </div>
             <div className="text-sm text-gray-700">{row.itemName}</div>
-            <div className="text-sm font-medium text-black">VND {formatNumberWithCommas(row.price)}</div>
+            <div className="text-sm font-medium text-black">
+              VND {formatNumberWithCommas(row.price)}
+            </div>
             <div className="flex justify-end">
               <button
                 className="text-blue-500 font-bold hover:underline"
@@ -357,7 +358,11 @@ export default function TableAl({
           </select>
         </div>
         <div className="flex w-full justify-end">
-          <PaginationComponent setPage={onPageChange} page={page} totalPage={totalPages}/>
+          <PaginationComponent
+            setPage={onPageChange}
+            page={page}
+            totalPage={totalPages}
+          />
         </div>
       </div>
     </div>

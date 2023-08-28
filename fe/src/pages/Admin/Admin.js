@@ -1,9 +1,9 @@
-import { useState } from 'react';
-import Header from './components/Header';
-import Sidebar from './components/Sidebar';
-import { Outlet } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import Header from "./components/Header";
+import Sidebar from "./components/Sidebar";
+import { Outlet } from "react-router-dom";
 
-export default function Admin () {
+export default function Admin() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
@@ -24,12 +24,7 @@ export default function Admin () {
               <Outlet />
             </div>
             <div>
-              {sidebarOpen && 
-                (<div
-                    id="dimScreen"
-                    className={"block "}
-                  ></div>)
-              }
+              {sidebarOpen && <div id="dimScreen" className={"block "}></div>}
             </div>
           </main>
           {/* <!-- ===== Main Content End ===== --> */}
@@ -39,6 +34,4 @@ export default function Admin () {
       {/* <!-- ===== Page Wrapper End ===== --> */}
     </div>
   );
-};
-
-
+}
