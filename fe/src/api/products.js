@@ -46,9 +46,8 @@ export const getRelativeProduct = async (category, id) => {
     });
     return response;
   } catch (err) {
-    throw new Error(
-      err.response?.data?.error || "Error get products by category"
-    );
+    console.log(err);
+    throw new Error(err || "Error get products by category");
   }
 };
 

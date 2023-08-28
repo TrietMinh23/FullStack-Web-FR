@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import formatNumberWithCommas from "../../../utils/formatNumberWithCommas";
 
 export default function ShoppingCard({ title, price, image, id, brand }) {
   return (
@@ -18,7 +19,7 @@ export default function ShoppingCard({ title, price, image, id, brand }) {
           </p>
           <div className="flex items-center">
             <p className="text-lg font-semibold text-black cursor-auto my-3">
-              {price} ₫
+              {formatNumberWithCommas(price)} ₫
             </p>
             <div className="ml-auto">
               <svg

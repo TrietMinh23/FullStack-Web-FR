@@ -9,6 +9,8 @@ import { useSelector } from "react-redux";
 export default function ShoppingList({ page, category, handleSetTotalPage }) {
   const [productsList, setProducts] = useState(null);
   const listProduct = useSelector((state) => state.product.products);
+  const isSearch = useSelector((state) => state.product.search);
+  const [isGet, setIsGet] = useState(false);
 
   useEffect(() => {
     async function getProduct() {
@@ -16,26 +18,29 @@ export default function ShoppingList({ page, category, handleSetTotalPage }) {
       window.scrollTo(0, 0);
       try {
         let res;
+        setIsGet(false);
         if (category && category.length > 0) {
           // Call the appropriate API based on the category
           res = await getByCategory(category, page);
         } else {
           res = await products(page);
         }
+        console.log("CHECK: ", res.data.products);
         setProducts(res.data.products);
         sessionStorage.setItem("totalPage", res.data.totalPages);
         handleSetTotalPage(res.data.totalPages);
+        setIsGet(true);
       } catch (err) {
         console.log(err);
       }
     }
 
-    if (listProduct.length > 0) {
+    if (isSearch) {
+      setProducts(listProduct);
+    } else if (listProduct.length > 0) {
       setProducts(listProduct);
     } else getProduct();
   }, [page, category, listProduct]);
-
-  console.log(productsList);
 
   return (
     <section

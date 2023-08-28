@@ -12,7 +12,9 @@ import ButtonSignUp from "./ButtonSignUp";
 import { getCart } from "../../../api/cart";
 import {
   GETALLPRODUCTS,
+  SEARCH,
   UPDATEPRODUCT,
+  UPDATETOTALPAGE,
 } from "../../../utils/redux/productsSlice";
 import { useDispatch } from "react-redux";
 import { products } from "../../../api/products";
@@ -30,10 +32,17 @@ const Navbar = () => {
     inputElement.addEventListener("keydown", function (event) {
       if (event.key === "Enter") {
         if (this.value !== "") {
+          dispatch(SEARCH({ flag: true }));
           products(Number(sessionStorage.getItem("page")), this.value)
-            .then((res) => dispatch(GETALLPRODUCTS(res.data.products)))
+            .then((res) => {
+              console.log(res);
+              dispatch(GETALLPRODUCTS(res.data.products));
+              sessionStorage.setItem("totalPage", res.data.totalPages);
+              dispatch(UPDATETOTALPAGE({ totalPages: res.data.totalPages }));
+            })
             .catch((err) => console.log(err));
         } else {
+          dispatch(SEARCH({ flag: false }));
           dispatch(GETALLPRODUCTS([]));
         }
       }

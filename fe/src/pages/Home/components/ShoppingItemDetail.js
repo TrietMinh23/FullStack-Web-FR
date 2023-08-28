@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { instance } from "../../../api/config";
 import { ToastContainer, toast } from "react-toastify";
-import { ADDTOCART } from "../../../utils/redux/productsSlice";
+import { ADDTOCART, ADDTOPURCHASE } from "../../../utils/redux/productsSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Rating from "@mui/material/Rating";
@@ -22,6 +22,7 @@ export default function ProductDetail() {
   const [seeStar, setSeeStar] = useState(0);
   const params = useParams();
   const [data, setData] = useState(null);
+  const navigate = useNavigate();
 
   const [review, setReview] = useState([]);
   const [dataReview, setDataReview] = useState({});
@@ -32,6 +33,7 @@ export default function ProductDetail() {
   const currentShoppingCart = useSelector(
     (state) => state.product.shoppingCart
   );
+  const currentPurchase = useSelector((state) => state.product.purchase);
 
   const notify = () =>
     toast.success("Add to cart successfully 🛒", {
@@ -47,7 +49,68 @@ export default function ProductDetail() {
   };
 
   const buyNow = () => {
-    if (getCookie("refresh_token")) addToCart();
+    if (getCookie("refresh_token")) addToPurchase();
+  };
+
+  const addToPurchase = () => {
+    const dataForm = {
+      name: data.title,
+      image: data.image,
+      price: data.price,
+      shop: data.sellerId.name,
+      id: data._id,
+      condition: data.condition,
+      brand: data.brandName,
+    };
+
+    // Check if product has been available in shopping cart
+    if (currentShoppingCart.length) {
+      let index;
+      for (const item of currentShoppingCart) {
+        if (item.name === data.sellerId.name) {
+          index = item.item.findIndex((item) => item._id === data._id);
+          if (index >= 0) {
+            return false;
+          }
+        }
+      }
+
+      if (index >= 0) return false;
+    }
+
+    if (currentPurchase.length) {
+      let index;
+      for (const item of currentPurchase) {
+        if (item.name === data.sellerId.name) {
+          index = item.item.findIndex((item) => item._id === data._id);
+          if (index >= 0) {
+            return false;
+          }
+        }
+      }
+
+      if (index >= 0) return false;
+    }
+
+    dispatch(
+      ADDTOCART({
+        data,
+      })
+    );
+
+    dispatch(
+      ADDTOPURCHASE({
+        data: dataForm,
+      })
+    );
+
+    instance.post("/carts/update_cart", {
+      productId: params.slug,
+      cartId: JSON.parse(localStorage.getItem("cart"))._id.replace(
+        /^"(.*)"$/,
+        "$1"
+      ),
+    });
   };
 
   const addToCart = () => {
@@ -58,7 +121,6 @@ export default function ProductDetail() {
 
     // Check if product has been available in shopping cart
     if (currentShoppingCart.length) {
-      console.log(currentShoppingCart);
       let index;
       for (const item of currentShoppingCart) {
         if (item.name === data.sellerId.name) {
@@ -69,7 +131,6 @@ export default function ProductDetail() {
           }
         }
       }
-
       if (index >= 0) return false;
     }
 
@@ -360,7 +421,9 @@ export default function ProductDetail() {
 
                     <div className="max-sm:grow">
                       <Link
-                        to={getCookie("refresh_token") ? "/purchase" : "/type"}
+                        to={
+                          getCookie("refresh_token") ? "/shoppingcart" : "/type"
+                        }
                         onClick={buyNow}
                         className="block text-center sm:ml-3 w-full max-sm:block text-white bg-red-500 hover:bg-red-600 border-0 py-3 px-7 focus:outline-none rounded"
                       >

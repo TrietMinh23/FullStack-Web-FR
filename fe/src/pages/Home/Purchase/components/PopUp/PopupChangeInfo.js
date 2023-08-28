@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-export default function PopupChangeInfo({ changeFunc, close, open }) {
+export default function PopupChangeInfo({ changeFunc, close, open, form }) {
   useEffect(() => {
     var citis = document.getElementById("city");
     var districts = document.getElementById("district");
@@ -64,6 +64,7 @@ export default function PopupChangeInfo({ changeFunc, close, open }) {
                 className="w-full p-2.5 bg-transparent outline-none text-base min-w-0 text-gray-700"
                 name="name"
                 onChange={changeFunc}
+                defaultValue={form.name}
               ></input>
             </div>
             <div className="w-4"></div>
@@ -73,6 +74,7 @@ export default function PopupChangeInfo({ changeFunc, close, open }) {
                 className="w-full p-2.5 bg-transparent outline-none text-base min-w-0 text-gray-700"
                 name="phone"
                 onChange={changeFunc}
+                defaultValue={form.phone}
               ></input>
             </div>
           </div>
@@ -87,7 +89,7 @@ export default function PopupChangeInfo({ changeFunc, close, open }) {
                     name="city"
                     onChange={changeFunc}
                   >
-                    <option defaultValue="">Chọn tỉnh thành</option>
+                    <option defaultValue={form.city}>{form.city}</option>
                   </select>
                   <div className="w-6"></div>
                   <select
@@ -97,7 +99,9 @@ export default function PopupChangeInfo({ changeFunc, close, open }) {
                     name="district"
                     onChange={changeFunc}
                   >
-                    <option defaultValue="">Chọn quận huyện</option>
+                    <option defaultValue={form.district}>
+                      {form.district}
+                    </option>
                   </select>
                   <div className="w-6"></div>
                   <select
@@ -107,7 +111,7 @@ export default function PopupChangeInfo({ changeFunc, close, open }) {
                     name="ward"
                     onChange={changeFunc}
                   >
-                    <option defaultValue="">Chọn phường xã</option>
+                    <option defaultValue={form.ward}>{form.ward}</option>
                   </select>
                 </div>
               </div>
@@ -119,6 +123,7 @@ export default function PopupChangeInfo({ changeFunc, close, open }) {
               className="w-full p-2.5 bg-transparent outline-none text-base min-w-0 text-gray-700"
               name="address"
               onChange={changeFunc}
+              defaultValue={form.address}
             ></input>
           </div>
           <div className="btn-group flex justify-end pt-4">

@@ -21,8 +21,6 @@ export const createPaymentUrl = async (order) => {
       order,
     });
 
-    console.log("CHECK", data);
-
     if (data.data) {
       if (data.data.code === "00") {
         window.location.href = data.data.paymentUrl;
@@ -159,5 +157,17 @@ export const getCurrentYearIncome = async () => {
     throw new Error(
       error.response?.data?.error || "Error getting current year income."
     );
+  }
+};
+
+export const paymentCash = async (order) => {
+  console.log(order);
+  try {
+    const response = await instance.post("/vnpay/payment-cash", {
+      order,
+    });
+    return response;
+  } catch (err) {
+    return err;
   }
 };

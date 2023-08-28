@@ -1,14 +1,14 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import Select from "react-tailwindcss-select";
-import { useEffect } from "react";
-import { rows } from "../data/dataTable";
-import { ProductID, createProduct, updateProduct } from "../../../api/products";
-import { getByCategoryRelative } from "../../../api/category";
-import { MultiSelect } from "react-multi-select-component";
+import {useEffect} from "react";
+import {rows} from "../data/dataTable";
+import {ProductID, createProduct, updateProduct} from "../../../api/products";
+import {getByCategoryRelative} from "../../../api/category";
+import {MultiSelect} from "react-multi-select-component";
 
 let options = [];
 
-const Form = ({ title, PH, value }) => (
+const Form = ({title, PH, value}) => (
   <div className="mb-4">
     <label htmlFor={title} className="mb-2 self-start capitalize">
       {title} :
@@ -24,7 +24,7 @@ const Form = ({ title, PH, value }) => (
   </div>
 );
 
-const NewProductForm = ({ tradeCode, role }) => {
+const NewProductForm = ({tradeCode, role}) => {
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [selected, setSelected] = useState([]);
   const [imageFile, setImageFile] = useState(null);
@@ -160,7 +160,7 @@ const NewProductForm = ({ tradeCode, role }) => {
 
   return (
     <div className="container mx-auto flex flex-col justify-center items-center max-w-4xl">
-      <h1 className="text-2xl font-bold mb-4 block w-full text-left">
+      <h1 className="text-2xl font-bold mb-4 block w-full text-center">
         {tradeCode ? "Update Product" : "New Product"}
       </h1>
       <div className="w-full">
@@ -238,12 +238,14 @@ const NewProductForm = ({ tradeCode, role }) => {
             />
           </div>
 
-          <button
-            type="submit"
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          >
-            {tradeCode ? "Update" : "Create"}
-          </button>
+          <div>
+            <button
+              type="submit"
+              className="mx-auto bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex justify-center"
+            >
+              {tradeCode ? "Update" : "Create"}
+            </button>
+          </div>
         </form>
       </div>
     </div>
