@@ -1,8 +1,14 @@
 import { instance } from "./config";
 
-export const getOrdersByUserId = async (id) => {
+export const getOrdersByUserId = async (id,page,limit, searchQuery) => {
   try {
-    const response = await instance.get(`/orders/${id}`);
+    const response = await instance.get(`/orders/${id}`,{
+      params: {
+        page:  page,
+        limit: limit,
+        searchQuery: searchQuery,
+      },
+    });
     return response;
   } catch (err) {
     return err;

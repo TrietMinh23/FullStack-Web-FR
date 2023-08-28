@@ -232,7 +232,8 @@ export default function ProductDetail() {
                         <Rating
                           name="read-only"
                           readOnly
-                          value={dataReview.AvgStar}
+                          precision={0.5}
+                          value={dataReview.AvgStar || '0'}
                         />
                       </div>
                       <div className="w-[100px] text-center">

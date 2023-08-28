@@ -31,7 +31,7 @@ export default function Review ( {review, seeStar}) {
                                         <div>{item.buyer.name}</div>
                                         <div>
                                             <Rating
-                                                name="read-only"
+                                                name="sstar"
                                                 readOnly
                                                 value={item.rating.star}
                                           />
