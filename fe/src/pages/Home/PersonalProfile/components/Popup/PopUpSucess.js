@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-export default function PopUpSucess({ close, i, at, data }) {
+export default function PopUpSucess({ close, at}) {
     return (
         <div className=" !w-96 modal p-10" style={{ top: `calc(50% + ${at}px)` }}>
             <h1 className="flex justify-center text-2xl mb-2 text-green-sheen font-semibold">

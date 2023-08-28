@@ -57,14 +57,16 @@ const orderSchema = new mongoose.Schema(
   }
 );
 
-orderSchema.methods.calculateTotalPrice = async () => {
+orderSchema.methods.calculateTotalPrice = async function () {
   this.totalPrice = 0;
-  for (var item of this.products) {
-    this.totalPrice += item.product.price;
+  for (const item of this.products) {
+    this.totalPrice += item.price;
   }
+  await this.save();
+  return this.totalPrice;
 };
 
-orderSchema.methods.calculateQuantity = async () => {
+orderSchema.methods.calculateQuantity = async function () {
   this.quantity = this.products.length;
 };
 

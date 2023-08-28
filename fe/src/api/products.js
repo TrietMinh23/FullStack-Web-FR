@@ -54,10 +54,6 @@ export const getRelativeProduct = async (category, id) => {
 export const deleteProduct = async (productId) => {
   try {
     const response = await instance.delete(`/products/${productId}`);
-    // Reload the page after successful deletion
-    if (response.data.message === "Product deleted.") {
-      window.location.reload(); // Reload the current page
-    }
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.error || "Error deleting product.");
