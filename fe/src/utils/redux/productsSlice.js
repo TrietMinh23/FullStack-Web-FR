@@ -39,8 +39,10 @@ export const productsSlice = createSlice({
       );
 
       const index = state.shoppingCart[targetIndex].item.findIndex(
-        (item) => item.id === id
+        (item) => item._id === id
       );
+
+      console.log(targetIndex, index);
 
       state.shoppingCart[targetIndex].item.splice(index, 1);
       if (!state.shoppingCart[targetIndex].item.length) {
