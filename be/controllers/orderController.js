@@ -748,9 +748,7 @@ export const getDailyRefundBySeller = async (req, res) => {
 
 export const getOrderBySellerId = async (req, res) => {
   try {
-    const sellerId = req.params.id; // Convert the sellerId to ObjectId type
-
-    console.log("Seller ID:", sellerId);
+    const sellerId = req.params.id;
 
     // Pagination
     var page = parseInt(req.query.page) || 1;
@@ -814,9 +812,6 @@ export const getOrderBySellerId = async (req, res) => {
           orderStatusCounts[status]++;
           orderStatusTotalAmounts[status] += totalAmount;
         }
-
-        console.log("Order status counts: ", orderStatusCounts);
-        console.log("Order status total amounts: ", orderStatusTotalAmounts);
       }
 
       return res.status(200).json({

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaTrashAlt, FaPen } from "react-icons/fa";
 import PaginationComponent from "../../../Home/components/Pagination";
 import { deleteProduct } from "../../../../api/products";
@@ -133,7 +133,9 @@ export default function TableAl({
 
     return sortedData.slice(startIndex, endIndex);
   };
-
+  useEffect(() => {
+    console.log("data",rows);
+  },[rows])
   return (
     <>
       <div className="p-5 h-full bg-gray-100 w-full rounded-md">
