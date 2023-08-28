@@ -69,6 +69,7 @@ export default function Allitems() {
       }
     };
     fetchProducts();
+    console.log(products);
   }, [page, perPage, searchQuery]);
 
   const handleSelectEditRow = (tradeCode) => {

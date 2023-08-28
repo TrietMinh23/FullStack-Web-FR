@@ -33,15 +33,15 @@ const NewProductForm = ({ tradeCode, role }) => {
     JSON.parse(sessionStorage.getItem("listCategory")) || []
   );
   const [roleUser, setRoleUser] = useState(role);
-
-  // const handleChange = (selected) => {
-  //   console.log(selected[0]);
-  //   if (selected === null || selected === undefined) {
-  //     return;
-  //   }
-  //   const newSelectedOptions = [...selectedOptions, selected[0]]; // Replace newValue with the actual value you want to add
-  //   setSelectedOptions(newSelectedOptions);
-  // };
+  console.log(selectedOptions)
+  const handleChange = (selected) => {
+    console.log(selected[0]);
+    if (selected === null || selected === undefined) {
+      return;
+    }
+    const newSelectedOptions = [...selectedOptions, selected[0]]; // Replace newValue with the actual value you want to add
+    setSelectedOptions(newSelectedOptions);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -51,6 +51,7 @@ const NewProductForm = ({ tradeCode, role }) => {
     formData.append("description", e.target.description.value);
     formData.append("price", e.target.price.value);
     formData.append("brandName", e.target.brand.value);
+    
     if (imageFile instanceof File) {
       console.log(1);
       formData.append("image", imageFile); // Thêm hình ảnh mới vào formData nếu có sự thay đổi
@@ -114,6 +115,8 @@ const NewProductForm = ({ tradeCode, role }) => {
         try {
           const response = await ProductID(tradeCode);
           const product = response.data;
+          setCategory(product.category);
+          console.log("Product details:", product);
           setProductData(product);
         } catch (error) {
           console.error("Error fetching product details:", error.message);
@@ -130,6 +133,7 @@ const NewProductForm = ({ tradeCode, role }) => {
         productData.category.includes(option.value)
       );
       setSelectedOptions(selected);
+      
     }
   }, [productData]);
 
@@ -198,8 +202,8 @@ const NewProductForm = ({ tradeCode, role }) => {
             </label>
             <MultiSelect
               options={category || []}
-              value={selected}
-              onChange={setSelected}
+              value={selected || []}
+              onChange={handleChange}
               labelledBy="Select"
               id="type"
             />
