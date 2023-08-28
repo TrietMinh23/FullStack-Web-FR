@@ -2,16 +2,21 @@ import React, { useState } from "react";
 import { TiTick } from "react-icons/ti";
 import RowData from "./rowData";
 import { blockBuyer, unblockBuyer } from "../../../../api/buyer";
-
+import PopUpSucess from "./PopUpSucess";
 export default function PopupReview ({close, finish, i, data, at}) {
     const steps = ["Report Info", "Action","Informing" ];
     const [currentStep, setCurrentStep] = useState(1);
     const [complete, setComplete] = useState(false);
     const [isUpdating, setIsUpdating] = useState(false);
     const [selectedItems, setSelectedItems] = useState([]); // Các sản phẩm được chọn
-    
-    console.log(data[i].id_reporter)
+    const [isBlockReporter, setBlockReporter] = useState(false);
+    const [isBlockReported, setBlockReported] = useState(false);
+    const [isOpenPopUp, setOpenPopUp] = useState(false);
 
+    console.log(data[i].id_reporter)
+    const closeProcess = () => {
+        setOpenPopUp(false);
+      };
     const handleBlockUserRow = async (item) => {
         try {
           setIsUpdating(true);
@@ -126,12 +131,22 @@ export default function PopupReview ({close, finish, i, data, at}) {
                             className="p-2"
                             >Block: </div>
                             <button
-                            className="bg-orange-500 px-2 text-white font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-orange-500 hover:text-orange-500"
-                            onClick={() => handleBlockUserRow(data[i].id_reporter)}
+                            className={` px-2 text-white font-semibold rounded-md  border-2 border-transparent ${isBlockReporter ? "bg-slate-200": "bg-orange-500 hover:border-2 hover:border-orange-500 hover:text-orange-500 hover:bg-white"}`}
+                            disabled ={isBlockReporter}
+                            onClick={() => {
+                                handleBlockUserRow(data[i].id_reporter);
+                                setBlockReporter(true);
+                                setOpenPopUp(true);
+                            }}
                             >Account Reporter</button>
                             <button
-                            className="bg-orange-500 px-2 text-white font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-orange-500 hover:text-orange-500"
-                            onClick={() => handleBlockUserRow(data[i].id_reported)}
+                            disabled ={isBlockReported}
+                            className={` px-2 text-white font-semibold rounded-md  border-2 border-transparent ${isBlockReported ? "bg-slate-200": "bg-orange-500 hover:border-2 hover:border-orange-500 hover:text-orange-500 hover:bg-white"}`}
+                            onClick={() => {
+                                handleBlockUserRow(data[i].id_reported);
+                                setBlockReported(true);
+                                setOpenPopUp(true);
+                            }}
                             >Account Reported</button>
                         </div>
                         <div className ="flex justify-between my-5">
@@ -197,6 +212,15 @@ export default function PopupReview ({close, finish, i, data, at}) {
                 </div>
             
             </div>
+            {isOpenPopUp && (
+                <div className="flex lg:flex-row flex-col">
+                <PopUpSucess
+                    close={closeProcess}
+                    at={document.documentElement.scrollTop}
+                />
+                <div id="dimScreen" className={"block"}></div>
+                </div>
+            )}
         </div>
     )
 }
