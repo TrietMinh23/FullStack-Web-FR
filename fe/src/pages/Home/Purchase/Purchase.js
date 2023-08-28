@@ -30,12 +30,17 @@ export default function Purchase() {
   const address = localStorage.getItem("address")?.split(",") || [];
   const [isChange, setIsChange] = useState(false);
   const shipping = useSelector((state) => state.purchase.shipping);
-  const products = useSelector((state) => state.product.shoppingCart);
+  const products = useSelector((state) => state.product.purchase);
+  console.log("Products", products);
   const [information, setInformation] = useState({
     name: localStorage.getItem("name")?.replace(/^"(.*)"$/, "$1") || "",
-    phone: localStorage.getItem("mobile").replace(/^"(.*)"$/, "$1")
-      ? ""
-      : localStorage.getItem("mobile")?.replace(/^"(.*)"$/, "$1"),
+    phone:
+      localStorage
+        .getItem("mobile")
+        .replace(/^"(.*)"$/, "$1")
+        .search("__MOBILE_NULL_FOR_") >= 0
+        ? ""
+        : localStorage.getItem("mobile")?.replace(/^"(.*)"$/, "$1"),
     city: address[3] || "",
     district: address[2] || "",
     ward: address[1] || "",
@@ -141,9 +146,7 @@ export default function Purchase() {
     setStatePayment(
       JSON.parse(decodeURIComponent(getCookie("vnp_params")))?.vnp_ResponseCode
     );
-    console.log(statePayment);
     if (statePayment === "00") {
-      console.log("BANANA");
       const cart = JSON.parse(localStorage.getItem("cart"));
       cart.products = [];
       localStorage.setItem("cart", JSON.stringify(cart));

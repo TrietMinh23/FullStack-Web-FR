@@ -1,9 +1,10 @@
 import { useSelector, useDispatch } from "react-redux";
 import React, { useCallback, useEffect, useState } from "react";
 import axios from "axios";
-import { createPaymentUrl } from "../../../../api/order";
+import { createPaymentUrl, paymentCash } from "../../../../api/order";
 import getCookie from "../../../../utils/getCookie";
 import validatePhoneNumber from "../../../../utils/validatePhone";
+import setCookie from "../../../../utils/setCookie";
 
 // Component hiển thị thông tin chi tiết về thanh toán
 function PaymentDetailsRow({ label, amount }) {
@@ -44,9 +45,8 @@ export default function CheckoutModal({ formData }) {
   const payments = useSelector((state) => state.purchase.payments);
   const shippingPrice = useSelector((state) => state.purchase.shipPrice);
   const productPrice = useSelector((state) => state.purchase.productPrice);
-  const products = useSelector((state) => state.product.shoppingCart);
-
-  console.log("CHECK", products);
+  const products = useSelector((state) => state.product.purchase);
+  const [isLoading, setLoading] = useState(false);
 
   // Biến chứa nhãn phương thức thanh toán dựa vào dữ liệu từ Redux store
   let paymentMethodLabel = "";
@@ -125,10 +125,24 @@ export default function CheckoutModal({ formData }) {
       );
       totalOrder.push(order);
     }
-    // Gửi yêu cầu tạo URL thanh toán với thông tin đơn hàng
-    createPaymentUrl(JSON.stringify(totalOrder))
-      .then((res) => console.log(res))
-      .catch((err) => console.log("Error creating payment URL:", err));
+
+    setLoading(true);
+
+    if (payments === "Cash") {
+      paymentCash(JSON.stringify(totalOrder))
+        .then((res) => {
+          console.log(res);
+          setLoading(false);
+          setCookie("vnp_params", { vnp_ResponseCode: "00" }, 3 * 60 * 60);
+          setTimeout(window.location.reload(), 1500);
+        })
+        .catch((err) => console.log("Error creating payment URL:", err));
+    } else {
+      // Gửi yêu cầu tạo URL thanh toán với thông tin đơn hàng
+      createPaymentUrl(JSON.stringify(totalOrder))
+        .then((res) => console.log(res))
+        .catch((err) => console.log("Error creating payment URL:", err));
+    }
   };
 
   // Render giao diện của component

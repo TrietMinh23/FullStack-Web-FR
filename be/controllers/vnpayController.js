@@ -72,8 +72,6 @@ export const createPaymentUrl = async (req, res, next) => {
     const orders = JSON.parse(req.body.order);
     const totalPriceOrders = orders.reduce((a, b) => a + b.totalPrice, 0);
 
-    console.log(totalPriceOrders);
-
     async function processOrders(orders) {
       const listOrderId = [];
 
@@ -240,5 +238,70 @@ export const getVnPayReturn = async (req, res, next) => {
     res
       .cookie("vnpay", "fail", vnp_Params["vnp_OrderInfo"], { maxAge: 720000 })
       .redirect(`http://localhost:3000/purchase/`);
+  }
+};
+
+export const paymentCash = async (req, res) => {
+  try {
+    const orders = JSON.parse(req.body.order);
+
+    async function processOrders(orders) {
+      let listOrder = [];
+      for (const item of orders) {
+        const {
+          products,
+          orderby,
+          shipping,
+          orderStatus,
+          totalPrice,
+          paymentMethod,
+          quantity,
+        } = item;
+
+        const newShipping = new Shipping(shipping);
+        const newPayment = new Payment({
+          paymentMethod,
+        });
+
+        try {
+          await newShipping.save();
+          await newPayment.save();
+
+          const newOrder = new Order({
+            products,
+            totalPrice,
+            quantity,
+            orderby,
+            orderStatus,
+            payment: newPayment._id,
+            shipping: newShipping._id,
+          });
+
+          await newOrder.save();
+          listOrder.push(newOrder);
+        } catch (error) {
+          res.status(400).json({ error: error });
+          return;
+        }
+      }
+
+      return listOrder;
+    }
+
+    const order = await processOrders(orders);
+
+    for (let i of order) {
+      const orderItem = await Order.findById(i._id);
+      const productIds = orderItem.products.map((product) => product._id);
+      await Product.updateMany(
+        { _id: { $in: productIds } },
+        { $set: { sold: 1 } }
+      );
+    }
+    res.status(200).json({ message: "Cập nhật dữ liệu thành công." });
+    return;
+  } catch (err) {
+    res.status(400).json({ error: err });
+    return;
   }
 };
