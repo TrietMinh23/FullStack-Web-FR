@@ -6,7 +6,7 @@ export default function PopUpInforBuyer({ close, i, at, data }) {
         const options = { year: 'numeric', month: 'short', day: 'numeric' };
         const parts = new Date(date).toLocaleDateString(undefined, options).split(' ');
         return `${parts[1]} ${parts[0]}, ${parts[2]}`;
-      }
+    }
     return (
         <div className="modal p-7" style={{ top: `calc(50% + ${at}px)` }}>
             <h1 className="flex justify-center text-2xl">
@@ -14,53 +14,53 @@ export default function PopUpInforBuyer({ close, i, at, data }) {
             </h1>
             <div className="m-5 p-5 border rounded-md border-green-sheen">
                 <RowData
-                    titles ={"Seller id"}
-                    data = {data[i]._id}
+                    titles={"Buyer id"}
+                    data={data[i]._id}
                 />
                 <RowData
-                    titles ={"Adress"}
-                    data = {data[i].address}
-                    css ={"mt-3"}
+                    titles={"Address"}
+                    data={data[i].address}
+                    css={"mt-3"}
                 />
                 <RowData
-                    titles ={"Post date"}
-                    data = {formatDate(data[i].createdAt)}
-                    css ={"mt-3"}
+                    titles={"Post date"}
+                    data={formatDate(data[i].createdAt)}
+                    css={"mt-3"}
                 />
                 <RowData
-                    titles ={"Seller Name"}
-                    data = {data[i].name}
-                    css ={"mt-3"}
+                    titles={"Buyer Name"}
+                    data={data[i].name}
+                    css={"mt-3"}
                 />
                 <RowData
-                    titles ={"Is Blocked"}
-                    data = {data[i].isBlocked ? "YES" :"NO"}
-                    css ={"mt-3"}
+                    titles={"Is Blocked"}
+                    data={data[i].isBlocked ? "YES" : "NO"}
+                    css={"mt-3"}
                 />
                 <RowData
-                    titles ={"Email"}
-                    data = {data[i].email}
-                    css ={"mt-3"}
+                    titles={"Email"}
+                    data={data[i].email}
+                    css={"mt-3"}
                 />
                 <RowData
-                    titles ={"Phone Number"}
-                    data = {data[i].mobile}
-                    css ={"mt-3"}
+                    titles={"Phone Number"}
+                    data={data[i].mobile}
+                    css={"mt-3"}
                 />
                 <RowData
-                    titles ={"Total Cancelled"}
-                    data = {data[i].sumCancelled}
-                    css ={"mt-3"}
+                    titles={"Total Cancelled"}
+                    data={data[i].sumCancelled}
+                    css={"mt-3"}
                 />
                 <RowData
-                    titles ={"Total Delivered"}
-                    data = {data[i]. sumDelivered}
-                    css ={"mt-3"}
+                    titles={"Total Delivered"}
+                    data={data[i].sumDelivered}
+                    css={"mt-3"}
                 />
                 <RowData
-                    titles ={"Total Purchase"}
-                    data = {data[i].sumPurchased}
-                    css ={"mt-3"}
+                    titles={"Total Purchase"}
+                    data={data[i].sumPurchased}
+                    css={"mt-3"}
                 />
 
             </div>
@@ -69,9 +69,9 @@ export default function PopUpInforBuyer({ close, i, at, data }) {
                     className="ml-2 bg-green-sheen py-2 px-4 text-white font-semibold rounded-md hover:bg-white border-2 border-transparent hover:border-2 hover:border-green-sheen hover:text-green-sheen"
                     onClick={close}
                 >
-                Return to All Review page
+                    Return to All Review page
                 </button>
             </div>
         </div>
-  );
+    );
 }
