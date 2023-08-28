@@ -19,13 +19,13 @@ export default function Header({ sidebarOpen, setSidebarOpen }) {
               <span className="relative block bg-red-400 h-5 w-5 cursor-pointer">
                 <span className="du-block absolute right-0 h-full w-full bg-white">
                   <span
-                    className={`relative top-0 left-0 my-1 block h-0.5 w-0 rounded-sm bg-black delay-[0] duration-200 ease-in-out dark:bg-white !w-full`}
+                    className={`relative top-0 left-0 my-1 block h-0.5 rounded-sm bg-black delay-[0] duration-200 ease-in-out dark:bg-white !w-full`}
                   ></span>
                   <span
-                    className={`relative top-0 left-0 my-1 block h-0.5 w-0 rounded-sm bg-black delay-150 duration-200 ease-in-out dark:bg-white !w-full`}
+                    className={`relative top-0 left-0 my-1 block h-0.5 rounded-sm bg-black delay-150 duration-200 ease-in-out dark:bg-white !w-full`}
                   ></span>
                   <span
-                    className={`relative top-0 left-0 my-1 block h-0.5 w-0 rounded-sm bg-black delay-200 duration-200 ease-in-out dark:bg-white !w-full`}
+                    className={`relative top-0 left-0 my-1 block h-0.5 rounded-sm bg-black delay-200 duration-200 ease-in-out dark:bg-white !w-full`}
                   ></span>
                 </span>
               </span>
