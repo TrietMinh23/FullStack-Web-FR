@@ -7,35 +7,64 @@ import { getReport } from "../../../api/Report/getReport";
 
 export default function Report() {
   const [data, setData] = useState({});
+  const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(5);
+  const [totalPages, setTotalPages] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
+
   const staticTable = [
     {
       icon: <ReceiptLongIcon/>,
       id: 4,
-      title: "Done",
+      title: "Today: Done",
       text: "done report",
-      today: "10",
-      all: data.totalPending,
+      today: data.totalDoneToday,
+      all: data.totalDone,
       color: "#bbf7d0",
       textColor:"text-green-600",
     },
     {
       icon: <CancelIcon/>,
       id: 5,
-      title: "Pending",
+      title: "Today: Pending",
       text: "pending report",
-      today: "10",
-      all: data.totalDone,
+      today: data.totalPendingToday,
+      all: data.totalPending,
       color: "#fef08a",
       textColor:"text-yellow-800",
     },
   ];
+
+  
+  const handleChange = (newPage) => {
+    setPage(newPage);
+  };
+
+  const handlePerPageChange = (newPerPage) => {
+    setPerPage(newPerPage);
+    setPage(1); 
+  };
+
+  const handleSearch = (newSearchTerm) => {
+    setSearchQuery( new RegExp(newSearchTerm.replace(/\s+/g, " "), "i").source); // Update the search query state
+  };
+
+
   useEffect(() => {
     fetchData();
-  },[]);
+  },[page, perPage, searchQuery]);
+  
     const fetchData = async () => {
+      sessionStorage.setItem("pageTableReport", page.toString());
+      sessionStorage.setItem("pageTableReportPerPage", perPage.toString());
       try {
-        const response = await getReport();
+        const response = await getReport(page, perPage, searchQuery);
         setData(response.data);
+        setTotalPages(response.data.totalPages);
+        sessionStorage.setItem(
+          "totalPage",
+          response.data.totalPages.toString()
+        );
         // console.log("this is dadgsuadg",response.data.report);
         return response.data;
       } catch (error) {
@@ -43,6 +72,9 @@ export default function Report() {
         return null;
       }
     };
+  useEffect(() => {
+    console.log("pages",totalPages);
+  },[totalPages])
   return (
     <React.Fragment>
       <div>
@@ -63,6 +95,12 @@ export default function Report() {
         <div className="w-full">
           <TableReport 
             rows = {data.report}
+            page={page}
+            perPage={perPage}
+            onPageChange={handleChange}
+            onPerPageChange={handlePerPageChange}
+            onSearchTermChange={handleSearch}
+            totalPages={totalPages}
           />
         </div>
        

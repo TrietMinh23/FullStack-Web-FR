@@ -6,16 +6,29 @@ import PopupProcess from "../PopUp/PopupProcess";
 import {updateReport} from "../../../../api/Report/updateReport";
 import PaginationComponent from "../../../Home/components/Pagination";
 
-const Table = ({rows, onPageChange, page, totalPages}) => {
-  const [perPage, setPerPage] = useState(5); // Số hàng trên mỗi trang
+const Table = ({
+  rows,
+  onPageChange,
+  page,
+  onPerPageChange,
+  perPage,
+  totalPages,
+  onSearchTermChange,
+}) => {
   const [currentPage] = useState(1); // Trang hiện tại
   const [sortColumn, setSortColumn] = useState(""); // Cột hiện tại được sắp xếp
   const [sortOrder, setSortOrder] = useState(""); // Thứ tự sắp xếp ('asc' hoặc 'desc')
   const [searchTerm, setSearchTerm] = useState(""); // Giá trị tìm kiếm
-  const [selectedItems, setSelectedItems] = useState([]); // Các sản phẩm được chọn
   const [isHandle, setIsHandle] = useState(1);
   const [isReview, setIsReview] = useState(false);
   const [isProcess, setIsProcess] = useState(false);
+
+
+  const updateSearchTerm = (event) => {
+    const newSearchTerm = event.target.value;
+    setSearchTerm(newSearchTerm);
+    onSearchTermChange(newSearchTerm); // Call the callback prop
+  };
 
   const handleSort = (column) => {
     if (column === sortColumn) {
@@ -31,6 +44,7 @@ const Table = ({rows, onPageChange, page, totalPages}) => {
     setIsProcess(false);
     rows[isHandle].status = "Done";
     Update(rows[isHandle]._id);
+    window.location.reload();
   };
 
   const Update = async (data) => {
@@ -45,9 +59,6 @@ const Table = ({rows, onPageChange, page, totalPages}) => {
 
   const closeProcess = () => {
     setIsProcess(false);
-  };
-  const handleSearch = (e) => {
-    setSearchTerm(e.target.value);
   };
 
   const getCurrentPageData = () => {
@@ -100,7 +111,7 @@ const Table = ({rows, onPageChange, page, totalPages}) => {
           type="text"
           className="border border-gray-300 rounded-md p-1"
           value={searchTerm}
-          onChange={handleSearch}
+          onChange={updateSearchTerm}
         />
       </div>
 
@@ -257,6 +268,7 @@ const Table = ({rows, onPageChange, page, totalPages}) => {
         ))}
       </div> 
 
+      {/* Pagination */}
       <div className="flex justify-between items-center mt-4 flex-col lg:flex-row">
         <div className="flex items-center w-full mb-10">
           <label htmlFor="rowsPerPage" className="mr-2">
@@ -266,7 +278,7 @@ const Table = ({rows, onPageChange, page, totalPages}) => {
             id="rowsPerPage"
             className="border border-gray-300 rounded-md p-1 w-12"
             value={perPage}
-            onChange={(e) => setPerPage(Number(e.target.value))}
+            onChange={(e) => onPerPageChange(Number(e.target.value))}
           >
             <option value={5}>5</option>
             <option value={10}>10</option>

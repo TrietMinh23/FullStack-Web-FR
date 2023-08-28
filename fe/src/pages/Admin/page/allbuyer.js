@@ -4,7 +4,7 @@ import TableAB from "../components/Table/TableAB";
 import CancelIcon from "@mui/icons-material/Cancel";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import { instance } from "../../../api/config";
-import { getBuyerPerformanceStats } from "../../../api/buyer";
+import { getBuyerPerformanceStats, countStatusToday } from "../../../api/buyer";
 
 export default function Allbuyer() {
   const [buyerData, setBuyerData] = useState([]);
@@ -13,6 +13,8 @@ export default function Allbuyer() {
   const [totalPages, setTotalPages] = useState(0); // Total number of pages returned by the API
   const [totalSumProcessing, setTotalSumProcessing] = useState(0); // Total number of pages returned by the API
   const [totalSumCancelled, setTotalSumCancelled] = useState(0); // Total number of pages returned by the API
+  const [totalSumProcessingToday, setTotalSumProcessingToday] = useState(0); // Total number of pages returned by the API
+  const [totalSumCancelledToday, setTotalSumCancelledToday] = useState(0); // Total number of pages returned by the API
   const [searchQuery, setSearchQuery] = useState("");
 
   const staticTable = [
@@ -21,7 +23,7 @@ export default function Allbuyer() {
       id: 1,
       title: "Processing",
       text: "processing orders",
-      today: "10",
+      today: totalSumProcessingToday,
       all: totalSumProcessing,
       color: "#bbf7d0",
       textColor: "text-green-600",
@@ -31,7 +33,7 @@ export default function Allbuyer() {
       id: 2,
       title: "Cancelled",
       text: "canceled orders",
-      today: "10",
+      today: totalSumCancelledToday,
       all: totalSumCancelled,
       color: "#fecaca",
       textColor: "text-red-600",
@@ -48,7 +50,7 @@ export default function Allbuyer() {
   };
 
   const handleSearch = (newSearchTerm) => {
-    setSearchQuery( new RegExp(newSearchTerm.replace(/\s+/g, " "), "i").source); // Update the search query state
+    setSearchQuery(new RegExp(newSearchTerm.replace(/\s+/g, " "), "i").source); // Update the search query state
   };
 
   useEffect(() => {
@@ -56,13 +58,24 @@ export default function Allbuyer() {
       sessionStorage.setItem("page", page.toString());
       sessionStorage.setItem("perPage", perPage.toString());
       try {
-        const response = await getBuyerPerformanceStats(page, perPage, searchQuery);
+        const response = await getBuyerPerformanceStats(
+          page,
+          perPage,
+          searchQuery
+        );
+        const responeCountStatusToday = await countStatusToday();
         setBuyerData(response.data.Buyers);
 
         setTotalPages(response.data.totalPages);
 
         setTotalSumProcessing(response.data.TotalSumProcessing);
         setTotalSumCancelled(response.data.TotalSumCancelled);
+        setTotalSumProcessingToday(
+          responeCountStatusToday.data.TotalSumProcessing
+        );
+        setTotalSumCancelledToday(
+          responeCountStatusToday.data.TotalSumCancelled
+        );
 
         sessionStorage.setItem(
           "totalPage",

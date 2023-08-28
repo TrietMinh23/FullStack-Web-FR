@@ -132,16 +132,17 @@ export default function Table({
           className="border border-gray-300 rounded-md p-1"
           value={searchTerm}
           onChange={updateSearchTerm}
-        />
-      <button
-  id="All"
-  className="ml-2 p-2 bg-red-500 text-white rounded-md lg:p-4 hover:bg-red-600"
-  onClick={handleDelete}
->
-  <FaTrashAlt />
-</button>
-
+        />   
       </div>
+      <div className="flex items-center mb-2">
+          <button
+            id="All"
+            className="ml-2 p-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+            onClick={handleDelete}
+          >
+            Delete Items
+          </button>
+        </div>
 
       <div className="overflow-auto rounded-lg shadow hidden lg:block">
         <table className="w-full">
@@ -229,7 +230,7 @@ export default function Table({
                   {row.itemName}
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
-                  {row.price}
+                  {formatNumberWithCommas(row.price)}
                 </td>
                 <td className="p-3 text-xs font-medium uppercase text-gray-700 whitespace-nowrap">
                   <span

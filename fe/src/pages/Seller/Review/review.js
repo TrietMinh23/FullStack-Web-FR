@@ -89,7 +89,7 @@ export default function Review() {
     let sellerId = localStorage.getItem("_id");
     let cleanedSellerId = sellerId.replace(/"/g, "");
     const path = cleanedSellerId;
-    fetchData(path, 1);
+    fetchData(path);
   }, [page, perPage, searchQuery]);
   const fetchData = async (path) => {
     sessionStorage.setItem("pageTableReviews", page.toString());

@@ -3,6 +3,7 @@ import LoadingIcon from '../../components/ui/LoadingIcon'
 import { useParams, Link } from 'react-router-dom'
 import { resetPassword } from '../../api/login'
 import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
+import deleteAllCookies from '../../utils/deleteCookie';
 
 
 export default function ResetPassword() {
@@ -16,6 +17,7 @@ export default function ResetPassword() {
 
     useEffect(() => {
         localStorage.clear()
+        deleteAllCookies()
     }, [])
 
     const handleResetPassword = async () => {

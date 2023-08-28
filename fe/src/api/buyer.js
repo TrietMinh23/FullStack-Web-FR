@@ -2,7 +2,7 @@ import { instance } from "./config";
 
 export const getBuyerById = async (id) => {
   try {
-    const respone = await instance.get(`/users/${id}`,{
+    const respone = await instance.get(`/users/${id}`, {
       params: {
         id: id,
       },
@@ -65,5 +65,14 @@ export const updateBuyerById = async (id, data) => {
     throw new Error(
       error.response?.data?.error || "Error update seller by id."
     );
+  }
+};
+
+export const countStatusToday = async () => {
+  try {
+    const respone = await instance.get("/users/counter");
+    return respone;
+  } catch (error) {
+    throw new Error(error.response?.data?.error || "Error count status today.");
   }
 };
