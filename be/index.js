@@ -5,7 +5,7 @@ import "dotenv/config";
 import userRouter from "./routers/userRoute.js";
 import sellerRouter from "./routers/sellerRoute.js";
 import productRouter from "./routers/producRoute.js";
-import pCategoryRouter from "./routers/pCategoryRoute.js";
+import pCategoryRouter from "./routers/pcategoryRoute.js";
 import orderRouter from "./routers/orderRoute.js";
 import cartRouter from "./routers/cartRoute.js";
 import mongoose from "mongoose";
