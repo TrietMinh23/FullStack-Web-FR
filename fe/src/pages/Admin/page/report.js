@@ -49,7 +49,6 @@ export default function Report() {
     setSearchQuery( new RegExp(newSearchTerm.replace(/\s+/g, " "), "i").source); // Update the search query state
   };
 
-
   useEffect(() => {
     fetchData();
   },[page, perPage, searchQuery]);
