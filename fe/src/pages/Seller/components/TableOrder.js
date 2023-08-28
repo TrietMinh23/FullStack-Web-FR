@@ -200,10 +200,10 @@ export default function TableOrders({
               </th>
               <th
                 className="p-3 text-sm font-semibold tracking-wide text-center"
-                onClick={() => handleSort("order")}
+                onClick={() => handleSort("orderBy")}
               >
                 Buyer{" "}
-                {sortColumn === "order" && (sortOrder === "asc" ? "▲" : "▼")}
+                {sortColumn === "orderBy" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th className="p-3 text-sm font-semibold tracking-wide text-center">
                 Phone{" "}
@@ -213,10 +213,10 @@ export default function TableOrders({
               </th>
               <th
                 className="w-24 p-3 text-sm font-semibold tracking-wide text-center"
-                onClick={() => handleSort("postDate")}
+                onClick={() => handleSort("orderDate")}
               >
                 Order date{" "}
-                {sortColumn === "postDate" && (sortOrder === "asc" ? "▲" : "▼")}
+                {sortColumn === "orderDate" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th className="w-32 p-3 text-sm font-semibold tracking-wide text-center">
                 Action

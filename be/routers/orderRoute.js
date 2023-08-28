@@ -9,6 +9,7 @@ import {
   getMonthlyIncomeBySeller,
   getOrderBySellerId,
   updateOrderStatusToDispatched,
+  updateOrderStatusToCancelled,
   getDailyIncomeBySeller,
   getDailyRefundBySeller,
   getIncomeBySellerIdForAllMonths,
@@ -50,6 +51,8 @@ router.post("/", verifyToken, createOrder);
 router.put("/:id", verifyTokenAndAdmin, updateOrder);
 router.delete("/:id", deleteOrder);
 router.put("/update/:orderId", updateOrderStatusToDispatched);
+router.put("/cancel/:orderId", updateOrderStatusToCancelled);
+
 router.get("/sellerId/:id", getOrderBySellerId);
 
 export default router;
