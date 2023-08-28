@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { PiMagnifyingGlassBold } from "react-icons/pi";
-import { ImBlocked } from "react-icons/im";
-import { BsCheckCircleFill } from "react-icons/bs";
 import PopUpInforSeller from "../PopUp/PopUpInforSeller";
 import { blockSeller, unblockSeller } from "../../../../api/seller";
+import { TbLockOpen, TbLock } from "react-icons/tb";
+import { FcInfo } from "react-icons/fc";
 import PaginationComponent from "../../../Home/components/Pagination";
+import formatNumberWithCommas from "../../../../utils/formatNumberWithCommas";
 
 const Table = ({
   rows,
@@ -24,7 +24,6 @@ const Table = ({
   const [detailInfor, setDetailInfor] = useState(false);
   const [indexInfor, setIndexInfor] = useState(0);
   const [isUpdating, setIsUpdating] = useState(false);
-
 
   const closeSee = () => {
     setDetailInfor(false);
@@ -156,40 +155,47 @@ const Table = ({
     return sortedData.slice(startIndex, endIndex);
   };
   const formatDate = (date) => {
-    const options = {year: "numeric", month: "short", day: "numeric"};
+    const options = { year: "numeric", month: "short", day: "numeric" };
     const parts = new Date(date)
       .toLocaleDateString(undefined, options)
       .split(" ");
     return `${parts[1]} ${parts[0]}, ${parts[2]}`;
   };
+
   return (
     <div className="p-5 h-full bg-gray-100 w-full rounded-md">
       <h1 className="text-xl mb-2">All sellers</h1>
 
       {/* Search and Delete */}
       <div className="flex items-center mb-4">
-        <label htmlFor="search" className="mr-2">
-          Search:
-        </label>
-        <input
-          id="search"
-          type="text"
-          className="border border-gray-300 rounded-md p-1"
-          value={searchTerm}
-          onChange={updateSearchTerm}
-        />
-        <button
-          className="ml-2 p-2 hover:bg-red-600 bg-red-500 text-white rounded-md"
-          onClick={handleBlockUser}
-        >
-          <ImBlocked />
-        </button>
-        <button
-          className="ml-2 p-2 hover:bg-green-600 bg-green-500 text-white rounded-md"
-          onClick={handleUnblockUser}
-        >
-          <BsCheckCircleFill />
-        </button>
+        <div className="flex justify-start w-1/2">
+          <label htmlFor="search" className="xl:mr-2">
+            <span className="xl:block hidden">Search:</span>
+          </label>
+          <input
+            id="search"
+            type="text"
+            className="border border-gray-300 rounded-md p-1 w-full"
+            value={searchTerm}
+            onChange={updateSearchTerm}
+          />
+        </div>
+        <div className="flex justify-end w-1/2">
+          <button
+            className="ml-2 p-2 hover:bg-red-600 bg-red-500 text-white rounded-md flex items-center"
+            onClick={handleBlockUser}
+          >
+            <TbLock className="xl:mr-2" />{" "}
+            <span className="xl:block hidden">Block</span>
+          </button>
+          <button
+            className="ml-2 p-2 hover:bg-green-600 bg-green-500 text-white rounded-md items-center flex"
+            onClick={handleUnblockUser}
+          >
+            <TbLockOpen className="xl:mr-2" />{" "}
+            <span className="xl:block hidden">Unblock</span>
+          </button>
+        </div>
       </div>
 
       {/* Desktop Table */}
@@ -205,10 +211,10 @@ const Table = ({
                 />
               </th>
               <th
-                className="w-20 p-3 text-sm font-semibold tracking-wide text-center"
+                className="p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("name")}
               >
-                Name{" "}
+                Username{" "}
                 {sortColumn === "name" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
@@ -236,7 +242,7 @@ const Table = ({
                   (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
-                className="w-24 p-3 text-sm font-semibold tracking-wide text-center"
+                className="p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("isBlocked")}
               >
                 Status{" "}
@@ -244,14 +250,14 @@ const Table = ({
                   (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
-                className="w-24 p-3 text-sm font-semibold tracking-wide text-center"
+                className="p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("createdAt")}
               >
                 Sign up date{" "}
                 {sortColumn === "createdAt" &&
                   (sortOrder === "asc" ? "▲" : "▼")}
               </th>
-              <th className="w-32 p-3 text-sm font-semibold tracking-wide text-center">
+              <th className="p-3 text-sm font-semibold tracking-wide text-center">
                 Action
               </th>
             </tr>
@@ -279,7 +285,7 @@ const Table = ({
                   {row.negativeCount}
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
-                  {row.totalSales}
+                  {formatNumberWithCommas(row.totalSales)}
                 </td>
                 <td className="p-3 text-xs font-medium uppercase text-gray-700 whitespace-nowrap text-center">
                   <span
@@ -303,21 +309,21 @@ const Table = ({
                       setDetailInfor(true);
                       setIndexInfor(index);
                     }}
-                    className="text-blue-500 font-bold hover:underline"
+                    className="text-blue-500 font-bold hover:underline hover:text-blue-600"
                   >
-                    <PiMagnifyingGlassBold />
+                    <FcInfo />
                   </button>
                   <button
-                    className="text-red-500 font-bold hover:underline ml-2"
+                    className="text-red-500 font-bold hover:underline ml-2 hover:text-red-600"
                     onClick={() => handleBlockUserRow(row)}
                   >
-                    <ImBlocked />
+                    <TbLock />
                   </button>
                   <button
-                    className="text-green-500 font-bold hover:underline ml-2"
+                    className="text-green-500 font-bold hover:underline ml-2 hover:text-green-600"
                     onClick={() => handleUnblockUserRow(row)}
                   >
-                    <BsCheckCircleFill />
+                    <TbLockOpen />
                   </button>
                 </td>
               </tr>
@@ -334,13 +340,8 @@ const Table = ({
             key={row._id}
           >
             <div className="flex items-center space-x-2 text-sm">
-              <div>
-                <a
-                  href="/#"
-                  className="text-blue-500 font-bold hover:underline"
-                >
-                  {row.name}
-                </a>
+              <div className="text-blue-500 font-bold">
+                {row.name}
               </div>
               <div className="text-gray-500">{formatDate(row.createdAt)}</div>
               <div>
@@ -356,13 +357,13 @@ const Table = ({
               </div>
             </div>
             <div className="text-sm text-gray-700">
-              Positive reviews:{" "}
+              Positives:{" "}
               <span className="text-sky-500">{row.positiveCount}</span>,
-              negative reviews:{" "}
+              Negatives:{" "}
               <span className="text-red-400">{row.negativeCount}</span>
             </div>
             <div className="text-sm font-medium text-black">
-              ${row.totalSales}
+              VND {formatNumberWithCommas(row.totalSales)}
             </div>
             <div className="flex justify-end">
               <button
@@ -370,21 +371,21 @@ const Table = ({
                   setDetailInfor(true);
                   setIndexInfor(index);
                 }}
-                className="text-blue-500 font-bold hover:underline"
+                className="text-blue-500 font-bold hover:underline hover:text-blue-600"
               >
-                <PiMagnifyingGlassBold />
+                <FcInfo />
               </button>
               <button
-                className="text-red-500 font-bold hover:underline ml-2"
+                className="text-red-500 font-bold hover:underline ml-2 hover:text-red-600"
                 onClick={() => handleBlockUserRow(row)}
               >
-                <ImBlocked />
+                <TbLock />
               </button>
               <button
-                className="text-green-500 font-bold hover:underline ml-2"
+                className="text-green-500 font-bold hover:underline ml-2 hover:text-green-600"
                 onClick={() => handleBlockUserRow(row)}
               >
-                <BsCheckCircleFill />
+                <TbLockOpen />
               </button>
             </div>
           </div>

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import ChartOne from "../components/ChartOne";
 import AnalyticEcommerce from "../components/AnalyticEcommerce";
+import formatNumberWithCommas from "../../../utils/formatNumberWithCommas";
 
 import { Stack, Grid } from "@mui/material";
 import { getIncomeForAllMonths, getRefundForAllMonths,getIncomeForAllDeliveredOrders, getCurrentMonthIncome, getCurrentYearIncome } from "../../../api/order";
@@ -103,9 +104,9 @@ export default function FinancialManagement() {
         <Grid item xs={12} sm={6} md={4} lg={3}>
           <AnalyticEcommerce
             title="Total Sales"
-            count={incomeForAllDeliveredOrders}
+            count={formatNumberWithCommas(incomeForAllDeliveredOrders)}
             percentage={`${(incomeCurrentYear - incomeForAllDeliveredOrders) / incomeForAllDeliveredOrders * 100}`}
-            extra={`${incomeCurrentYear}`}
+            extra={formatNumberWithCommas(incomeCurrentYear)}
             liltitle="you made an extra"
           />
         </Grid>

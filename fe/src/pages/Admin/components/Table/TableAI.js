@@ -3,6 +3,7 @@ import { FaTrashAlt, FaPen } from "react-icons/fa";
 import PaginationComponent from "../../../Home/components/Pagination";
 import { deleteProduct } from "../../../../api/products";
 import LoadingIcon from "../LoadingIcon";
+import formatNumberWithCommas from "../../../../utils/formatNumberWithCommas";
 
 export default function TableAl({
   rows,
@@ -125,23 +126,29 @@ export default function TableAl({
       <h1 className="text-xl mb-2">{nameTable}</h1>
 
       <div className="flex items-center mb-4">
-        <label htmlFor="search" className="mr-2 hidden lg:block">
+        
+      <div className="flex justify-start w-1/2">
+      <label htmlFor="search" className="xl:mr-2 hidden lg:block">
           Search:
         </label>
         <input
           id="search"
           type="text"
-          className="border border-gray-300 rounded-md p-1"
+          className="border border-gray-300 rounded-md p-1 w-full"
           value={searchTerm}
           onChange={updateSearchTerm}
         />
+        </div>
+        <div className="flex justify-end w-1/2">
         <button
           id="All"
-          className="ml-2 p-2 bg-red-500 text-white rounded-md lg:p-4"
+          className="ml-2 bg-red-500 text-white rounded-md p-2 hover:bg-red-600 flex items-center"
           onClick={handleDelete}
         >
-          <FaTrashAlt />
+          <FaTrashAlt className="xl:mr-2"/>
+          <span className="xl:block hidden">Delete</span>
         </button>
+        </div>
         {isLoading ? (
           <div>
             <LoadingIcon />
@@ -196,7 +203,7 @@ export default function TableAl({
                 {sortColumn === "status" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
-                className="w-24 p-3 text-sm font-semibold tracking-wide text-center"
+                className="p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("postDate")}
               >
                 Update date{" "}
@@ -238,7 +245,7 @@ export default function TableAl({
                   {row.itemName}
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
-                  {row.price}
+                  {formatNumberWithCommas(row.price)}
                 </td>
                 <td className="p-3 text-xs font-medium uppercase text-gray-700 whitespace-nowrap ">
                   <span
@@ -314,7 +321,7 @@ export default function TableAl({
               </div>
             </div>
             <div className="text-sm text-gray-700">{row.itemName}</div>
-            <div className="text-sm font-medium text-black">${row.price}</div>
+            <div className="text-sm font-medium text-black">VND {formatNumberWithCommas(row.price)}</div>
             <div className="flex justify-end">
               <button
                 className="text-blue-500 font-bold hover:underline"
