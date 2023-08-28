@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from "react";
-import {useSelector, useDispatch} from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import FmdGoodIcon from "@mui/icons-material/FmdGood";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import ItemCart from "./components/ItemCart";
@@ -16,9 +16,9 @@ import {
   updatedProductPrice,
 } from "../../../utils/redux/purchaseSlice";
 import getCookie from "../../../utils/getCookie";
-import {instance} from "../../../api/config";
+import { instance } from "../../../api/config";
 import setCookie from "../../../utils/setCookie";
-import {UPDATETOTAL} from "../../../utils/redux/productsSlice";
+import { UPDATETOTAL } from "../../../utils/redux/productsSlice";
 
 export default function Purchase() {
   const [statePayment, setStatePayment] = useState(false);
@@ -263,7 +263,39 @@ export default function Purchase() {
                       <div className="md:ml-10">
                         <span>{shipping}</span>
                         <div className="time-recieve text-xs text-gray-800">
-                          Nhận hàng vào  {new Date(Date.now() + 24*60*60*1000).toLocaleDateString('vi-VN', { weekday: "long", year: "numeric", month: "short", day: "numeric"})}
+                          Nhận hàng vào{" "}
+                          {shipping === "Normal"
+                            ? `${new Date(
+                                Date.now() + 3 * 24 * 60 * 60 * 1000
+                              ).toLocaleDateString("vi-VN", {
+                                weekday: "long",
+                                year: "numeric",
+                                month: "short",
+                                day: "numeric",
+                              })} - ${new Date(
+                                Date.now() + 5 * 24 * 60 * 60 * 1000
+                              ).toLocaleDateString("vi-VN", {
+                                weekday: "long",
+                                year: "numeric",
+                                month: "short",
+                                day: "numeric",
+                              })}`
+                            : `${new Date(Date.now()).toLocaleDateString(
+                                "vi-VN",
+                                {
+                                  weekday: "long",
+                                  year: "numeric",
+                                  month: "short",
+                                  day: "numeric",
+                                }
+                              )} - ${new Date(
+                                Date.now() + 24 * 60 * 60 * 1000
+                              ).toLocaleDateString("vi-VN", {
+                                weekday: "long",
+                                year: "numeric",
+                                month: "short",
+                                day: "numeric",
+                              })}`}
                         </div>
                       </div>
                       <div className="btn-change">

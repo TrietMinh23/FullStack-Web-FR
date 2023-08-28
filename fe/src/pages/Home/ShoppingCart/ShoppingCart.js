@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import ItemShoppingCart from "./components/ItemShoppingCart";
 import TableResponsiveShoppingCart from "./components/TableResponsiveShoppingCart";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import React, { useEffect } from "react";
 import {
   ADDTOPURCHASEALL,
@@ -13,6 +13,7 @@ export default function ShoppingCart() {
   const purchase = useSelector((state) => state.product.purchase);
   console.log("Purchase: ", purchase);
 
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const summarizeQuantity = (list) => {
@@ -33,6 +34,14 @@ export default function ShoppingCart() {
     }
 
     return formatNumberWithCommas(sum);
+  };
+
+  const checkOut = () => {
+    if (purchase.length) {
+      navigate("/purchase");
+    } else {
+      alert("Choose one to buy");
+    }
   };
 
   const selectAllProducts = (e) => {
@@ -123,12 +132,12 @@ export default function ShoppingCart() {
                 {summarizePrice(products)}{" "}
               </div>
               <div className="ml-6">
-                <Link
-                  to="/purchase"
+                <button
+                  onClick={checkOut}
                   className="uppercase py-2 px-6 bg-gray-800 text-white hover:bg-gray-700"
                 >
                   check out
-                </Link>
+                </button>
               </div>
             </div>
           </div>
