@@ -183,13 +183,13 @@ export const getAllProducts = async (req, res) => {
     var page = parseInt(req.query.page) || 1;
     var limit = parseInt(req.query.limit) || 20;
     var searchQuery = req.query.searchQuery || "";
-    console.log(searchQuery);
+
+    console.log(page, limit)
 
     const skip = (page - 1) * limit;
 
     const products = await Product.find({
-      sold: 0,
-      title: { $regex: searchQuery, $options: "i" },
+      title: {$regex: searchQuery, $options: "i"},
     })
       .sort({ createdAt: -1 })
       .skip(skip)
@@ -210,6 +210,8 @@ export const getAllProducts = async (req, res) => {
       return;
     }
 
+    const totalProducts = await Product.countDocuments();
+
     const totalSold0 = await Product.find({
       sold: 0,
       title: { $regex: searchQuery, $options: "i" },
@@ -221,9 +223,8 @@ export const getAllProducts = async (req, res) => {
     const quantityTotalSold0 = totalSold0.length;
     const quantityTotalSold1 = totalSold1.length;
 
-    const totalPages = Math.ceil(
-      (quantityTotalSold0 + quantityTotalSold1) / limit
-    );
+    const totalPages = Math.ceil(totalProducts / limit);
+
     // Calculate total price of sold products (sold 1)
     const totalPriceSold1 = totalSold1.reduce(
       (total, product) => total + product.price,

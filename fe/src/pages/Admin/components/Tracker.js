@@ -18,8 +18,8 @@ export default function Card({ title, icon, text, today, all, color, textColor }
         </h4>
       </div>
       <div className="border-t border-blue-gray-50 p-4">
-        <p className="block antialiased font-sans text-base leading-relaxed font-normal text-blue-gray-600">
-          Total {text} : {all}
+        <p className="block antialiased font-sans text-base font-normal leading-relaxed text-blue-gray-600">
+          Total {text}: {all}
         </p>
       </div>
     </div>

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { PiMagnifyingGlassBold } from "react-icons/pi";
-import { ImBlocked } from "react-icons/im";
-import { BsCheckCircleFill } from "react-icons/bs";
+import { FcInfo } from "react-icons/fc";
+import { TbLock, TbLockOpen } from "react-icons/tb";
 import { blockBuyer, unblockBuyer } from "../../../../api/buyer";
 import PopUpInforBuyer from "../PopUp/PopUpInforBuyer";
 import PaginationComponent from "../../../Home/components/Pagination";
@@ -25,6 +24,14 @@ const Table = ({
   const [indexInfor, setIndexInfor] = useState(0);
   const [isUpdating, setIsUpdating] = useState(false);
 
+  const formatDate = (date) => {
+    const options = { year: "numeric", month: "short", day: "numeric" };
+    const parts = new Date(date)
+      .toLocaleDateString(undefined, options)
+      .split(" ");
+    return `${parts[1]} ${parts[0]}, ${parts[2]}`;
+  };
+
   const closeSee = () => {
     setDetailInfor(false);
   };
@@ -40,12 +47,12 @@ const Table = ({
     }
   };
 
-    // Update the search term when input changes
-    const updateSearchTerm = (event) => {
-      const newSearchTerm = event.target.value;
-      setSearchTerm(newSearchTerm);
-      onSearchTermChange(newSearchTerm); // Call the callback prop
-    };
+  // Update the search term when input changes
+  const updateSearchTerm = (event) => {
+    const newSearchTerm = event.target.value;
+    setSearchTerm(newSearchTerm);
+    onSearchTermChange(newSearchTerm); // Call the callback prop
+  };
 
   const handleCheckboxChange = (event, item) => {
     const { checked } = event.target;
@@ -160,29 +167,36 @@ const Table = ({
     <div className="p-5 h-full bg-gray-100 w-full rounded-md">
       <h1 className="text-xl mb-2">All Buyers</h1>
 
+      {/* Search and Delete */}
       <div className="flex items-center mb-4">
-        <label htmlFor="search" className="mr-2">
-          Search:
-        </label>
-        <input
-          id="search"
-          type="text"
-          className="border border-gray-300 rounded-md p-1"
-          value={searchTerm}
-          onChange={updateSearchTerm}
-        />
-        <button
-          className="ml-2 p-2 hover:bg-red-600 bg-red-500 text-white rounded-md"
-          onClick={handleBlockUser}
-        >
-          <ImBlocked />
-        </button>
-        <button
-          className="ml-2 p-2 hover:bg-green-600 bg-green-500 text-white rounded-md"
-          onClick={handleUnblockUser}
-        >
-          <BsCheckCircleFill />
-        </button>
+        <div className="flex justify-start w-1/2">
+          <label htmlFor="search" className="xl:mr-2">
+            <span className="xl:block hidden">Search:</span>
+          </label>
+          <input
+            id="search"
+            type="text"
+            className="border border-gray-300 rounded-md p-1 w-full"
+            value={searchTerm}
+            onChange={updateSearchTerm}
+          />
+        </div>
+        <div className="flex justify-end w-1/2">
+          <button
+            className="ml-2 p-2 hover:bg-red-600 bg-red-500 text-white rounded-md flex items-center"
+            onClick={handleBlockUser}
+          >
+            <TbLock className="xl:mr-2" />{" "}
+            <span className="xl:block hidden">Block</span>
+          </button>
+          <button
+            className="ml-2 p-2 hover:bg-green-600 bg-green-500 text-white rounded-md items-center flex"
+            onClick={handleUnblockUser}
+          >
+            <TbLockOpen className="xl:mr-2" />{" "}
+            <span className="xl:block hidden">Unblock</span>
+          </button>
+        </div>
       </div>
 
       {/* Desktop Table */}
@@ -198,11 +212,11 @@ const Table = ({
                 />
               </th>
               <th
-                className="w-20 p-3 text-sm font-semibold tracking-wide text-center"
-                onClick={() => handleSort("userName")}
+                className="p-3 text-sm font-semibold tracking-wide text-center"
+                onClick={() => handleSort("name")}
               >
                 Username{" "}
-                {sortColumn === "userName" && (sortOrder === "asc" ? "▲" : "▼")}
+                {sortColumn === "name" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
                 className="p-3 text-sm font-semibold tracking-wide text-center"
@@ -217,24 +231,25 @@ const Table = ({
                 onClick={() => handleSort("sumCancelled")}
               >
                 Cancelled Orders{" "}
-                {sortColumn === "sumCancelled" && (sortOrder === "asc" ? "▲" : "▼")}
+                {sortColumn === "sumCancelled" &&
+                  (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
-                className="w-24 p-3 text-sm font-semibold tracking-wide text-center"
+                className="p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("status")}
               >
                 Status{" "}
                 {sortColumn === "status" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
-                className="w-24 p-3 text-sm font-semibold tracking-wide text-center"
+                className="p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("signUpDate")}
               >
                 Sign Up Date{" "}
                 {sortColumn === "signUpDate" &&
                   (sortOrder === "asc" ? "▲" : "▼")}
               </th>
-              <th className="w-32 p-3 text-sm font-semibold tracking-wide text-center">
+              <th className="p-3 text-sm font-semibold tracking-wide text-center">
                 Action
               </th>
             </tr>
@@ -275,7 +290,7 @@ const Table = ({
                 </td>
 
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
-                  {row.createdAt}
+                  {formatDate(row.createdAt)}
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                   <button
@@ -285,19 +300,19 @@ const Table = ({
                     }}
                     className="text-blue-500 font-bold hover:underline"
                   >
-                    <PiMagnifyingGlassBold />
+                    <FcInfo />
                   </button>
                   <button
                     className="text-red-500 font-bold hover:underline ml-2"
                     onClick={() => handleBlockUserRow(row)}
                   >
-                    <ImBlocked />
+                    <TbLock />
                   </button>
                   <button
                     className="text-green-500 font-bold hover:underline ml-2"
                     onClick={() => handleUnblockUserRow(row)}
                   >
-                    <BsCheckCircleFill />
+                    <TbLockOpen />
                   </button>
                 </td>
               </tr>
@@ -314,15 +329,10 @@ const Table = ({
             key={row._id}
           >
             <div className="flex items-center space-x-2 text-sm">
-              <div>
-                <a
-                  href="/#"
-                  className="text-blue-500 font-bold hover:underline"
-                >
-                  userName {row.name}
-                </a>
+              <div className="text-blue-500 font-bold hover:underline">
+                {row.name}
               </div>
-              <div className="text-gray-500">{row.createdAt}</div>
+              <div className="text-gray-500">{formatDate(row.createdAt)}</div>
               <div>
                 <span
                   className={`p-1.5 text-xs font-medium uppercase tracking-wider ${
@@ -335,11 +345,13 @@ const Table = ({
                 </span>
               </div>
             </div>
-            <div className="text-sm text-gray-700">
-              Processing order: {row.sumProcessing}
+            <div className="text-sm text-gray-900">
+              Processing order:{" "}
+              <span className="text-sky-500">{row.sumProcessing}</span>
             </div>
-            <div className="text-sm font-medium text-black">
-              ${row.sumCancelled}
+            <div className="text-sm text-gray-900">
+              Cancelled Orders{" "}
+              <span className="text-red-400">{row.sumCancelled}</span>
             </div>
             <div className="flex justify-end">
               <button
@@ -349,19 +361,19 @@ const Table = ({
                 }}
                 className="text-blue-500 font-bold hover:underline"
               >
-                <PiMagnifyingGlassBold />
+                <FcInfo />
               </button>
               <button
                 className="text-red-500 font-bold hover:underline ml-2"
                 onClick={() => handleBlockUserRow(row)}
               >
-                <ImBlocked />
+                <TbLock />
               </button>
               <button
                 className="text-green-500 font-bold hover:underline ml-2"
                 onClick={() => handleUnblockUserRow(row)}
               >
-                <BsCheckCircleFill />
+                <TbLockOpen />
               </button>
             </div>
           </div>
@@ -386,7 +398,11 @@ const Table = ({
           </select>
         </div>
         <div className="flex w-full justify-end">
-          <PaginationComponent setPage={onPageChange} page={page} totalPage={totalPages}/>
+          <PaginationComponent
+            setPage={onPageChange}
+            page={page}
+            totalPage={totalPages}
+          />
         </div>
       </div>
       {detailInfor && (

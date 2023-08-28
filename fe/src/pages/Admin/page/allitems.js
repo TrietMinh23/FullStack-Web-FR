@@ -7,6 +7,7 @@ import NewProductForm from "../../Seller/NewItem/NewForm";
 import ClearIcon from "@mui/icons-material/Clear";
 import DoneOutlineIcon from "@mui/icons-material/DoneOutline";
 import Card from "../../Home/PersonalProfile/components/card";
+import formatNumberWithCommas from "../../../utils/formatNumberWithCommas";
 
 export default function Allitems() {
   const [products, setProducts] = useState([]);
@@ -78,18 +79,18 @@ export default function Allitems() {
     {
       icon: <DoneOutlineIcon fontSize="large" />,
       id: 1,
-      text: "Total Money",
+      text: "Total Money:",
       number: totalSold || 0,
-      money: totalPriceSold0 || 0,
+      money: formatNumberWithCommas(totalPriceSold0) || 0,
       color: "rgb(74, 222, 128)",
       title: "AVAILABLE",
     },
     {
       icon: <ClearIcon fontSize="large" />,
       id: 2,
-      text: "Total Money",
+      text: "Total Money:",
       number: totalAvailable || 0,
-      money: totalPriceSold1 || 0,
+      money: formatNumberWithCommas(totalPriceSold1) || 0,
       color: "rgb(248, 113, 113)",
       title: "SOLD",
     },
