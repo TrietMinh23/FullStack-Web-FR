@@ -99,3 +99,17 @@ export const getAllProducts = async (page, limit, searchQuery) => {
     throw new Error(error.response?.data?.error || "Error get all products.");
   }
 };
+
+export const getByPrice = async (price, page) => {
+  try {
+    const response = await instance.get("/products/filter/price", {
+      params: {
+        price: price,
+        page: page,
+      },
+    });
+    return response;
+  } catch (err) {
+    throw new Error(err.response?.data?.error || "Error get price");
+  }
+};
