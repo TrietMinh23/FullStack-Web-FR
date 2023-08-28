@@ -61,8 +61,8 @@ const NewProductForm = ({ tradeCode, role }) => {
     }
     formData.append("color", e.target.color.value);
     formData.append("condition", e.target.condition.value);
-    category.forEach((items) => {
-      formData.append("category", items);
+    selected.forEach((items) => {
+      formData.append("category", items.value);
     });
 
     // Get the sellerId value from local storage

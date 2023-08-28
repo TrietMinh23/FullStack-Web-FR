@@ -26,10 +26,10 @@ export default function ShoppingList({
         setIsGet(false);
         if (category && category.length > 0) {
           // Call the appropriate API based on the category
-          res = await getByCategory(category, page);
+          res = await getByCategory(category, 1);
         } else if (price) {
           console.log("hello");
-          res = await getByPrice(price, page);
+          res = await getByPrice(price, 1);
         } else {
           res = await products(page);
         }

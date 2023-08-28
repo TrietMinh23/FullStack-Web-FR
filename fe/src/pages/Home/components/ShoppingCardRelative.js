@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-export default function ShoppingCardRelative({ title, price, image, id }) {
+export default function ShoppingCardRelative({ title, price, image, id, brand }) {
   return (
     <Link
       to={`/products/${id}`}
@@ -16,7 +16,7 @@ export default function ShoppingCardRelative({ title, price, image, id }) {
           className="h-80 w-72 object-cover rounded-t-xl"
         />
         <div className="px-4 py-3 w-72">
-          <span className="text-gray-400 mr-3 uppercase text-xs">Brand</span>
+          <span className="text-gray-400 mr-3 uppercase text-xs">Brand: {brand}</span>
           <p className="text-lg font-bold text-black truncate block capitalize">
             {title}
           </p>

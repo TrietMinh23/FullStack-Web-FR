@@ -748,7 +748,7 @@ export const getDailyRefundBySeller = async (req, res) => {
 
 export const getOrderBySellerId = async (req, res) => {
   try {
-    const sellerId = req.params.id; // Convert the sellerId to ObjectId type
+    const sellerId = req.params.id;
 
     // Pagination
     var page = parseInt(req.query.page) || 1;
@@ -757,7 +757,22 @@ export const getOrderBySellerId = async (req, res) => {
 
     var ordersCount = await Order.find()
       .populate("products", "sellerId")
-      .countDocuments();
+
+      var productsWithSellerId = ordersCount.map(order =>
+        order.products.filter(product => 
+            product.sellerId.toString() === sellerId 
+          ).length
+      );
+      
+      var totalProductsCount = productsWithSellerId.reduce((total, count) => total + count, 0);
+    
+    if(totalProductsCount === 0) {
+      console.log("No orders found for this seller.");
+      return res.status(404).json({error: "No orders found for this seller."});
+    }
+
+    ordersCount = ordersCount.length;
+
     var orders = await Order.find()
       .populate(
         "products",
@@ -772,6 +787,7 @@ export const getOrderBySellerId = async (req, res) => {
       .exec();
 
     if (!orders.length) {
+      console.log("No orders found.");
       return res.status(404).json({error: "No orders found."});
     } else {
       const orderStatusCounts = {
@@ -796,9 +812,6 @@ export const getOrderBySellerId = async (req, res) => {
           orderStatusCounts[status]++;
           orderStatusTotalAmounts[status] += totalAmount;
         }
-
-        console.log("Order status counts: ", orderStatusCounts);
-        console.log("Order status total amounts: ", orderStatusTotalAmounts);
       }
 
       return res.status(200).json({
