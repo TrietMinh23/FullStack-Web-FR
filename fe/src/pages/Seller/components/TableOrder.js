@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import PaginationComponent from "../../Home/components/Pagination";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { updateOrderStatusToDispatched } from "../../../api/order";
+import formatNumberWithCommas from "../../../utils/formatNumberWithCommas";
+
 
 export default function TableOrders({
   rows,
@@ -162,61 +164,61 @@ export default function TableOrders({
                 />
               </th>
               <th
-                className="w-20 p-3 text-sm font-semibold tracking-wide text-left"
+                className="w-20 p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("tradeCode")}
               >
                 TradeCode{" "}
                 {sortColumn === "tradeCode" &&
                   (sortOrder === "asc" ? "▲" : "▼")}
               </th>
-              <th className="p-3 text-sm font-semibold tracking-wide text-left">
+              <th className="p-3 text-sm font-semibold tracking-wide text-center">
                 Image
               </th>
-              <th className="p-3 text-sm font-semibold tracking-wide text-left">
+              <th className="p-3 text-sm font-semibold tracking-wide text-center">
                 Item name{" "}
               </th>
               <th
-                className="p-3 text-sm font-semibold tracking-wide text-left"
+                className="p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("price")}
               >
                 Price{" "}
                 {sortColumn === "price" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
-                className="p-3 text-sm font-semibold tracking-wide text-left"
+                className="p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("payment")}
               >
                 Payment{" "}
                 {sortColumn === "payment" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
-                className="w-24 p-3 text-sm font-semibold tracking-wide text-left"
+                className="w-24 p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("status")}
               >
                 Status{" "}
                 {sortColumn === "status" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
-                className="p-3 text-sm font-semibold tracking-wide text-left"
+                className="p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("order")}
               >
                 Buyer{" "}
                 {sortColumn === "order" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
-              <th className="p-3 text-sm font-semibold tracking-wide text-left">
+              <th className="p-3 text-sm font-semibold tracking-wide text-center">
                 Phone{" "}
               </th>
-              <th className="p-3 text-sm font-semibold tracking-wide text-left">
+              <th className="p-3 text-sm font-semibold tracking-wide text-center">
                 Address{" "}
               </th>
               <th
-                className="w-24 p-3 text-sm font-semibold tracking-wide text-left"
+                className="w-24 p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("postDate")}
               >
                 Order date{" "}
                 {sortColumn === "postDate" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
-              <th className="w-32 p-3 text-sm font-semibold tracking-wide text-left">
+              <th className="w-32 p-3 text-sm font-semibold tracking-wide text-center">
                 Action
               </th>
             </tr>
@@ -238,10 +240,10 @@ export default function TableOrders({
                       onChange={(event) => handleCheckboxChange(event, row)}
                     />
                   </td>
-                  <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                  <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                     {row.tradeCode}
                   </td>
-                  <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                  <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                     {/* Display each image separately */}
                     <div className="flex flex-wrap">
                       {row.image.split(", ").map((image, imgIndex) => (
@@ -258,20 +260,20 @@ export default function TableOrders({
                       ))}
                     </div>
                   </td>
-                  <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                  <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                     {row.itemName.split(", ").map((name, nameIndex) => (
                       <div className="py-4">
                         <div key={nameIndex}>{name} </div>
                       </div>
                     ))}
                   </td>
-                  <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                    {row.price}
+                  <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
+                    {formatNumberWithCommas(row.price)}
                   </td>
-                  <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                  <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                     {row.payment}
                   </td>
-                  <td className="p-3 text-xs font-medium uppercase text-gray-700 whitespace-nowrap">
+                  <td className="p-3 text-xs font-medium uppercase text-gray-700 whitespace-nowrap text-center">
                     <span
                       className={`p-1.5 text-xs font-medium uppercase tracking-wider ${row.status == "Delivered"
                           ? "text-green-800 bg-green-200"
@@ -287,19 +289,19 @@ export default function TableOrders({
                       {row.status}
                     </span>
                   </td>
-                  <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                  <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                     {row.orderBy}
                   </td>
-                  <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                  <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                     {row.mobile}
                   </td>
-                  <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                  <td className="p-3 text-sm text-gray-700 whitespace-nowrap ">
                     {row.address}
                   </td>
-                  <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                  <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                     {row.orderDate}
                   </td>
-                  <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                  <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                     <button
                       className="text-green-500 font-bold hover:underline ml-2 hover:text-green-600"
                       onClick={() => handleUpdateStatusRow(row)}
