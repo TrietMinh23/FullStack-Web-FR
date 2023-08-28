@@ -5,7 +5,7 @@ import {
   updatedShipTotal,
   updatedShipping,
 } from "../../../../utils/redux/purchaseSlice";
-import formatNumberWithCommas from "../../../../utils/formatNumberWithCommas"
+import formatNumberWithCommas from "../../../../utils/formatNumberWithCommas";
 
 export default function ModalShipping({ modal, closeModal, at }) {
   let fastPriceShipping = 20000;
@@ -40,8 +40,6 @@ export default function ModalShipping({ modal, closeModal, at }) {
     closeModal();
   };
 
-  console.log("CHECK", at);
-
   return (
     <div
       className={`modal ${modal ? "block" : "hidden"}`}
@@ -70,8 +68,16 @@ export default function ModalShipping({ modal, closeModal, at }) {
               </div>
             </div>
             <div className="below text-xs mt-1">
-              Nhận hàng vào {new Date().toLocaleDateString('vi-VN', {month: "short", day: "numeric"})}
-              -{new Date(Date.now() + 24*60*60*1000).toLocaleDateString('vi-VN', { month: "short", day: "numeric"})}
+              Nhận hàng vào{" "}
+              {new Date().toLocaleDateString("vi-VN", {
+                month: "short",
+                day: "numeric",
+              })}
+              -
+              {new Date(Date.now() + 24 * 60 * 60 * 1000).toLocaleDateString(
+                "vi-VN",
+                { month: "short", day: "numeric" }
+              )}
             </div>
           </div>
           <div className="right-side">
@@ -90,8 +96,14 @@ export default function ModalShipping({ modal, closeModal, at }) {
               </div>
             </div>
             <div className="below text-xs mt-1">
-            Nhận hàng vào {new Date(Date.now() + 3*24*60*60*1000).toLocaleDateString('vi-VN', {month: "short", day: "numeric"})}
-              -{new Date(Date.now() + 5*24*60*60*1000).toLocaleDateString('vi-VN', {month: "short", day: "numeric"})}
+              Nhận hàng vào{" "}
+              {new Date(
+                Date.now() + 3 * 24 * 60 * 60 * 1000
+              ).toLocaleDateString("vi-VN", { month: "short", day: "numeric" })}
+              -
+              {new Date(
+                Date.now() + 5 * 24 * 60 * 60 * 1000
+              ).toLocaleDateString("vi-VN", { month: "short", day: "numeric" })}
             </div>
           </div>
           <div className="right-side">

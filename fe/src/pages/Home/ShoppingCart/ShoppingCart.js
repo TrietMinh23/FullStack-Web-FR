@@ -38,6 +38,7 @@ export default function ShoppingCart() {
 
   const checkOut = () => {
     if (purchase.length) {
+      sessionStorage.setItem("purchase", JSON.stringify(purchase));
       navigate("/purchase");
     } else {
       alert("Choose one to buy");

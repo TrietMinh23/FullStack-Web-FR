@@ -29,7 +29,9 @@ export default function Purchase() {
   const address = localStorage.getItem("address")?.split(",") || [];
   const [isChange, setIsChange] = useState(false);
   const shipping = useSelector((state) => state.purchase.shipping);
-  const products = useSelector((state) => state.product.purchase);
+  const [products, setProducts] = useState(
+    useSelector((state) => state.product.purchase)
+  );
   console.log("Products", products);
   const [information, setInformation] = useState({
     name: localStorage.getItem("name")?.replace(/^"(.*)"$/, "$1") || "",
@@ -46,6 +48,15 @@ export default function Purchase() {
     address: address[0] || "",
   });
 
+  const [informationChange, setInformationChange] = useState({
+    name: information.name,
+    phone: information.phone,
+    city: information.city,
+    district: information.district,
+    ward: information.ward,
+    address: information.address,
+  });
+
   const changeShipping = () => {
     setModalOpen(!modalIsOpen);
     const bodyModal = document.getElementsByClassName("body-modal")[0];
@@ -58,25 +69,41 @@ export default function Purchase() {
   };
 
   const handleChangeInput = (event) => {
-    setInformation({
-      ...information,
+    setInformationChange({
+      ...informationChange,
       [event.target.name]: event.target.value,
     });
   };
 
+  const checkEmptyFields = (form) => {
+    for (const key in form) {
+      if (form[key] === "") {
+        return false;
+      }
+    }
+    return true;
+  };
+
   const finishUpdateInfomation = () => {
+    if (!checkEmptyFields(informationChange)) {
+      alert("Please fill out all the information");
+      return;
+    }
+
+    setInformation(informationChange);
+
     localStorage.setItem(
       "address",
-      `${information.address}, ${information.ward}, ${information.district}, ${information.city}`
+      `${informationChange.address}, ${informationChange.ward}, ${informationChange.district}, ${informationChange.city}`
     );
-    localStorage.setItem("mobile", information.phone);
-    localStorage.setItem("name", information.name);
+    localStorage.setItem("mobile", informationChange.phone);
+    localStorage.setItem("name", informationChange.name);
 
     instance
-      .post("/users/update_information", {
+      .post("/users/update_informationChange", {
         userId: localStorage.getItem("_id").replace(/^"(.*)"$/, "$1"),
-        address: `${information.address}, ${information.ward}, ${information.district}, ${information.city}`,
-        phone: information.phone,
+        address: `${informationChange.address}, ${informationChange.ward}, ${informationChange.district}, ${informationChange.city}`,
+        phone: informationChange.phone,
         name: localStorage.getItem("name").replace(/^"(.*)"$/, "$1"),
       })
       .then((res) => console.log(res))
@@ -86,13 +113,13 @@ export default function Purchase() {
 
   const closeUpdateInfomation = () => {
     setIsChange(false);
-    setInformation({
-      name: "",
-      phone: "",
-      city: "",
-      district: "",
-      ward: "",
-      address: "",
+    setInformationChange({
+      name: information.name,
+      phone: information.phone,
+      city: information.city,
+      district: information.district,
+      ward: information.ward,
+      address: information.address,
     });
   };
 
@@ -146,6 +173,7 @@ export default function Purchase() {
       JSON.parse(decodeURIComponent(getCookie("vnp_params")))?.vnp_ResponseCode
     );
     if (statePayment === "00") {
+      console.log("BÂNNÂNNÂNN");
       const cart = JSON.parse(localStorage.getItem("cart"));
       cart.products = [];
       localStorage.setItem("cart", JSON.stringify(cart));
@@ -157,6 +185,10 @@ export default function Purchase() {
       setCookie("vnp_params", null, 1);
     }
   }, [statePayment]);
+
+  useEffect(() => {
+    setProducts(JSON.parse(sessionStorage.getItem("purchase")));
+  }, []);
 
   return (
     <React.Fragment>
@@ -189,6 +221,7 @@ export default function Purchase() {
                   changeFunc={(event) => handleChangeInput(event)}
                   close={() => closeUpdateInfomation()}
                   open={() => finishUpdateInfomation()}
+                  form={informationChange}
                 />
               )}
               <div className="flex lg:flex-row flex-col gap-x-3 ml-2">
