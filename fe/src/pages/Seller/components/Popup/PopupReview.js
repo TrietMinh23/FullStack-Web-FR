@@ -44,7 +44,8 @@ export default function PopupReview({ close, i, at, data }) {
                             <div>Star</div>
                             <Rating
                                 color="primary"
-                                name="simple-controlled"
+                                name="read-only"
+                                readOnly
                                 value={data[i].rating.star}
                             />                    
                         </div>
