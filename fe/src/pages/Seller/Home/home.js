@@ -1,6 +1,6 @@
 import React from "react";
-import {useState} from "react";
-import {useEffect} from "react";
+import { useState } from "react";
+import { useEffect } from "react";
 import ChartOne from "../components/ChartOne";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import Card from "../../Home/PersonalProfile/components/card";
@@ -104,7 +104,6 @@ export default function Review() {
               }),
           },
         ];
-
         // Set the mapped customSeries to state
         setMonthlyIncome(mappedCustomSeries);
       } catch (error) {

@@ -71,7 +71,7 @@ export default function Login() {
     const rememberMe = document.getElementById("remember_me").checked;
     signInWithGoogle().then(async (res) => {
       await login({
-        email: res.user.email,
+        email: res?.user?.email,
         password: "GOOGLE",
         role,
       })
@@ -246,18 +246,16 @@ export default function Login() {
               name="email"
               placeholder="abc123@gmail.com"
               onChange={(e) => handleLoginInputChange(e)}
-              className={`py-2 px-3 border focus:outline-none focus:ring focus:ring-red-200 focus:ring-opacity-50 rounded-md shadow-sm disabled:bg-gray-100 mt-1 block w-full ${
-                !stateDialog.stateDialogEmail
-                  ? "border-red-300"
-                  : "border-gray-300"
-              }`}
+              className={`py-2 px-3 border focus:outline-none focus:ring focus:ring-red-200 focus:ring-opacity-50 rounded-md shadow-sm disabled:bg-gray-100 mt-1 block w-full ${!stateDialog.stateDialogEmail
+                ? "border-red-300"
+                : "border-gray-300"
+                }`}
               required
             />
           </div>
           <div
-            className={`alert-box-inner alert-container mb-4 flex font-semibold text-red-600 ${
-              !stateDialog.stateDialogEmail ? "block" : "hidden"
-            }`}
+            className={`alert-box-inner alert-container mb-4 flex font-semibold text-red-600 ${!stateDialog.stateDialogEmail ? "block" : "hidden"
+              }`}
           >
             <PriorityHighIcon className="icon-alert"></PriorityHighIcon>
             <div className="alert-content text-xs ml-2">
@@ -274,18 +272,16 @@ export default function Login() {
               name="password"
               placeholder="***********"
               onChange={(e) => handleLoginInputChange(e)}
-              className={`py-2 px-3 border focus:outline-none focus:ring focus:ring-red-200 focus:ring-opacity-50 rounded-md shadow-sm disabled:bg-gray-100 mt-1 block w-full ${
-                !stateDialog.stateDialogPassword
-                  ? "border-red-300"
-                  : "border-gray-300"
-              }`}
+              className={`py-2 px-3 border focus:outline-none focus:ring focus:ring-red-200 focus:ring-opacity-50 rounded-md shadow-sm disabled:bg-gray-100 mt-1 block w-full ${!stateDialog.stateDialogPassword
+                ? "border-red-300"
+                : "border-gray-300"
+                }`}
               required
             />
           </div>
           <div
-            className={`alert-box-inner alert-container mb-4 flex font-semibold text-red-600 ${
-              !stateDialog.stateDialogPassword ? "block" : "hidden"
-            }`}
+            className={`alert-box-inner alert-container mb-4 flex font-semibold text-red-600 ${!stateDialog.stateDialogPassword ? "block" : "hidden"
+              }`}
           >
             <PriorityHighIcon className="icon-alert"></PriorityHighIcon>
             <div className="alert-content text-xs ml-2">
@@ -293,11 +289,10 @@ export default function Login() {
             </div>
           </div>
           <div
-            className={`alert-box-inner alert-container mb-4 flex font-semibold text-red-600 ${
-              message !== "" && stateDialog.stateDialogPassword
-                ? "block"
-                : "hidden"
-            }`}
+            className={`alert-box-inner alert-container mb-4 flex font-semibold text-red-600 ${message !== "" && stateDialog.stateDialogPassword
+              ? "block"
+              : "hidden"
+              }`}
           >
             <PriorityHighIcon className="icon-alert"></PriorityHighIcon>
             <div className="alert-content text-xs ml-2">
