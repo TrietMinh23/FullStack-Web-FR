@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React, {useEffect, useState} from "react";
+import {useSelector, useDispatch} from "react-redux";
 import FmdGoodIcon from "@mui/icons-material/FmdGood";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import ItemCart from "./components/ItemCart";
@@ -9,21 +9,20 @@ import SuccessfullForm from "./components/SuccessfullForm";
 import UnsuccessFullForm from "./components/UnsuccessFullForm";
 import PopupChangeInfo from "./components/PopUp/PopupChangeInfo";
 import CheckoutModal from "./components/ModalPayments";
+import formatNumberWithCommas from "../../../utils/formatNumberWithCommas";
 
 import {
   updatedPayments,
   updatedProductPrice,
 } from "../../../utils/redux/purchaseSlice";
 import getCookie from "../../../utils/getCookie";
-import { instance } from "../../../api/config";
+import {instance} from "../../../api/config";
 import setCookie from "../../../utils/setCookie";
-import { UPDATETOTAL } from "../../../utils/redux/productsSlice";
+import {UPDATETOTAL} from "../../../utils/redux/productsSlice";
 
 export default function Purchase() {
   const [statePayment, setStatePayment] = useState(false);
-
   const [modalIsOpen, setModalOpen] = useState(false);
-
   const [isCashPayment, setCashPayment] = useState(true);
   const [isVNPAYPayment, setVNPAYPayment] = useState(false);
   const dispatch = useDispatch();
@@ -123,7 +122,7 @@ export default function Purchase() {
       sum += i.item.length;
     }
 
-    return sum;
+    return formatNumberWithCommas(sum);
   };
 
   const summarizePrice = (list) => {
@@ -139,7 +138,7 @@ export default function Purchase() {
       })
     );
 
-    return sum;
+    return formatNumberWithCommas(sum);
   };
 
   useEffect(() => {
@@ -264,7 +263,7 @@ export default function Purchase() {
                       <div className="md:ml-10">
                         <span>{shipping}</span>
                         <div className="time-recieve text-xs text-gray-800">
-                          Nhận hàng vào 18 Th07 - 19 Th07
+                          Nhận hàng vào  {new Date(Date.now() + 24*60*60*1000).toLocaleDateString('vi-VN', { weekday: "long", year: "numeric", month: "short", day: "numeric"})}
                         </div>
                       </div>
                       <div className="btn-change">

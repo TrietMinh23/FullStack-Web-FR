@@ -1,6 +1,7 @@
 import MallIcon from "../../../../assets/MallIcon";
 import React from "react";
 import ItemItemCart from "./ItemItemCart";
+import formatNumberWithCommas from "../../../../utils/formatNumberWithCommas";
 
 export default function ItemCart({ shop }) {
   return (
@@ -16,7 +17,7 @@ export default function ItemCart({ shop }) {
       {shop?.item.map((item, i) => (
         <ItemItemCart
           name={item.title}
-          price={item.price}
+          price={formatNumberWithCommas(item.price)}
           image={item.image}
           brand={item.brandName}
           condition={item.condition ? item.condition : 100}

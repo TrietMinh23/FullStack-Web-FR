@@ -5,6 +5,7 @@ import { createPaymentUrl, paymentCash } from "../../../../api/order";
 import getCookie from "../../../../utils/getCookie";
 import validatePhoneNumber from "../../../../utils/validatePhone";
 import setCookie from "../../../../utils/setCookie";
+import formatNumberWithCommas from "../../../../utils/formatNumberWithCommas";
 
 // Component hiển thị thông tin chi tiết về thanh toán
 function PaymentDetailsRow({ label, amount }) {
@@ -24,13 +25,13 @@ function PaymentDetails({ productPrice, shipPrice }) {
         <thead>
           <PaymentDetailsRow
             label="Merchandise Subtotal"
-            amount={productPrice}
+            amount={formatNumberWithCommas(productPrice)}
           />
-          <PaymentDetailsRow label="Shipping Total" amount={shipPrice} />
+          <PaymentDetailsRow label="Shipping Total" amount={formatNumberWithCommas(shipPrice)} />
           <tr>
             <th className="text-left">Total Payment:</th>
             <td className="text-right pl-4 py-2 text-3xl font-semibold text-red-500">
-              ₫{productPrice + shipPrice}
+              ₫{formatNumberWithCommas(productPrice + shipPrice)}
             </td>
           </tr>
         </thead>
@@ -45,8 +46,9 @@ export default function CheckoutModal({ formData }) {
   const payments = useSelector((state) => state.purchase.payments);
   const shippingPrice = useSelector((state) => state.purchase.shipPrice);
   const productPrice = useSelector((state) => state.purchase.productPrice);
-  const products = useSelector((state) => state.product.purchase);
-  const [isLoading, setLoading] = useState(false);
+  const products = useSelector((state) => state.product.shoppingCart);
+
+  console.log("CHECK", products);
 
   // Biến chứa nhãn phương thức thanh toán dựa vào dữ liệu từ Redux store
   let paymentMethodLabel = "";
@@ -111,7 +113,7 @@ export default function CheckoutModal({ formData }) {
         city: arrAddress[3],
       };
       const productList = i.item.map((item) => item._id);
-      const totalBill =
+      const totalBill = 
         i.item.reduce(
           (accumulator, product) => accumulator + product.price,
           0
@@ -155,8 +157,8 @@ export default function CheckoutModal({ formData }) {
           </h1>
           <hr />
           <PaymentDetails
-            productPrice={productPrice}
-            shipPrice={shippingPrice}
+            productPrice={(productPrice)}
+            shipPrice={(shippingPrice)}
           />
         </div>
       )}

@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import ChartOne from "../components/ChartOne";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import Card from "../../Home/PersonalProfile/components/card";
+import formatNumberWithCommas from "../../../utils/formatNumberWithCommas";
 import {
   getOrdersBySellerId,
   getDailyIncomeBySeller,
@@ -34,7 +35,7 @@ export default function Review() {
       icon: <MonetizationOnIcon fontSize="large" />,
       id: 1,
       text: `Daily Sales ${dailyIncome}`,
-      number: orderStatusTotalAmounts["Delivered"] || 0,
+      number: formatNumberWithCommas(orderStatusTotalAmounts["Delivered"]) || 0,
       interaction: "53",
       color: "blue",
       title: "Total Sales",
@@ -43,7 +44,7 @@ export default function Review() {
       icon: <MonetizationOnIcon fontSize="large" />,
       id: 2,
       text: `Daily Refund ${dailyRefund}`,
-      number: orderStatusTotalAmounts["Cancelled"] || 0,
+      number: formatNumberWithCommas(orderStatusTotalAmounts["Cancelled"]) || 0,
       interaction: "53",
       color: "orange",
       title: "Total Refund",
