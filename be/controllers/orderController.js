@@ -99,13 +99,11 @@ export const getOrdersByUserId = async (req, res) => {
       console.log("hihi");
 
       const regex = new RegExp(searchQuery, "i"); 
-      const filteredOrders = orders.filter((order) => {
+      const orders = orders.filter((order) => {
         return order.products.some((product) => {
           return regex.test(product.title);
         });
       });
-
-      console.log("test", filteredOrders);
 
       return res.status(200).json({
         currentPage: page,

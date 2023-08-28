@@ -67,15 +67,6 @@ const TableItem = (
     const endIndex = startIndex + perPage;
 
     let filteredData = rows;
-
-    if (searchTerm) {
-      filteredData = rows?.filter((row) => {
-        return Object.values(row).some((value) =>
-          value.toString().toLowerCase().includes(searchTerm.toLowerCase())
-        );
-      });
-    }
-
     let sortedData = filteredData;
 
     if (sortColumn) {
