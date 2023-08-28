@@ -138,6 +138,18 @@ export const getIncomeForAllDeliveredOrders = async () => {
   }
 };
 
+export const getRefundForAllDeliveredOrders = async () => { 
+  try {
+    const response = await instance.get("/orders/admin/refund");
+    return response;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.error ||
+        "Error getting refund for all delivered orders."
+    );
+  }
+};
+
 export const getCurrentMonthIncome = async () => {
   try {
     const response = await instance.get("/orders/admin/income/current/month");

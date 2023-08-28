@@ -17,6 +17,7 @@ import {
   getRefundForALlMonths,
   getIncomeForAllDeliveredOrders,
   getCurrentYearIncome,
+  getRefundForAllDeliveredOrders
 } from "../controllers/orderController.js";
 import {
   verifyToken,
@@ -42,6 +43,7 @@ router.get("/admin/income/current/month", getCurrentMonthIncome);
 router.get("/admin/income/allmonth", getIncomeForAllMonths);
 router.get("/admin/refund/allmonth", getRefundForALlMonths);
 router.get("/admin/income", getIncomeForAllDeliveredOrders);
+router.get("/admin/refund", getRefundForAllDeliveredOrders);
 
 router.get("/:userId", getOrdersByUserId);
 router.post("/", verifyToken, createOrder);
