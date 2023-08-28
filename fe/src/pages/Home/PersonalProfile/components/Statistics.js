@@ -5,8 +5,8 @@ import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
 import CancelIcon from "@mui/icons-material/Cancel";
 import formatNumberWithCommas from "../../../../utils/formatNumberWithCommas";
 
-export default function Statistic(orderStatus, orderStatusTotalAmounts) {
-  
+export default function Statistic({orderStatus, orderStatusTotalAmounts}) {
+  console.log("orderStatus",orderStatus)
   const staticTable = [
     {
       icon: <AutorenewIcon fontSize="large" />,
