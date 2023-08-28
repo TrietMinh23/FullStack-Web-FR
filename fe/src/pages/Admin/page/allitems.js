@@ -69,7 +69,7 @@ export default function Allitems() {
       }
     };
     fetchProducts();
-  }, [page, perPage,searchQuery]);
+  }, [page, perPage, searchQuery]);
 
   const handleSelectEditRow = (tradeCode) => {
     setSelectedTradeCode(tradeCode); // Set the selected TradeCode in state

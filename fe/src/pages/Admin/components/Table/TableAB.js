@@ -236,17 +236,17 @@ const Table = ({
               </th>
               <th
                 className="p-3 text-sm font-semibold tracking-wide text-center"
-                onClick={() => handleSort("status")}
+                onClick={() => handleSort("isBlocked")}
               >
                 Status{" "}
-                {sortColumn === "status" && (sortOrder === "asc" ? "▲" : "▼")}
+                {sortColumn === "isBlocked" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
                 className="p-3 text-sm font-semibold tracking-wide text-center"
-                onClick={() => handleSort("signUpDate")}
+                onClick={() => handleSort("createdAt")}
               >
                 Sign Up Date{" "}
-                {sortColumn === "signUpDate" &&
+                {sortColumn === "createdAt" &&
                   (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th className="p-3 text-sm font-semibold tracking-wide text-center">

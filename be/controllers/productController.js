@@ -184,7 +184,7 @@ export const getAllProducts = async (req, res) => {
     var limit = parseInt(req.query.limit) || 20;
     var searchQuery = req.query.searchQuery || "";
 
-    console.log(page, limit);
+    console.log(searchQuery);
 
     const skip = (page - 1) * limit;
 

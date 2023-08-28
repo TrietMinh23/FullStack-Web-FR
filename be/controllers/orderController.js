@@ -750,6 +750,8 @@ export const getOrderBySellerId = async (req, res) => {
   try {
     const sellerId = req.params.id; // Convert the sellerId to ObjectId type
 
+    console.log("Seller ID:", sellerId);
+
     // Pagination
     var page = parseInt(req.query.page) || 1;
     var limit = parseInt(req.query.limit) || 15;
@@ -757,7 +759,22 @@ export const getOrderBySellerId = async (req, res) => {
 
     var ordersCount = await Order.find()
       .populate("products", "sellerId")
-      .countDocuments();
+
+      var productsWithSellerId = ordersCount.map(order =>
+        order.products.filter(product => 
+            product.sellerId.toString() === sellerId 
+          ).length
+      );
+      
+      var totalProductsCount = productsWithSellerId.reduce((total, count) => total + count, 0);
+    
+    if(totalProductsCount === 0) {
+      console.log("No orders found for this seller.");
+      return res.status(404).json({error: "No orders found for this seller."});
+    }
+
+    ordersCount = ordersCount.length;
+
     var orders = await Order.find()
       .populate(
         "products",
@@ -772,6 +789,7 @@ export const getOrderBySellerId = async (req, res) => {
       .exec();
 
     if (!orders.length) {
+      console.log("No orders found.");
       return res.status(404).json({error: "No orders found."});
     } else {
       const orderStatusCounts = {
