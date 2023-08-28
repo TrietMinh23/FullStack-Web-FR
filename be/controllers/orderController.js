@@ -98,12 +98,21 @@ export const getOrdersByUserId = async (req, res) => {
     } else {
       console.log("hihi");
 
-      const regex = new RegExp(searchQuery, "i"); 
-      const orders = orders.filter((order) => {
-        return order.products.some((product) => {
-          return regex.test(product.title);
+      if (searchQuery) {
+        const regex = new RegExp(searchQuery, "i");
+        orders = orders.filter((order) => {
+          return order.products.some((product) => {
+            return regex.test(product.title);
+          });
         });
-      });
+      }
+
+      const orderStatusCounts = {
+        Processing: 0,
+        Dispatched: 0,
+        Cancelled: 0,
+        Delivered: 0,
+      };
 
       const orderStatusTotalAmounts = {
         Processing: 0,
@@ -115,21 +124,21 @@ export const getOrdersByUserId = async (req, res) => {
       for (var item of orders) {
         var status = item.orderStatus;
         var totalAmount = await item.calculateTotalPrice();
-      
+
         if (orderStatusCounts.hasOwnProperty(status)) {
           orderStatusCounts[status]++;
           orderStatusTotalAmounts[status] += totalAmount;
         }
+
+        console.log("Order status counts:", orderStatusCounts);
+        console.log("Order status total amounts:", orderStatusTotalAmounts);
       }
-      
-      console.log("Order status counts:", orderStatusCounts);
-      console.log("Order status total amounts:", orderStatusTotalAmounts);
-      console.log("Total:", orderStatusTotalAmounts);
-      console.log("total", orderStatusTotalAmounts);
       return res.status(200).json({
         currentPage: page,
         totalPages: Math.ceil(ordersCount / limit),
         orders,
+        orderStatusCounts,
+        orderStatusTotalAmounts,
       });
     }
   } catch (err) {
