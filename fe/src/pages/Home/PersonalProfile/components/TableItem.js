@@ -20,8 +20,6 @@ const TableItem = (
   const [sortColumn, setSortColumn] = useState(""); // Cột hiện tại được sắp xếp
   const [sortOrder, setSortOrder] = useState(""); // Thứ tự sắp xếp ('asc' hoặc 'desc')
   const [searchTerm, setSearchTerm] = useState(""); // Giá trị tìm kiếm
-  const [selectedItems, setSelectedItems] = useState([]); // Các sản phẩm được chọn
-  const [selectAll, setSelectAll] = useState(false); // Tất cả sản phẩm được chọn
   const [isReview, setIsReview] = useState(false);
   const [isCancel, setIsCancel] = useState(false);
   const [isReport, setIsReport] = useState(false);
@@ -64,36 +62,6 @@ const TableItem = (
     setSearchTerm(newSearchTerm);
     onSearchTermChange(newSearchTerm); // Call the callback prop
   };
-
-  const handleCheckboxChange = (event, item) => {
-    const { checked } = event.target;
-
-    if (checked) {
-      setSelectedItems((prevSelectedItems) => [...prevSelectedItems, item]);
-    } else {
-      setSelectedItems((prevSelectedItems) =>
-        prevSelectedItems.filter(
-          (selectedItem) => selectedItem.shopName !== item.shopName
-        )
-      );
-    }
-  };
-
-  const handleSelectAllChange = (event) => {
-    const { checked } = event.target;
-
-    if (checked) {
-      setSelectAll(true);
-    } else {
-      setSelectAll(false);
-      setSelectedItems([]);
-    }
-  };
-
-  const handleDelete = () => {
-    setSelectedItems([]);
-  };
-
   const getCurrentPageData = () => {
     const startIndex = (currentPage - 1) * perPage;
     const endIndex = startIndex + perPage;
@@ -141,25 +109,12 @@ const TableItem = (
           value={searchTerm}
           onChange={updateSearchTerm}
         />
-        <button
-          className="ml-2 p-2 hover:bg-red-600 bg-red-500 text-white rounded-md"
-          onClick={handleDelete}
-        >
-          <FaTrashAlt />
-        </button>
       </div>
 
       <div className="overflow-auto rounded-lg shadow hidden xl:block">
         <table className="w-full">
           <thead className="bg-gray-50 border-b-2 border-gray-200">
             <tr>
-              <th>
-                <input
-                  type="checkbox"
-                  checked={selectAll}
-                  onChange={handleSelectAllChange}
-                />
-              </th>
               <th
                 className="w-20 p-3 text-sm font-semibold tracking-wide text-left"
                 onClick={() => handleSort("shopName")}
@@ -182,11 +137,11 @@ const TableItem = (
                 {sortColumn === "price" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
-                className="w-24 p-3 text-sm font-semibold tracking-wide text-left"
-                onClick={() => handleSort("status")}
+                className="w-24 p-3 text-sm font-semibold tracking-wide text-center"
+                onClick={() => handleSort("orderStatus")}
               >
                 Status{" "}
-                {sortColumn === "status" && (sortOrder === "asc" ? "▲" : "▼")}
+                {sortColumn === "orderStatus" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
                 className="w-24 p-3 text-sm font-semibold tracking-wide text-left"
@@ -196,7 +151,7 @@ const TableItem = (
                 {sortColumn === "orderDate" &&
                   (sortOrder === "asc" ? "▲" : "▼")}
               </th>
-              <th className="w-32 p-3 text-sm font-semibold tracking-wide text-left">
+              <th className="w-32 p-3 text-sm font-semibold tracking-wide text-center">
                 Action
               </th>
             </tr>
@@ -207,15 +162,6 @@ const TableItem = (
                 className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
                 key={index}
               >
-                <td className="p-3 text-sm text-center text-gray-700 whitespace-nowrap">
-                  <input
-                    type="checkbox"
-                    checked={selectedItems.some(
-                      (item) => item.shopName === row.shopName
-                    )}
-                    onChange={(event) => handleCheckboxChange(event, row)}
-                  />
-                </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
                   {row.products[0].sellerId.name}
                 </td>

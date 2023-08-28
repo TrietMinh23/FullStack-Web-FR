@@ -119,7 +119,6 @@ const Table = ({
         <table className="w-full">
           <thead className="bg-gray-50 border-b-2 border-gray-200">
             <tr>
-
               <th
                 className="w-20 p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("id_reporter.name")}
