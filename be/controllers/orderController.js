@@ -87,7 +87,7 @@ export const getOrdersByUserId = async (req, res) => {
       .populate({
         path: "products",
         populate: {
-          path: "sellerId",
+          path: "userId",
           model: "User",
           select: "name",
         },
@@ -100,19 +100,91 @@ export const getOrdersByUserId = async (req, res) => {
       .limit(limit)
       .exec();
 
-    if (orders.length === 0) {
-      return res.status(404).json({ message: "No orders found." });
-    } else {
-      return res.status(200).json({
-        currentPage: page,
-        totalPages: Math.ceil(ordersl.length / limit),
-        orders,
+    const orderStatusCounts = {
+      "Not Processed": 0,
+      "Cash on Delivery": 0,
+      Processing: 0,
+      Dispatched: 0,
+      Cancelled: 0,
+      Delivered: 0,
+    };
+
+    const orderStatusTotalAmounts = {
+      "Not Processed": 0,
+      "Cash on Delivery": 0,
+      Processing: 0,
+      Dispatched: 0,
+      Cancelled: 0,
+      Delivered: 0,
+    };
+
+    let totalPages = 0;
+    const filteredOrders = [];
+
+    orders.forEach((order) => {
+      const orderTotalAmount = order.products
+        .filter((product) => product.userId._id.toString() === userId)
+        .reduce((total, product) => total + product.price, 0);
+
+      orderStatusCounts[order.orderStatus]++;
+      orderStatusTotalAmounts[order.orderStatus] += orderTotalAmount;
+      totalPages++;
+
+      filteredOrders.push({
+        _id: order._id,
+        products: order.products
+          .filter((product) => product.userId._id.toString() === userId)
+          .map((product) => ({
+            _id: product._id,
+            title: product.title,
+            description: product.description,
+            price: product.price,
+            brandName: product.brandName,
+            category: product.category,
+            slug: product.slug,
+            sold: product.sold,
+            image: product.image,
+            color: product.color,
+            userId: product.userId,
+            createdAt: product.createdAt,
+            condition: product.condition,
+          })),
+        orderStatus: order.orderStatus,
+        orderby: {
+          mobile: order.orderby.mobile,
+          name: order.orderby.name,
+        },
+        payment: {
+          paymentMethod: order.payment.paymentMethod,
+        },
+        shipping: {
+          address: order.shipping.address,
+          city: order.shipping.city,
+          district: order.shipping.district,
+          ward: order.shipping.ward,
+        },
+        orderDate: order.orderDate,
       });
+    });
+
+    const paginatedOrders = filteredOrders.slice(skip, skip + limit);
+
+    if (paginatedOrders.length === 0) {
+      return res.status(404).json({ error: "No orders found for this seller." });
     }
+
+    res.status(200).json({
+      filteredOrders: paginatedOrders,
+      orderStatusCounts,
+      orderStatusTotalAmounts,
+      currentPage: page,
+      totalPages: Math.ceil(totalPages / limit),
+    });
   } catch (err) {
-    res.status(400).json({error: err.message});
+    res.status(400).json({ error: err.message });
   }
 };
+
 
 export const getCurrentMonthIncome = async (req, res) => {
   try {
