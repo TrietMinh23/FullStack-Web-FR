@@ -97,7 +97,8 @@ export default function Review() {
 
     try {
       const response = await getReview(path, page, perPage, searchQuery);
-      setReview(response.data.review);
+      console.log(response.data);
+      setReview(response.data.reviews);
       setAllData(response.data);
       setTotalPages(response.data.totalPages);
       return response.data;
