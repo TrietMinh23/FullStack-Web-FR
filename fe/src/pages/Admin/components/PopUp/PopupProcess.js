@@ -3,50 +3,50 @@ import { TiTick } from "react-icons/ti";
 import RowData from "./rowData";
 import { blockBuyer, unblockBuyer } from "../../../../api/buyer";
 
-export default function PopupReview({ close, finish, i, data }) {
-  const steps = ["Report Info", "Action", "Informing"];
-  const [currentStep, setCurrentStep] = useState(1);
-  const [complete, setComplete] = useState(false);
-  const [isUpdating, setIsUpdating] = useState(false);
-  const [selectedItems, setSelectedItems] = useState([]); // Các sản phẩm được chọn
+export default function PopupReview ({close, finish, i, data, at}) {
+    const steps = ["Report Info", "Action","Informing" ];
+    const [currentStep, setCurrentStep] = useState(1);
+    const [complete, setComplete] = useState(false);
+    const [isUpdating, setIsUpdating] = useState(false);
+    const [selectedItems, setSelectedItems] = useState([]); // Các sản phẩm được chọn
+    
+    console.log(data[i].id_reporter)
 
-  console.log(data[i].id_reporter);
-
-  const handleBlockUserRow = async (item) => {
-    try {
-      setIsUpdating(true);
-      await blockBuyer(item._id);
-      // Handle success or update your local data accordingly
-      setSelectedItems((prevSelectedItems) =>
-        prevSelectedItems.filter(
-          (selectedItem) => selectedItem.tradeCode !== item.tradeCode
-        )
-      );
-    } catch (error) {
-      console.error("Error updating order status:", error.message);
-      // Handle error or display an error message
-    } finally {
-      setIsUpdating(false);
-    }
-  };
-
-  const handleUnblockUserRow = async (item) => {
-    try {
-      setIsUpdating(true);
-      await unblockBuyer(item._id);
-      // Handle success or update your local data accordingly
-      setSelectedItems((prevSelectedItems) =>
-        prevSelectedItems.filter(
-          (selectedItem) => selectedItem.tradeCode !== item.tradeCode
-        )
-      );
-    } catch (error) {
-      console.error("Error updating order status:", error.message);
-      // Handle error or display an error message
-    } finally {
-      setIsUpdating(false);
-    }
-  };
+    const handleBlockUserRow = async (item) => {
+        try {
+          setIsUpdating(true);
+          await blockBuyer(item._id);
+          // Handle success or update your local data accordingly
+          setSelectedItems((prevSelectedItems) =>
+            prevSelectedItems.filter(
+              (selectedItem) => selectedItem.tradeCode !== item.tradeCode
+            )
+          );
+        } catch (error) {
+          console.error("Error updating order status:", error.message);
+          // Handle error or display an error message
+        } finally {
+          setIsUpdating(false);
+        }
+      };
+    
+      const handleUnblockUserRow = async (item) => {
+        try {
+          setIsUpdating(true);
+          await unblockBuyer(item._id);
+          // Handle success or update your local data accordingly
+          setSelectedItems((prevSelectedItems) =>
+            prevSelectedItems.filter(
+              (selectedItem) => selectedItem.tradeCode !== item.tradeCode
+            )
+          );
+        } catch (error) {
+          console.error("Error updating order status:", error.message);
+          // Handle error or display an error message
+        } finally {
+          setIsUpdating(false);
+        }
+      };
 
   const formatDate = (date) => {
     const options = { year: "numeric", month: "short", day: "numeric" };
