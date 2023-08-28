@@ -1,13 +1,52 @@
 import React, { useState } from "react";
 import { TiTick } from "react-icons/ti";
 import RowData from "./rowData";
+import { blockBuyer, unblockBuyer } from "../../../../api/buyer";
 
 export default function PopupReview ({close, finish, i, data, at}) {
     const steps = ["Report Info", "Action","Informing" ];
     const [currentStep, setCurrentStep] = useState(1);
     const [complete, setComplete] = useState(false);
+    const [isUpdating, setIsUpdating] = useState(false);
+    const [selectedItems, setSelectedItems] = useState([]); // Các sản phẩm được chọn
+    
+    console.log(data[i].id_reporter)
 
-    console.log(at)
+    const handleBlockUserRow = async (item) => {
+        try {
+          setIsUpdating(true);
+          await blockBuyer(item._id);
+          // Handle success or update your local data accordingly
+          setSelectedItems((prevSelectedItems) =>
+            prevSelectedItems.filter(
+              (selectedItem) => selectedItem.tradeCode !== item.tradeCode
+            )
+          );
+        } catch (error) {
+          console.error("Error updating order status:", error.message);
+          // Handle error or display an error message
+        } finally {
+          setIsUpdating(false);
+        }
+      };
+    
+      const handleUnblockUserRow = async (item) => {
+        try {
+          setIsUpdating(true);
+          await unblockBuyer(item._id);
+          // Handle success or update your local data accordingly
+          setSelectedItems((prevSelectedItems) =>
+            prevSelectedItems.filter(
+              (selectedItem) => selectedItem.tradeCode !== item.tradeCode
+            )
+          );
+        } catch (error) {
+          console.error("Error updating order status:", error.message);
+          // Handle error or display an error message
+        } finally {
+          setIsUpdating(false);
+        }
+      };
 
     const formatDate = (date) => {
         const options = { year: 'numeric', month: 'short', day: 'numeric' };
@@ -88,9 +127,11 @@ export default function PopupReview ({close, finish, i, data, at}) {
                             >Block: </div>
                             <button
                             className="bg-orange-500 px-2 text-white font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-orange-500 hover:text-orange-500"
+                            onClick={() => handleBlockUserRow(data[i].id_reporter)}
                             >Account Reporter</button>
                             <button
                             className="bg-orange-500 px-2 text-white font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-orange-500 hover:text-orange-500"
+                            onClick={() => handleBlockUserRow(data[i].id_reported)}
                             >Account Reported</button>
                         </div>
                         <div className ="flex justify-between my-5">

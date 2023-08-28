@@ -48,13 +48,13 @@ export default function AllOrders() {
   };
 
   useEffect(() => {
-    console.log("total",totalPages)
-  },[totalPages]);
+    console.log("total",data)
+  },[data]);
   return (
     <div className="xl:ml-64 ml-0 p-4 mt-[-100vh]" id="info">
       <Statistic />
       <TableItem 
-        rows = {data.orders}
+        rows = {data?.orders}
         page={page}
         perPage={perPage}
         onPageChange={handleChange}

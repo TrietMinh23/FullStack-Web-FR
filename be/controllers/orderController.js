@@ -64,24 +64,20 @@ export const updateOrder = async (req, res) => {
 export const getOrdersByUserId = async (req, res) => {
   try {
     const userId = req.params.userId;
-
+    const searchQuery = req.query.searchQuery || "";
+    console.log("test", searchQuery);
     // Pagination
     var page = parseInt(req.query.page) || 1;
     var limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    const ordersl = await Order.find({orderby: userId})
-    .populate({
-      path: "products",
-      populate: {
-        path: "sellerId",
-        model: "User",
-        select: "name",
-      },
-    })
-    .populate("orderby", "name")
-    .populate("payment", "paymentMethod")
-    .populate("shipping", "address city ward")
+    const ordersCount = await Order.countDocuments({orderby: userId});
+
+    if (!ordersCount) {
+      console.log("No orders found for this buyer.");
+      res.status(404).json({message: "No orders found for this buyer."});
+      return;
+    }
 
     const orders = await Order.find({orderby: userId})
       .populate({
@@ -89,24 +85,31 @@ export const getOrdersByUserId = async (req, res) => {
         populate: {
           path: "sellerId",
           model: "User",
-          select: "name",
+          select: "name title",
         },
       })
       .populate("orderby", "name")
       .populate("payment", "paymentMethod")
       .populate("shipping", "address city ward")
-      .sort({createAt: -1})
-      .skip(skip)
-      .limit(limit)
-      .exec();
-    console.log("length",req.query.searchQuery);
+      .sort({ createAt: -1 });
 
     if (orders.length === 0) {
-      return res.status(404).json({ message: "No orders found." });
+      return res.status(404).json({message: "No orders found."});
     } else {
+      console.log("hihi");
+
+      const regex = new RegExp(searchQuery, "i"); 
+      const filteredOrders = orders.filter((order) => {
+        return order.products.some((product) => {
+          return regex.test(product.title);
+        });
+      });
+
+      console.log("test", filteredOrders);
+
       return res.status(200).json({
         currentPage: page,
-        totalPages: Math.ceil(ordersl.length / limit),
+        totalPages: Math.ceil(ordersCount / limit),
         orders,
       });
     }
@@ -143,23 +146,23 @@ export const getCurrentMonthIncome = async (req, res) => {
       {
         $group: {
           _id: null,
-          totalIncome: { $sum: "$productData.price" },
+          totalIncome: {$sum: "$productData.price"},
         },
       },
     ]);
 
     if (income.length > 0) {
-      return res.status(200).json({ income: income[0].totalIncome });
+      return res.status(200).json({income: income[0].totalIncome});
     } else {
       return res
         .status(404)
-        .json({ message: "No income available for current month." });
+        .json({message: "No income available for current month."});
     }
   } catch (error) {
     console.error("Error calculating income:", error);
     return res
       .status(500)
-      .json({ message: "An error occurred while calculating income." });
+      .json({message: "An error occurred while calculating income."});
   }
 };
 
@@ -191,26 +194,25 @@ export const getCurrentYearIncome = async (req, res) => {
       {
         $group: {
           _id: null,
-          totalIncome: { $sum: "$productData.price" },
+          totalIncome: {$sum: "$productData.price"},
         },
       },
     ]);
 
     if (income.length > 0) {
-      return res.status(200).json({ income: income[0].totalIncome });
+      return res.status(200).json({income: income[0].totalIncome});
     } else {
       return res
         .status(404)
-        .json({ message: "No income available for current year." });
+        .json({message: "No income available for current year."});
     }
   } catch (error) {
     console.error("Error calculating income:", error);
     return res
       .status(500)
-      .json({ message: "An error occurred while calculating income." });
+      .json({message: "An error occurred while calculating income."});
   }
 };
-
 
 export const getIncomeForAllMonths = async (req, res) => {
   try {
@@ -237,10 +239,10 @@ export const getIncomeForAllMonths = async (req, res) => {
       {
         $group: {
           _id: {
-            year: { $year: "$createdAt" },
-            month: { $month: "$createdAt" },
+            year: {$year: "$createdAt"},
+            month: {$month: "$createdAt"},
           },
-          totalIncome: { $sum: "$productData.price" },
+          totalIncome: {$sum: "$productData.price"},
         },
       },
       {
@@ -252,17 +254,17 @@ export const getIncomeForAllMonths = async (req, res) => {
     ]);
 
     if (income.length > 0) {
-      return res.status(200).json({ income });
+      return res.status(200).json({income});
     } else {
       return res
         .status(404)
-        .json({ message: "No income available for any month." });
+        .json({message: "No income available for any month."});
     }
   } catch (error) {
     console.error("Error calculating income:", error);
     return res
       .status(500)
-      .json({ message: "An error occurred while calculating income." });
+      .json({message: "An error occurred while calculating income."});
   }
 };
 
@@ -291,10 +293,10 @@ export const getRefundForALlMonths = async (req, res) => {
       {
         $group: {
           _id: {
-            year: { $year: "$createdAt" },
-            month: { $month: "$createdAt" },
+            year: {$year: "$createdAt"},
+            month: {$month: "$createdAt"},
           },
-          totalRefund: { $sum: "$productData.price" },
+          totalRefund: {$sum: "$productData.price"},
         },
       },
       {
@@ -306,17 +308,17 @@ export const getRefundForALlMonths = async (req, res) => {
     ]);
 
     if (refund.length > 0) {
-      return res.status(200).json({ refund });
+      return res.status(200).json({refund});
     } else {
       return res
         .status(404)
-        .json({ message: "No refund available for any month." });
+        .json({message: "No refund available for any month."});
     }
   } catch (error) {
     console.error("Error calculating refund:", error);
     return res
       .status(500)
-      .json({ message: "An error occurred while calculating refund." });
+      .json({message: "An error occurred while calculating refund."});
   }
 };
 
@@ -345,27 +347,25 @@ export const getIncomeForAllDeliveredOrders = async (req, res) => {
       {
         $group: {
           _id: null,
-          totalIncome: { $sum: "$productData.price" },
+          totalIncome: {$sum: "$productData.price"},
         },
       },
     ]);
 
     if (totalIncome.length > 0) {
-      return res.status(200).json({ totalIncome: totalIncome[0].totalIncome });
+      return res.status(200).json({totalIncome: totalIncome[0].totalIncome});
     } else {
       return res
         .status(404)
-        .json({ message: "No income available for delivered orders." });
+        .json({message: "No income available for delivered orders."});
     }
   } catch (error) {
     console.error("Error calculating income:", error);
     return res
       .status(500)
-      .json({ message: "An error occurred while calculating income." });
+      .json({message: "An error occurred while calculating income."});
   }
 };
-
-
 
 // get Income By Seller Id For All Months
 export const getIncomeBySellerIdForAllMonths = async (req, res) => {
@@ -415,7 +415,7 @@ export const getIncomeBySellerIdForAllMonths = async (req, res) => {
     ]);
 
     if (income.length > 0) {
-      return res.status(200).json({ income });
+      return res.status(200).json({income});
     } else {
       // Thêm mã vào đây để trả về các trường có giá trị là 0
       const zeroIncome = [
@@ -427,7 +427,7 @@ export const getIncomeBySellerIdForAllMonths = async (req, res) => {
           totalIncome: 0,
         },
       ];
-      return res.status(200).json({ income: zeroIncome });
+      return res.status(200).json({income: zeroIncome});
     }
   } catch (error) {
     console.error("Error calculating income:", error);
@@ -484,7 +484,7 @@ export const getRefundBySellerIdForAllMonths = async (req, res) => {
     ]);
 
     if (refund.length > 0) {
-      return res.status(200).json({ refund });
+      return res.status(200).json({refund});
     } else {
       // Thêm mã vào đây để trả về các trường có giá trị là 0
       const zeroRefund = [
@@ -496,7 +496,7 @@ export const getRefundBySellerIdForAllMonths = async (req, res) => {
           totalRefund: 0,
         },
       ];
-      return res.status(200).json({ refund: zeroRefund });
+      return res.status(200).json({refund: zeroRefund});
     }
   } catch (error) {
     console.error("Error calculating refund:", error);
@@ -608,9 +608,7 @@ export const getDailyIncomeBySeller = async (req, res) => {
     if (income.length > 0) {
       return res.status(200).json({income: income[0].totalIncome});
     } else {
-      return res
-        .status(200)
-        .json({ income: 0 });
+      return res.status(200).json({income: 0});
     }
   } catch (error) {
     console.error("Error calculating income:", error);
@@ -665,9 +663,7 @@ export const getDailyRefundBySeller = async (req, res) => {
     if (refund.length > 0) {
       return res.status(200).json({refund: refund[0].totalRefund});
     } else {
-      return res
-        .status(200)
-        .json({ refund: 0 });
+      return res.status(200).json({refund: 0});
     }
   } catch (error) {
     console.error("Error calculating refund:", error);
@@ -686,7 +682,7 @@ export const getOrderBySellerId = async (req, res) => {
     var limit = parseInt(req.query.limit) || 15;
     var searchQuery = req.query.searchQuery || "";
     console.log(searchQuery);
-    
+
     const skip = (page - 1) * limit;
 
     const orders = await Order.find()
@@ -694,7 +690,7 @@ export const getOrderBySellerId = async (req, res) => {
       .populate("shipping")
       .populate("payment")
       .populate("orderby")
-      .sort({ createdAt: -1 });
+      .sort({createdAt: -1});
 
     const orderStatusCounts = {
       "Not Processed": 0,
@@ -773,16 +769,14 @@ export const getOrderBySellerId = async (req, res) => {
     if (filteredOrders.length === 0) {
       return res.status(404).json({error: "No orders found for this seller."});
     }
-    
-    res
-      .status(200)
-      .json({
-        filteredOrders,
-        orderStatusCounts,
-        orderStatusTotalAmounts,
-        currentPage: page,
-        totalPages: Math.ceil(totalPages / limit),
-      });
+
+    res.status(200).json({
+      filteredOrders,
+      orderStatusCounts,
+      orderStatusTotalAmounts,
+      currentPage: page,
+      totalPages: Math.ceil(totalPages / limit),
+    });
   } catch (err) {
     console.log({error: err.message});
     res.status(500).json({error: "Internal server error"});

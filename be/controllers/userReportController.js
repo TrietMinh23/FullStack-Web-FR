@@ -9,8 +9,8 @@ export const getUserReport = async (req, res) => {
 
     const report = await userReport
       .find()
-      .populate("id_reporter", "name")
-      .populate("id_reported", "name")
+      .populate("id_reporter", "name isBlocked")
+      .populate("id_reported", "name isBlocked")
       .skip(skip)
       .limit(limit)
       .exec();

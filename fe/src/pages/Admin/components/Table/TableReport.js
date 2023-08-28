@@ -1,9 +1,9 @@
-import React, {useState, useEffect} from "react";
-import {FaTrashAlt, FaPen} from "react-icons/fa";
-import {PiMagnifyingGlass} from "react-icons/pi";
-import {AiOutlineCheckCircle} from "react-icons/ai";
+import React, { useState, useEffect } from "react";
+import { FaTrashAlt, FaPen } from "react-icons/fa";
+import { PiMagnifyingGlass } from "react-icons/pi";
+import { AiOutlineCheckCircle } from "react-icons/ai";
 import PopupProcess from "../PopUp/PopupProcess";
-import {updateReport} from "../../../../api/Report/updateReport";
+import { updateReport } from "../../../../api/Report/updateReport";
 import PaginationComponent from "../../../Home/components/Pagination";
 
 const Table = ({
@@ -23,7 +23,6 @@ const Table = ({
   const [isReview, setIsReview] = useState(false);
   const [isProcess, setIsProcess] = useState(false);
 
-
   const updateSearchTerm = (event) => {
     const newSearchTerm = event.target.value;
     setSearchTerm(newSearchTerm);
@@ -40,6 +39,7 @@ const Table = ({
       setSortOrder("asc");
     }
   };
+
   const finishProcess = () => {
     setIsProcess(false);
     rows[isHandle].status = "Done";
@@ -48,7 +48,7 @@ const Table = ({
   };
 
   const Update = async (data) => {
-    await updateReport({_id: data})
+    await updateReport({ _id: data })
       .then((res) => {
         console.log(res.data);
       })
@@ -89,15 +89,15 @@ const Table = ({
     return sortedData?.slice(startIndex, endIndex);
   };
   const formatDate = (date) => {
-    const options = {year: "numeric", month: "short", day: "numeric"};
+    const options = { year: "numeric", month: "short", day: "numeric" };
     const parts = new Date(date)
       .toLocaleDateString(undefined, options)
       .split(" ");
     return `${parts[1]} ${parts[0]}, ${parts[2]}`;
   };
   useEffect(() => {
-    console.log("right?",rows);
-  },[rows]);
+    console.log("right?", rows);
+  }, [rows]);
   return (
     <div className="p-5 h-full bg-gray-100 w-full rounded-md">
       <h1 className="text-xl mb-2">All Reports</h1>
@@ -115,11 +115,10 @@ const Table = ({
         />
       </div>
 
-       <div className="overflow-auto rounded-lg shadow hidden lg:block">
+      <div className="overflow-auto rounded-lg shadow hidden lg:block">
         <table className="w-full">
           <thead className="bg-gray-50 border-b-2 border-gray-200">
             <tr>
-
               <th
                 className="w-20 p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("id_reporter.name")}
@@ -129,12 +128,26 @@ const Table = ({
                   (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
+                className="p-3 text-sm font-semibold tracking-wide text-center"
+                onClick={() => handleSort("status")}
+              >
+                Status Reporter{" "}
+                {sortColumn === "status" && (sortOrder === "asc" ? "▲" : "▼")}
+              </th>
+              <th
                 className="w-24 p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("id_reported.name")}
               >
                 Reported{" "}
                 {sortColumn === "id_reported.name" &&
                   (sortOrder === "asc" ? "▲" : "▼")}
+              </th>
+              <th
+                className="p-3 text-sm font-semibold tracking-wide text-center"
+                onClick={() => handleSort("status")}
+              >
+                Status Reported{" "}
+                {sortColumn === "status" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
                 className="p-3 text-sm font-semibold tracking-wide text-center"
@@ -151,12 +164,12 @@ const Table = ({
                 {sortColumn === "createdAt" &&
                   (sortOrder === "asc" ? "▲" : "▼")}
               </th>
-              <th className="w-32 p-3 text-sm font-semibold tracking-wide text-center"
+              <th
+                className="w-32 p-3 text-sm font-semibold tracking-wide text-center"
                 onClick={() => handleSort("status")}
               >
                 Status{" "}
-                {sortColumn === "status"  && 
-                  (sortOrder === "asc" ? "▲" : "▼")}
+                {sortColumn === "status" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th className="w-32 p-3 text-sm font-semibold tracking-wide text-center">
                 Action
@@ -172,8 +185,32 @@ const Table = ({
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                   {row.id_reporter.name}
                 </td>
+                <td className="p-3 text-xs font-medium uppercase text-gray-700 whitespace-nowrap ">
+                  <span
+                    className={
+                      "block text-center p-2 rounded-md bg-opacity-50  " +
+                      (row.id_reporter.isBlocked === false
+                        ? "text-green-800 bg-green-200"
+                        : "text-red-800 bg-red-200")
+                    }
+                  >
+                    {row.id_reporter.isBlocked === false ? "Active" : "Blocked"}
+                  </span>
+                </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                   {row.id_reported.name}
+                </td>
+                <td className="p-3 text-xs font-medium uppercase text-gray-700 whitespace-nowrap ">
+                  <span
+                    className={
+                      "block text-center p-2 rounded-md bg-opacity-50  " +
+                      (row.id_reported.isBlocked === false
+                        ? "text-green-800 bg-green-200"
+                        : "text-red-800 bg-red-200")
+                    }
+                  >
+                    {row.id_reported.isBlocked === false ? "Active" : "Blocked"}
+                  </span>
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                   {row.title}
@@ -193,8 +230,8 @@ const Table = ({
                   >
                     {row.status}
                   </span>
-                </td> 
-                 {row.status === "Done" ? (
+                </td>
+                {row.status === "Done" ? (
                   <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                     <button className="text-blue-500 font-bold hover:underline">
                       <AiOutlineCheckCircle className="w-5 h-5 text-blue-500" />
@@ -212,12 +249,12 @@ const Table = ({
                       <PiMagnifyingGlass className="w-5 h-5 text-blue-500" />
                     </button>
                   </td>
-                )} 
+                )}
               </tr>
             ))}
           </tbody>
         </table>
-      </div> 
+      </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:hidden">
         {getCurrentPageData()?.map((row, index) => (
@@ -266,7 +303,7 @@ const Table = ({
             </div>
           </div>
         ))}
-      </div> 
+      </div>
 
       {/* Pagination */}
       <div className="flex justify-between items-center mt-4 flex-col lg:flex-row">
@@ -286,7 +323,11 @@ const Table = ({
           </select>
         </div>
         <div className="flex w-full justify-end">
-          <PaginationComponent setPage={onPageChange} page={page} totalPage={totalPages}/>
+          <PaginationComponent
+            setPage={onPageChange}
+            page={page}
+            totalPage={totalPages}
+          />
         </div>
       </div>
       {isProcess && (
