@@ -60,6 +60,18 @@ export const updateOrderStatusToDispatched = async (orderId) => {
   }
 };
 
+export const updateOrderStatusToCancelled = async (orderId) => {
+  try {
+    const response = await instance.put(`/orders/cancel/${orderId}`);
+    return response;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.error ||
+        "Error updating order status to Dispatched."
+    );
+  }
+};
+
 export const getDailyIncomeBySeller = async (sellerId) => {
   try {
     const response = await instance.get(`/orders/income/daily/${sellerId}`);

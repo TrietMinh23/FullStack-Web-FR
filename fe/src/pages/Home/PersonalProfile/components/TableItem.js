@@ -4,9 +4,8 @@ import PopupReview from "./Popup/PopupReview";
 import PopupCancel from "./Popup/PopupCancel";
 import moment from "moment";
 import PopupReport from "./Popup/PopupReport";
-import { getOrdersByUserId } from "../../../../api/order";
 import PaginationComponent from "../../../Home/components/Pagination";
-
+import {updateOrderStatusToCancelled} from "../../../../api/order";
 const TableItem = (
   {rows,
   onPageChange,
@@ -41,6 +40,13 @@ const TableItem = (
   };
   const finishCancel = () => {
     setIsCancel(false);
+    // try {
+    //   const response = updateOrderStatusToCancelled(rows[indexCancel]._id);    
+    //   return response.data;
+    // } catch (error) {
+    //   console.log(error);
+    //   return null;
+    // }
   };
   const closeReport = () => {
     setIsReport(false);
@@ -216,14 +222,8 @@ const TableItem = (
                   )}
                   {row.orderStatus === "Dispatched" && (
                     <div className="grow flex">
-                      <button
-                        onClick={() => {
-                          setIsCancel(!isCancel);
-                          setIndexCancel(index);
-                        }}
-                        className="mr-2 md:w-1/2 bg-red-500 py-2 px-4 text-white font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-red-500 hover:text-red-500"
-                      >
-                        Cancel
+                      <button className="mr-2 md:w-1/2 bg-yellow-500 py-2 px-4 text-white font-semibold rounded-md border-2 border-transparent ">
+                        Waiting
                       </button>
                       <button
                         onClick={() => {
@@ -238,8 +238,15 @@ const TableItem = (
                   )}
                   {(row.orderStatus === "Processing" ||  row.orderStatus === "Not Processed") && (
                     <div className="grow flex">
-                      <button className="mr-2 md:w-1/2 bg-yellow-500 py-2 px-4 text-white font-semibold rounded-md border-2 border-transparent ">
-                        Waiting
+                      
+                      <button
+                        onClick={() => {
+                          setIsCancel(!isCancel);
+                          setIndexCancel(index);
+                        }}
+                        className="mr-2 md:w-1/2 bg-red-500 py-2 px-4 text-white font-semibold rounded-md hover:bg-white border-2 border-transparent  hover:border-2 hover:border-red-500 hover:text-red-500"
+                      >
+                        Cancel
                       </button>
                       <button
                         onClick={() => {
@@ -281,7 +288,7 @@ const TableItem = (
                   href="/#"
                   className="text-blue-500 font-bold hover:underline"
                 >
-                  shopName {row.products[0].sellerId.name}
+                  shopName {row.products[0].sellerId?.name}
                 </a>
               </div>
               <div className="text-gray-500">{row.orderDate}</div>

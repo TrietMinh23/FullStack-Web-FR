@@ -41,6 +41,8 @@ export const deleteOrder = async (req, res) => {
   }
 };
 
+
+
 export const updateOrder = async (req, res) => {
   try {
     const { id } = req.params;
@@ -78,7 +80,6 @@ export const getOrdersByUserId = async (req, res) => {
       res.status(404).json({ message: "No orders found for this buyer." });
       return;
     }
-
     var orders = await Order.find({orderby: userId})
       .populate({
         path: "products",
@@ -95,7 +96,7 @@ export const getOrdersByUserId = async (req, res) => {
       .skip(skip)
       .limit(limit)
       .exec();
-
+    console.log("data", orders);
     if (!orders.length) {
       return res.status(404).json({message: "No orders found."});
     } else {
@@ -848,6 +849,30 @@ export const updateOrderStatusToDispatched = async (req, res) => {
       }
     }, DELIVERY_TIMEOUT);
 
+    res.status(200).json({
+      message: "Order status updated to Dispatched.",
+      order: updatedOrder,
+    });
+  } catch (err) {
+    console.log({ error: err.message });
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const updateOrderStatusToCancelled = async (req, res) => {
+  try {
+    const orderId = req.params.orderId; // Get the order ID from the request parameters
+
+    // Find the order by its ID and update the status to "Dispatched"
+    const updatedOrder = await Order.findByIdAndUpdate(
+      orderId,
+      { orderStatus: "Cancelled" },
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedOrder) {
+      return res.status(404).json({ error: "Order not found." });
+    }
     res.status(200).json({
       message: "Order status updated to Dispatched.",
       order: updatedOrder,
