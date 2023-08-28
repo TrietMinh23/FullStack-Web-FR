@@ -40,13 +40,13 @@ const TableItem = (
   };
   const finishCancel = () => {
     setIsCancel(false);
-    // try {
-    //   const response = updateOrderStatusToCancelled(rows[indexCancel]._id);    
-    //   return response.data;
-    // } catch (error) {
-    //   console.log(error);
-    //   return null;
-    // }
+    try {
+      const response = updateOrderStatusToCancelled(rows[indexCancel]._id);    
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
   };
   const closeReport = () => {
     setIsReport(false);
