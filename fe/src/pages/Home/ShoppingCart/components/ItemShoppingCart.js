@@ -7,7 +7,7 @@ import {
   REMOVEFROMPURCHASEBYSHOPALL,
 } from "../../../../utils/redux/productsSlice";
 import { useDispatch } from "react-redux";
-
+import formatNumberWithCommas from "../../../../utils/formatNumberWithCommas";
 export default function ItemShoppingCart({ shop }) {
   const dispatch = useDispatch();
 
@@ -52,7 +52,7 @@ export default function ItemShoppingCart({ shop }) {
       {shop.item.map((item, i) => (
         <ItemItemShoppingCart
           name={item.title}
-          price={item.price}
+          price={formatNumberWithCommas(item.price)}
           image={item.image}
           brand={item.brandName}
           condition={item.condition ? item.condition : 100}
