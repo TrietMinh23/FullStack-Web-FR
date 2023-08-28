@@ -34,7 +34,7 @@ export default function Review() {
     {
       icon: <MonetizationOnIcon fontSize="large" />,
       id: 1,
-      text: `Daily Sales ${Number(dailyIncome)}`,
+      text: `Daily Sales ${formatNumberWithCommas(Number(dailyIncome) || 0)}`,
       number: orderStatusTotalAmounts["Delivered"] || 0,
       interaction: "53",
       color: "blue",
@@ -43,7 +43,7 @@ export default function Review() {
     {
       icon: <MonetizationOnIcon fontSize="large" />,
       id: 2,
-      text: `Daily Refund ${Number(dailyRefund)}`,
+      text: `Daily Refund ${formatNumberWithCommas(Number(dailyRefund) || 0)}`,
       number: orderStatusTotalAmounts["Cancelled"] || 0,
       interaction: "53",
       color: "orange",
