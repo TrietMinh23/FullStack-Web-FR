@@ -1,17 +1,5 @@
 import {userReview} from "../models/userReviewModel.js";
 
-export const getUserReview = async (req, res) => {
-  try {
-    const review = await userReview
-      .find()
-      .populate("buyer", "name")
-      .populate("seller", "name");
-    res.status(200).json(report);
-  } catch (err) {
-    res.status(404).json({error: err.message});
-  }
-};
-
 export const createReview = async (req, res) => {
   try {
     const newReport = new userReview(req.body);
@@ -38,7 +26,7 @@ export const getReviewBySellerId = async (req, res) => {
       .limit(limit)
       .exec();
 
-    const totalReviews = await userReview.countDocuments({
+    const totalReview = await userReview.countDocuments({
       seller: sellerId,
       "seller.name": {$regex: searchQuery, $options: "i"},
     });
@@ -72,9 +60,9 @@ export const getReviewBySellerId = async (req, res) => {
         totalStar1) /
       totalReview;
     const AvgStar = parseFloat(Avg.toFixed(1));
-    if (review) {
+    if (reviews) {
       res.status(200).json({
-        review,
+        reviews,
         currentPage: page,
         totalReview,
         totalPages,

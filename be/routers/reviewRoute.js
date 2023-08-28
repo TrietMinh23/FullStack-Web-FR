@@ -1,6 +1,5 @@
 import express from "express";
 import {
-  getUserReview,
   createReview,
   getReviewBySellerId,
   getAllReviewsBySellerId,
@@ -12,7 +11,6 @@ const router = express.Router();
 // create API endpoints
 
 router.get("/count", countAllReview);
-router.get("/", getUserReview);
 router.get("/:id", getReviewBySellerId);
 router.get("/all/:id", getAllReviewsBySellerId);
 router.post("/send", createReview);

@@ -5,7 +5,7 @@ const userReviewSchema = new mongoose.Schema(
     orderedProduct: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Order",
-      require: true,
+      required: true,
     },
     rating: {
       star: Number,
@@ -14,12 +14,12 @@ const userReviewSchema = new mongoose.Schema(
     buyer: {
       type: mongoose.Schema.Types.ObjectId, 
       ref: "User",
-      require: true,
+      required: true,
     },
     seller: {
       type: mongoose.Schema.Types.ObjectId, 
       ref: "User",
-      require: true,
+      required: true,
     },
   },
   {
