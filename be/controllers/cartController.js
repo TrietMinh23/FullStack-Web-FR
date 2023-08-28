@@ -7,6 +7,7 @@ export const getCartByUserId = async (req, res) => {
       { userId: userId },
       "products totalPrice _id"
     );
+
     await cart
       .populate({
         path: "products.product",

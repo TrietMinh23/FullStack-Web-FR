@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 import LoadingIcon from "../../components/ui/LoadingIcon";
 import setCookie from "../../utils/setCookie";
 import axios from "axios";
+import { signup } from "../../api/signup";
 import getCookie from "../../utils/getCookie";
 
 const initialStateDialog = {
@@ -67,7 +68,96 @@ export default function Login() {
   };
 
   const signInWithGoolge = () => {
-    signInWithGoogle();
+    const rememberMe = document.getElementById("remember_me").checked;
+    signInWithGoogle().then(async (res) => {
+      await login({
+        email: res.user.email,
+        password: "GOOGLE",
+        role,
+      })
+        .then((res) => {
+          setCookie("access_token", res.data.access_token, 1 * 24 * 60 * 60);
+          setCookie("refresh_token", res.data.refresh_token, 3 * 24 * 60 * 60);
+          axios
+            .get("http://localhost:5000/users/user_info", {
+              headers: {
+                Authorization: `${res.data.access_token}`,
+                "Content-Type": "application/x-www-form-urlencoded",
+              },
+            })
+            .then((res) => {
+              for (let i in res.data) {
+                localStorage.setItem(i, JSON.stringify(res.data[i]));
+              }
+              if (res.status === 200) {
+                setLoading(false);
+                if (role === "buyer") {
+                  navigate("/");
+                  window.location.reload();
+                } else {
+                  navigate("/seller");
+                  window.location.reload();
+                }
+              }
+            })
+            .catch((err) => console.log(err));
+        })
+        .catch(async (err) => {
+          console.log(err);
+          await signup({
+            email: res.user.email,
+            password: "GOOGLE",
+            name: res.user.displayName,
+            role,
+          })
+            .then((res) => {
+              setCookie("access_token", res.data.access_token, 5);
+              setCookie(
+                "refresh_token",
+                res.data.refresh_token,
+                3 * 24 * 60 * 60
+              );
+              axios
+                .get(`http://localhost:5000/users/user_info`, {
+                  headers: {
+                    Authorization: res.data.access_token,
+                  },
+                })
+                .then((res) => {
+                  for (let i in res.data) {
+                    localStorage.setItem(i, JSON.stringify(res.data[i]));
+                  }
+
+                  if (res.status === 200) {
+                    setLoading(false);
+                    if (rememberMe) {
+                      setCookie("email", formData.email, 3 * 24 * 60 * 60);
+                      setCookie(
+                        "password",
+                        formData.password,
+                        3 * 24 * 60 * 60
+                      );
+                    }
+                    if (role === "buyer") {
+                      navigate("/");
+                      window.location.reload();
+                    } else {
+                      navigate("/seller");
+                      window.location.reload();
+                    }
+                  }
+                })
+                .catch((err) => {
+                  console.log(err);
+                  setLoading(false);
+                });
+            })
+            .catch((err) => {
+              setMessage(err.response.data.message);
+              setLoading(false);
+            });
+        });
+    });
   };
 
   const Login = async (e) => {

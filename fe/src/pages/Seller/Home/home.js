@@ -1,6 +1,6 @@
 import React from "react";
-import { useState } from "react";
-import { useEffect } from "react";
+import {useState} from "react";
+import {useEffect} from "react";
 import ChartOne from "../components/ChartOne";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import Card from "../../Home/PersonalProfile/components/card";
@@ -34,8 +34,8 @@ export default function Review() {
     {
       icon: <MonetizationOnIcon fontSize="large" />,
       id: 1,
-      text: `Daily Sales ${dailyIncome}`,
-      number: (orderStatusTotalAmounts["Delivered"]) || 0,
+      text: `Daily Sales ${formatNumberWithCommas(Number(dailyIncome) || 0)}`,
+      number: orderStatusTotalAmounts["Delivered"] || 0,
       interaction: "53",
       color: "blue",
       title: "Total Sales",
@@ -43,8 +43,8 @@ export default function Review() {
     {
       icon: <MonetizationOnIcon fontSize="large" />,
       id: 2,
-      text: `Daily Refund ${dailyRefund}`,
-      number: (orderStatusTotalAmounts["Cancelled"]) || 0,
+      text: `Daily Refund ${formatNumberWithCommas(Number(dailyRefund) || 0)}`,
+      number: orderStatusTotalAmounts["Cancelled"] || 0,
       interaction: "53",
       color: "orange",
       title: "Total Refund",

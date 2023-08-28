@@ -26,6 +26,7 @@ export default function ShoppingRelativeProducts({ category, id }) {
               title={item.title}
               image={item.image}
               price={item.price}
+              brand={item.brandName}
             />
           ))
         ) : (

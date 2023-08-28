@@ -238,49 +238,43 @@ export default function ProductDetail() {
                       </div>
                       <div className="w-[100px] text-center">
                         <div
-                          className={`custom-button ${
-                            seeStar === 0 ? "active" : ""
-                          }`}
+                          className={`custom-button ${seeStar === 0 ? "active" : ""
+                            }`}
                           onClick={() => setSeeStar(0)}
                         >
                           All({dataReview.totalReview})
                         </div>
                         <div
-                          className={`custom-button ${
-                            seeStar === 5 ? "active" : ""
-                          }`}
+                          className={`custom-button ${seeStar === 5 ? "active" : ""
+                            }`}
                           onClick={() => setSeeStar(5)}
                         >
                           5 stars({dataReview.totalStar5})
                         </div>
                         <div
-                          className={`custom-button ${
-                            seeStar === 4 ? "active" : ""
-                          }`}
+                          className={`custom-button ${seeStar === 4 ? "active" : ""
+                            }`}
                           onClick={() => setSeeStar(4)}
                         >
                           4 stars({dataReview.totalStar4})
                         </div>
                         <div
-                          className={`custom-button ${
-                            seeStar === 3 ? "active" : ""
-                          }`}
+                          className={`custom-button ${seeStar === 3 ? "active" : ""
+                            }`}
                           onClick={() => setSeeStar(3)}
                         >
                           3 star({dataReview.totalStar3})
                         </div>
                         <div
-                          className={`custom-button ${
-                            seeStar === 2 ? "active" : ""
-                          }`}
+                          className={`custom-button ${seeStar === 2 ? "active" : ""
+                            }`}
                           onClick={() => setSeeStar(2)}
                         >
                           2 stars({dataReview.totalStar2})
                         </div>
                         <div
-                          className={`custom-button ${
-                            seeStar === 1 ? "active" : ""
-                          }`}
+                          className={`custom-button ${seeStar === 1 ? "active" : ""
+                            }`}
                           onClick={() => setSeeStar(1)}
                         >
                           1 star ({dataReview.totalStar1})
