@@ -104,6 +104,8 @@ export const getProductsByRelativeCategory = async (req, res) => {
     const categorySlug = req.query.category;
     const id = req.query.id;
 
+    console.log(categorySlug, id);
+
     const products = await Product.aggregate([
       {
         $match: {
