@@ -19,7 +19,7 @@ export const getReviewBySellerId = async (req, res) => {
     const reviews = await userReview
       .find({
         seller: sellerId,
-        "seller.name": {$regex: searchQuery, $options: "i"},
+        // "seller.name": {$regex: searchQuery, $options: "i"},
       })
       .populate("buyer", "name")
       .skip(skip)
@@ -28,7 +28,7 @@ export const getReviewBySellerId = async (req, res) => {
 
     const totalReview = await userReview.countDocuments({
       seller: sellerId,
-      "seller.name": {$regex: searchQuery, $options: "i"},
+      // "seller.name": {$regex: searchQuery, $options: "i"},
     });
     const totalPages = Math.ceil(totalReview / limit);
 
