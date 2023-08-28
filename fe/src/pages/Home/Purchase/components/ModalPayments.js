@@ -128,13 +128,11 @@ export default function CheckoutModal({ formData }) {
       totalOrder.push(order);
     }
 
-    setLoading(true);
 
     if (payments === "Cash") {
       paymentCash(JSON.stringify(totalOrder))
         .then((res) => {
           console.log(res);
-          setLoading(false);
           setCookie("vnp_params", { vnp_ResponseCode: "00" }, 3 * 60 * 60);
           setTimeout(window.location.reload(), 1500);
         })

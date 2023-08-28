@@ -7,7 +7,7 @@ import {
   ADDTOPURCHASEALL,
   REMOVEFROMPURCHASEALL,
 } from "../../../utils/redux/productsSlice";
-
+import formatNumberWithCommas from "../../../utils/formatNumberWithCommas";
 export default function ShoppingCart() {
   const products = useSelector((state) => state.product.shoppingCart);
   const purchase = useSelector((state) => state.product.purchase);
@@ -21,7 +21,7 @@ export default function ShoppingCart() {
       sum += i.item.length;
     }
 
-    return sum;
+    return formatNumberWithCommas(sum);
   };
 
   const summarizePrice = (list) => {
@@ -32,7 +32,7 @@ export default function ShoppingCart() {
       }
     }
 
-    return sum;
+    return formatNumberWithCommas(sum);
   };
 
   const selectAllProducts = (e) => {
