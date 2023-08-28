@@ -3,8 +3,10 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   products: [],
   shoppingCart: [],
+  search: false,
   purchase: [],
   total: 0,
+  totalPage: 1,
 };
 
 export const productsSlice = createSlice({
@@ -181,6 +183,12 @@ export const productsSlice = createSlice({
     REMOVEFROMPURCHASEALL: (state) => {
       state.purchase = [];
     },
+    SEARCH: (state, action) => {
+      state.search = action.payload.flag;
+    },
+    UPDATETOTALPAGE: (state, action) => {
+      state.totalPage = action.payload.totalPages;
+    },
   },
 });
 
@@ -196,7 +204,9 @@ export const {
   ADDTOPURCHASEBYSHOPALL,
   REMOVEFROMPURCHASEBYSHOPALL,
   ADDTOPURCHASEALL,
+  SEARCH,
   REMOVEFROMPURCHASEALL,
+  UPDATETOTALPAGE,
 } = productsSlice.actions;
 
 export default productsSlice.reducer;

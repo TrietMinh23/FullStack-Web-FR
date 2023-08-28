@@ -8,7 +8,9 @@ export default function Category({ setCategory }) {
 
   useEffect(() => {
     getByCategoryRelative()
-      .then((res) => setData(res.data))
+      .then((res) => {
+        setData(res.data);
+      })
       .catch((err) => console.log(err));
   }, []);
 
