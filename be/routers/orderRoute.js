@@ -47,7 +47,6 @@ router.get("/:userId", getOrdersByUserId);
 router.post("/", verifyToken, createOrder);
 router.put("/:id", verifyTokenAndAdmin, updateOrder);
 router.delete("/:id", deleteOrder);
-router.get("/:userId", getOrdersByUserId);
 router.put("/update/:orderId", updateOrderStatusToDispatched);
 router.get("/sellerId/:id", getOrderBySellerId);
 

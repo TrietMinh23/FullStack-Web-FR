@@ -1,14 +1,14 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import Select from "react-tailwindcss-select";
-import {useEffect} from "react";
-import {rows} from "../data/dataTable";
-import {ProductID, createProduct, updateProduct} from "../../../api/products";
-import {getByCategoryRelative} from "../../../api/category";
-import {MultiSelect} from "react-multi-select-component";
+import { useEffect } from "react";
+import { rows } from "../data/dataTable";
+import { ProductID, createProduct, updateProduct } from "../../../api/products";
+import { getByCategoryRelative } from "../../../api/category";
+import { MultiSelect } from "react-multi-select-component";
 
 let options = [];
 
-const Form = ({title, PH, value}) => (
+const Form = ({ title, PH, value }) => (
   <div className="mb-4">
     <label htmlFor={title} className="mb-2 self-start capitalize">
       {title} :
@@ -24,7 +24,7 @@ const Form = ({title, PH, value}) => (
   </div>
 );
 
-const NewProductForm = ({tradeCode, role}) => {
+const NewProductForm = ({ tradeCode, role }) => {
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [selected, setSelected] = useState([]);
   const [imageFile, setImageFile] = useState(null);
@@ -51,16 +51,12 @@ const NewProductForm = ({tradeCode, role}) => {
     formData.append("description", e.target.description.value);
     formData.append("price", e.target.price.value);
     formData.append("brandName", e.target.brand.value);
-    if (!imageFile || !productData?.image) {
-      alert("No image");
-      return;
-    }
     if (imageFile instanceof File) {
       console.log(1);
       formData.append("image", imageFile); // Thêm hình ảnh mới vào formData nếu có sự thay đổi
     } else {
       console.log(2);
-      formData.append("image", productData.image); // Sử dụng hình ảnh hiện tại nếu không có sự thay đổi
+      formData.append("image", productData?.image); // Sử dụng hình ảnh hiện tại nếu không có sự thay đổi
     }
     formData.append("color", e.target.color.value);
     formData.append("condition", e.target.condition.value);

@@ -136,7 +136,10 @@ export const AccountProfileDetails = ({ name, email, mobile, address }) => {
     <>
       <form autoComplete="off" noValidate onSubmit={handleSubmit}>
         <Card className="px-6 py-4 shadow-lg">
-          <CardHeader subheader="The information can be edited" title="Profile" />
+          <CardHeader
+            subheader="The information can be edited"
+            title="Profile"
+          />
           <CardContent>
             <Box className="space-y-4">
               <Grid container spacing={4}>
@@ -286,8 +289,14 @@ export const AccountProfileDetails = ({ name, email, mobile, address }) => {
       )}
       {isFalse && (
         <div className="flex lg:flex-row flex-col">
-          <PopUpFail
-            close={closeSee}
+          <PopUpFail close={closeSee} at={document.documentElement.scrollTop} />
+          <div id="dimScreen" className={"block"}></div>
+        </div>
+      )}
+      {isSame && (
+        <div className="flex lg:flex-row flex-col">
+          <PopUpSame
+            close={closeSame}
             at={document.documentElement.scrollTop}
           />
           <div id="dimScreen" className={"block"}></div>

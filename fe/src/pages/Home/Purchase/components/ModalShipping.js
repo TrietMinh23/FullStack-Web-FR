@@ -1,6 +1,6 @@
 import CheckIcon from "@mui/icons-material/Check";
 import { useDispatch } from "react-redux";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   updatedShipTotal,
   updatedShipping,
@@ -39,6 +39,24 @@ export default function ModalShipping({ modal, closeModal, at }) {
 
     closeModal();
   };
+
+  const handleResize = () => {
+    if (window.innerWidth <= 1024) {
+      document.querySelector(".modal").removeAttribute("style");
+    } else {
+      document
+        .querySelector(".modal")
+        .setAttribute("style", "top: `calc(50% + ${at}px)`");
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []); // Dependency array is empty to add the event listener only once
 
   return (
     <div

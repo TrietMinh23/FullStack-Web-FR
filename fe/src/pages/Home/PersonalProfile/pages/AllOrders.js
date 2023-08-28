@@ -9,7 +9,9 @@ export default function AllOrders() {
   const [perPage, setPerPage] = useState(5);
   const [totalPages, setTotalPages] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
-  const [orders, setOrders] = useState(null);
+  const [orderStatus, setOrderStatus] = useState([]);
+  const [orderStatusTotalAmounts, setOrderStatusTotalAmounts] = useState([]);
+
   useEffect(() => {
     fetchData();
   },[page, perPage, searchQuery]);
@@ -19,9 +21,11 @@ export default function AllOrders() {
     sessionStorage.setItem("pageTableOrdersPerPage", perPage.toString());
       try {
         const response = await getOrdersByUserId(JSON.parse(localStorage.getItem("_id")),page, perPage, searchQuery);
-        console.log(page, perPage, searchQuery);
+        console.log("response",response.data)
         setData(response.data);
         setTotalPages(response.data.totalPages);
+        setOrderStatus(response.data.orderStatusCounts);
+        setOrderStatusTotalAmounts(response.data.orderStatusTotalAmounts);
         sessionStorage.setItem(
           "totalPage",
           response.data.totalPages.toString()
@@ -48,13 +52,13 @@ export default function AllOrders() {
   };
 
   useEffect(() => {
-    console.log("hi",data)
+    console.log("total",data)
   },[data]);
   return (
     <div className="xl:ml-64 ml-0 p-4 mt-[-100vh]" id="info">
-      <Statistic />
+      <Statistic  orderStatus={orderStatus} orderStatusTotalAmounts={orderStatusTotalAmounts}/>
       <TableItem 
-        rows = {data.orders}
+        rows = {data?.orders}
         page={page}
         perPage={perPage}
         onPageChange={handleChange}

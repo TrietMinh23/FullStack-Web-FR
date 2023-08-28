@@ -73,7 +73,7 @@ function App() {
     };
   }, []);
   return (
-    <div className="App bg-light-silver">
+    <div className="App bg-light-silver h-full">
       <Router></Router>
     </div>
   );

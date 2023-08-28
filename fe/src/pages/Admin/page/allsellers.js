@@ -49,9 +49,9 @@ export default function Allsellers() {
     setPerPage(newPerPage);
     setPage(1); // Reset to first page when changing items per page
   };
-  
+
   const handleSearch = (newSearchTerm) => {
-    setSearchQuery( new RegExp(newSearchTerm.replace(/\s+/g, " "), "i").source); // Update the search query state
+    setSearchQuery(new RegExp(newSearchTerm.replace(/\s+/g, " "), "i").source); // Update the search query state
   };
 
   useEffect(() => {
@@ -59,7 +59,11 @@ export default function Allsellers() {
       sessionStorage.setItem("page", page.toString());
       sessionStorage.setItem("perPage", perPage.toString());
       try {
-        const response = await getSellerPerformanceStats(page, perPage, searchQuery);
+        const response = await getSellerPerformanceStats(
+          page,
+          perPage,
+          searchQuery
+        );
         setSellerData(response.data.Sellers);
         setTotalPositive(response.data.totalPositive);
         setTotalNegative(response.data.totalNegative);
@@ -99,6 +103,7 @@ export default function Allsellers() {
         </div>
         <div className="mt-8 w-full">
           <TableAS
+            at={document.documentElement.scrollTop}
             rows={sellerData}
             page={page}
             onPageChange={handleChange}
