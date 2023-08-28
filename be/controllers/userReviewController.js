@@ -13,23 +13,22 @@ export const getReviewBySellerId = async (req, res) => {
     var page = parseInt(req.query.page) || 1;
     var limit = parseInt(req.query.limit) || 5;
     var searchQuery = req.query.searchQuery || "";
+    // console.log(searchQuery);
 
     const skip = (page - 1) * limit;
     const sellerId = req.params.id;
-    const reviews = await userReview
-      .find({
-        seller: sellerId,
-        // "seller.name": {$regex: searchQuery, $options: "i"},
-      })
+    let query = { seller: sellerId };
+
+    if (searchQuery) {
+      query["$or"] = [{ "seller.name": { $regex: searchQuery, $options: "i" } }];
+    }
+
+    const reviews = await userReview.find(query)
       .populate("buyer", "name")
       .skip(skip)
-      .limit(limit)
-      .exec();
+      .limit(limit);
 
-    const totalReview = await userReview.countDocuments({
-      seller: sellerId,
-      // "seller.name": {$regex: searchQuery, $options: "i"},
-    });
+    const totalReview = reviews.length;
     const totalPages = Math.ceil(totalReview / limit);
 
     const totalStar1 = await userReview.countDocuments({
