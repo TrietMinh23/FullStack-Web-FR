@@ -91,7 +91,10 @@ export const getOrdersByUserId = async (req, res) => {
       .populate("orderby", "name")
       .populate("payment", "paymentMethod")
       .populate("shipping", "address city ward")
-      .sort({createAt: -1});
+      .sort({createAt: -1})
+      .skip(skip)
+      .limit(limit)
+      .exec();
 
     if (orders.length === 0) {
       return res.status(404).json({message: "No orders found."});
