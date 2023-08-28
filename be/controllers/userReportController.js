@@ -7,7 +7,7 @@ export const getUserReport = async (req, res) => {
     var searchQuery = req.query.searchQuery || "";
     const skip = (page - 1) * limit;
 
-    const report = await userReport
+    var report = await userReport
       .find()
       .populate("id_reporter", "name isBlocked")
       .populate("id_reported", "name isBlocked")
@@ -16,11 +16,8 @@ export const getUserReport = async (req, res) => {
       .exec();
     var searchQuery = req.query.searchQuery || "";
 
-    if (searchQuery) {
-      report.forEach((item) => {
-        item.id_reporter.name === searchQuery;
-      });
-    }
+
+
     console.log("search",searchQuery);
     const total = await userReport
       .find();
@@ -38,7 +35,6 @@ export const getUserReport = async (req, res) => {
       status: "Done",
       updatedAt: {$gte: currentDate},
     });
-    console.log(totalPendingToday, totalDoneToday);
     res.status(200).json({
       report,
       totalPending,
