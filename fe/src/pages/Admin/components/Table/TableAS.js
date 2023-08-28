@@ -7,6 +7,7 @@ import PaginationComponent from "../../../Home/components/Pagination";
 import formatNumberWithCommas from "../../../../utils/formatNumberWithCommas";
 
 const Table = ({
+  at,
   rows,
   onPageChange,
   page,
@@ -161,11 +162,9 @@ const Table = ({
       .split(" ");
     return `${parts[1]} ${parts[0]}, ${parts[2]}`;
   };
-
   return (
     <div className="p-5 h-full bg-gray-100 w-full rounded-md">
       <h1 className="text-xl mb-2">All sellers</h1>
-
       {/* Search and Delete */}
       <div className="flex items-center mb-4">
         <div className="flex justify-start w-1/2">
@@ -268,7 +267,7 @@ const Table = ({
                 className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
                 key={row._id}
               >
-                <td className="p-3 text-sm text-center text-gray-700 whitespace-nowrap text-center">
+                <td className="p-3 text-sm text-center text-gray-700 whitespace-nowrap">
                   <input
                     type="checkbox"
                     checked={selectedItems.some((item) => item._id === row._id)}
@@ -340,9 +339,7 @@ const Table = ({
             key={row._id}
           >
             <div className="flex items-center space-x-2 text-sm">
-              <div className="text-blue-500 font-bold">
-                {row.name}
-              </div>
+              <div className="text-blue-500 font-bold">{row.name}</div>
               <div className="text-gray-500">{formatDate(row.createdAt)}</div>
               <div>
                 <span
@@ -419,12 +416,7 @@ const Table = ({
       </div>
       {detailInfor && (
         <div className="flex lg:flex-row flex-col">
-          <PopUpInforSeller
-            close={closeSee}
-            i={indexInfor}
-            data={rows}
-            at={document.documentElement.scrollTop}
-          />
+          <PopUpInforSeller close={closeSee} i={indexInfor} data={rows} />
           <div id="dimScreen" className={"block"}></div>
         </div>
       )}

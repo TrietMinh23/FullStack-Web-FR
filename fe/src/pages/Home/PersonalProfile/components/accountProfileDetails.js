@@ -1,7 +1,8 @@
 import React, { useState, useCallback, useEffect } from "react";
 import PopUpSucess from "./Popup/PopUpSucess";
 import PopUpFail from "./Popup/PopUpFail";
-
+import PopUpSame from "./Popup/PopUpSame";
+import { ValidationEmail } from "../../../../utils/Validation";
 import {
   Box,
   Button,
@@ -42,6 +43,9 @@ const states = [
 export const AccountProfileDetails = ({ name, email, mobile, address }) => {
   const [isFalse, setIsFalse] = useState(false);
   const [isTrue, setIsTrue] = useState(false);
+  const [isSame, setIsSame] = useState(false);
+  const [isNull, setIsNull] = useState(false);
+  const [isSubmit, setIsSubmit] = useState(false);
 
   const [values, setValues] = useState({
     firstName: "",
@@ -51,12 +55,22 @@ export const AccountProfileDetails = ({ name, email, mobile, address }) => {
     state: "vietnam",
     country: "",
   });
-  
+  const firstdata = {
+    name: name,
+    email: email,
+    address: address,
+    mobile:  mobile,
+  };
+  const closeSame = () => {
+    setIsSame(false);
+
+  };
+
   const closeSee = () => {
     setIsFalse(false);
     setIsTrue(false);
+    setIsSame(false);
     window.location.reload();
-
   };
 
   useEffect(() => {
@@ -92,22 +106,29 @@ export const AccountProfileDetails = ({ name, email, mobile, address }) => {
   }, []);
 
   const handleSubmit = async (event) => {
+    setIsSubmit(true);
     event.preventDefault();
-
+    
     let buyerId = localStorage.getItem("_id");
     let cleanedBuyerId = buyerId.replace(/"/g, "");
     const id = cleanedBuyerId;
-
-    try {
-      // Make an API call to update the buyer's details
-      const response = await updateBuyerById(id, formattedValues); // Use formattedValues here
-      console.log("Updated buyer: ", response.data);
-      setIsTrue(true);
-      // Handle success, show a success message or take other actions
-    } catch (error) {
-      setIsFalse(true);
-      // Handle error, show an error message or take other actions
-      console.log("Failed to update buyer: ", error);
+   
+    if(values.lastName && values.firstName && ValidationEmail(values.email) && values.phone && values.state && values.country){
+      if(JSON.stringify(firstdata) == JSON.stringify(formattedValues)){
+        setIsSame(true);
+      } else{
+        try {
+          // Make an API call to update the buyer's details
+          const response = await updateBuyerById(id, formattedValues); // Use formattedValues here
+          console.log("Updated buyer: ", response.data);
+          setIsTrue(true);
+          // Handle success, show a success message or take other actions
+        } catch (error) {
+          setIsFalse(true);
+          // Handle error, show an error message or take other actions
+          console.log("Failed to update buyer: ", error);
+        }
+      }
     }
   };
 
@@ -115,7 +136,10 @@ export const AccountProfileDetails = ({ name, email, mobile, address }) => {
     <>
       <form autoComplete="off" noValidate onSubmit={handleSubmit}>
         <Card className="px-6 py-4 shadow-lg">
-          <CardHeader subheader="The information can be edited" title="Profile" />
+          <CardHeader
+            subheader="The information can be edited"
+            title="Profile"
+          />
           <CardContent>
             <Box className="space-y-4">
               <Grid container spacing={4}>
@@ -129,6 +153,15 @@ export const AccountProfileDetails = ({ name, email, mobile, address }) => {
                     value={values.firstName}
                     variant="outlined"
                   />
+                   <div
+                      className={` ${
+                        isSubmit && !values.firstName 
+                          ? "text-red-700 visible font-semibold"
+                          : "invisible"
+                      }`}
+                    >
+                      !This field can't be empty
+                    </div>
                 </Grid>
                 <Grid xs={12} md={6}>
                   <InputLabel>Last name</InputLabel>
@@ -140,6 +173,15 @@ export const AccountProfileDetails = ({ name, email, mobile, address }) => {
                     value={values.lastName}
                     variant="outlined"
                   />
+                   <div
+                      className={` ${
+                        isSubmit && !values.lastName
+                          ? "text-red-700 visible font-semibold"
+                          : "invisible"
+                      }`}
+                    >
+                      !This field can't be empty
+                    </div>
                 </Grid>
                 <Grid xs={12} md={6}>
                   <InputLabel>Email Address</InputLabel>
@@ -151,6 +193,15 @@ export const AccountProfileDetails = ({ name, email, mobile, address }) => {
                     value={values.email}
                     variant="outlined"
                   />
+                    <div
+                      className={` ${
+                        isSubmit && !ValidationEmail(values.email)
+                          ? "text-red-700 visible font-semibold"
+                          : "invisible"
+                      }`}
+                    >
+                       {!(values.email) ? "This field can't be empty" :"!Wrong format"}
+                    </div>
                 </Grid>
                 <Grid xs={12} md={6}>
                   <InputLabel>Phone Number</InputLabel>
@@ -162,6 +213,15 @@ export const AccountProfileDetails = ({ name, email, mobile, address }) => {
                     value={values.phone}
                     variant="outlined"
                   />
+                   <div
+                      className={` ${
+                        isSubmit && !values.phone
+                          ? "text-red-700 visible font-semibold"
+                          : "invisible"
+                      }`}
+                    >
+                      !This field can't be empty
+                    </div>
                 </Grid>
                 <Grid xs={12} md={6}>
                   <InputLabel>Address</InputLabel>
@@ -173,6 +233,15 @@ export const AccountProfileDetails = ({ name, email, mobile, address }) => {
                     value={values.country}
                     variant="outlined"
                   />
+                   <div
+                      className={` ${
+                        isSubmit && !values.country
+                          ? "text-red-700 visible font-semibold"
+                          : "invisible"
+                      }`}
+                    >
+                      This field can't be empty
+                    </div>
                 </Grid>
                 <Grid xs={12} md={6}>
                   <InputLabel>Select Country</InputLabel>
@@ -186,6 +255,7 @@ export const AccountProfileDetails = ({ name, email, mobile, address }) => {
                     value={values.state}
                     variant="outlined"
                   >
+                    
                     {states.map((option) => (
                       <option key={option.value} value={option.value}>
                         {option.label}
@@ -219,8 +289,23 @@ export const AccountProfileDetails = ({ name, email, mobile, address }) => {
       )}
       {isFalse && (
         <div className="flex lg:flex-row flex-col">
-          <PopUpFail
-            close={closeSee}
+          <PopUpFail close={closeSee} at={document.documentElement.scrollTop} />
+          <div id="dimScreen" className={"block"}></div>
+        </div>
+      )}
+      {isSame && (
+        <div className="flex lg:flex-row flex-col">
+          <PopUpSame
+            close={closeSame}
+            at={document.documentElement.scrollTop}
+          />
+          <div id="dimScreen" className={"block"}></div>
+        </div>
+      )}
+      {isSame && (
+        <div className="flex lg:flex-row flex-col">
+          <PopUpSame
+            close={closeSame}
             at={document.documentElement.scrollTop}
           />
           <div id="dimScreen" className={"block"}></div>

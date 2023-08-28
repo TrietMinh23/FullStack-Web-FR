@@ -380,22 +380,25 @@ export default function TableAl({
             />
           </div>
         </div>
+        {isTrue && (
+          <div className="flex lg:flex-row flex-col">
+            <PopUpSucess
+              close={closeSee}
+              at={document.documentElement.scrollTop}
+            />
+            <div id="dimScreen" className={"block"}></div>
+          </div>
+        )}
+        {isFalse && (
+          <div className="flex lg:flex-row flex-col">
+            <PopUpFail
+              close={closeSee}
+              at={document.documentElement.scrollTop}
+            />
+            <div id="dimScreen" className={"block"}></div>
+          </div>
+        )}
       </div>
-      {isTrue && (
-        <div className="flex lg:flex-row flex-col">
-          <PopUpSucess
-            close={closeSee}
-            at={document.documentElement.scrollTop}
-          />
-          <div id="dimScreen" className={"block"}></div>
-        </div>
-      )}
-      {isFalse && (
-        <div className="flex lg:flex-row flex-col">
-          <PopUpFail close={closeSee} at={document.documentElement.scrollTop} />
-          <div id="dimScreen" className={"block"}></div>
-        </div>
-      )}
     </>
   );
 }

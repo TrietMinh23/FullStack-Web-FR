@@ -98,6 +98,7 @@ const Table = ({
   useEffect(() => {
     console.log("right?", rows);
   }, [rows]);
+
   return (
     <div className="p-5 h-full bg-gray-100 w-full rounded-md">
       <h1 className="text-xl mb-2">All Reports</h1>
@@ -337,7 +338,6 @@ const Table = ({
             finish={finishProcess}
             i={isHandle}
             data={rows}
-            at={document.documentElement.scrollTop}
           />
           <div id="dimScreen" className={"block"}></div>
         </div>

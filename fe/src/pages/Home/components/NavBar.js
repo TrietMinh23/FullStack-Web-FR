@@ -20,6 +20,7 @@ import { useDispatch } from "react-redux";
 import { products } from "../../../api/products";
 import { useEffect } from "react";
 import deleteAllCookies from "../../../utils/deleteCookie";
+import { useRef } from "react";
 
 const Navbar = () => {
   const dispatch = useDispatch();
