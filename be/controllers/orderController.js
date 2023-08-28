@@ -883,7 +883,6 @@ export const updateOrderStatusToCancelled = async (req, res) => {
       { orderStatus: "Cancelled" },
       { new: true } // Return the updated document
     );
-
     if (!updatedOrder) {
       return res.status(404).json({ error: "Order not found." });
     }
