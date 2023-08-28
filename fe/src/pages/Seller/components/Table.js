@@ -230,7 +230,7 @@ export default function Table({
                   {row.itemName}
                 </td>
                 <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
-                  {row.price}
+                  {formatNumberWithCommas(row.price)}
                 </td>
                 <td className="p-3 text-xs font-medium uppercase text-gray-700 whitespace-nowrap">
                   <span
