@@ -91,7 +91,7 @@ export const getOrdersByUserId = async (req, res) => {
       .populate("orderby", "name")
       .populate("payment", "paymentMethod")
       .populate("shipping", "address city ward")
-      .sort({ createAt: -1 });
+      .sort({createAt: -1});
 
     if (orders.length === 0) {
       return res.status(404).json({message: "No orders found."});
@@ -105,6 +105,27 @@ export const getOrdersByUserId = async (req, res) => {
         });
       });
 
+      const orderStatusTotalAmounts = {
+        Processing: 0,
+        Dispatched: 0,
+        Cancelled: 0,
+        Delivered: 0,
+      };
+
+      for (var item of orders) {
+        var status = item.orderStatus;
+        var totalAmount = await item.calculateTotalPrice();
+      
+        if (orderStatusCounts.hasOwnProperty(status)) {
+          orderStatusCounts[status]++;
+          orderStatusTotalAmounts[status] += totalAmount;
+        }
+      }
+      
+      console.log("Order status counts:", orderStatusCounts);
+      console.log("Order status total amounts:", orderStatusTotalAmounts);
+      console.log("Total:", orderStatusTotalAmounts);
+      console.log("total", orderStatusTotalAmounts);
       return res.status(200).json({
         currentPage: page,
         totalPages: Math.ceil(ordersCount / limit),
