@@ -6,7 +6,7 @@ import AnalyticEcommerce from "../components/AnalyticEcommerce";
 import formatNumberWithCommas from "../../../utils/formatNumberWithCommas";
 
 import { Stack, Grid } from "@mui/material";
-import { getIncomeForAllMonths, getRefundForAllMonths,getIncomeForAllDeliveredOrders, getCurrentMonthIncome, getCurrentYearIncome } from "../../../api/order";
+import { getIncomeForAllMonths, getRefundForAllMonths,getIncomeForAllDeliveredOrders, getCurrentMonthIncome, getCurrentYearIncome, getRefundForAllDeliveredOrders } from "../../../api/order";
 import { countSellers } from "../../../api/seller";
 import { countBuyer } from "../../../api/buyer";
 
@@ -28,6 +28,7 @@ export default function FinancialManagement() {
   const [incomeCurrentYear, setIncomeCurrentYear] = useState(0); // income for the current year
   const [sellerCount, setSellerCount] = useState(0);  // count sellers
   const [buyerCount, setBuyerCount] = useState(0);  // count buyers
+  const [refundForAllDeliveredOrders, setRefundForAllDeliveredOrders] = useState(0);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -39,6 +40,7 @@ export default function FinancialManagement() {
         const responeIncomeCurrentYear = await getCurrentYearIncome();  
         const responeCountSellers = await countSellers();
         const responeCountBuyers = await countBuyer();
+        const responeRefundForAllDeliveredOrders = await getRefundForAllDeliveredOrders();
 
         const mappedCustomSeries = [
           {
@@ -67,6 +69,7 @@ export default function FinancialManagement() {
 
         // Set the mappedCustomSeries to the state
         setIncomeForAllDeliveredOrders(responeIncomeForAllDeliveredOrders.data["totalIncome"]);
+        setRefundForAllDeliveredOrders(responeRefundForAllDeliveredOrders.data["totalRefund"]);
         setMonthlyIncome(mappedCustomSeries);
         setIncomeCurrentYear(responeIncomeCurrentYear.data["income"]);
         setIncomeCurrentMonth(responeIncomeCurrentMonth.data["income"]);
@@ -107,6 +110,15 @@ export default function FinancialManagement() {
             count={formatNumberWithCommas(incomeForAllDeliveredOrders)}
             percentage={`${(incomeCurrentYear - incomeForAllDeliveredOrders) / incomeForAllDeliveredOrders * 100}`}
             extra={formatNumberWithCommas(incomeCurrentYear)}
+            liltitle="you made an extra"
+          />
+        </Grid>
+        <Grid item xs={12} sm={6} md={4} lg={3}>
+          <AnalyticEcommerce
+            title="Total Refund"
+            count={formatNumberWithCommas(refundForAllDeliveredOrders)}
+            percentage={`0`}
+            extra={formatNumberWithCommas(refundForAllDeliveredOrders)}
             liltitle="you made an extra"
           />
         </Grid>

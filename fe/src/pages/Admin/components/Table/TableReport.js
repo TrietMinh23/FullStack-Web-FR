@@ -129,10 +129,10 @@ const Table = ({
               </th>
               <th
                 className="p-3 text-sm font-semibold tracking-wide text-center"
-                onClick={() => handleSort("status")}
+                onClick={() => handleSort("id_reporter.isBlocked")}
               >
                 Status Reporter{" "}
-                {sortColumn === "status" && (sortOrder === "asc" ? "▲" : "▼")}
+                {sortColumn === "id_reporter.isBlocked" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
                 className="w-24 p-3 text-sm font-semibold tracking-wide text-center"
@@ -144,10 +144,10 @@ const Table = ({
               </th>
               <th
                 className="p-3 text-sm font-semibold tracking-wide text-center"
-                onClick={() => handleSort("status")}
+                onClick={() => handleSort("id_reported.isBlocked")}
               >
                 Status Reported{" "}
-                {sortColumn === "status" && (sortOrder === "asc" ? "▲" : "▼")}
+                {sortColumn === "id_reported.isBlocked" && (sortOrder === "asc" ? "▲" : "▼")}
               </th>
               <th
                 className="p-3 text-sm font-semibold tracking-wide text-center"

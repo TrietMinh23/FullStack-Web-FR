@@ -394,6 +394,52 @@ export const getIncomeForAllDeliveredOrders = async (req, res) => {
   }
 };
 
+export const getRefundForAllDeliveredOrders = async (req, res) => {
+  try {
+    const totalRefund = await Order.aggregate([
+      {
+        $match: {
+          orderStatus: "Cancelled",
+        },
+      },
+      {
+        $unwind: "$products",
+      },
+      {
+        $lookup: {
+          from: "products",
+          localField: "products",
+          foreignField: "_id",
+          as: "productData",
+        },
+      },
+      {
+        $unwind: "$productData",
+      },
+      {
+        $group: {
+          _id: null,
+          totalRefund: { $sum: "$productData.price" },
+        },
+      },
+    ]);
+
+    if (totalRefund.length > 0) {
+      return res.status(200).json({ totalRefund: totalRefund[0].totalRefund });
+    } else {
+      return res
+        .status(404)
+        .json({ message: "No refund available for delivered orders." });
+    }
+  } catch (error) {
+    console.error("Error calculating refund:", error);
+    return res
+      .status(500)
+      .json({ message: "An error occurred while calculating refund." });
+  }
+};
+
+
 // get Income By Seller Id For All Months
 export const getIncomeBySellerIdForAllMonths = async (req, res) => {
   try {
