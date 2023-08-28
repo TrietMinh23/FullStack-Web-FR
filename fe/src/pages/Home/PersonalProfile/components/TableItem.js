@@ -69,7 +69,7 @@ const TableItem = (
     let filteredData = rows;
 
     if (searchTerm) {
-      filteredData = rows.filter((row) => {
+      filteredData = rows?.filter((row) => {
         return Object.values(row).some((value) =>
           value.toString().toLowerCase().includes(searchTerm.toLowerCase())
         );
