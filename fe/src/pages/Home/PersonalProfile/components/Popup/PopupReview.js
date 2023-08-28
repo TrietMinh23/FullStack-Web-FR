@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Rating from "@mui/material/Rating";
 import { postReview } from "../../../../../api/Review/postReview";
 
@@ -15,7 +15,7 @@ export default function PopupReview({ finish, close, i, at, data }) {
         rating: rate,
         buyer: data[i].orderby._id,
         seller: data[i].products[0].sellerId._id,
-        orderedProduct:data[i]._id,
+        orderedProduct: data[i]._id,
       };
       Review(thisData);
       setIsComfirm(true);
@@ -27,13 +27,38 @@ export default function PopupReview({ finish, close, i, at, data }) {
   const Review = async (thisData) => {
     console.log(thisData);
     await postReview(thisData)
-    .then((res) => {
-      console.log(res.data);
-    })
-    .catch((err) => {
-      console.log(err.response.data.message);
-    });
+      .then((res) => {
+        console.log(res.data);
+      })
+      .catch((err) => {
+        console.log(err.response.data.message);
+      });
   };
+
+  const handleResize = () => {
+    if (window.innerWidth <= 1024) {
+      document.querySelector(".modal").removeAttribute("style");
+    } else {
+      document
+        .querySelector(".modal")
+        .setAttribute("style", `top: calc(50% + ${at}px)`);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("resize", handleResize);
+    if (window.innerWidth <= 1024) {
+      document.querySelector(".modal").removeAttribute("style");
+    } else {
+      document
+        .querySelector(".modal")
+        .setAttribute("style", `top: calc(50% + ${at}px)`);
+    }
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []); // Dependency array is empty to add the event listener only once
 
   return (
     <div className="modal p-7" style={{ top: `calc(50% + ${at}px)` }}>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { postReport } from "../../../../../api/Report/postReport";
 
 export default function PopupReport({ i, close, at, data }) {
@@ -8,17 +8,16 @@ export default function PopupReport({ i, close, at, data }) {
   const [isTitleEmty, setIsTitleEmty] = useState(false);
   const [isComEmty, setIsComEmty] = useState(false);
 
-
   const comfirm = () => {
-    if(title.length && details.length ){
-      console.log("get in here")
+    if (title.length && details.length) {
+      console.log("get in here");
       setIsComfirm(true);
       const dataSend = {
         title: title,
         details: details,
         id_reporter: data[i].orderby._id,
         id_reported: data[i].products[0].sellerId._id,
-        orderedProduct:data[i]._id,
+        orderedProduct: data[i]._id,
         status: "Pending",
       };
       Report(dataSend);
@@ -26,10 +25,10 @@ export default function PopupReport({ i, close, at, data }) {
       setIsTitleEmty(true);
       setIsComEmty(true);
     }
-    console.log("length ",title.length ,details.length)
+    console.log("length ", title.length, details.length);
   };
   const Report = async (dataSend) => {
-    console.log("hi" ,dataSend);
+    console.log("hi", dataSend);
     await postReport(dataSend)
       .then((res) => {
         console.log(res.data);
@@ -38,6 +37,32 @@ export default function PopupReport({ i, close, at, data }) {
         console.log(err);
       });
   };
+
+  const handleResize = () => {
+    if (window.innerWidth <= 1024) {
+      document.querySelector(".modal").removeAttribute("style");
+    } else {
+      document
+        .querySelector(".modal")
+        .setAttribute("style", `top: calc(50% + ${at}px)`);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("resize", handleResize);
+    if (window.innerWidth <= 1024) {
+      document.querySelector(".modal").removeAttribute("style");
+    } else {
+      document
+        .querySelector(".modal")
+        .setAttribute("style", `top: calc(50% + ${at}px)`);
+    }
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []); // Dependency array is empty to add the event listener only once
+
   return (
     <div
       className="container p-10 modal"
@@ -55,7 +80,7 @@ export default function PopupReport({ i, close, at, data }) {
               <label htmlFor="title">Title:</label>
               <input
                 className={`border ml-3 md:w-full ${
-                  (isTitleEmty && !title.length) && "border-red-700"
+                  isTitleEmty && !title.length && "border-red-700"
                 }`}
                 type="text"
                 name="name"
@@ -67,7 +92,7 @@ export default function PopupReport({ i, close, at, data }) {
               <label htmlFor="title">Detail:</label>
               <textarea
                 className={`border md:w-full ml-3 ${
-                  (isComEmty && !details.length) && "border-red-700"
+                  isComEmty && !details.length && "border-red-700"
                 }`}
                 type="text"
                 name="name"

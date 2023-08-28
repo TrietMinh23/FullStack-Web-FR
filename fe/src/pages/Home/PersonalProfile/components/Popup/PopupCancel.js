@@ -1,6 +1,30 @@
 import React, { useEffect, useState } from "react";
 
 export default function PopupCancel({ close, finish, at }) {
+  const handleResize = () => {
+    if (window.innerWidth <= 1024) {
+      document.querySelector(".modal").removeAttribute("style");
+    } else {
+      document
+        .querySelector(".modal")
+        .setAttribute("style", `top: calc(50% + ${at}px)`);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("resize", handleResize);
+    if (window.innerWidth <= 1024) {
+      document.querySelector(".modal").removeAttribute("style");
+    } else {
+      document
+        .querySelector(".modal")
+        .setAttribute("style", `top: calc(50% + ${at}px)`);
+    }
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []); // Dependency array is empty to add the event listener only once
   return (
     <div
       className=" container modal p-7"
