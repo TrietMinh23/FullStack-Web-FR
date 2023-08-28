@@ -1,4 +1,5 @@
 export default function formatNumberWithCommas(number) {
+
   const numberStr = number.toString();
 
   const [integerPart, decimalPart] = numberStr.split(".");
