@@ -5,8 +5,8 @@ import { generateToken, decodeToken } from "../config/jwtToken.js";
 import bcrypt from "bcryptjs";
 import "dotenv/config";
 import asyncHandler from "express-async-handler";
-import crypto from 'crypto';
-import { sendMail } from '../utils/sendMail.js';
+import crypto from "crypto";
+import { sendMail } from "../utils/sendMail.js";
 
 //Complete REFRESH TOKEN HANDLE
 export const refreshTokenHandle = async (req, res) => {
@@ -116,8 +116,10 @@ export const createUser = async (req, res) => {
     const email = req.body.email;
     const findUser = await User.findOne({ email });
 
+    console.log(req.body);
+
     if (findUser) {
-      res.status(400).json({ message: "User already exists" });
+      res.status(400).json({ message: "User already exists", NoGG: true });
       return;
     }
 
@@ -516,57 +518,63 @@ export const count_status_today = async (req, res) => {
   }
 };
 
-//Reset Password 
+//Reset Password
 //forgot password & reset password
 //Contributor: Dat
 export const forgotPassword = asyncHandler(async (req, res) => {
   const { email } = req.body;
-  if (!email){
-    res.status(400).json({error : 'Email is not exist'})
+  if (!email) {
+    res.status(400).json({ error: "Email is not exist" });
     return;
   }
-  const user = await User.findOne({ email })
-  if (!user) 
-  {
-    res.status(400).json({error : 'Email is not exist'});
+  const user = await User.findOne({ email });
+  if (!user) {
+    res.status(400).json({ error: "Email is not exist" });
     return;
   }
-  
+
   const resetToken = user.createPasswordChangedToken(); // create a password reset token
-  await user.save() //save to db
+  await user.save(); //save to db
 
   const html = `Click on the link below to change your password. This link will expire after 15 minutes from now. <a href = 
-  ${process.env.URL_CLIENT}/reset-password/${resetToken}>Click here</a> ` // create the html content for the email change password
+  ${process.env.URL_CLIENT}/reset-password/${resetToken}>Click here</a> `; // create the html content for the email change password
 
   const data = {
-      email,
-      html,
-      subject: 'Forgot password'
-  } // create the data for the email
+    email,
+    html,
+    subject: "Forgot password",
+  }; // create the data for the email
   const rs = await sendMail(data); // send the email
   return res.status(200).json({
-      success: rs.response?.includes('OK') ? true : false,
-      mes: rs.response?.includes('OK') ? 'Email sent successfully' : 'Something went wrong'
-  })
-})
+    success: rs.response?.includes("OK") ? true : false,
+    mes: rs.response?.includes("OK")
+      ? "Email sent successfully"
+      : "Something went wrong",
+  });
+});
 
 export const resetPassword = asyncHandler(async (req, res) => {
   const { password, token } = req.body;
-  if (!password || !token) throw new Error('Password and token are required')
-  const passwordResetToken = crypto.createHash('sha256').update(token).digest('hex');
-  const user = await User.findOne({ passwordResetToken, passwordResetExpires: { $gt: Date.now() } });
-  if (!user) throw new Error('Invalid or expired token');
+  if (!password || !token) throw new Error("Password and token are required");
+  const passwordResetToken = crypto
+    .createHash("sha256")
+    .update(token)
+    .digest("hex");
+  const user = await User.findOne({
+    passwordResetToken,
+    passwordResetExpires: { $gt: Date.now() },
+  });
+  if (!user) throw new Error("Invalid or expired token");
   user.password = password;
   user.passwordResetToken = undefined;
   user.passwordChangeAt = Date.now();
   user.passwordResetExpires = undefined;
   await user.save();
   return res.status(200).json({
-      success: user ? true : false,
-      mes: user ? 'Password changed successfully' : 'Something went wrong'
-  })
-})
-
+    success: user ? true : false,
+    mes: user ? "Password changed successfully" : "Something went wrong",
+  });
+});
 
 // const getUserByName = async (req, res) => {
 //   try {
@@ -580,7 +588,6 @@ export const resetPassword = asyncHandler(async (req, res) => {
 //     } else {
 //       res.status(200).json(user);
 //     }
-    
 
 //   } catch (err) {
 //     console.error(err);

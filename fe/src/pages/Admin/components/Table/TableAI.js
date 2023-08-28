@@ -3,6 +3,7 @@ import { FaTrashAlt, FaPen } from "react-icons/fa";
 import PaginationComponent from "../../../Home/components/Pagination";
 import { deleteProduct } from "../../../../api/products";
 import LoadingIcon from "../LoadingIcon";
+import { BiBlock } from "react-icons/bi";
 import formatNumberWithCommas from "../../../../utils/formatNumberWithCommas";
 import PopUpSucess from "../../../Home/PersonalProfile/components/Popup/PopUpSucess";
 import PopUpFail from "../../../Home/PersonalProfile/components/Popup/PopUpFail";
@@ -283,20 +284,30 @@ export default function TableAl({
                   <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
                     {row.postDate}
                   </td>
-                  <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
-                    <button
-                      className="text-blue-500 font-bold hover:underline"
-                      onClick={() => handleEditRow(row)}
-                    >
-                      <FaPen />
-                    </button>
-                    <button
-                      className="text-red-500 font-bold hover:underline ml-2"
-                      onClick={() => handleDeleteRow(row)}
-                    >
-                      <FaTrashAlt />
-                    </button>
-                  </td>
+                  {!row.status ? (
+                    <>
+                      <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
+                        <button
+                          className="text-blue-500 font-bold hover:underline"
+                          onClick={() => handleEditRow(row)}
+                        >
+                          <FaPen />
+                        </button>
+                        <button
+                          className="text-red-500 font-bold hover:underline ml-2"
+                          onClick={() => handleDeleteRow(row)}
+                        >
+                          <FaTrashAlt />
+                        </button>
+                      </td>
+                    </>
+                  ) : (
+                    <>
+                      <td className="p-3 text-sm text-gray-700 whitespace-nowrap text-center">
+                        <BiBlock className="text-red-500 font-bold ml-2 w-full" />
+                      </td>
+                    </>
+                  )}
                 </tr>
               ))}
             </tbody>
@@ -338,20 +349,30 @@ export default function TableAl({
               <div className="text-sm font-medium text-black">
                 VND {formatNumberWithCommas(row.price)}
               </div>
-              <div className="flex justify-end">
-                <button
-                  className="text-blue-500 font-bold hover:underline"
-                  onClick={() => handleEditRow(row)}
-                >
-                  <FaPen />
-                </button>
-                <button
-                  className="text-red-500 font-bold hover:underline ml-2"
-                  onClick={handleDelete}
-                >
-                  <FaTrashAlt />
-                </button>
-              </div>
+              {!row.status ? (
+                <>
+                  <div className="flex justify-end">
+                    <button
+                      className="text-blue-500 font-bold hover:underline"
+                      onClick={() => handleEditRow(row)}
+                    >
+                      <FaPen />
+                    </button>
+                    <button
+                      className="text-red-500 font-bold hover:underline ml-2"
+                      onClick={handleDelete}
+                    >
+                      <FaTrashAlt />
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="flex justify-end">
+                    <BiBlock className="text-red-500 font-bold ml-2 w-full" />
+                  </div>
+                </>
+              )}
             </div>
           ))}
         </div>

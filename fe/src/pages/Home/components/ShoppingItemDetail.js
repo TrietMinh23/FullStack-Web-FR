@@ -227,7 +227,7 @@ export default function ProductDetail() {
                     <div className="grid h-[304px] absolute left-[-100px] top-7 invisible border group-hover:visible bg-white rounded">
                       <div className="col-span-2 py-1 h-[40px] border auto-rows-max text-center">
                         <span className="text-2xl text-center pr-2">
-                          {dataReview.AvgStar}/5.0
+                          {dataReview.AvgStar}.0/5.0
                         </span>
                         <Rating
                           name="read-only"
