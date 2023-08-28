@@ -86,8 +86,9 @@ export default function TableAl({
         await deleteProduct(productId);
       }
       setSelectedItems([]);
-      <PopUpSucess close={closeSee} at={document.documentElement.scrollTop} />;
+      setIsTrue(true);
     } catch (error) {
+      setIsFalse(true);
       console.error(error.message);
     }
   };
@@ -95,13 +96,14 @@ export default function TableAl({
   const handleDeleteRow = async (item) => {
     try {
       await deleteProduct(item.tradeCode);
+      setIsTrue(true);
       setSelectedItems((prevSelectedItems) =>
         prevSelectedItems.filter(
           (selectedItem) => selectedItem.tradeCode !== item.tradeCode
         )
       );
-      <PopUpSucess close={closeSee} at={document.documentElement.scrollTop} />;
     } catch (error) {
+      setIsFalse(true);
       console.error(error.message);
     }
   };
